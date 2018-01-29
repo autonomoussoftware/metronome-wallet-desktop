@@ -1,0 +1,51 @@
+import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
+import React, { Component } from 'react';
+import RecoverFromMnemonic from './components/RecoverFromMnemonic';
+import PropTypes from 'prop-types';
+import Sidebar from './components/Sidebar';
+import Wallets from './components/Wallets';
+import Auction from './components/Auction';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  background-color: ${p => p.theme.bg.primary};
+  display: flex;
+  min-height: 100vh;
+`;
+
+const Main = styled.div`
+  flex-grow: 1;
+`;
+
+class Router extends Component {
+  static propTypes = {
+    onMnemonic: PropTypes.func.isRequired,
+    seed: PropTypes.string.isRequired
+  };
+
+  render() {
+    const { seed, onMnemonic } = this.props;
+
+    return (
+      <HashRouter>
+        <Container>
+          <Sidebar />
+          <Main>
+            <Switch>
+              <Route path="/" exact render={() => <Redirect to="/wallets" />} />
+              <Route path="/exchanger" component={() => <div>Exchanger</div>} />
+              <Route path="/auction" render={() => <Auction seed={seed} />} />
+              <Route
+                render={() => <RecoverFromMnemonic onMnemonic={onMnemonic} />}
+                path="/tools"
+              />
+              <Route path="/wallets" render={() => <Wallets seed={seed} />} />
+            </Switch>
+          </Main>
+        </Container>
+      </HashRouter>
+    );
+  }
+}
+
+export default Router;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>Metronome Wallet</title>
+    <style>
+      /* latin */
+      @font-face {
+        font-family: 'Muli';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Muli Regular'), local('Muli-Regular'), url(%PUBLIC_URL%/fonts/Muli/Muli-Regular.ttf) format('truetype');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
+      }
+      /* latin */
+      @font-face {
+        font-family: 'Muli';
+        font-style: normal;
+        font-weight: 600;
+        src: local('Muli SemiBold'), local('Muli-SemiBold'), url(%PUBLIC_URL%/fonts/Muli/Muli-SemiBold.ttf) format('truetype');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
+      }
+      html {
+        font-size: 10px;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #7e61f8;
+        font-family: 'Muli', monospace;
+        color: white;
+        font-size: 1.6rem;
+        -webkit-font-smoothing: antialiased;
+      }
+      *, *:before, *:after {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      body.ReactModal__Body--open {
+        overflow: hidden;
+      }
+      .ReactModal__Overlay {
+        background-color: transparent !important;
+        transition: 0.3s;
+      }
+      .ReactModal__Overlay.ReactModal__Overlay--after-open {
+        background-color: rgba(50, 50, 50, 0.8) !important;
+      }
+      .ReactModal__Overlay.ReactModal__Overlay--before-close {
+        background-color: transparent !important;
+        transition: 0.6s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
