@@ -10,11 +10,12 @@ import styled from 'styled-components';
 const Container = styled.div`
   background-color: ${p => p.theme.bg.primary};
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
 `;
 
 const Main = styled.div`
   flex-grow: 1;
+  overflow-y: auto;
 `;
 
 class Router extends Component {

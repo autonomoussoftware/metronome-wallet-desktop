@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import LogoSmall from './LogoSmall';
 import styled from 'styled-components';
+import Logo from './Logo';
 
 const Container = styled.div`
   background: ${p => p.theme.bg.darkGradient};
-  min-width: 200px;
+  width: 200px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
 `;
 
-const Logo = styled.div`
-  height: 130px;
-  padding: 3.2rem;
+const LogoContainer = styled.div`
+  padding: 3.2rem 3.2rem 6rem 3.2rem;
 `;
 
 const MainMenu = styled.nav`
@@ -45,7 +48,7 @@ const Button = styled(NavLink)`
 `;
 
 const SecondaryMenu = styled.nav`
-  padding-bottom: 0.8rem;
+  margin-top: 1.6rem;
 `;
 
 const SecondaryBtn = styled(NavLink)`
@@ -56,15 +59,43 @@ const SecondaryBtn = styled(NavLink)`
   line-height: 2rem;
   transition: 0.5s;
   opacity: 0.5;
+  transition: 0.6s;
+  position: relative;
   &.active {
+    opacity: 1;
+    padding-left: 3.2rem;
   }
+  &:before {
+    transition: 0.4s;
+    transition-delay: 0.2s;
+    opacity: 0;
+    content: '';
+    display: block;
+    background-color: ${p => p.theme.colors.primary};
+    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+    left: 1.6rem;
+  }
+  &.active:before {
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+  }
+`;
+
+const LogoSmallContainer = styled.div`
+  padding: 4.8rem 0 2.4rem 1.6rem;
 `;
 
 class App extends Component {
   render() {
     return (
       <Container>
-        <Logo>Logo</Logo>
+        <LogoContainer>
+          <Logo />
+        </LogoContainer>
         <MainMenu>
           <Button activeClassName="active" to="/wallets">
             Wallets
@@ -87,6 +118,9 @@ class App extends Component {
             Help
           </SecondaryBtn>
         </SecondaryMenu>
+        <LogoSmallContainer>
+          <LogoSmall />
+        </LogoSmallContainer>
       </Container>
     );
   }
