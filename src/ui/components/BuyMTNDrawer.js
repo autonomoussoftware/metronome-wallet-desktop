@@ -1,44 +1,20 @@
 import PurchaseFormProvider from '../providers/PurchaseFormProvider';
+import { Drawer, Btn } from '../common';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Drawer from './Drawer';
 import React from 'react';
 import Web3 from 'web3';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const Header = styled.header`
-  background-color: ${p => p.theme.colors.primary};
-  padding: 1.7rem 2.4rem;
-  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
-`;
-
-const Title = styled.h1`
-  font-size: 2.4rem;
-  line-height: 3rem;
-  font-weight: bold;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  margin: 0;
-`;
-
-const Form = styled.form``;
 
 const FieldsContainer = styled.div`
   padding: 3.2rem 2.4rem;
 `;
-
-const Field = styled.div``;
 
 const Label = styled.label`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const Input = styled.input`
@@ -54,7 +30,7 @@ const Input = styled.input`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const ErrorMsg = styled.p`
@@ -66,28 +42,6 @@ const BtnContainer = styled.div`
   height: 100%;
   padding: 6.4rem 2.4rem;
   flex-grow: 1;
-`;
-
-const SubmitBtn = styled.button`
-  font: inherit;
-  display: block;
-  border: none;
-  padding: 0;
-  width: 100%;
-  height: 56px;
-  border-radius: 1.2rem;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
-  box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  line-height: 2.5rem;
-  color: ${p => p.theme.colors.primary};
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 `;
 
 export default class BuyMTNDrawer extends React.Component {
@@ -131,65 +85,64 @@ export default class BuyMTNDrawer extends React.Component {
     const { onRequestClose, isOpen, currentPrice } = this.props;
 
     return (
-      <Drawer onRequestClose={onRequestClose} isOpen={isOpen}>
-        <Container>
-          <Header>
-            <Title>Buy Metronome</Title>
-          </Header>
-          <PurchaseFormProvider
-            disclaimerAccepted={disclaimerAccepted}
-            currentPrice={currentPrice}
-            amount={input}
-          >
-            {({
-              expectedMTNamount,
-              isValidPurchase,
-              isValidAmount,
-              isPristine
-            }) => (
-              <Form onSubmit={this.onSubmit}>
-                <FieldsContainer>
-                  <Field>
-                    <Label>ETH amount</Label>
-                    <Input
-                      placeholder="Enter a valid amount"
-                      onChange={this.onInputChanged}
-                      disabled={status !== 'init'}
-                      value={input === null ? '' : input}
-                    />
-                  </Field>
-                  {expectedMTNamount && (
-                    <div>
-                      <p>You would get</p>
-                      <p>{expectedMTNamount} MTN</p>
-                    </div>
-                  )}
-                  {!isValidAmount &&
-                    !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
-                  {status === 'success' && (
-                    <div>
-                      <p>Your receipt:</p>
-                      <pre>{JSON.stringify(receipt, null, 2)}</pre>
-                    </div>
-                  )}
-                  {status === 'pending' && (
-                    <div>
-                      <p>Waiting for receipt...</p>
-                    </div>
-                  )}
-                  {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
-                </FieldsContainer>
-                {status === 'init' && (
-                  <BtnContainer>
-                    <SubmitBtn disabled={!isValidPurchase} type="submit">
-                      Buy
-                    </SubmitBtn>
-                  </BtnContainer>
+      <Drawer
+        onRequestClose={onRequestClose}
+        isOpen={isOpen}
+        title="Buy Metronome"
+      >
+        <PurchaseFormProvider
+          disclaimerAccepted={disclaimerAccepted}
+          currentPrice={currentPrice}
+          amount={input}
+        >
+          {({
+            expectedMTNamount,
+            isValidPurchase,
+            isValidAmount,
+            isPristine
+          }) => (
+            <form onSubmit={this.onSubmit}>
+              <FieldsContainer>
+                <div>
+                  <Label>ETH amount</Label>
+                  <Input
+                    placeholder="Enter a valid amount"
+                    onChange={this.onInputChanged}
+                    disabled={status !== 'init'}
+                    value={input === null ? '' : input}
+                  />
+                </div>
+                {expectedMTNamount && (
+                  <div>
+                    <p>You would get</p>
+                    <p>{expectedMTNamount} MTN</p>
+                  </div>
                 )}
-              </Form>
-            )}
-          </PurchaseFormProvider>
-        </Container>
+                {!isValidAmount &&
+                  !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
+                {status === 'success' && (
+                  <div>
+                    <p>Your receipt:</p>
+                    <pre>{JSON.stringify(receipt, null, 2)}</pre>
+                  </div>
+                )}
+                {status === 'pending' && (
+                  <div>
+                    <p>Waiting for receipt...</p>
+                  </div>
+                )}
+                {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
+              </FieldsContainer>
+              {status === 'init' && (
+                <BtnContainer>
+                  <Btn block submit disabled={!isValidPurchase}>
+                    Buy
+                  </Btn>
+                </BtnContainer>
+              )}
+            </form>
+          )}
+        </PurchaseFormProvider>
       </Drawer>
     );
   }

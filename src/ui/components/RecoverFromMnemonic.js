@@ -1,11 +1,12 @@
+import { DarkLayout, Btn } from '../common';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import bip39 from 'bip39';
 import React from 'react';
 
-const Container = styled.form`
-  padding: 2.4rem;
+const Form = styled.form`
+  padding: 2.4rem 4.8rem;
 `;
 
 const Msg = styled.p``;
@@ -26,28 +27,9 @@ const Input = styled.textarea`
 
 const ErrorMsg = styled.p``;
 
-const DoneBtn = styled.button`
-  font: inherit;
-  display: block;
-  border: none;
-  padding: 0;
-  width: 100%;
-  height: 56px;
-  border-radius: 1.2rem;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
-  box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  line-height: 2.5rem;
-  color: ${p => p.theme.colors.primary};
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
-  max-width: 300px;
+const DoneBtn = Btn.extend`
+  min-width: 15rem;
   margin-top: 2rem;
-  cursor: pointer;
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 `;
 
 class RecoverFromMnemonic extends React.Component {
@@ -92,22 +74,24 @@ class RecoverFromMnemonic extends React.Component {
         .filter(w => w.length > 0).length === 12;
 
     return (
-      <Container onSubmit={this.onDonePressed}>
-        <Msg>Enter the 12 words to recover your wallet.</Msg>
-        <p>This action will replace your current stored seed!</p>
-        <InputContainer>
-          <Input
-            autofocus
-            onChange={this.onInputChanged}
-            value={input || ''}
-            rows="3"
-          />
-        </InputContainer>
-        {error && <ErrorMsg>{error}</ErrorMsg>}
-        <DoneBtn disabled={!weHave12words} type="submit">
-          Done
-        </DoneBtn>
-      </Container>
+      <DarkLayout title="Recover wallet">
+        <Form onSubmit={this.onDonePressed}>
+          <Msg>Enter the 12 words to recover your wallet.</Msg>
+          <p>This action will replace your current stored seed!</p>
+          <InputContainer>
+            <Input
+              autofocus
+              onChange={this.onInputChanged}
+              value={input || ''}
+              rows="3"
+            />
+          </InputContainer>
+          {error && <ErrorMsg>{error}</ErrorMsg>}
+          <DoneBtn disabled={!weHave12words} submit>
+            Done
+          </DoneBtn>
+        </Form>
+      </DarkLayout>
     );
   }
 }

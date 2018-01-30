@@ -28,30 +28,14 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: #7e61f8;
+        background-image: linear-gradient(to bottom,#353535,#323232);
         font-family: 'Muli', monospace;
         color: white;
         font-size: 1.6rem;
         -webkit-font-smoothing: antialiased;
       }
       *, *:before, *:after {
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
         box-sizing: border-box;
-      }
-      body.ReactModal__Body--open {
-        overflow: hidden;
-      }
-      .ReactModal__Overlay {
-        background-color: transparent !important;
-        transition: 0.3s;
-      }
-      .ReactModal__Overlay.ReactModal__Overlay--after-open {
-        background-color: rgba(50, 50, 50, 0.8) !important;
-      }
-      .ReactModal__Overlay.ReactModal__Overlay--before-close {
-        background-color: transparent !important;
-        transition: 0.6s;
       }
     </style>
   </head>

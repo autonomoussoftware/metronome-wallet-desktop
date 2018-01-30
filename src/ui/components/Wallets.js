@@ -1,15 +1,18 @@
 import ReceiveDrawer from './ReceiveDrawer';
 import SendDrawer from './SendDrawer';
 import ItemFilter from './ItemFilter';
+import { Btn } from '../common';
 import styled from 'styled-components';
 import React from 'react';
 
 const Container = styled.div`
+  background-color: ${p => p.theme.colors.bg.primary};
   padding: 0 4.8rem;
+  min-height: 100%;
 `;
 
 const Header = styled.header`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid ${p => p.theme.colors.shade};
   padding: 1.8rem 0;
   display: flex;
   align-items: center;
@@ -21,7 +24,7 @@ const Title = styled.h1`
   line-height: 3rem;
   white-space: nowrap;
   margin: 0;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const AddressContainer = styled.div`
@@ -32,7 +35,7 @@ const AddressContainer = styled.div`
 const Label = styled.div`
   padding: 0.8rem;
   font-size: 1.3rem;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
   letter-spacing: 0.5px;
   font-weight: 600;
 `;
@@ -50,22 +53,13 @@ const Address = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: normal;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
-const CopyBtn = styled.button`
-  font: inherit;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
+const CopyBtn = Btn.extend`
   border-radius: 0 2px 2px 0;
-  cursor: pointer;
-  display: block;
-  color: ${p => p.theme.colors.primary};
   line-height: 1.8rem;
   padding: 0.5rem 0.8rem;
-  margin: 0;
-  background: white;
-  font-weight: 600;
-  border: none;
   font-size: 1.4rem;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -89,7 +83,7 @@ const Balance = styled.div`
   justify-content: space-between;
 
   & + & {
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: 1px solid ${p => p.theme.colors.shade};
   }
 `;
 
@@ -107,7 +101,7 @@ const Value = styled.div`
   line-height: ${p => (p.large ? '6rem' : '4rem')};
   font-size: ${p => (p.large ? '4.8rem' : '3.2rem')};
   letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
   margin: 2.4rem 3rem;
   flex-grow: 1;
 `;
@@ -116,7 +110,7 @@ const USDValue = styled.div`
   line-height: 3rem;
   font-size: 2.4rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const Right = styled.div`
@@ -124,25 +118,7 @@ const Right = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: 1.6rem;
-`;
-
-const HeroBtn = styled.button`
-  font: inherit;
-  border: none;
-  cursor: pointer;
-  border-radius: 12px;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
-  box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  color: ${p => p.theme.colors.primary};
-  line-height: 2.5rem;
-  padding: 1.6rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
   min-width: 18rem;
-  & + & {
-    margin-top: 1.6rem;
-  }
 `;
 
 const Transactions = styled.div`
@@ -159,7 +135,7 @@ const ListTitle = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const TabsContainer = styled.div`
@@ -173,7 +149,7 @@ const Tab = styled.button`
   font-weight: 600;
   letter-spacing: 1.4px;
   text-align: center;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
   opacity: ${p => (p.isActive ? '1' : '0.5')};
   text-transform: uppercase;
   padding: 1.6rem;
@@ -192,7 +168,7 @@ const Tab = styled.button`
 const List = styled.div`
   border-radius: 2px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 0 ${p => p.theme.colors.shade};
 `;
 
 const Tx = styled.div`
@@ -283,12 +259,12 @@ export default class Wallets extends React.Component {
             </Balance>
           </Left>
           <Right>
-            <HeroBtn data-modal="send" onClick={this.onOpenModal}>
+            <Btn block data-modal="send" onClick={this.onOpenModal}>
               Send
-            </HeroBtn>
-            <HeroBtn data-modal="receive" onClick={this.onOpenModal}>
+            </Btn>
+            <Btn mt={2} block data-modal="receive" onClick={this.onOpenModal}>
               Receive
-            </HeroBtn>
+            </Btn>
           </Right>
         </Hero>
         <ItemFilter extractValue={tx => tx.type} items={transactions}>

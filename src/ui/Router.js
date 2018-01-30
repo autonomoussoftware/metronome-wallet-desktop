@@ -1,6 +1,7 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import React, { Component } from 'react';
 import RecoverFromMnemonic from './components/RecoverFromMnemonic';
+import Converter from './components/Converter';
 import PropTypes from 'prop-types';
 import Sidebar from './components/Sidebar';
 import Wallets from './components/Wallets';
@@ -8,7 +9,6 @@ import Auction from './components/Auction';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  background-color: ${p => p.theme.bg.primary};
   display: flex;
   height: 100vh;
 `;
@@ -34,7 +34,10 @@ class Router extends Component {
           <Main>
             <Switch>
               <Route path="/" exact render={() => <Redirect to="/wallets" />} />
-              <Route path="/exchanger" component={() => <div>Exchanger</div>} />
+              <Route
+                render={() => <Converter seed={seed} />}
+                path="/converter"
+              />
               <Route path="/auction" render={() => <Auction seed={seed} />} />
               <Route
                 render={() => <RecoverFromMnemonic onMnemonic={onMnemonic} />}

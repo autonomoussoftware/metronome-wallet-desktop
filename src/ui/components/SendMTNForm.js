@@ -25,7 +25,7 @@ const Label = styled.label`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const Input = styled.input`
@@ -41,7 +41,7 @@ const Input = styled.input`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const BtnContainer = styled.div`

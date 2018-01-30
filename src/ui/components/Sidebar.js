@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Logo from './Logo';
 
 const Container = styled.div`
-  background: ${p => p.theme.bg.darkGradient};
+  background: ${p => p.theme.colors.bg.darkGradient};
   width: 200px;
   display: flex;
   flex-direction: column;
@@ -32,9 +32,9 @@ const Button = styled(NavLink)`
   padding: 1.6rem;
   transition: 0.5s;
   opacity: 0.5;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid ${p => p.theme.colors.shade};
   &:first-child {
-    border-top: 2px solid rgba(0, 0, 0, 0.2);
+    border-top: 2px solid ${p => p.theme.colors.shade};
   }
   &.active {
     border-bottom-color: ${p => p.theme.colors.primary};
@@ -103,8 +103,8 @@ class App extends Component {
           <Button activeClassName="active" to="/auction">
             Auction
           </Button>
-          <Button activeClassName="active" to="/exchanger">
-            Exchanger
+          <Button activeClassName="active" to="/converter">
+            Converter
           </Button>
         </MainMenu>
         <SecondaryMenu>

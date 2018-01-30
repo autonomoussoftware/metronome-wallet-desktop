@@ -1,3 +1,4 @@
+import { DarkLayout, Btn } from '../common';
 import MTNAuctionProvider from '../providers/MTNAuctionProvider';
 import CountDownProvider from '../providers/CountDownProvider';
 import BuyMTNDrawer from './BuyMTNDrawer';
@@ -8,35 +9,15 @@ import Wallet from './MTNWallet';
 import React from 'react';
 import Web3 from 'web3';
 
-const Container = styled.div`
-  min-height: 100%;
-  background-image: linear-gradient(to bottom, #353535, #323232);
-  border-left: 2px solid rgb(46, 46, 46);
-`;
-
-const Header = styled.header`
-  padding: 2.4rem 4.8rem;
-  background-color: #323232;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
-`;
-
-const Title = styled.h1`
-  line-height: 3rem;
-  font-size: 2.4rem;
-  margin: 0;
-`;
-
 const Body = styled.div`
   padding: 3.2rem 4.8rem;
 `;
-
-const CountDownContainer = styled.div``;
 
 const CountDownTitle = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
 const Row = styled.div`
@@ -55,8 +36,8 @@ const Cell = styled.div`
   line-height: 6rem;
   letter-spacing: -1px;
   text-align: center;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  border-left: 1px solid ${p => p.theme.colors.shade};
   font-size: 2.4rem;
   &:first-child {
     border-left: none;
@@ -77,24 +58,11 @@ const CurrentPrice = styled.div`
   background-color: rgba(0, 0, 0, 0.1);
   line-height: 4rem;
   font-size: 3.2rem;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
-const BuyBtn = styled.button`
+const BuyBtn = Btn.extend`
   margin-top: 2.4rem;
-  font: inherit;
-  border: none;
-  cursor: pointer;
-  border-radius: 12px;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
-  box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  color: ${p => p.theme.colors.primary};
-  line-height: 2.5rem;
-  padding: 1.6rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
-  min-width: 18rem;
 `;
 
 export default class Auction extends React.Component {
@@ -112,10 +80,7 @@ export default class Auction extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Header>
-          <Title>Metronome Auction</Title>
-        </Header>
+      <DarkLayout title="Metronome Auction">
         <MTNAuctionProvider
           statusTopic={settings.WS_AUCTION_STATUS_TOPIC}
           apiUrl={settings.MTN_API_URL}
@@ -123,7 +88,7 @@ export default class Auction extends React.Component {
           {({ status }) =>
             status && (
               <Body>
-                <CountDownContainer>
+                <div>
                   <CountDownTitle>Time Remaining</CountDownTitle>
                   <CountDownProvider
                     targetTimestamp={status.nextAuctionStartTime}
@@ -141,7 +106,7 @@ export default class Auction extends React.Component {
                       </Row>
                     )}
                   </CountDownProvider>
-                </CountDownContainer>
+                </div>
                 <CurrentPrice>
                   Current Price: {Web3.utils.fromWei(status.currentPrice)} ETH
                 </CurrentPrice>
@@ -162,7 +127,7 @@ export default class Auction extends React.Component {
             )
           }
         </MTNAuctionProvider>
-      </Container>
+      </DarkLayout>
     );
   }
 }
