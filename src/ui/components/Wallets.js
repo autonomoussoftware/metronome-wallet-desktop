@@ -1,4 +1,4 @@
-import { ItemFilter, Fade, Btn } from '../common';
+import { ItemFilter, Fade, Btn, Sp } from '../common';
 import { TransitionGroup } from 'react-transition-group';
 import ReceiveDrawer from './ReceiveDrawer';
 import SendDrawer from './SendDrawer';
@@ -119,10 +119,6 @@ const Right = styled.div`
   justify-content: center;
   margin-left: 1.6rem;
   min-width: 18rem;
-`;
-
-const Transactions = styled.div`
-  margin-top: 4.8rem;
 `;
 
 const ListHeader = styled.div`
@@ -260,14 +256,16 @@ export default class Wallets extends React.Component {
             <Btn block data-modal="send" onClick={this.onOpenModal}>
               Send
             </Btn>
-            <Btn mt={2} block data-modal="receive" onClick={this.onOpenModal}>
-              Receive
-            </Btn>
+            <Sp mt={2}>
+              <Btn block data-modal="receive" onClick={this.onOpenModal}>
+                Receive
+              </Btn>
+            </Sp>
           </Right>
         </Hero>
         <ItemFilter extractValue={tx => tx.type} items={transactions}>
           {({ filteredItems, onFilterChange, activeFilter }) => (
-            <Transactions>
+            <Sp mt={6}>
               <ListHeader>
                 <ListTitle>Transactions</ListTitle>
                 <TabsContainer>
@@ -314,7 +312,7 @@ export default class Wallets extends React.Component {
                   </Fade>
                 ))}
               </TransitionGroup>
-            </Transactions>
+            </Sp>
           )}
         </ItemFilter>
         <ReceiveDrawer

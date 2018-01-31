@@ -3,14 +3,6 @@ import styled from 'styled-components';
 export default styled.button.attrs({
   type: ({ submit }) => (submit ? 'submit' : 'button')
 })`
-  margin-top: ${({ m, mt, my, theme }) =>
-    theme.spacing * (m || mt || my || 0) + 'rem'};
-  margin-bottom: ${({ m, mb, my, theme }) =>
-    theme.spacing * (m || mb || my || 0) + 'rem'};
-  margin-left: ${({ m, ml, mx, theme }) =>
-    theme.spacing * (m || ml || mx || 0) + 'rem'};
-  margin-right: ${({ m, mr, mx, theme }) =>
-    theme.spacing * (m || mr || mx || 0) + 'rem'};
   display: ${({ block }) => (block ? 'block' : 'inline-block')};
   width: ${({ block }) => (block ? '100%' : 'auto')};
   font: inherit;

@@ -1,11 +1,6 @@
-import { DarkLayout } from '../common';
+import { DarkLayout, Sp } from '../common';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import React from 'react';
-
-const Body = styled.div`
-  padding: 3.2rem 4.8rem;
-`;
 
 export default class Auction extends React.Component {
   static propTypes = {
@@ -15,7 +10,9 @@ export default class Auction extends React.Component {
   render() {
     return (
       <DarkLayout title="Autonomous Converter">
-        <Body>Content...</Body>
+        <Sp py={4} px={6}>
+          Content...
+        </Sp>
       </DarkLayout>
     );
   }

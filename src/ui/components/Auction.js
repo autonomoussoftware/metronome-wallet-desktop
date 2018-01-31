@@ -1,4 +1,4 @@
-import { DarkLayout, Btn } from '../common';
+import { DarkLayout, Btn, Sp } from '../common';
 import MTNAuctionProvider from '../providers/MTNAuctionProvider';
 import CountDownProvider from '../providers/CountDownProvider';
 import BuyMTNDrawer from './BuyMTNDrawer';
@@ -8,10 +8,6 @@ import styled from 'styled-components';
 import Wallet from './MTNWallet';
 import React from 'react';
 import Web3 from 'web3';
-
-const Body = styled.div`
-  padding: 3.2rem 4.8rem;
-`;
 
 const CountDownTitle = styled.div`
   line-height: 2.5rem;
@@ -83,32 +79,34 @@ export default class Auction extends React.Component {
         >
           {({ status }) =>
             status && (
-              <Body>
-                <div>
-                  <CountDownTitle>Time Remaining</CountDownTitle>
-                  <CountDownProvider
-                    targetTimestamp={status.nextAuctionStartTime}
-                  >
-                    {({ days, hours, minutes, seconds }) => (
-                      <Row>
-                        <Cell isFaded={days === 0}>{days} days</Cell>
-                        <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                        <Cell isFaded={days + hours + minutes === 0}>
-                          {minutes} mins
-                        </Cell>
-                        <Cell isFaded={days + hours + minutes + seconds === 0}>
-                          {seconds} segs
-                        </Cell>
-                      </Row>
-                    )}
-                  </CountDownProvider>
-                </div>
+              <Sp py={4} px={6}>
+                <CountDownTitle>Time Remaining</CountDownTitle>
+
+                <CountDownProvider
+                  targetTimestamp={status.nextAuctionStartTime}
+                >
+                  {({ days, hours, minutes, seconds }) => (
+                    <Row>
+                      <Cell isFaded={days === 0}>{days} days</Cell>
+                      <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                      <Cell isFaded={days + hours + minutes === 0}>
+                        {minutes} mins
+                      </Cell>
+                      <Cell isFaded={days + hours + minutes + seconds === 0}>
+                        {seconds} segs
+                      </Cell>
+                    </Row>
+                  )}
+                </CountDownProvider>
+
                 <CurrentPrice>
                   Current Price: {Web3.utils.fromWei(status.currentPrice)} ETH
                 </CurrentPrice>
-                <Btn mt={4} data-modal="buy" onClick={this.onOpenModal}>
-                  Buy Metronome
-                </Btn>
+                <Sp mt={4}>
+                  <Btn data-modal="buy" onClick={this.onOpenModal}>
+                    Buy Metronome
+                  </Btn>
+                </Sp>
                 <Wallet seed={this.props.seed}>
                   {({ onBuy }) => (
                     <BuyMTNDrawer
@@ -119,7 +117,7 @@ export default class Auction extends React.Component {
                     />
                   )}
                 </Wallet>
-              </Body>
+              </Sp>
             )
           }
         </MTNAuctionProvider>

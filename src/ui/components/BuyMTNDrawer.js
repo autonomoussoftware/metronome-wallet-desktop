@@ -1,13 +1,9 @@
 import PurchaseFormProvider from '../providers/PurchaseFormProvider';
-import { Drawer, Btn } from '../common';
+import { Drawer, Btn, Sp } from '../common';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import React from 'react';
 import Web3 from 'web3';
-
-const FieldsContainer = styled.div`
-  padding: 3.2rem 2.4rem;
-`;
 
 const Label = styled.label`
   line-height: 1.6rem;
@@ -102,7 +98,7 @@ export default class BuyMTNDrawer extends React.Component {
             isPristine
           }) => (
             <form onSubmit={this.onSubmit}>
-              <FieldsContainer>
+              <Sp py={4} px={3}>
                 <div>
                   <Label>ETH amount</Label>
                   <Input
@@ -132,7 +128,7 @@ export default class BuyMTNDrawer extends React.Component {
                   </div>
                 )}
                 {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
-              </FieldsContainer>
+              </Sp>
               {status === 'init' && (
                 <BtnContainer>
                   <Btn block submit disabled={!isValidPurchase}>

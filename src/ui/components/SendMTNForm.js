@@ -1,5 +1,5 @@
 // import PropTypes from 'prop-types';
-import { Btn } from '../common';
+import { Btn, Sp } from '../common';
 import styled from 'styled-components';
 import React from 'react';
 
@@ -7,10 +7,6 @@ const Container = styled.form`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-`;
-
-const FieldsContainer = styled.div`
-  padding: 3.2rem 2.4rem 2.4rem;
 `;
 
 const Field = styled.div``;
@@ -60,7 +56,7 @@ export default class SendMTNForm extends React.Component {
 
     return (
       <Container>
-        <FieldsContainer>
+        <Sp pt={4} pb={3} px={3}>
           <Field>
             <Label>Sent to Address</Label>
             <Input placeholder="e.g. 0x2345678998765434567" type="text" />
@@ -85,7 +81,7 @@ export default class SendMTNForm extends React.Component {
               <Input placeholder="$0.00" type="text" />
             </Field>
           </Row>
-        </FieldsContainer>
+        </Sp>
         <BtnContainer>
           <Btn block submit>
             Review Send

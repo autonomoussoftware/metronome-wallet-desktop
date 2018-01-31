@@ -1,21 +1,16 @@
-import { DarkLayout } from '../common';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import { DarkLayout, Sp } from '../common';
+// import PropTypes from 'prop-types';
 import React from 'react';
 
-const Body = styled.div`
-  padding: 3.2rem 4.8rem;
-`;
-
 export default class Settings extends React.Component {
-  static propTypes = {
-    seed: PropTypes.string.isRequired
-  };
+  static propTypes = {};
 
   render() {
     return (
       <DarkLayout title="Settings">
-        <Body>Content...</Body>
+        <Sp py={4} px={6}>
+          Content...
+        </Sp>
       </DarkLayout>
     );
   }
