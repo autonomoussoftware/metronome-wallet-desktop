@@ -1,4 +1,5 @@
 // import PropTypes from 'prop-types';
+import { Btn } from '../common';
 import styled from 'styled-components';
 import React from 'react';
 
@@ -51,24 +52,6 @@ const BtnContainer = styled.div`
   flex-grow: 1;
 `;
 
-const SubmitBtn = styled.button`
-  font: inherit;
-  display: block;
-  border: none;
-  padding: 0;
-  width: 100%;
-  height: 56px;
-  border-radius: 1.2rem;
-  background-image: linear-gradient(to top, #ededed, #ffffff);
-  box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  line-height: 2.5rem;
-  opacity: 0.5;
-  color: ${p => p.theme.colors.primary};
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
-`;
-
 export default class SendMTNForm extends React.Component {
   // static propTypes = {};
 
@@ -104,7 +87,9 @@ export default class SendMTNForm extends React.Component {
           </Row>
         </FieldsContainer>
         <BtnContainer>
-          <SubmitBtn type="submit">Review Send</SubmitBtn>
+          <Btn block submit>
+            Review Send
+          </Btn>
         </BtnContainer>
       </Container>
     );

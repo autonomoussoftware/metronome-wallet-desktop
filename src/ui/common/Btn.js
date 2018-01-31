@@ -14,6 +14,9 @@ export default styled.button.attrs({
   display: ${({ block }) => (block ? 'block' : 'inline-block')};
   width: ${({ block }) => (block ? '100%' : 'auto')};
   font: inherit;
+  ${p => p.theme.text.normal};
+  color: ${p => p.theme.colors.primary};
+  text-align: center;
   border: none;
   cursor: pointer;
   border-radius: 12px;
@@ -24,12 +27,7 @@ export default styled.button.attrs({
     ${p => p.theme.colors.bg.white}
   );
   box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
-  color: ${p => p.theme.colors.primary};
-  line-height: 2.5rem;
   padding: 1.6rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
   transition: 0.3s;
 
   &:not([disabled]):hover,

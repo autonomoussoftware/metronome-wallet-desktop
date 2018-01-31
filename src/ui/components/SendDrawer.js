@@ -1,6 +1,5 @@
+import { ItemFilter, Drawer } from '../common';
 import SendMTNForm from './SendMTNForm';
-import ItemFilter from './ItemFilter';
-import { Drawer } from '../common';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import React from 'react';

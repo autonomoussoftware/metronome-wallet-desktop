@@ -61,10 +61,6 @@ const CurrentPrice = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
 `;
 
-const BuyBtn = Btn.extend`
-  margin-top: 2.4rem;
-`;
-
 export default class Auction extends React.Component {
   static propTypes = {
     seed: PropTypes.string.isRequired
@@ -110,9 +106,9 @@ export default class Auction extends React.Component {
                 <CurrentPrice>
                   Current Price: {Web3.utils.fromWei(status.currentPrice)} ETH
                 </CurrentPrice>
-                <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
+                <Btn mt={4} data-modal="buy" onClick={this.onOpenModal}>
                   Buy Metronome
-                </BuyBtn>
+                </Btn>
                 <Wallet seed={this.props.seed}>
                   {({ onBuy }) => (
                     <BuyMTNDrawer

@@ -17,7 +17,11 @@ export default {
     big: `
       line-height: 3rem;
       font-size: 2.4rem;
-    `
+    `,
+    normal: `
+      line-height: 2.5rem;
+      font-size: 2rem;
+      font-weight: 600;`
   },
   spacing: 0.8
 };

@@ -3,10 +3,12 @@ import React, { Component } from 'react';
 import RecoverFromMnemonic from './components/RecoverFromMnemonic';
 import Converter from './components/Converter';
 import PropTypes from 'prop-types';
+import Settings from './components/Settings';
 import Sidebar from './components/Sidebar';
 import Wallets from './components/Wallets';
 import Auction from './components/Auction';
 import styled from 'styled-components';
+import Help from './components/Help';
 
 const Container = styled.div`
   display: flex;
@@ -34,16 +36,18 @@ class Router extends Component {
           <Main>
             <Switch>
               <Route path="/" exact render={() => <Redirect to="/wallets" />} />
+              <Route path="/wallets" render={() => <Wallets seed={seed} />} />
+              <Route path="/auction" render={() => <Auction seed={seed} />} />
               <Route
                 render={() => <Converter seed={seed} />}
                 path="/converter"
               />
-              <Route path="/auction" render={() => <Auction seed={seed} />} />
               <Route
                 render={() => <RecoverFromMnemonic onMnemonic={onMnemonic} />}
                 path="/tools"
               />
-              <Route path="/wallets" render={() => <Wallets seed={seed} />} />
+              <Route component={Settings} path="/settings" />
+              <Route component={Help} path="/help" />
             </Switch>
           </Main>
         </Container>

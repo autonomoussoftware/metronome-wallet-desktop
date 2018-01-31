@@ -1,7 +1,7 @@
+import { ItemFilter, Fade, Btn } from '../common';
+import { TransitionGroup } from 'react-transition-group';
 import ReceiveDrawer from './ReceiveDrawer';
 import SendDrawer from './SendDrawer';
-import ItemFilter from './ItemFilter';
-import { Btn } from '../common';
 import styled from 'styled-components';
 import React from 'react';
 
@@ -177,9 +177,7 @@ const Tx = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  & + & {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
+  border-top: ${({ i }) => (i > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none')};
 `;
 
 const Icon = styled.div`
@@ -305,14 +303,17 @@ export default class Wallets extends React.Component {
                   </Tab>
                 </TabsContainer>
               </ListHeader>
-              <List>
-                {filteredItems.map(tx => (
-                  <Tx key={tx.id}>
-                    <Icon />
-                    <Amount>{tx.amount} MTN</Amount>
-                  </Tx>
+
+              <TransitionGroup component={List}>
+                {filteredItems.map((tx, i) => (
+                  <Fade key={tx.id} maxHeight="5rem">
+                    <Tx i={i}>
+                      <Icon />
+                      <Amount>{tx.amount} MTN</Amount>
+                    </Tx>
+                  </Fade>
                 ))}
-              </List>
+              </TransitionGroup>
             </Transactions>
           )}
         </ItemFilter>
