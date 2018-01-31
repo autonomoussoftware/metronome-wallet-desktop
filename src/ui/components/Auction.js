@@ -1,4 +1,4 @@
-import { DarkLayout, Btn, Sp } from '../common';
+import { DarkLayout, Text, Btn, Sp } from '../common';
 import MTNAuctionProvider from '../providers/MTNAuctionProvider';
 import CountDownProvider from '../providers/CountDownProvider';
 import BuyMTNDrawer from './BuyMTNDrawer';
@@ -9,18 +9,11 @@ import Wallet from './MTNWallet';
 import React from 'react';
 import Web3 from 'web3';
 
-const CountDownTitle = styled.div`
-  line-height: 2.5rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-`;
-
 const Row = styled.div`
   margin-top: 1.6rem;
   display: flex;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
 `;
 
 const Cell = styled.div`
@@ -32,8 +25,8 @@ const Cell = styled.div`
   line-height: 6rem;
   letter-spacing: -1px;
   text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-  border-left: 1px solid ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  border-left: 1px solid ${p => p.theme.colors.darkShade};
   font-size: 2.4rem;
   &:first-child {
     border-left: none;
@@ -51,10 +44,10 @@ const CurrentPrice = styled.div`
   padding: 3.5rem 2.4rem;
   margin-top: 1.6rem;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
   line-height: 4rem;
   font-size: 3.2rem;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 export default class Auction extends React.Component {
@@ -80,7 +73,7 @@ export default class Auction extends React.Component {
           {({ status }) =>
             status && (
               <Sp py={4} px={6}>
-                <CountDownTitle>Time Remaining</CountDownTitle>
+                <Text>Time Remaining</Text>
 
                 <CountDownProvider
                   targetTimestamp={status.nextAuctionStartTime}

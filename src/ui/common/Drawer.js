@@ -15,6 +15,7 @@ injectGlobal`
   .ReactModal__Overlay {
     background-color: transparent !important;
     transition: 0.3s;
+    z-index: 1;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
     background-color: rgba(50, 50, 50, 0.8) !important;
@@ -42,7 +43,7 @@ const Container = styled(Modal)`
 const Header = styled.header`
   background-color: ${p => p.theme.colors.primary};
   padding: 1.7rem 2.4rem;
-  box-shadow: 0 0 16px 0 ${p => p.theme.colors.shade};
+  box-shadow: 0 0 16px 0 ${p => p.theme.colors.darkShade};
   display: flex;
   justify-content: space-between;
   flex-shrink: 0;
@@ -52,7 +53,7 @@ const Title = styled.h1`
   font-size: 2.4rem;
   line-height: 3rem;
   font-weight: bold;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0;
 `;
 

@@ -6,7 +6,9 @@ export default styled.button.attrs({
   display: ${({ block }) => (block ? 'block' : 'inline-block')};
   width: ${({ block }) => (block ? '100%' : 'auto')};
   font: inherit;
-  ${p => p.theme.text.normal};
+  line-height: 2.5rem;
+  font-size: 2rem;
+  font-weight: 600;
   color: ${p => p.theme.colors.primary};
   text-align: center;
   border: none;
@@ -26,7 +28,7 @@ export default styled.button.attrs({
   &:not([disabled]):focus,
   &:not([disabled]):active {
     background-color: ${p => p.theme.colors.bg.white};
-    box-shadow: 0 2px 8px 0 ${p => p.theme.colors.shade};
+    box-shadow: 0 2px 8px 0 ${p => p.theme.colors.darkShade};
     outline: none;
   }
 

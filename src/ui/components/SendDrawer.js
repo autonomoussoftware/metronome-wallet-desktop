@@ -16,7 +16,7 @@ const Tab = styled.button`
   border: none;
   border-bottom: 2px solid;
   border-bottom-color: ${p =>
-    p.isActive ? p.theme.colors.primary : p.theme.colors.shade};
+    p.isActive ? p.theme.colors.primary : p.theme.colors.darkShade};
   transition: 0.5s;
   padding: 2.5rem;
   color: ${p => p.theme.colors.light};

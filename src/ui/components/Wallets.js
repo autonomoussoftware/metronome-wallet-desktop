@@ -1,18 +1,30 @@
-import { ItemFilter, Fade, Btn, Sp } from '../common';
+import { ItemFilter, LogoIcon, Btn, Sp } from '../common';
 import { TransitionGroup } from 'react-transition-group';
 import ReceiveDrawer from './ReceiveDrawer';
 import SendDrawer from './SendDrawer';
 import styled from 'styled-components';
+import TxRow from './TxRow';
 import React from 'react';
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
-  padding: 0 4.8rem;
+  padding: 7.2rem 4.8rem;
   min-height: 100%;
+  position: relative;
+`;
+
+const FixedContainer = styled.div`
+  background-color: ${p => p.theme.colors.bg.primary};
+  position: fixed;
+  padding: 0 4.8rem;
+  left: 200px;
+  z-index: 1;
+  right: 0;
+  top: 0;
 `;
 
 const Header = styled.header`
-  border-bottom: 1px solid ${p => p.theme.colors.shade};
+  border-bottom: 1px solid ${p => p.theme.colors.darkShade};
   padding: 1.8rem 0;
   display: flex;
   align-items: center;
@@ -24,7 +36,7 @@ const Title = styled.h1`
   line-height: 3rem;
   white-space: nowrap;
   margin: 0;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const AddressContainer = styled.div`
@@ -35,7 +47,7 @@ const AddressContainer = styled.div`
 const Label = styled.div`
   padding: 0.8rem;
   font-size: 1.3rem;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   letter-spacing: 0.5px;
   font-weight: 600;
 `;
@@ -45,7 +57,7 @@ const Bg = styled.div`
   align-items: center;
   border-radius: 4px;
   padding: 2px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
 `;
 
 const Address = styled.div`
@@ -53,7 +65,7 @@ const Address = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: normal;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const CopyBtn = Btn.extend`
@@ -72,7 +84,7 @@ const Hero = styled.div`
 
 const Left = styled.div`
   flex-grow: 1;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
   border-radius: 4px;
   padding: 0 2.4rem;
 `;
@@ -83,7 +95,7 @@ const Balance = styled.div`
   justify-content: space-between;
 
   & + & {
-    border-top: 1px solid ${p => p.theme.colors.shade};
+    border-top: 1px solid ${p => p.theme.colors.darkShade};
   }
 `;
 
@@ -101,7 +113,7 @@ const Value = styled.div`
   line-height: ${p => (p.large ? '6rem' : '4rem')};
   font-size: ${p => (p.large ? '4.8rem' : '3.2rem')};
   letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 2.4rem 3rem;
   flex-grow: 1;
 `;
@@ -110,7 +122,7 @@ const USDValue = styled.div`
   line-height: 3rem;
   font-size: 2.4rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const Right = styled.div`
@@ -124,6 +136,14 @@ const Right = styled.div`
 const ListHeader = styled.div`
   display: flex;
   align-items: baseline;
+  position: sticky;
+  background: ${p => p.theme.colors.bg.primary};
+  top: 7.2rem;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  margin: 0 -4.8rem;
+  padding: 0 4.8rem;
 `;
 
 const ListTitle = styled.div`
@@ -131,7 +151,7 @@ const ListTitle = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const TabsContainer = styled.div`
@@ -145,7 +165,7 @@ const Tab = styled.button`
   font-weight: 600;
   letter-spacing: 1.4px;
   text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   opacity: ${p => (p.isActive ? '1' : '0.5')};
   text-transform: uppercase;
   padding: 1.6rem;
@@ -164,56 +184,81 @@ const Tab = styled.button`
 const List = styled.div`
   border-radius: 2px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px 0 ${p => p.theme.colors.shade};
+  box-shadow: 0 4px 8px 0 ${p => p.theme.colors.darkShade};
 `;
 
-const Tx = styled.div`
-  margin-left: 1.6rem;
-  padding: 1.2rem 2.4rem 1.2rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: ${({ i }) => (i > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none')};
-`;
-
-const Icon = styled.div`
-  display: block;
-  width: 2.4rem;
-  height: 2.4rem;
-  background-color: silver;
-`;
-
-const Amount = styled.div`
-  line-height: 2.5rem;
-  font-size: 2rem;
-  color: ${p => p.theme.colors.primary};
+const FooterLogo = styled.div`
+  padding: 4.8rem;
+  width: 3.2rem;
+  margin: 0 auto;
 `;
 
 const transactions = [
   {
-    id: 0,
-    type: 'auction',
-    amount: 0.0000201
-  },
-  {
-    id: 1,
-    type: 'sent',
-    amount: 11.1231201
-  },
-  {
-    id: 2,
+    id: '100',
     type: 'received',
-    amount: 9.1200000001
+    amount: '9.1200000001',
+    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9',
+    pending: 6
   },
   {
-    id: 3,
+    id: '0',
     type: 'auction',
-    amount: 0.000072
+    amount: '0.0000201'
   },
   {
-    id: 4,
-    type: 'exchanged',
-    amount: 0.112300000201
+    id: '1',
+    type: 'sent',
+    amount: '11.1231201',
+    to: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
+  },
+  {
+    id: '2',
+    type: 'received',
+    amount: '9.1200000001',
+    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
+  },
+  {
+    id: '3',
+    type: 'auction',
+    amount: '0.000072'
+  },
+  {
+    id: '4',
+    type: 'converted',
+    amount: '0.112300000201'
+  },
+  {
+    id: '10',
+    type: 'auction',
+    amount: '0.0000201'
+  },
+  {
+    id: '11',
+    type: 'sent',
+    amount: '11.1231201',
+    to: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
+  },
+  {
+    id: '12',
+    type: 'received',
+    amount: '9.1200000001',
+    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
+  },
+  {
+    id: '13',
+    type: 'auction',
+    amount: '0.000072'
+  },
+  {
+    id: '15',
+    type: 'converted',
+    amount: '0.112300000201'
+  },
+  {
+    id: '14',
+    type: 'converted',
+    amount: '0.112300000201'
   }
 ];
 
@@ -229,16 +274,18 @@ export default class Wallets extends React.Component {
   render() {
     return (
       <Container>
-        <Header>
-          <Title>My Wallet 1</Title>
-          <AddressContainer>
-            <Label>Address</Label>
-            <Bg>
-              <Address>0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9</Address>
-              <CopyBtn>Copy</CopyBtn>
-            </Bg>
-          </AddressContainer>
-        </Header>
+        <FixedContainer>
+          <Header>
+            <Title>My Wallet 1</Title>
+            <AddressContainer>
+              <Label>Address</Label>
+              <Bg>
+                <Address>0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9</Address>
+                <CopyBtn>Copy</CopyBtn>
+              </Bg>
+            </AddressContainer>
+          </Header>
+        </FixedContainer>
         <Hero>
           <Left>
             <Balance>
@@ -294,24 +341,22 @@ export default class Wallets extends React.Component {
                     Auction
                   </Tab>
                   <Tab
-                    isActive={activeFilter === 'exchanged'}
-                    onClick={() => onFilterChange('exchanged')}
+                    isActive={activeFilter === 'converted'}
+                    onClick={() => onFilterChange('converted')}
                   >
-                    Exchanged
+                    Converted
                   </Tab>
                 </TabsContainer>
               </ListHeader>
 
-              <TransitionGroup component={List}>
-                {filteredItems.map((tx, i) => (
-                  <Fade key={tx.id} maxHeight="5rem">
-                    <Tx i={i}>
-                      <Icon />
-                      <Amount>{tx.amount} MTN</Amount>
-                    </Tx>
-                  </Fade>
-                ))}
-              </TransitionGroup>
+              <List>
+                <TransitionGroup>
+                  {filteredItems.map(tx => <TxRow key={tx.id} {...tx} />)}
+                </TransitionGroup>
+                <FooterLogo>
+                  <LogoIcon />
+                </FooterLogo>
+              </List>
             </Sp>
           )}
         </ItemFilter>

@@ -1,7 +1,12 @@
-import { ConverterIcon, AuctionIcon, WalletIcon, Sp } from '../common';
+import {
+  ConverterIcon,
+  AuctionIcon,
+  WalletIcon,
+  LogoIcon,
+  Sp
+} from '../common';
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import LogoSmall from './LogoSmall';
 import styled from 'styled-components';
 import Logo from './Logo';
 
@@ -29,9 +34,9 @@ const Button = styled(NavLink)`
   padding: 1.6rem;
   transition: 0.5s;
   opacity: 0.5;
-  border-bottom: 2px solid ${p => p.theme.colors.shade};
+  border-bottom: 2px solid ${p => p.theme.colors.darkShade};
   &:first-child {
-    border-top: 2px solid ${p => p.theme.colors.shade};
+    border-top: 2px solid ${p => p.theme.colors.darkShade};
   }
   &.active {
     border-bottom-color: ${p => p.theme.colors.primary};
@@ -118,7 +123,7 @@ class App extends Component {
           </SecondaryBtn>
         </Sp>
         <LogoSmallContainer>
-          <LogoSmall />
+          <LogoIcon negative />
         </LogoSmallContainer>
       </Container>
     );
