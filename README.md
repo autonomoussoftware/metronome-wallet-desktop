@@ -13,7 +13,7 @@ npm install
 In console, start the React app:
 
 ```
-npm run start
+npm start
 ```
 
 Wait for the development server to startup and then run:

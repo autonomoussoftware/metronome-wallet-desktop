@@ -1,13 +1,13 @@
 import { DarkLayout, Btn } from '../common';
-import MTNAuctionProvider from '../providers/MTNAuctionProvider';
 import CountDownProvider from '../providers/CountDownProvider';
 import BuyMTNDrawer from './BuyMTNDrawer';
 import PropTypes from 'prop-types';
-import settings from '../../config/settings';
 import styled from 'styled-components';
 import Wallet from './MTNWallet';
 import React from 'react';
 import Web3 from 'web3';
+
+import auction from '../../services/auction'
 
 const Body = styled.div`
   padding: 3.2rem 4.8rem;
@@ -71,8 +71,14 @@ export default class Auction extends React.Component {
   };
 
   state = {
-    activeModal: null
+    activeModal: null,
+    status: null
   };
+
+  componentDidMount() {
+    auction.getStatus()
+      .then(status => this.setState({ status }))
+  }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal });
 
@@ -81,52 +87,43 @@ export default class Auction extends React.Component {
   render() {
     return (
       <DarkLayout title="Metronome Auction">
-        <MTNAuctionProvider
-          statusTopic={settings.WS_AUCTION_STATUS_TOPIC}
-          apiUrl={settings.MTN_API_URL}
-        >
-          {({ status }) =>
-            status && (
-              <Body>
-                <div>
-                  <CountDownTitle>Time Remaining</CountDownTitle>
-                  <CountDownProvider
-                    targetTimestamp={status.nextAuctionStartTime}
-                  >
-                    {({ days, hours, minutes, seconds }) => (
-                      <Row>
-                        <Cell isFaded={days === 0}>{days} days</Cell>
-                        <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                        <Cell isFaded={days + hours + minutes === 0}>
-                          {minutes} mins
-                        </Cell>
-                        <Cell isFaded={days + hours + minutes + seconds === 0}>
-                          {seconds} segs
-                        </Cell>
-                      </Row>
-                    )}
-                  </CountDownProvider>
-                </div>
-                <CurrentPrice>
-                  Current Price: {Web3.utils.fromWei(status.currentPrice)} ETH
-                </CurrentPrice>
-                <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
-                  Buy Metronome
-                </BuyBtn>
-                <Wallet seed={this.props.seed}>
-                  {({ onBuy }) => (
-                    <BuyMTNDrawer
-                      onRequestClose={this.onCloseModal}
-                      currentPrice={status.currentPrice}
-                      isOpen={this.state.activeModal === 'buy'}
-                      onBuy={onBuy}
-                    />
-                  )}
-                </Wallet>
-              </Body>
-            )
-          }
-        </MTNAuctionProvider>
+        <Body>
+          <div>
+            <CountDownTitle>Time Remaining</CountDownTitle>
+            <CountDownProvider
+          targetTimestamp={this.state.status ? this.state.status.nextAuctionStartTime : 0}
+            >
+              {({ days, hours, minutes, seconds }) => (
+                <Row>
+                  <Cell isFaded={days === 0}>{days} days</Cell>
+                  <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                  <Cell isFaded={days + hours + minutes === 0}>
+                    {minutes} mins
+                  </Cell>
+                  <Cell isFaded={days + hours + minutes + seconds === 0}>
+                    {seconds} segs
+                  </Cell>
+                </Row>
+              )}
+            </CountDownProvider>
+          </div>
+          <CurrentPrice>
+        Current Price: {this.state.status ? Web3.utils.fromWei(this.state.status.currentPrice) : 0} ETH
+          </CurrentPrice>
+          <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
+            Buy Metronome
+          </BuyBtn>
+          <Wallet seed={this.props.seed}>
+            {({ onBuy }) => (
+              <BuyMTNDrawer
+                onRequestClose={this.onCloseModal}
+            currentPrice={this.state.status ? this.state.status.currentPrice : '0'}
+                isOpen={this.state.activeModal === 'buy'}
+                onBuy={onBuy}
+              />
+            )}
+          </Wallet>
+        </Body>
       </DarkLayout>
     );
   }
