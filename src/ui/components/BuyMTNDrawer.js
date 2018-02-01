@@ -1,9 +1,10 @@
-import PurchaseFormProvider from '../providers/PurchaseFormProvider';
-import { Drawer, Btn } from '../common';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import React from 'react';
 import Web3 from 'web3';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+import { Drawer, Btn } from '../common';
+import PurchaseFormProvider from '../providers/PurchaseFormProvider';
 
 const FieldsContainer = styled.div`
   padding: 3.2rem 2.4rem;

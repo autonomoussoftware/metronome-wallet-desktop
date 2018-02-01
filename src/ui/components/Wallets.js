@@ -1,9 +1,12 @@
-import ReceiveDrawer from './ReceiveDrawer';
+import React from 'react';
+import styled from 'styled-components';
+
+import { Btn } from '../common';
 import SendDrawer from './SendDrawer';
 import ItemFilter from './ItemFilter';
-import { Btn } from '../common';
-import styled from 'styled-components';
-import React from 'react';
+import ReceiveDrawer from './ReceiveDrawer';
+
+import wallet from '../../services/wallet'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
@@ -224,13 +227,19 @@ const transactions = [
 ];
 
 export default class Wallets extends React.Component {
+
   state = {
-    activeModal: null
+    activeModal: null,
+    address: ''
   };
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal });
 
   onCloseModal = () => this.setState({ activeModal: null });
+
+  componentDidMount () {
+    this.setState({ address: wallet.getAddress() })
+  }
 
   render() {
     return (
@@ -240,7 +249,7 @@ export default class Wallets extends React.Component {
           <AddressContainer>
             <Label>Address</Label>
             <Bg>
-              <Address>0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9</Address>
+              <Address>{this.state.address}</Address>
               <CopyBtn>Copy</CopyBtn>
             </Bg>
           </AddressContainer>

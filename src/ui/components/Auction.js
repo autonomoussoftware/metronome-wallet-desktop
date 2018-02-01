@@ -1,12 +1,15 @@
-import { DarkLayout, Btn } from '../common';
-import CountDownProvider from '../providers/CountDownProvider';
-import BuyMTNDrawer from './BuyMTNDrawer';
+import Web3 from 'web3';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Wallet from './MTNWallet';
-import React from 'react';
-import Web3 from 'web3';
 
+import CountDownProvider from '../providers/CountDownProvider';
+
+import Wallet from './MTNWallet';
+import BuyMTNDrawer from './BuyMTNDrawer';
+import { DarkLayout, Btn } from '../common';
+
+import wallet from '../../services/wallet'
 import auction from '../../services/auction'
 
 const Body = styled.div`
@@ -76,54 +79,63 @@ export default class Auction extends React.Component {
   };
 
   componentDidMount() {
+    // TODO: Retrive status after a new block is mined
     auction.getStatus()
       .then(status => this.setState({ status }))
   }
 
-  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal });
+  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
 
-  onCloseModal = () => this.setState({ activeModal: null });
+  onCloseModal = () => this.setState({ activeModal: null })
+
+  onBuy(amount) {
+    console.log('Buying...')
+    return auction.buy(wallet.getAddress(), amount)
+  }
 
   render() {
     return (
       <DarkLayout title="Metronome Auction">
-        <Body>
-          <div>
-            <CountDownTitle>Time Remaining</CountDownTitle>
-            <CountDownProvider
-          targetTimestamp={this.state.status ? this.state.status.nextAuctionStartTime : 0}
-            >
-              {({ days, hours, minutes, seconds }) => (
-                <Row>
-                  <Cell isFaded={days === 0}>{days} days</Cell>
-                  <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                  <Cell isFaded={days + hours + minutes === 0}>
-                    {minutes} mins
-                  </Cell>
-                  <Cell isFaded={days + hours + minutes + seconds === 0}>
-                    {seconds} segs
-                  </Cell>
-                </Row>
+        {this.state.status ?
+          <Body>
+            <div>
+              <CountDownTitle>Time Remaining</CountDownTitle>
+              <CountDownProvider
+            targetTimestamp={this.state.status ? this.state.status.nextAuctionStartTime : 0}
+              >
+                {({ days, hours, minutes, seconds }) => (
+                  <Row>
+                    <Cell isFaded={days === 0}>{days} days</Cell>
+                    <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                    <Cell isFaded={days + hours + minutes === 0}>
+                      {minutes} mins
+                    </Cell>
+                    <Cell isFaded={days + hours + minutes + seconds === 0}>
+                      {seconds} segs
+                    </Cell>
+                  </Row>
+                )}
+              </CountDownProvider>
+            </div>
+            <CurrentPrice>
+          Current Price: {this.state.status ? Web3.utils.fromWei(this.state.status.currentPrice) : 0} ETH
+            </CurrentPrice>
+            <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
+              Buy Metronome
+            </BuyBtn>
+            <Wallet seed={this.props.seed}>
+              {({ onBuy }) => (
+                <BuyMTNDrawer
+                  onRequestClose={this.onCloseModal}
+                  currentPrice={this.state.status ? this.state.status.currentPrice : '0'}
+                  isOpen={this.state.activeModal === 'buy'}
+                  onBuy={onBuy}
+                />
               )}
-            </CountDownProvider>
-          </div>
-          <CurrentPrice>
-        Current Price: {this.state.status ? Web3.utils.fromWei(this.state.status.currentPrice) : 0} ETH
-          </CurrentPrice>
-          <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
-            Buy Metronome
-          </BuyBtn>
-          <Wallet seed={this.props.seed}>
-            {({ onBuy }) => (
-              <BuyMTNDrawer
-                onRequestClose={this.onCloseModal}
-            currentPrice={this.state.status ? this.state.status.currentPrice : '0'}
-                isOpen={this.state.activeModal === 'buy'}
-                onBuy={onBuy}
-              />
-            )}
-          </Wallet>
-        </Body>
+            </Wallet>
+          </Body> :
+          <p>Loading...</p>
+        }
       </DarkLayout>
     );
   }

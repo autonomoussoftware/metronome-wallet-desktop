@@ -1,8 +1,11 @@
 import { retrieveSeed, storeSeed } from './seedStorage';
-import React, { Component } from 'react';
-import MnemonicGenerator from './components/MnemonicGenerator';
-import Router from './Router';
 import bip39 from 'bip39';
+import React, { Component } from 'react';
+
+import Router from './Router';
+import MnemonicGenerator from './components/MnemonicGenerator';
+
+import wallet from '../services/wallet'
 
 class App extends Component {
   state = {
@@ -11,7 +14,10 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.setState({ isReady: true, seed: retrieveSeed() });
+    const seed = retrieveSeed()
+    wallet.init(seed)
+
+    this.setState({ isReady: true, seed });
   }
 
   onMnemonic = mnemonic => {

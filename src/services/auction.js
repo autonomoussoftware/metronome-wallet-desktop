@@ -51,4 +51,8 @@ auction.getStatus = function () {
     .catch(err => { throw err })
 }
 
+auction.buy = function (address, amount) {
+  return Web3.sendTransaction(address, mtn.auctions.options.address, amount)
+}
+
 export default auction
