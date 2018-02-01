@@ -10,7 +10,7 @@ const Tx = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid ${p => p.theme.colors.lightShade};
+  box-shadow: 0 -1px 0 0 ${p => p.theme.colors.lightShade} inset;
 `;
 
 const Pending = styled.div`
@@ -73,7 +73,7 @@ export default class TxRow extends React.Component {
     const isPending = pending !== null;
 
     return (
-      <Collapsable maxHeight="6.6rem" {...other}>
+      <Collapsable maxHeight="6.5rem" {...other}>
         <Tx>
           {(type === 'received' || type === 'sent') &&
             !isPending && <TxIcon color={theme.colors.primary} />}
