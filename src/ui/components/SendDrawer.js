@@ -1,6 +1,5 @@
+import { ItemFilter, Drawer } from '../common';
 import SendMTNForm from './SendMTNForm';
-import ItemFilter from './ItemFilter';
-import { Drawer } from '../common';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import React from 'react';
@@ -17,7 +16,7 @@ const Tab = styled.button`
   border: none;
   border-bottom: 2px solid;
   border-bottom-color: ${p =>
-    p.isActive ? p.theme.colors.primary : p.theme.colors.shade};
+    p.isActive ? p.theme.colors.primary : p.theme.colors.darkShade};
   transition: 0.5s;
   padding: 2.5rem;
   color: ${p => p.theme.colors.light};

@@ -20,6 +20,7 @@ const Input = styled.textarea`
   padding: 1rem;
   border-radius: 4px;
   font-size: 2.4rem;
+  resize: vertical;
   &:focus {
     outline: none;
   }

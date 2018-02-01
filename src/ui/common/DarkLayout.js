@@ -11,12 +11,13 @@ const Container = styled.div`
 const Header = styled.header`
   padding: 2.4rem 4.8rem;
   background-color: ${p => p.theme.colors.bg.dark};
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 2px 0 ${p => p.theme.colors.lightShade};
 `;
 
 const Title = styled.h1`
   margin: 0;
-  ${p => p.theme.text.big};
+  line-height: 3rem;
+  font-size: 2.4rem;
 `;
 
 const DarkLayout = props => {

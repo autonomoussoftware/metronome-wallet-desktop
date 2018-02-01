@@ -3,11 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import CountDownProvider from '../providers/CountDownProvider';
-
 import BuyMTNDrawer from './BuyMTNDrawer';
-import { DarkLayout, Btn } from '../common';
+import { DarkLayout, Text, Btn, Sp } from '../common';
 
+import CountDownProvider from '../providers/CountDownProvider';
+import settings from '../../config/settings';
 import auction from '../../services/auction'
 
 const Body = styled.div`
@@ -25,7 +25,7 @@ const Row = styled.div`
   margin-top: 1.6rem;
   display: flex;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
 `;
 
 const Cell = styled.div`
@@ -37,8 +37,8 @@ const Cell = styled.div`
   line-height: 6rem;
   letter-spacing: -1px;
   text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-  border-left: 1px solid ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  border-left: 1px solid ${p => p.theme.colors.darkShade};
   font-size: 2.4rem;
   &:first-child {
     border-left: none;
@@ -56,14 +56,10 @@ const CurrentPrice = styled.div`
   padding: 3.5rem 2.4rem;
   margin-top: 1.6rem;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colors.lightShade};
   line-height: 4rem;
   font-size: 3.2rem;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-`;
-
-const BuyBtn = Btn.extend`
-  margin-top: 2.4rem;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 export default class Auction extends React.Component {
@@ -90,31 +86,34 @@ export default class Auction extends React.Component {
   render() {
     return (
       <DarkLayout title="Metronome Auction">
-        {this.state.status ?
-          <Body>
-            <div>
-              <CountDownTitle>Time Remaining</CountDownTitle>
-              <CountDownProvider targetTimestamp={this.state.status.nextAuctionStartTime}>
-                {({ days, hours, minutes, seconds }) => (
-                  <Row>
-                    <Cell isFaded={days === 0}>{days} days</Cell>
-                    <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                    <Cell isFaded={days + hours + minutes === 0}>{minutes} mins</Cell>
-                    <Cell isFaded={days + hours + minutes + seconds === 0}>{seconds} segs</Cell>
-                  </Row>
-                )}
-              </CountDownProvider>
-            </div>
-            <CurrentPrice>
-              Current Price: {Web3.utils.fromWei(this.state.status.currentPrice)} ETH
-            </CurrentPrice>
-            <BuyBtn data-modal="buy" onClick={this.onOpenModal}>Buy Metronome</BuyBtn>
-            <BuyMTNDrawer
-              onRequestClose={this.onCloseModal}
-              currentPrice={this.state.status.currentPrice}
-              isOpen={this.state.activeModal === 'buy'}
-            />
-          </Body> :
+        {
+          this.state.status ?
+          <Sp py={4} px={6}>
+            <Text>Time Remaining</Text>
+
+            <CountDownProvider targetTimestamp={this.state.status.nextAuctionStartTime}>
+                  {({ days, hours, minutes, seconds }) => (
+                    <Row>
+                      <Cell isFaded={days === 0}>{days} days</Cell>
+                      <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                  <Cell isFaded={days + hours + minutes === 0}>{minutes} mins</Cell>
+                  <Cell isFaded={days + hours + minutes + seconds === 0}>{seconds} segs</Cell>
+                    </Row>
+                  )}
+                </CountDownProvider>
+
+              <CurrentPrice>
+                Current Price: {Web3.utils.fromWei(this.state.status.currentPrice)} ETH
+              </CurrentPrice>
+              <Sp mt={4}>
+                <Btn data-modal="buy" onClick={this.onOpenModal}>Buy Metronome</Btn>
+              </Sp>
+              <BuyMTNDrawer
+                onRequestClose={this.onCloseModal}
+                currentPrice={this.state.status.currentPrice}
+                isOpen={this.state.activeModal === 'buy'}
+              />
+            </Sp> :
           <p>Loading...</p>
         }
       </DarkLayout>

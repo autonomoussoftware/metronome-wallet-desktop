@@ -1,6 +1,12 @@
+import {
+  ConverterIcon,
+  AuctionIcon,
+  WalletIcon,
+  LogoIcon,
+  Sp
+} from '../common';
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import LogoSmall from './LogoSmall';
 import styled from 'styled-components';
 import Logo from './Logo';
 
@@ -11,10 +17,6 @@ const Container = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
-`;
-
-const LogoContainer = styled.div`
-  padding: 3.2rem 3.2rem 6rem 3.2rem;
 `;
 
 const MainMenu = styled.nav`
@@ -32,9 +34,9 @@ const Button = styled(NavLink)`
   padding: 1.6rem;
   transition: 0.5s;
   opacity: 0.5;
-  border-bottom: 2px solid ${p => p.theme.colors.shade};
+  border-bottom: 2px solid ${p => p.theme.colors.darkShade};
   &:first-child {
-    border-top: 2px solid ${p => p.theme.colors.shade};
+    border-top: 2px solid ${p => p.theme.colors.darkShade};
   }
   &.active {
     border-bottom-color: ${p => p.theme.colors.primary};
@@ -45,10 +47,6 @@ const Button = styled(NavLink)`
     );
     opacity: 1;
   }
-`;
-
-const SecondaryMenu = styled.nav`
-  margin-top: 1.6rem;
 `;
 
 const SecondaryBtn = styled(NavLink)`
@@ -93,21 +91,27 @@ class App extends Component {
   render() {
     return (
       <Container>
-        <LogoContainer>
+        <Sp pt={4} px={4} pb={7}>
           <Logo />
-        </LogoContainer>
+        </Sp>
         <MainMenu>
           <Button activeClassName="active" to="/wallets">
-            Wallets
+            <Sp mr={2}>
+              <WalletIcon />
+            </Sp>Wallets
           </Button>
           <Button activeClassName="active" to="/auction">
-            Auction
+            <Sp mr={2}>
+              <AuctionIcon />
+            </Sp>Auction
           </Button>
           <Button activeClassName="active" to="/converter">
-            Converter
+            <Sp mr={2}>
+              <ConverterIcon />
+            </Sp>Converter
           </Button>
         </MainMenu>
-        <SecondaryMenu>
+        <Sp mt={2}>
           <SecondaryBtn activeClassName="active" to="/tools">
             Tools
           </SecondaryBtn>
@@ -117,9 +121,9 @@ class App extends Component {
           <SecondaryBtn activeClassName="active" to="/help">
             Help
           </SecondaryBtn>
-        </SecondaryMenu>
+        </Sp>
         <LogoSmallContainer>
-          <LogoSmall />
+          <LogoIcon negative />
         </LogoSmallContainer>
       </Container>
     );

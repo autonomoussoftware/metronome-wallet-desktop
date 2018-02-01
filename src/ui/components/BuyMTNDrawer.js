@@ -2,21 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { Drawer, Btn } from '../common';
 import PurchaseFormProvider from '../providers/PurchaseFormProvider';
 
+import { Drawer, Btn, Sp } from '../common';
 import auction from '../../services/auction'
-
-const FieldsContainer = styled.div`
-  padding: 3.2rem 2.4rem;
-`;
 
 const Label = styled.label`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const Input = styled.input`
@@ -32,7 +28,7 @@ const Input = styled.input`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `;
 
 const ErrorMsg = styled.p`
@@ -103,7 +99,7 @@ export default class BuyMTNDrawer extends React.Component {
             isPristine
           }) => (
             <form onSubmit={this.onSubmit}>
-              <FieldsContainer>
+              <Sp py={4} px={3}>
                 <div>
                   <Label>ETH amount</Label>
                   <Input
@@ -132,7 +128,7 @@ export default class BuyMTNDrawer extends React.Component {
                   </div>
                 )}
                 {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
-              </FieldsContainer>
+              </Sp>
               {status === 'init' && (
                 <BtnContainer>
                   <Btn block submit disabled={!isValidPurchase}>Buy</Btn>

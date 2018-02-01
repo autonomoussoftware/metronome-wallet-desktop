@@ -2,7 +2,10 @@ export default {
   colors: {
     primary: '#7e61f8',
     light: '#fff',
-    shade: 'rgba(0, 0, 0, 0.2)',
+    copy: '#545454',
+    dark: '#323232',
+    lightShade: 'rgba(0, 0, 0, 0.1)',
+    darkShade: 'rgba(0, 0, 0, 0.2)',
 
     // BACKGROUNDS
     bg: {
@@ -13,11 +16,5 @@ export default {
       darkGradient: 'linear-gradient(to bottom, #353535, #323232)'
     }
   },
-  text: {
-    big: `
-      line-height: 3rem;
-      font-size: 2.4rem;
-    `
-  },
-  spacing: 0.8
+  spacing: 0.8 // used as rem multiplier
 };
