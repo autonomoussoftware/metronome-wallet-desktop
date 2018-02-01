@@ -7,6 +7,7 @@ import SendDrawer from './SendDrawer';
 import ReceiveDrawer from './ReceiveDrawer';
 import { ItemFilter, LogoIcon, Btn, Sp } from '../common';
 import wallet from '../../services/wallet'
+import transactions from '../../services/tx-mock'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
@@ -194,80 +195,20 @@ const FooterLogo = styled.div`
   margin: 0 auto;
 `;
 
-const transactions = [
-  {
-    id: '100',
-    type: 'received',
-    amount: '9.1200000001',
-    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9',
-    pending: 6
-  },
-  {
-    id: '0',
-    type: 'auction',
-    amount: '0.0000201'
-  },
-  {
-    id: '1',
-    type: 'sent',
-    amount: '11.1231201',
-    to: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
-  },
-  {
-    id: '2',
-    type: 'received',
-    amount: '9.1200000001',
-    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
-  },
-  {
-    id: '3',
-    type: 'auction',
-    amount: '0.000072'
-  },
-  {
-    id: '4',
-    type: 'converted',
-    amount: '0.112300000201'
-  },
-  {
-    id: '10',
-    type: 'auction',
-    amount: '0.0000201'
-  },
-  {
-    id: '11',
-    type: 'sent',
-    amount: '11.1231201',
-    to: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
-  },
-  {
-    id: '12',
-    type: 'received',
-    amount: '9.1200000001',
-    from: '0x29384775fn4747fhfu8484hfhhf848hhf8292939jj9'
-  },
-  {
-    id: '13',
-    type: 'auction',
-    amount: '0.000072'
-  },
-  {
-    id: '15',
-    type: 'converted',
-    amount: '0.112300000201'
-  },
-  {
-    id: '14',
-    type: 'converted',
-    amount: '0.112300000201'
-  }
-];
 
 export default class Wallets extends React.Component {
   state = {
     activeModal: null,
-    address: wallet.getAddress()
+    address: wallet.getAddress(),
+    balance: null
   };
+
+  componentDidMount() {
+    wallet.getBalance()
+      .then(balance => {
+        this.setState({ balance })
+      })
+  }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal });
 
@@ -289,26 +230,24 @@ export default class Wallets extends React.Component {
           </Header>
         </FixedContainer>
         <Hero>
-          <Left>
-            <Balance>
-              <CoinSymbol>MTN</CoinSymbol>
-              <Value large>2345678.56789</Value>
-              <USDValue>$4567890 (USD)</USDValue>
-            </Balance>
-            <Balance>
-              <CoinSymbol>ETH</CoinSymbol>
-              <Value>2345678.56789</Value>
-              <USDValue>$4567890 (USD)</USDValue>
-            </Balance>
-          </Left>
+          {this.state.balance &&
+            <Left>
+              <Balance>
+                <CoinSymbol>MTN</CoinSymbol>
+                <Value large>{this.state.balance.mtn}</Value>
+                <USDValue>$4567890 (USD)</USDValue>
+              </Balance>
+              <Balance>
+                <CoinSymbol>ETH</CoinSymbol>
+                <Value>{this.state.balance.eth}</Value>
+                <USDValue>$4567890 (USD)</USDValue>
+              </Balance>
+            </Left>
+          }
           <Right>
-            <Btn block data-modal="send" onClick={this.onOpenModal}>
-              Send
-            </Btn>
+            <Btn block data-modal="send" onClick={this.onOpenModal}>Send</Btn>
             <Sp mt={2}>
-              <Btn block data-modal="receive" onClick={this.onOpenModal}>
-                Receive
-              </Btn>
+              <Btn block data-modal="receive" onClick={this.onOpenModal}>Receive</Btn>
             </Sp>
           </Right>
         </Hero>

@@ -1,7 +1,6 @@
 import EthereumTx from 'ethereumjs-tx';
 import ethutils from 'ethereumjs-util'
 import hdkey from 'ethereumjs-wallet/hdkey'
-import Web3 from 'web3'
 
 import mtn from './mtn'
 
@@ -25,6 +24,16 @@ wallet.getAddress = function (seed, index = 0) {
 
   wallet.init(seed, index)
   return wallet.address
+}
+
+wallet.getBalance = function (address) {
+  address || (address = wallet.getAddress())
+  return Promise.all([
+    mtn.web3.eth.getBalance(address),
+    mtn.mtntoken.methods.balanceOf(address).call()
+  ]).then(res => {
+    return { eth: res[0],  mtn: res[1] }
+  })
 }
 
 wallet.sendTransaction = function (from, to, value) {
