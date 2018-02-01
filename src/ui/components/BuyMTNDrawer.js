@@ -1,10 +1,11 @@
 import React from 'react';
-import Web3 from 'web3';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { Drawer, Btn } from '../common';
 import PurchaseFormProvider from '../providers/PurchaseFormProvider';
+
+import auction from '../../services/auction'
 
 const FieldsContainer = styled.div`
   padding: 3.2rem 2.4rem;
@@ -49,8 +50,7 @@ export default class BuyMTNDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     currentPrice: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired,
-    onBuy: PropTypes.func.isRequired
+    isOpen: PropTypes.bool.isRequired
   };
 
   static initialState = {
@@ -72,14 +72,14 @@ export default class BuyMTNDrawer extends React.Component {
   onInputChanged = e => this.setState({ input: e.target.value });
 
   onSubmit = e => {
-    e.preventDefault();
-    this.setState({ status: 'pending' }, () =>
-      this.props
-        .onBuy(Web3.utils.toWei(this.state.input.replace(',', '.')))
-        .then(receipt => this.setState({ status: 'success', receipt }))
-        .catch(e => this.setState({ status: 'failure', error: e.message }))
-    );
-  };
+    e.preventDefault()
+
+    this.setState({ status: 'pending' })
+
+    auction.buy(this.state.input)
+      .then(receipt => this.setState({ status: 'success', receipt }))
+      .catch(e => this.setState({ status: 'failure', error: e.message }))
+  }
 
   render() {
     const { disclaimerAccepted, receipt, status, error, input } = this.state;
@@ -119,8 +119,7 @@ export default class BuyMTNDrawer extends React.Component {
                     <p>{expectedMTNamount} MTN</p>
                   </div>
                 )}
-                {!isValidAmount &&
-                  !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
+                {!isValidAmount && !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
                 {status === 'success' && (
                   <div>
                     <p>Your receipt:</p>
@@ -136,9 +135,7 @@ export default class BuyMTNDrawer extends React.Component {
               </FieldsContainer>
               {status === 'init' && (
                 <BtnContainer>
-                  <Btn block submit disabled={!isValidPurchase}>
-                    Buy
-                  </Btn>
+                  <Btn block submit disabled={!isValidPurchase}>Buy</Btn>
                 </BtnContainer>
               )}
             </form>

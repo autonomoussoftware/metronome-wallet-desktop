@@ -1,7 +1,7 @@
-import Web3 from 'web3'
 import promiseAllProps from 'promise-all-props'
 
 import mtn from './mtn'
+import wallet from './wallet'
 
 const auction = {}
 
@@ -44,15 +44,17 @@ auction.getStatus = function () {
         tokenCirculation: totalSupply,
         tokenRemaining: mintable,
         tokenSold: globalMtnSupply && mintable
-          ? Web3.utils.toBN(globalMtnSupply).sub(Web3.utils.toBN(mintable)).toString()
+          ? mtn.web3.utils.toBN(globalMtnSupply).sub(mtn.web3.utils.toBN(mintable)).toString()
           : '0'
       }
     })
     .catch(err => { throw err })
 }
 
-auction.buy = function (address, amount) {
-  return Web3.sendTransaction(address, mtn.auctions.options.address, amount)
+auction.buy = function (amount) {
+  const from = wallet.getAddress()
+  const weiAmount = mtn.web3.utils.toWei(amount.replace(',', '.'))
+  return wallet.sendTransaction(from, mtn.auctions.options.address, weiAmount)
 }
 
 export default auction
