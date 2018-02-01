@@ -6,6 +6,8 @@ export default {
     dark: '#323232',
     lightShade: 'rgba(0, 0, 0, 0.1)',
     darkShade: 'rgba(0, 0, 0, 0.2)',
+    success: '#45d48d',
+    danger: '#d46045',
 
     // BACKGROUNDS
     bg: {
