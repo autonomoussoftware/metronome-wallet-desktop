@@ -1,3 +1,4 @@
+import { subscribeToMainProcessMessages } from './ui/subscriptions'
 import { ThemeProvider } from 'styled-components'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -12,6 +13,9 @@ const store = createStore(
   /* { we could pre load some initial state here... }, */
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+// Initialize all main process subscriptions and send 'ready' message
+subscribeToMainProcessMessages(store)
 
 ReactDOM.render(
   <Provider store={store}>

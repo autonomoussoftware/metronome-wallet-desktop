@@ -1,5 +1,10 @@
 import { createActions } from 'redux-actions'
 
+/**
+ * UI-originated actions
+ * For Main Proccess originated actions refer to ./subscriptions.js
+ */
+
 export default createActions({
-  'New auction status': status => status
+  'active wallet changed': newAddress => newAddress
 })

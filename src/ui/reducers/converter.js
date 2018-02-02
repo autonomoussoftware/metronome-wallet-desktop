@@ -1,13 +1,7 @@
-import { handleActions } from "redux-actions"
-// import actions from "../actions"
+import { handleActions } from 'redux-actions'
 
 const initialState = {}
 
-const reducer = handleActions(
-  {
-    // [actions.newConverterValues]: (state, { payload }) => payload
-  },
-  initialState
-)
+const reducer = handleActions({}, initialState)
 
 export default reducer

@@ -1,11 +1,10 @@
-import { handleActions } from "redux-actions"
-import actions from "../actions"
+import { handleActions } from 'redux-actions'
 
 const initialState = {}
 
 const reducer = handleActions(
   {
-    [actions.newAuctionStatus]: (state, { payload }) => payload
+    'new-auction-status': (state, { payload }) => payload
   },
   initialState
 )

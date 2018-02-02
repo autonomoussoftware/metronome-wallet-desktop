@@ -1,6 +1,5 @@
-import { handleActions } from "redux-actions"
-import transactions from "./transactions"
-// import actions from '../actions';
+import { handleActions } from 'redux-actions'
+import transactions from './transactions'
 
 const initialState = {
   transactions: transactions.initialState,
@@ -8,11 +7,6 @@ const initialState = {
   ETHbalance: null
 }
 
-const reducer = handleActions(
-  {
-    // [actions.newAuctionStatus]: (state, { payload }) => payload
-  },
-  initialState
-)
+const reducer = handleActions({}, initialState)
 
 export default reducer
