@@ -130,8 +130,8 @@ export default class SendMTNForm extends React.Component {
 
     return (
       <Flex.Column grow="1">
-        <form onSubmit={this.onSubmit}>
-          <Sp pt={4} pb={3} px={3}>
+        <Sp pt={4} pb={3} px={3}>
+          <form onSubmit={this.onSubmit} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               onChange={this.onInputchange}
@@ -147,7 +147,7 @@ export default class SendMTNForm extends React.Component {
                   <TextInput
                     placeholder="0.00"
                     onChange={this.onInputchange}
-                    label="Amount (MNT)"
+                    label="Amount (ETH)"
                     value={ethAmount}
                     error={errors.ethAmount}
                     id="ethAmount"
@@ -168,13 +168,13 @@ export default class SendMTNForm extends React.Component {
                 </Flex.Item>
               </Flex.Row>
             </Sp>
-          </Sp>
-          <Footer>
-            <Btn block submit>
-              Review Send
-            </Btn>
-          </Footer>
-        </form>
+          </form>
+        </Sp>
+        <Footer>
+          <Btn block submit form="sendForm">
+            Review Send
+          </Btn>
+        </Footer>
       </Flex.Column>
     )
   }

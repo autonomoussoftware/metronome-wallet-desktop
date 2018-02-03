@@ -1,10 +1,10 @@
-import { handleActions } from "redux-actions"
-import walletReducer from "./wallet"
-import actions from "../actions"
+import { handleActions } from 'redux-actions'
+import walletReducer from './wallet'
+import actions from '../actions'
 
 const initialState = {
   all: {},
-  active: null
+  active: '0xae6e5f1471b30ef80af5a0e641a3880cbaf27d76' // TODO: harcoded for now
 }
 
 const reducer = handleActions(

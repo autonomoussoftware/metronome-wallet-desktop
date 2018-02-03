@@ -1,13 +1,14 @@
-import { ItemFilter, Drawer } from '../common';
-import SendMTNForm from './SendMTNForm';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import React from 'react';
+import { ItemFilter, Drawer } from '../common'
+import SendMTNForm from './SendMTNForm'
+import SendETHForm from './SendETHForm'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 
 const Tabs = styled.div`
   display: flex;
   flex-shrink: 0;
-`;
+`
 
 const Tab = styled.button`
   font: inherit;
@@ -34,16 +35,16 @@ const Tab = styled.button`
   &:focus {
     outline: none;
   }
-`;
+`
 
 export default class SendDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired
-  };
+  }
 
   render() {
-    const { onRequestClose, isOpen } = this.props;
+    const { onRequestClose, isOpen } = this.props
 
     return (
       <Drawer
@@ -56,7 +57,7 @@ export default class SendDrawer extends React.Component {
           extractValue={({ name }) => name}
           items={[
             { name: 'mtn', component: SendMTNForm },
-            { name: 'eth', component: SendMTNForm }
+            { name: 'eth', component: SendETHForm }
           ]}
         >
           {({ filteredItems, onFilterChange, activeFilter }) => (
@@ -82,6 +83,6 @@ export default class SendDrawer extends React.Component {
           )}
         </ItemFilter>
       </Drawer>
-    );
+    )
   }
 }

@@ -1,11 +1,11 @@
-import React from 'react';
-import styled from 'styled-components';
-import { TransitionGroup } from 'react-transition-group';
+import React from 'react'
+import styled from 'styled-components'
+import { TransitionGroup } from 'react-transition-group'
 
-import TxRow from './TxRow';
-import SendDrawer from './SendDrawer';
-import ReceiveDrawer from './ReceiveDrawer';
-import { ItemFilter, LogoIcon, Btn, Sp } from '../common';
+import TxRow from './TxRow'
+import SendDrawer from './SendDrawer'
+import ReceiveDrawer from './ReceiveDrawer'
+import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
 import wallet from '../../services/wallet'
 import transactions from '../../services/tx-mock'
 
@@ -14,7 +14,7 @@ const Container = styled.div`
   padding: 7.2rem 4.8rem;
   min-height: 100%;
   position: relative;
-`;
+`
 
 const FixedContainer = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
@@ -24,7 +24,7 @@ const FixedContainer = styled.div`
   z-index: 1;
   right: 0;
   top: 0;
-`;
+`
 
 const Header = styled.header`
   border-bottom: 1px solid ${p => p.theme.colors.darkShade};
@@ -32,7 +32,7 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const Title = styled.h1`
   font-size: 2.4rem;
@@ -40,12 +40,12 @@ const Title = styled.h1`
   white-space: nowrap;
   margin: 0;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const AddressContainer = styled.div`
   display: flex;
   align-items: center;
-`;
+`
 
 const Label = styled.div`
   padding: 0.8rem;
@@ -53,7 +53,7 @@ const Label = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   letter-spacing: 0.5px;
   font-weight: 600;
-`;
+`
 
 const Bg = styled.div`
   display: flex;
@@ -61,7 +61,7 @@ const Bg = styled.div`
   border-radius: 4px;
   padding: 2px;
   background-color: ${p => p.theme.colors.lightShade};
-`;
+`
 
 const Address = styled.div`
   padding: 0 1.6rem;
@@ -69,7 +69,7 @@ const Address = styled.div`
   font-weight: 600;
   letter-spacing: normal;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const CopyBtn = Btn.extend`
   border-radius: 0 2px 2px 0;
@@ -78,19 +78,19 @@ const CopyBtn = Btn.extend`
   font-size: 1.4rem;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-`;
+`
 
 const Hero = styled.div`
   margin-top: 4.8rem;
   display: flex;
-`;
+`
 
 const Left = styled.div`
   flex-grow: 1;
   background-color: ${p => p.theme.colors.lightShade};
   border-radius: 4px;
   padding: 0 2.4rem;
-`;
+`
 
 const Balance = styled.div`
   display: flex;
@@ -99,7 +99,7 @@ const Balance = styled.div`
   & + & {
     border-top: 1px solid ${p => p.theme.colors.darkShade};
   }
-`;
+`
 
 const CoinSymbol = styled.div`
   border-radius: 14.1px;
@@ -109,7 +109,7 @@ const CoinSymbol = styled.div`
   font-size: 2rem;
   font-weight: 600;
   text-align: center;
-`;
+`
 
 const Value = styled.div`
   line-height: ${p => (p.large ? '6rem' : '4rem')};
@@ -118,14 +118,14 @@ const Value = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 2.4rem 3rem;
   flex-grow: 1;
-`;
+`
 
 const USDValue = styled.div`
   line-height: 3rem;
   font-size: 2.4rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const Right = styled.div`
   display: flex;
@@ -133,7 +133,7 @@ const Right = styled.div`
   justify-content: center;
   margin-left: 1.6rem;
   min-width: 18rem;
-`;
+`
 
 const ListHeader = styled.div`
   display: flex;
@@ -146,7 +146,7 @@ const ListHeader = styled.div`
   z-index: 1;
   margin: 0 -4.8rem;
   padding: 0 4.8rem;
-`;
+`
 
 const ListTitle = styled.div`
   flex-grow: 1;
@@ -154,11 +154,11 @@ const ListTitle = styled.div`
   font-size: 2rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const TabsContainer = styled.div`
   display: flex;
-`;
+`
 
 const Tab = styled.button`
   font: inherit;
@@ -181,38 +181,36 @@ const Tab = styled.button`
   &:focus {
     outline: none;
   }
-`;
+`
 
 const List = styled.div`
   border-radius: 2px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px 0 ${p => p.theme.colors.darkShade};
-`;
+`
 
 const FooterLogo = styled.div`
   padding: 4.8rem;
   width: 3.2rem;
   margin: 0 auto;
-`;
-
+`
 
 export default class Wallets extends React.Component {
   state = {
-    activeModal: null,
+    activeModal: 'receive',
     address: wallet.getAddress(),
     balance: null
-  };
-
-  componentDidMount() {
-    wallet.getBalance()
-      .then(balance => {
-        this.setState({ balance })
-      })
   }
 
-  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal });
+  componentDidMount() {
+    wallet.getBalance().then(balance => {
+      this.setState({ balance })
+    })
+  }
 
-  onCloseModal = () => this.setState({ activeModal: null });
+  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
+
+  onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
     return (
@@ -230,7 +228,7 @@ export default class Wallets extends React.Component {
           </Header>
         </FixedContainer>
         <Hero>
-          {this.state.balance &&
+          {this.state.balance && (
             <Left>
               <Balance>
                 <CoinSymbol>MTN</CoinSymbol>
@@ -243,11 +241,15 @@ export default class Wallets extends React.Component {
                 <USDValue>$4567890 (USD)</USDValue>
               </Balance>
             </Left>
-          }
+          )}
           <Right>
-            <Btn block data-modal="send" onClick={this.onOpenModal}>Send</Btn>
+            <Btn block data-modal="send" onClick={this.onOpenModal}>
+              Send
+            </Btn>
             <Sp mt={2}>
-              <Btn block data-modal="receive" onClick={this.onOpenModal}>Receive</Btn>
+              <Btn block data-modal="receive" onClick={this.onOpenModal}>
+                Receive
+              </Btn>
             </Sp>
           </Right>
         </Hero>
@@ -310,6 +312,6 @@ export default class Wallets extends React.Component {
           isOpen={this.state.activeModal === 'send'}
         />
       </Container>
-    );
+    )
   }
 }
