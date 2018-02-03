@@ -8,6 +8,7 @@ import ReceiveDrawer from './ReceiveDrawer'
 import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
 import wallet from '../../services/wallet'
 import transactions from '../../services/tx-mock'
+const { clipboard } = window.require('electron')
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
@@ -197,7 +198,7 @@ const FooterLogo = styled.div`
 
 export default class Wallets extends React.Component {
   state = {
-    activeModal: 'receive',
+    activeModal: null,
     address: wallet.getAddress(),
     balance: null
   }
@@ -212,6 +213,8 @@ export default class Wallets extends React.Component {
 
   onCloseModal = () => this.setState({ activeModal: null })
 
+  onCopyToClipboardClick = () => clipboard.writeText(this.state.address)
+
   render() {
     return (
       <Container>
@@ -222,7 +225,7 @@ export default class Wallets extends React.Component {
               <Label>Address</Label>
               <Bg>
                 <Address>{this.state.address}</Address>
-                <CopyBtn>Copy</CopyBtn>
+                <CopyBtn onClick={this.onCopyToClipboardClick}>Copy</CopyBtn>
               </Bg>
             </AddressContainer>
           </Header>
