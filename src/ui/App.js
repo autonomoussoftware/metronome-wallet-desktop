@@ -1,45 +1,27 @@
-import { retrieveSeed, storeSeed } from './seedStorage';
-import bip39 from 'bip39';
-import React, { Component } from 'react';
-
-import Router from './Router';
-import MnemonicGenerator from './components/MnemonicGenerator';
-
-import wallet from '../services/wallet'
+import React, { Component } from 'react'
+import * as selectors from './selectors'
+import { connect } from 'react-redux'
+import Onboarding from './components/Onboarding'
+import PropTypes from 'prop-types'
+import Splash from './components/Splash'
+import Router from './Router'
 
 class App extends Component {
-  state = {
-    isReady: false,
-    seed: null
-  };
-
-  componentDidMount() {
-    const seed = retrieveSeed()
-    wallet.init(seed)
-
-    this.setState({ isReady: true, seed });
+  static propTypes = {
+    isInitialized: PropTypes.bool.isRequired,
+    isReady: PropTypes.bool.isRequired
   }
 
-  onMnemonic = mnemonic => {
-    this.setState({ isReady: false }, () => {
-      const seed = bip39.mnemonicToSeedHex(mnemonic);
-      this.setState({ seed, isReady: true }, () => storeSeed(seed));
-    });
-  };
-
   render() {
-    const { isReady, seed } = this.state;
+    const { isInitialized, isReady } = this.props
 
-    return isReady ? (
-      seed ? (
-        <Router seed={seed} onMnemonic={this.onMnemonic} />
-      ) : (
-        <MnemonicGenerator onMnemonic={this.onMnemonic} />
-      )
-    ) : (
-      <p>Loading...</p>
-    );
+    return !isReady ? <Splash /> : isInitialized ? <Router /> : <Onboarding />
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  isInitialized: selectors.isInitialized(state),
+  isReady: selectors.isReady(state)
+})
+
+export default connect(mapStateToProps)(App)

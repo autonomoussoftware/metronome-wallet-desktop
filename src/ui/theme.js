@@ -1,6 +1,7 @@
 export default {
   colors: {
     primary: '#7e61f8',
+    translucentPrimary: 'rgba(126, 97, 248, 0.2)',
     light: '#fff',
     copy: '#545454',
     dark: '#323232',
@@ -19,4 +20,4 @@ export default {
     }
   },
   spacing: 0.8 // used as rem multiplier
-};
+}

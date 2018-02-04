@@ -4,6 +4,7 @@ import AuctionIcon from './AuctionIcon'
 import Collapsable from './Collapsable'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
+import LoadingBar from './LoadingBar'
 import WalletIcon from './WalletIcon'
 import CloseIcon from './CloseIcon'
 import TextInput from './TextInput'
@@ -21,6 +22,7 @@ export {
   Collapsable,
   ItemFilter,
   DarkLayout,
+  LoadingBar,
   WalletIcon,
   CloseIcon,
   TextInput,

@@ -6,5 +6,9 @@ import { createActions } from 'redux-actions'
  */
 
 export default createActions({
-  'active wallet changed': newAddress => newAddress
+  'onboarding-completed': [
+    ({ password, mnemonic }) => ({ password, mnemonic }),
+    () => ({ ipc: true })
+  ],
+  'active-wallet-changed': newAddress => newAddress
 })

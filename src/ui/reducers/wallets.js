@@ -3,8 +3,8 @@ import walletReducer from './wallet'
 import actions from '../actions'
 
 const initialState = {
-  all: {},
-  active: '0xae6e5f1471b30ef80af5a0e641a3880cbaf27d76' // TODO: harcoded for now
+  all: null,
+  active: null
 }
 
 const reducer = handleActions(
