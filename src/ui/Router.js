@@ -2,7 +2,6 @@ import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
 import RecoverFromMnemonic from './components/RecoverFromMnemonic'
 import Converter from './components/Converter'
-import PropTypes from 'prop-types'
 import Settings from './components/Settings'
 import Sidebar from './components/Sidebar'
 import Wallets from './components/Wallets'
@@ -21,14 +20,7 @@ const Main = styled.div`
 `
 
 class Router extends Component {
-  static propTypes = {
-    onMnemonic: PropTypes.func.isRequired,
-    seed: PropTypes.string.isRequired
-  }
-
   render() {
-    const { seed, onMnemonic } = this.props
-
     return (
       <HashRouter>
         <Container>
@@ -36,16 +28,10 @@ class Router extends Component {
           <Main>
             <Switch>
               <Route path="/" exact render={() => <Redirect to="/wallets" />} />
-              <Route path="/wallets" render={() => <Wallets seed={seed} />} />
-              <Route path="/auction" render={() => <Auction seed={seed} />} />
-              <Route
-                render={() => <Converter seed={seed} />}
-                path="/converter"
-              />
-              <Route
-                render={() => <RecoverFromMnemonic onMnemonic={onMnemonic} />}
-                path="/tools"
-              />
+              <Route path="/wallets" component={Wallets} />
+              <Route path="/auction" component={Auction} />
+              <Route path="/converter" component={Converter} />
+              <Route path="/tools" component={RecoverFromMnemonic} />
               <Route component={Settings} path="/settings" />
               <Route component={Help} path="/help" />
             </Switch>

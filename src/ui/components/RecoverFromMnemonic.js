@@ -1,6 +1,8 @@
 import { DarkLayout, Btn } from '../common'
 import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import actions from '../actions'
 import styled from 'styled-components'
 import bip39 from 'bip39'
 import React from 'react'
@@ -35,7 +37,7 @@ const DoneBtn = Btn.extend`
 
 class RecoverFromMnemonic extends React.Component {
   static propTypes = {
-    onMnemonic: PropTypes.func.isRequired,
+    recoverFromMnemonic: PropTypes.func.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
     }).isRequired
@@ -50,7 +52,7 @@ class RecoverFromMnemonic extends React.Component {
     e.preventDefault()
     const { input } = this.state
     if (bip39.validateMnemonic(input)) {
-      this.props.onMnemonic(input)
+      this.props.recoverFromMnemonic(input)
       this.props.history.push('/wallets')
     } else {
       this.setState({
@@ -97,4 +99,4 @@ class RecoverFromMnemonic extends React.Component {
   }
 }
 
-export default withRouter(RecoverFromMnemonic)
+export default connect(null, actions)(withRouter(RecoverFromMnemonic))

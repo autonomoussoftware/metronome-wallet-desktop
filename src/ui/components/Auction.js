@@ -1,25 +1,10 @@
-import Web3 from 'web3'
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-
-import BuyMTNDrawer from './BuyMTNDrawer'
 import { DarkLayout, Text, Btn, Sp } from '../common'
-
 import CountDownProvider from '../providers/CountDownProvider'
-import settings from '../../config/settings'
+import BuyMTNDrawer from './BuyMTNDrawer'
 import auction from '../../services/auction'
-
-const Body = styled.div`
-  padding: 3.2rem 4.8rem;
-`
-
-const CountDownTitle = styled.div`
-  line-height: 2.5rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-`
+import styled from 'styled-components'
+import React from 'react'
+import Web3 from 'web3'
 
 const Row = styled.div`
   margin-top: 1.6rem;
@@ -63,10 +48,6 @@ const CurrentPrice = styled.div`
 `
 
 export default class Auction extends React.Component {
-  static propTypes = {
-    seed: PropTypes.string.isRequired
-  }
-
   state = {
     activeModal: null,
     status: null

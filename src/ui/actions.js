@@ -10,5 +10,9 @@ export default createActions({
     ({ password, mnemonic }) => ({ password, mnemonic }),
     () => ({ ipc: true })
   ],
+  'recover-from-mnemonic': [
+    mnemonic => mnemonic,
+    () => ({ ipc: true })
+  ],
   'active-wallet-changed': newAddress => newAddress
 })

@@ -9,10 +9,29 @@ const initialState = {
 
 const reducer = handleActions(
   {
+    'wallets-retrieved': (state, action) => ({
+      ...state,
+      // must return a dictionary of type { [address]: Wallet }
+      all: action.payload
+        ? action.payload.reduce((all, wallet) => {
+            if (wallet.address) {
+              all[wallet.address] = wallet
+            }
+            return all
+          }, {})
+        : {},
+      // must return the first available address or null if no addresses
+      active:
+        action.payload && action.payload.length > 0
+          ? action.payload[0].address
+          : null
+    }),
+
     [actions.activeWalletChanged]: (state, action) => ({
       ...state,
       active: action.payload
     }),
+
     [actions.walletBalanceUpdated]: (state, action) => ({
       ...state,
       all: {
