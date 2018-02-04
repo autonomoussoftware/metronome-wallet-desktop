@@ -20,10 +20,6 @@ export const subscribeToMainProcessMessages = store => {
    * })
    */
 
-  // After all subscriptions are in place, notify the main
-  // process sthat we are ready to receive messages now
-  ipcRenderer.send('ui-start')
-
   function subscribeTo(types) {
     return types.forEach(type =>
       ipcRenderer.on(type, (event, payload) =>
