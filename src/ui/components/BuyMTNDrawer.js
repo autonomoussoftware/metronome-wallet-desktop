@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
 
-import PurchaseFormProvider from '../providers/PurchaseFormProvider';
+import PurchaseFormProvider from '../providers/PurchaseFormProvider'
 
-import { Drawer, Btn, Sp } from '../common';
+import { Drawer, Btn, Sp } from '../common'
 import auction from '../../services/auction'
 
 const Label = styled.label`
@@ -13,7 +13,7 @@ const Label = styled.label`
   font-weight: 600;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const Input = styled.input`
   border: none;
@@ -29,25 +29,25 @@ const Input = styled.input`
   font-weight: 600;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const ErrorMsg = styled.p`
   color: red;
-`;
+`
 
 const BtnContainer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
   height: 100%;
   padding: 6.4rem 2.4rem;
   flex-grow: 1;
-`;
+`
 
 export default class BuyMTNDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     currentPrice: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired
-  };
+  }
 
   static initialState = {
     disclaimerAccepted: true,
@@ -55,31 +55,32 @@ export default class BuyMTNDrawer extends React.Component {
     status: 'init',
     error: null,
     input: null
-  };
+  }
 
-  state = BuyMTNDrawer.initialState;
+  state = BuyMTNDrawer.initialState
 
   componentWillReceiveProps(newProps) {
     if (newProps.isOpen !== this.props.isOpen) {
-      this.setState(BuyMTNDrawer.initialState);
+      this.setState(BuyMTNDrawer.initialState)
     }
   }
 
-  onInputChanged = e => this.setState({ input: e.target.value });
+  onInputChanged = e => this.setState({ input: e.target.value })
 
   onSubmit = e => {
     e.preventDefault()
 
     this.setState({ status: 'pending' })
 
-    auction.buy(this.state.input)
+    auction
+      .buy(this.state.input)
       .then(receipt => this.setState({ status: 'success', receipt }))
       .catch(e => this.setState({ status: 'failure', error: e.message }))
   }
 
   render() {
-    const { disclaimerAccepted, receipt, status, error, input } = this.state;
-    const { onRequestClose, isOpen, currentPrice } = this.props;
+    const { disclaimerAccepted, receipt, status, error, input } = this.state
+    const { onRequestClose, isOpen, currentPrice } = this.props
 
     return (
       <Drawer
@@ -115,7 +116,8 @@ export default class BuyMTNDrawer extends React.Component {
                     <p>{expectedMTNamount} MTN</p>
                   </div>
                 )}
-                {!isValidAmount && !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
+                {!isValidAmount &&
+                  !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
                 {status === 'success' && (
                   <div>
                     <p>Your receipt:</p>
@@ -131,13 +133,15 @@ export default class BuyMTNDrawer extends React.Component {
               </Sp>
               {status === 'init' && (
                 <BtnContainer>
-                  <Btn block submit disabled={!isValidPurchase}>Buy</Btn>
+                  <Btn block submit disabled={!isValidPurchase}>
+                    Buy
+                  </Btn>
                 </BtnContainer>
               )}
             </form>
           )}
         </PurchaseFormProvider>
       </Drawer>
-    );
+    )
   }
 }

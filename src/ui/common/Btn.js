@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export const BaseBtn = styled.button.attrs({
   type: ({ submit }) => (submit ? 'submit' : 'button')
@@ -24,7 +24,7 @@ export const BaseBtn = styled.button.attrs({
     opacity: 0.5;
     cursor: not-allowed;
   }
-`;
+`
 
 export const Btn = BaseBtn.extend`
   line-height: 2.5rem;
@@ -47,4 +47,4 @@ export const Btn = BaseBtn.extend`
     background-color: ${p => p.theme.colors.bg.white};
     box-shadow: 0 2px 8px 0 ${p => p.theme.colors.darkShade};
   }
-`;
+`

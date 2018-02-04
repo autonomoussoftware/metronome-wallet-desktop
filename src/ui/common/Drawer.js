@@ -1,8 +1,8 @@
-import { default as styled, injectGlobal } from 'styled-components';
-import CloseIcon from './CloseIcon';
-import PropTypes from 'prop-types';
-import Modal from 'react-modal';
-import React from 'react';
+import { default as styled, injectGlobal } from 'styled-components'
+import CloseIcon from './CloseIcon'
+import PropTypes from 'prop-types'
+import Modal from 'react-modal'
+import React from 'react'
 
 /**
  * There's no other way to override overlay states styles
@@ -24,7 +24,7 @@ injectGlobal`
     background-color: transparent !important;
     transition: 0.6s;
   }
-`;
+`
 
 const Container = styled(Modal)`
   &.ReactModal__Content {
@@ -38,7 +38,7 @@ const Container = styled(Modal)`
   &.ReactModal__Content--before-close {
     transform: translate3d(100%, 0, 0);
   }
-`;
+`
 
 const Header = styled.header`
   background-color: ${p => p.theme.colors.primary};
@@ -47,7 +47,7 @@ const Header = styled.header`
   display: flex;
   justify-content: space-between;
   flex-shrink: 0;
-`;
+`
 
 const Title = styled.h1`
   font-size: 2.4rem;
@@ -55,7 +55,7 @@ const Title = styled.h1`
   font-weight: bold;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0;
-`;
+`
 
 const CloseButton = styled.button`
   background: transparent;
@@ -66,9 +66,9 @@ const CloseButton = styled.button`
   &:hover {
     opacity: 0.5;
   }
-`;
+`
 
-Modal.setAppElement('#root');
+Modal.setAppElement('#root')
 
 export default class Drawer extends React.Component {
   static propTypes = {
@@ -76,10 +76,10 @@ export default class Drawer extends React.Component {
     children: PropTypes.node.isRequired,
     isOpen: PropTypes.bool.isRequired,
     title: PropTypes.string
-  };
+  }
 
   render() {
-    const { onRequestClose, children, isOpen, title } = this.props;
+    const { onRequestClose, children, isOpen, title } = this.props
 
     return (
       <Container
@@ -118,6 +118,6 @@ export default class Drawer extends React.Component {
         )}
         {children}
       </Container>
-    );
+    )
   }
 }

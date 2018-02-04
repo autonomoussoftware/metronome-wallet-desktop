@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 // sizes:  11, 13, 14, 16, 20, 24, 32, 48
 // weights: normal, 600
@@ -11,6 +11,6 @@ const Text = styled.span`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
-`;
+`
 
-export default Text;
+export default Text

@@ -1,9 +1,9 @@
-import { DarkLayout, Sp } from '../common';
+import { DarkLayout, Sp } from '../common'
 // import PropTypes from 'prop-types';
-import React from 'react';
+import React from 'react'
 
 export default class Help extends React.Component {
-  static propTypes = {};
+  static propTypes = {}
 
   render() {
     return (
@@ -12,6 +12,6 @@ export default class Help extends React.Component {
           Content...
         </Sp>
       </DarkLayout>
-    );
+    )
   }
 }

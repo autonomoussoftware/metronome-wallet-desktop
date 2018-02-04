@@ -1,32 +1,32 @@
-import Web3 from 'web3';
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import Web3 from 'web3'
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
 
-import BuyMTNDrawer from './BuyMTNDrawer';
-import { DarkLayout, Text, Btn, Sp } from '../common';
+import BuyMTNDrawer from './BuyMTNDrawer'
+import { DarkLayout, Text, Btn, Sp } from '../common'
 
-import CountDownProvider from '../providers/CountDownProvider';
-import settings from '../../config/settings';
+import CountDownProvider from '../providers/CountDownProvider'
+import settings from '../../config/settings'
 import auction from '../../services/auction'
 
 const Body = styled.div`
   padding: 3.2rem 4.8rem;
-`;
+`
 
 const CountDownTitle = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.shade};
-`;
+`
 
 const Row = styled.div`
   margin-top: 1.6rem;
   display: flex;
   border-radius: 4px;
   background-color: ${p => p.theme.colors.lightShade};
-`;
+`
 
 const Cell = styled.div`
   opacity: ${({ isFaded }) => (isFaded ? '0.5' : '1')};
@@ -50,7 +50,7 @@ const Cell = styled.div`
     padding: 3rem;
     font-size: 4.8rem;
   }
-`;
+`
 
 const CurrentPrice = styled.div`
   padding: 3.5rem 2.4rem;
@@ -60,63 +60,70 @@ const CurrentPrice = styled.div`
   line-height: 4rem;
   font-size: 3.2rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 export default class Auction extends React.Component {
   static propTypes = {
     seed: PropTypes.string.isRequired
-  };
+  }
 
   state = {
     activeModal: null,
     status: null
-  };
+  }
 
   componentDidMount() {
     // TODO: Retrive status after a new block is mined
-    auction.getStatus()
-      .then(status => this.setState({ status }))
+    auction.getStatus().then(status => this.setState({ status }))
   }
 
-  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
+  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
 
   onCloseModal = () => this.setState({ activeModal: null })
-
 
   render() {
     return (
       <DarkLayout title="Metronome Auction">
-        {
-          this.state.status ?
+        {this.state.status ? (
           <Sp py={4} px={6}>
             <Text>Time Remaining</Text>
 
-            <CountDownProvider targetTimestamp={this.state.status.nextAuctionStartTime}>
-                  {({ days, hours, minutes, seconds }) => (
-                    <Row>
-                      <Cell isFaded={days === 0}>{days} days</Cell>
-                      <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                  <Cell isFaded={days + hours + minutes === 0}>{minutes} mins</Cell>
-                  <Cell isFaded={days + hours + minutes + seconds === 0}>{seconds} segs</Cell>
-                    </Row>
-                  )}
-                </CountDownProvider>
+            <CountDownProvider
+              targetTimestamp={this.state.status.nextAuctionStartTime}
+            >
+              {({ days, hours, minutes, seconds }) => (
+                <Row>
+                  <Cell isFaded={days === 0}>{days} days</Cell>
+                  <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                  <Cell isFaded={days + hours + minutes === 0}>
+                    {minutes} mins
+                  </Cell>
+                  <Cell isFaded={days + hours + minutes + seconds === 0}>
+                    {seconds} segs
+                  </Cell>
+                </Row>
+              )}
+            </CountDownProvider>
 
-              <CurrentPrice>
-                Current Price: {Web3.utils.fromWei(this.state.status.currentPrice)} ETH
-              </CurrentPrice>
-              <Sp mt={4}>
-                <Btn data-modal="buy" onClick={this.onOpenModal}>Buy Metronome</Btn>
-              </Sp>
-              <BuyMTNDrawer
-                onRequestClose={this.onCloseModal}
-                currentPrice={this.state.status.currentPrice}
-                isOpen={this.state.activeModal === 'buy'}
-              />
-            </Sp> :
+            <CurrentPrice>
+              Current Price:{' '}
+              {Web3.utils.fromWei(this.state.status.currentPrice)} ETH
+            </CurrentPrice>
+            <Sp mt={4}>
+              <Btn data-modal="buy" onClick={this.onOpenModal}>
+                Buy Metronome
+              </Btn>
+            </Sp>
+            <BuyMTNDrawer
+              onRequestClose={this.onCloseModal}
+              currentPrice={this.state.status.currentPrice}
+              isOpen={this.state.activeModal === 'buy'}
+            />
+          </Sp>
+        ) : (
           <p>Loading...</p>
-        }
+        )}
       </DarkLayout>
-    );
+    )
   }
 }

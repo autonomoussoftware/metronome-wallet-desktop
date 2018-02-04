@@ -1,11 +1,11 @@
-import { DarkLayout, Sp } from '../common';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { DarkLayout, Sp } from '../common'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 export default class Auction extends React.Component {
   static propTypes = {
     seed: PropTypes.string.isRequired
-  };
+  }
 
   render() {
     return (
@@ -14,6 +14,6 @@ export default class Auction extends React.Component {
           Content...
         </Sp>
       </DarkLayout>
-    );
+    )
   }
 }

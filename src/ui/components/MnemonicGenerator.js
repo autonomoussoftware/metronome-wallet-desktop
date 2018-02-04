@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import React from 'react';
-import bip39 from 'bip39';
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+import bip39 from 'bip39'
 
-const Container = styled.div``;
+const Container = styled.div``
 
 const Msg = styled.p`
   font-size: 2rem;
@@ -11,21 +11,21 @@ const Msg = styled.p`
   max-width: 640px;
   opacity: 0.75;
   padding: 3rem;
-`;
+`
 
 const Mnemonic = styled.div`
   max-width: 810px;
   margin: 0 auto;
   text-align: center;
   padding: 2rem;
-`;
+`
 
 const Word = styled.span`
   font-size: 3rem;
   margin: 0 3rem;
   display: inline-block;
   line-height: 2em;
-`;
+`
 
 const DoneBtn = styled.button`
   font: inherit;
@@ -45,19 +45,19 @@ const DoneBtn = styled.button`
   max-width: 300px;
   margin: 2rem auto;
   cursor: pointer;
-`;
+`
 
 export default class MnemonicGenerator extends React.Component {
   static propTypes = {
     onMnemonic: PropTypes.func.isRequired
-  };
+  }
 
-  state = { mnemonic: bip39.generateMnemonic() };
+  state = { mnemonic: bip39.generateMnemonic() }
 
-  onDonePressed = () => this.props.onMnemonic(this.state.mnemonic);
+  onDonePressed = () => this.props.onMnemonic(this.state.mnemonic)
 
   render() {
-    const { mnemonic } = this.state;
+    const { mnemonic } = this.state
 
     return (
       <Container>
@@ -70,6 +70,6 @@ export default class MnemonicGenerator extends React.Component {
         </Mnemonic>
         <DoneBtn onClick={this.onDonePressed}>Done</DoneBtn>
       </Container>
-    );
+    )
   }
 }

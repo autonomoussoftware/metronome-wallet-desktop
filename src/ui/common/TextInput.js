@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import React from 'react';
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 
 const Label = styled.label`
   line-height: 1.6rem;
@@ -9,7 +9,7 @@ const Label = styled.label`
   letter-spacing: 0.5px;
   color: ${p => (p.hasErrors ? p.theme.colors.danger : p.theme.colors.light)};
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`;
+`
 
 const Input = styled.input`
   border: none;
@@ -36,7 +36,7 @@ const Input = styled.input`
     outline: none;
     box-shadow: 0 2px 0 0px ${p => p.theme.colors.primary};
   }
-`;
+`
 
 const ErrorMsg = styled.div`
   color: ${p => p.theme.colors.danger};
@@ -48,7 +48,7 @@ const ErrorMsg = styled.div`
   margin-top: 0.4rem;
   width: 100%;
   margin-bottom: -2rem;
-`;
+`
 
 export default class TextInput extends React.Component {
   static propTypes = {
@@ -61,21 +61,21 @@ export default class TextInput extends React.Component {
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
     id: PropTypes.string.isRequired
-  };
+  }
 
-  state = { isPristine: true };
+  state = { isPristine: true }
 
   componentWillReceiveProps(newProps) {
     if (newProps.value !== this.props.value) {
-      this.setState({ isPristine: false });
+      this.setState({ isPristine: false })
     }
   }
 
   render() {
-    const { placeholder, onChange, error, label, value, id } = this.props;
-    const { isPristine } = this.state;
+    const { placeholder, onChange, error, label, value, id } = this.props
+    const { isPristine } = this.state
 
-    const hasErrors = error && error.length > 0;
+    const hasErrors = error && error.length > 0
 
     return (
       <div>
@@ -97,6 +97,6 @@ export default class TextInput extends React.Component {
           </ErrorMsg>
         )}
       </div>
-    );
+    )
   }
 }

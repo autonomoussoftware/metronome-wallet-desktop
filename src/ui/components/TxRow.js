@@ -1,8 +1,8 @@
-import { ConverterIcon, Collapsable, AuctionIcon, TxIcon } from '../common';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import theme from '../theme';
-import React from 'react';
+import { ConverterIcon, Collapsable, AuctionIcon, TxIcon } from '../common'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import theme from '../theme'
+import React from 'react'
 
 const Tx = styled.div`
   margin-left: 1.6rem;
@@ -11,7 +11,7 @@ const Tx = styled.div`
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 -1px 0 0 ${p => p.theme.colors.lightShade} inset;
-`;
+`
 
 const Pending = styled.div`
   color: #ababab;
@@ -22,7 +22,7 @@ const Pending = styled.div`
   line-height: 2.2rem;
   text-align: center;
   font-size: 1.2rem;
-`;
+`
 
 const Details = styled.div`
   line-height: 1.4rem;
@@ -32,13 +32,13 @@ const Details = styled.div`
   text-transform: uppercase;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   text-align: right;
-`;
+`
 
 const Currency = styled.span`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
-`;
+`
 
 const Address = styled.span`
   letter-spacing: normal;
@@ -46,7 +46,7 @@ const Address = styled.span`
   font-size: 1.3rem;
   font-weight: 600;
   text-transform: initial;
-`;
+`
 
 const Amount = styled.div`
   line-height: 2.5rem;
@@ -54,7 +54,7 @@ const Amount = styled.div`
   font-size: 2rem;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   color: ${p => (p.isPending ? p.theme.colors.copy : p.theme.colors.primary)};
-`;
+`
 
 export default class TxRow extends React.Component {
   static propTypes = {
@@ -65,12 +65,12 @@ export default class TxRow extends React.Component {
     from: PropTypes.string,
     to: PropTypes.string,
     id: PropTypes.string.isRequired
-  };
+  }
 
   render() {
-    const { pending = null, amount, type, from, to, id, ...other } = this.props;
+    const { pending = null, amount, type, from, to, id, ...other } = this.props
 
-    const isPending = pending !== null;
+    const isPending = pending !== null
 
     return (
       <Collapsable maxHeight="6.5rem" {...other}>
@@ -114,6 +114,6 @@ export default class TxRow extends React.Component {
           </div>
         </Tx>
       </Collapsable>
-    );
+    )
   }
 }

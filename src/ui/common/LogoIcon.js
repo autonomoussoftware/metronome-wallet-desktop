@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
-import BaseIcon from './BaseIcon';
-import React from 'react';
+import PropTypes from 'prop-types'
+import BaseIcon from './BaseIcon'
+import React from 'react'
 
 const LogoIcon = ({ size, negative, ...other }) => (
   <BaseIcon size={size || '3.2rem'} viewBox="0 0 32 32" {...other}>
@@ -16,11 +16,11 @@ const LogoIcon = ({ size, negative, ...other }) => (
       />
     </g>
   </BaseIcon>
-);
+)
 
 LogoIcon.propTypes = {
   negative: PropTypes.bool,
   size: PropTypes.string
-};
+}
 
-export default LogoIcon;
+export default LogoIcon

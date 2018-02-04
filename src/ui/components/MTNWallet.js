@@ -1,13 +1,13 @@
-import MTNWalletProvider from '../providers/MTNWalletProvider';
-import PropTypes from 'prop-types';
-import settings from '../../config/settings';
-import React from 'react';
-import axios from 'axios';
+import MTNWalletProvider from '../providers/MTNWalletProvider'
+import PropTypes from 'prop-types'
+import settings from '../../config/settings'
+import React from 'react'
+import axios from 'axios'
 
 const getTransactions = addr =>
-  axios.get(`${settings.MTN_API_URL}/event/account/${addr}`);
+  axios.get(`${settings.MTN_API_URL}/event/account/${addr}`)
 
-const getBalance = addr => axios.get(`${settings.MTN_API_URL}/account/${addr}`);
+const getBalance = addr => axios.get(`${settings.MTN_API_URL}/account/${addr}`)
 
 const MTNWallet = ({ children, seed }) => (
   <MTNWalletProvider
@@ -19,11 +19,11 @@ const MTNWallet = ({ children, seed }) => (
   >
     {children}
   </MTNWalletProvider>
-);
+)
 
 MTNWallet.propTypes = {
   children: PropTypes.func.isRequired,
   seed: PropTypes.string.isRequired
-};
+}
 
-export default MTNWallet;
+export default MTNWallet

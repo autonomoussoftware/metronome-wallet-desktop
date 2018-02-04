@@ -1,14 +1,8 @@
-import {
-  ConverterIcon,
-  AuctionIcon,
-  WalletIcon,
-  LogoIcon,
-  Sp
-} from '../common';
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
-import Logo from './Logo';
+import { ConverterIcon, AuctionIcon, WalletIcon, LogoIcon, Sp } from '../common'
+import React, { Component } from 'react'
+import { NavLink } from 'react-router-dom'
+import styled from 'styled-components'
+import Logo from './Logo'
 
 const Container = styled.div`
   background: ${p => p.theme.colors.bg.darkGradient};
@@ -17,11 +11,11 @@ const Container = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
-`;
+`
 
 const MainMenu = styled.nav`
   flex-grow: 1;
-`;
+`
 
 const Button = styled(NavLink)`
   display: flex;
@@ -47,7 +41,7 @@ const Button = styled(NavLink)`
     );
     opacity: 1;
   }
-`;
+`
 
 const SecondaryBtn = styled(NavLink)`
   display: block;
@@ -81,11 +75,11 @@ const SecondaryBtn = styled(NavLink)`
     width: 8px;
     height: 8px;
   }
-`;
+`
 
 const LogoSmallContainer = styled.div`
   padding: 4.8rem 0 2.4rem 1.6rem;
-`;
+`
 
 class App extends Component {
   render() {
@@ -126,8 +120,8 @@ class App extends Component {
           <LogoIcon negative />
         </LogoSmallContainer>
       </Container>
-    );
+    )
   }
 }
 
-export default App;
+export default App

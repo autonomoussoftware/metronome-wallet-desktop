@@ -1,9 +1,9 @@
-import EthereumTx from 'ethereumjs-tx';
-import PropTypes from 'prop-types';
-import ethutils from 'ethereumjs-util';
-import hdkey from 'ethereumjs-wallet/hdkey';
-import React from 'react';
-import Web3 from 'web3';
+import EthereumTx from 'ethereumjs-tx'
+import PropTypes from 'prop-types'
+import ethutils from 'ethereumjs-util'
+import hdkey from 'ethereumjs-wallet/hdkey'
+import React from 'react'
+import Web3 from 'web3'
 
 export default class MTNWalletProvider extends React.Component {
   static propTypes = {
@@ -14,31 +14,31 @@ export default class MTNWalletProvider extends React.Component {
     nodeUrl: PropTypes.string.isRequired,
     index: PropTypes.number,
     seed: PropTypes.string.isRequired
-  };
+  }
 
   static defaultProps = {
     index: 0 // use first address by default
-  };
+  }
 
   constructor(props) {
-    super(props);
-    this.api = new Web3(new Web3.providers.WebsocketProvider(props.nodeUrl));
+    super(props)
+    this.api = new Web3(new Web3.providers.WebsocketProvider(props.nodeUrl))
     this.state = {
       lastTransactions: null,
       balance: null,
       ...this.getAddress(props.index)
-    };
+    }
   }
 
   componentWillMount() {
-    const { getTransactions, getBalance } = this.props;
-    const { address } = this.state;
+    const { getTransactions, getBalance } = this.props
+    const { address } = this.state
 
     getBalance(address)
       .then(({ data }) =>
         this.setState({ balance: Web3.utils.fromWei(data.balance) })
       )
-      .catch(() => this.setState({ balance: '0' }));
+      .catch(() => this.setState({ balance: '0' }))
 
     getTransactions(address)
       .then(({ data }) =>
@@ -48,20 +48,20 @@ export default class MTNWalletProvider extends React.Component {
             .sort((a, b) => b.timestamp - a.timestamp)
         })
       )
-      .catch(e => this.setState({ error: e.message }));
+      .catch(e => this.setState({ error: e.message }))
   }
 
   getAddress(index) {
     const wallet = hdkey
       .fromMasterSeed(ethutils.toBuffer(ethutils.addHexPrefix(this.props.seed)))
       .derivePath(`m/44'/60'/0'/0/${index}`)
-      .getWallet();
+      .getWallet()
 
     return {
       address: wallet.getChecksumAddressString(),
       privKey: wallet.getPrivateKey(),
       pubKey: wallet.getPublicKey()
-    };
+    }
   }
 
   sendTransaction = ({ to, value }) => {
@@ -79,22 +79,22 @@ export default class MTNWalletProvider extends React.Component {
         from: this.state.address,
         gas: res[3],
         to
-      };
-      const tx = new EthereumTx(txParams);
-      tx.sign(this.state.privKey);
+      }
+      const tx = new EthereumTx(txParams)
+      tx.sign(this.state.privKey)
 
       return this.api.eth.sendSignedTransaction(
         '0x' + tx.serialize().toString('hex')
-      );
-    });
-  };
+      )
+    })
+  }
 
   buyMTN = value => {
-    return this.sendTransaction({ value, to: this.props.auctionAddress });
-  };
+    return this.sendTransaction({ value, to: this.props.auctionAddress })
+  }
 
   render() {
-    const { lastTransactions, balance, address, privKey, pubKey } = this.state;
+    const { lastTransactions, balance, address, privKey, pubKey } = this.state
 
     return this.props.children({
       lastTransactions,
@@ -104,6 +104,6 @@ export default class MTNWalletProvider extends React.Component {
       privKey,
       pubKey,
       onBuy: this.buyMTN
-    });
+    })
   }
 }

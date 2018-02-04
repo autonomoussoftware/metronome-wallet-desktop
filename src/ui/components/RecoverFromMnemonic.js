@@ -1,17 +1,17 @@
-import { DarkLayout, Btn } from '../common';
-import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import bip39 from 'bip39';
-import React from 'react';
+import { DarkLayout, Btn } from '../common'
+import { withRouter } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import bip39 from 'bip39'
+import React from 'react'
 
 const Form = styled.form`
   padding: 2.4rem 4.8rem;
-`;
+`
 
-const Msg = styled.p``;
+const Msg = styled.p``
 
-const InputContainer = styled.div``;
+const InputContainer = styled.div``
 
 const Input = styled.textarea`
   display: block;
@@ -24,14 +24,14 @@ const Input = styled.textarea`
   &:focus {
     outline: none;
   }
-`;
+`
 
-const ErrorMsg = styled.p``;
+const ErrorMsg = styled.p``
 
 const DoneBtn = Btn.extend`
   min-width: 15rem;
   margin-top: 2rem;
-`;
+`
 
 class RecoverFromMnemonic extends React.Component {
   static propTypes = {
@@ -39,32 +39,32 @@ class RecoverFromMnemonic extends React.Component {
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
     }).isRequired
-  };
+  }
 
   state = {
     input: null,
     error: null
-  };
+  }
 
   onDonePressed = e => {
-    e.preventDefault();
-    const { input } = this.state;
+    e.preventDefault()
+    const { input } = this.state
     if (bip39.validateMnemonic(input)) {
-      this.props.onMnemonic(input);
-      this.props.history.push('/wallets');
+      this.props.onMnemonic(input)
+      this.props.history.push('/wallets')
     } else {
       this.setState({
         error: "These words don't look like a valid recovery phrase."
-      });
+      })
     }
-  };
+  }
 
   onInputChanged = e => {
-    this.setState({ input: e.target.value, error: null });
-  };
+    this.setState({ input: e.target.value, error: null })
+  }
 
   render() {
-    const { input, error } = this.state;
+    const { input, error } = this.state
 
     const weHave12words =
       input &&
@@ -72,7 +72,7 @@ class RecoverFromMnemonic extends React.Component {
         .trim()
         .split(' ')
         .map(w => w.trim())
-        .filter(w => w.length > 0).length === 12;
+        .filter(w => w.length > 0).length === 12
 
     return (
       <DarkLayout title="Recover wallet">
@@ -93,8 +93,8 @@ class RecoverFromMnemonic extends React.Component {
           </DoneBtn>
         </Form>
       </DarkLayout>
-    );
+    )
   }
 }
 
-export default withRouter(RecoverFromMnemonic);
+export default withRouter(RecoverFromMnemonic)

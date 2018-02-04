@@ -1,7 +1,7 @@
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import React from 'react';
+import { CSSTransition } from 'react-transition-group'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 
 const Container = styled.div`
   &.collapse-enter {
@@ -23,7 +23,7 @@ const Container = styled.div`
     max-height: 0;
     overflow: hidden;
   }
-`;
+`
 
 const Collapsable = ({ maxHeight, children, timeout = 200, ...other }) => (
   <CSSTransition timeout={timeout} classNames="collapse" {...other}>
@@ -31,12 +31,12 @@ const Collapsable = ({ maxHeight, children, timeout = 200, ...other }) => (
       {children}
     </Container>
   </CSSTransition>
-);
+)
 
 Collapsable.propTypes = {
   maxHeight: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   timeout: PropTypes.number
-};
+}
 
-export default Collapsable;
+export default Collapsable
