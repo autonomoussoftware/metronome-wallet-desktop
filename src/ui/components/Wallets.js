@@ -1,13 +1,13 @@
-import React from 'react'
-import styled from 'styled-components'
-import { TransitionGroup } from 'react-transition-group'
-
-import TxRow from './TxRow'
-import SendDrawer from './SendDrawer'
-import ReceiveDrawer from './ReceiveDrawer'
 import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
-import wallet from '../../services/wallet'
+import { TransitionGroup } from 'react-transition-group'
+import ReceiveDrawer from './ReceiveDrawer'
 import transactions from '../../services/tx-mock'
+import ReceiptModal from './ReceiptModal'
+import SendDrawer from './SendDrawer'
+import wallet from '../../services/wallet'
+import styled from 'styled-components'
+import TxRow from './TxRow'
+import React from 'react'
 const { clipboard } = window.require('electron')
 
 const Container = styled.div`
@@ -199,6 +199,7 @@ const FooterLogo = styled.div`
 export default class Wallets extends React.Component {
   state = {
     activeModal: null,
+    selectedTx: null,
     address: wallet.getAddress(),
     balance: null
   }
@@ -210,6 +211,10 @@ export default class Wallets extends React.Component {
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
+
+  onTxClicked = selectedTx => {
+    this.setState({ activeModal: 'receipt', selectedTx })
+  }
 
   onCloseModal = () => this.setState({ activeModal: null })
 
@@ -297,7 +302,13 @@ export default class Wallets extends React.Component {
 
               <List>
                 <TransitionGroup>
-                  {filteredItems.map(tx => <TxRow key={tx.id} {...tx} />)}
+                  {filteredItems.map(tx => (
+                    <TxRow
+                      onClick={() => this.onTxClicked(tx.id)}
+                      key={tx.id}
+                      {...tx}
+                    />
+                  ))}
                 </TransitionGroup>
                 <FooterLogo>
                   <LogoIcon />
@@ -313,6 +324,11 @@ export default class Wallets extends React.Component {
         <SendDrawer
           onRequestClose={this.onCloseModal}
           isOpen={this.state.activeModal === 'send'}
+        />
+        <ReceiptModal
+          onRequestClose={this.onCloseModal}
+          isOpen={this.state.activeModal === 'receipt'}
+          tx={transactions.find(tx => tx.id === this.state.selectedTx)}
         />
       </Container>
     )

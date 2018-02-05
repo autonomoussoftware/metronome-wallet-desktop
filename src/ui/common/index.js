@@ -13,6 +13,7 @@ import CopyIcon from './CopyIcon'
 import LogoIcon from './LogoIcon'
 import TxIcon from './TxIcon'
 import Drawer from './Drawer'
+import Modal from './Modal'
 import Text from './Text'
 import Flex from './Flex'
 import Sp from './Spacing'
@@ -33,6 +34,7 @@ export {
   BaseBtn,
   TxIcon,
   Drawer,
+  Modal,
   Text,
   Flex,
   Btn,

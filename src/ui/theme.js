@@ -14,6 +14,7 @@ export default {
     bg: {
       primary: '#7e61f8',
       dark: '#323232',
+      medium: '#f4f4f4',
       light: '#ededed',
       white: '#fff',
       darkGradient: 'linear-gradient(to bottom, #353535, #323232)'
