@@ -14,44 +14,39 @@ function initMainWorker () {
   }
 
   ipcMain.on('ui-ready', function (event, { id }) {
-    // TODO cannot init here without the password to recover wallet data!!!
-    // initEthWallet(event.sender)
-
-    const onboardingComplete = settings.get('user.onboardingComplete')
+    const onboardingComplete = !!settings.get('user.passwordHash')
     event.sender.send('ui-ready', { id, data: { onboardingComplete } })
   })
 
-  ipcMain.on('onboarding-completed', function (event, { id, data }) {
-    const { password } = data
-
-    if (settings.get('user.onboardingComplete')) {
-      const error = new Error('Onboarding already completed')
-      event.sender.send('onboarding-completed', { id, data: { error } })
-    }
-
-    settings.set('user.onboardingComplete', true)
-    settings.set('user.passwordHash', sha256(password))
-
-    event.sender.send('onboarding-completed', { id, data: { success: true } })
-  })
-
-  ipcMain.on('recover-wallet', function (event, { id, data }) {
+  ipcMain.on('create-wallet', function (event, { id, data }) {
     const { mnemonic, password } = data
 
-    if (!settings.get('user.onboardingComplete')) {
-      const error = new Error('Onboarding not yet completed')
-      event.sender.send('recover-wallet', { id, data: { error } })
+    if (!password) {
+      const error = new Error('Invalid password')
+      event.sender.send('create-wallet', { id, data: { error } })
+      return
+    }
+
+    if (!bip39.validateMnemonic(mnemonic)) {
+      const error = new Error('Invalid mnemonic')
+      event.sender.send('create-wallet', { id, data: { error } })
+      return
+    }
+
+    if (!settings.get('user.passwordHash')) {
+      settings.set('user.passwordHash', sha256(password))
     }
 
     if (sha256(password) !== settings.get('user.passwordHash')) {
       const error = new Error('Invalid password')
-      event.sender.send('recover-wallet', { id, data: { error } })
+      event.sender.send('create-wallet', { id, data: { error } })
+      return
     }
 
     const seed = bip39.mnemonicToSeedHex(mnemonic)
 
     const seedHash = sha256(seed)
-    settings.set('app.activeWallet', seedHash)
+    settings.set('user.activeWallet', seedHash)
 
     const walletInfo = {
       encryptedSeed: aes256cbc.encrypt(password, seed),
@@ -60,7 +55,32 @@ function initMainWorker () {
     }
     settings.set(`user.wallets.${seedHash}`, walletInfo)
 
+    event.sender.send('create-wallet', { id, data: { walletId: seedHash } })
+
     initEthWallet(event.sender, seedHash, password)
+  })
+
+  ipcMain.on('open-wallets', function (event, { id, data }) {
+    const { password } = data
+
+    if (!password) {
+      const error = new Error('Invalid password')
+      event.sender.send('create-wallet', { id, data: { error } })
+      return
+    }
+
+    if (sha256(password) !== settings.get('user.passwordHash')) {
+      const error = new Error('Invalid password')
+      event.sender.send('create-wallet', { id, data: { error } })
+      return
+    }
+
+    const walletIds = Object.keys(settings.get('user.wallets'))
+    walletIds.forEach(function (walletId) {
+      initEthWallet(event.sender, walletId, password)
+    })
+
+    event.sender.send('open-wallets', { id, data: { walletIds } })
   })
 }
 
