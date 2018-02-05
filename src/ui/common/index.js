@@ -7,6 +7,7 @@ import DarkLayout from './DarkLayout'
 import LoadingBar from './LoadingBar'
 import WalletIcon from './WalletIcon'
 import CloseIcon from './CloseIcon'
+import CheckIcon from './CheckIcon'
 import TextInput from './TextInput'
 import CopyIcon from './CopyIcon'
 import LogoIcon from './LogoIcon'
@@ -25,6 +26,7 @@ export {
   LoadingBar,
   WalletIcon,
   CloseIcon,
+  CheckIcon,
   TextInput,
   CopyIcon,
   LogoIcon,
