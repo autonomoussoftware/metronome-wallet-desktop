@@ -1,4 +1,8 @@
 {
-  "extends": ["react-app", "plugin:react/recommended", "prettier"]
+  "extends": [
+    "plugin:react/recommended",
+    "prettier",
+    "react-app",
+    "standard" 
+  ]
 }
-
