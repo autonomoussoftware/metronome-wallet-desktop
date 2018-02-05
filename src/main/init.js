@@ -1,7 +1,7 @@
-const { app } = require("electron")
+const { app } = require('electron')
 
-app.on("window-all-closed", function() {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
     app.quit()
   }
 })

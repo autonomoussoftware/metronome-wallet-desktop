@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 
-function encrypt(password, data) {
+function encrypt (password, data) {
   const cipher = crypto.createCipher('aes-256-cbc', password)
 
   let encrypted = cipher.update(data, 'utf-8', 'hex')
@@ -8,7 +8,7 @@ function encrypt(password, data) {
   return encrypted
 }
 
-function decrypt(password, data) {
+function decrypt (password, data) {
   const decipher = crypto.createDecipher('aes-256-cbc', password)
 
   var decrypted = decipher.update(data, 'hex', 'utf-8')
