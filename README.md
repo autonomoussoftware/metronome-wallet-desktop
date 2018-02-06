@@ -39,3 +39,11 @@ The files you need to copy are the following:
 electron-starter.js
 package.json
 ```
+
+## Development notes
+
+To remove the settings of the app and start again:
+
+```
+$ rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
+```
