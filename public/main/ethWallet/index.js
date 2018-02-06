@@ -26,7 +26,7 @@ function sendTransaction ({ password, from, to, value }) {
   const wallets = settings.get('user.wallets')
 
   const wallet = Object.keys(wallets)
-    .find(walletId => Object.keys[wallet[walletId].addresses].contains(from))
+    .find(walletId => Object.keys(wallets[walletId].addresses).includes(from))
 
   if (!wallet) {
     // TODO error
@@ -122,7 +122,7 @@ function broadcastWalletInfo (webContents, walletId) {
   Object.keys(addresses).forEach(function (address) {
     getAddressBalance(address)
       .then(function (balance) {
-        settings.set(`user.wallets.${walletId}.addresses.${address}`, { balance })
+        settings.set(`user.wallets.${walletId}.addresses.${address}.balance`, balance)
         webContents.send('wallet-state-changed', {
           [walletId]: {
             addresses: {
