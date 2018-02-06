@@ -22,8 +22,7 @@ auction.getStatus = function () {
     nextAuction: auctions.nextAuction().call(),
     totalSupply: token.totalSupply().call()
   })
-    .then(
-    ({
+    .then(({
       currentAuction,
       currentPrice,
       genesisTime,
