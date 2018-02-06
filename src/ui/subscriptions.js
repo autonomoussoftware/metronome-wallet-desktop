@@ -5,12 +5,7 @@ export const subscribeToMainProcessMessages = store => {
    * Subscribe to an array of ipc channels (messages) and dispatch
    * an action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
-  subscribeTo([
-    'new-auction-status',
-    'new-transaction',
-    'balance-update',
-    'receipt'
-  ])
+  subscribeTo(['open-wallets', 'wallet-state-changed'])
 
   /**
    * For more complex subscriptions you can do the following

@@ -60,6 +60,7 @@ export default class TextInput extends React.Component {
     ]),
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
+    type: PropTypes.string,
     id: PropTypes.string.isRequired
   }
 
@@ -72,7 +73,7 @@ export default class TextInput extends React.Component {
   }
 
   render() {
-    const { placeholder, onChange, error, label, value, id } = this.props
+    const { placeholder, onChange, error, label, value, type, id } = this.props
     const { isPristine } = this.state
 
     const hasErrors = error && error.length > 0
@@ -88,7 +89,7 @@ export default class TextInput extends React.Component {
           onChange={onChange}
           hasErrors={hasErrors}
           value={value || ''}
-          type="text"
+          type={type || 'text'}
           id={id}
         />
         {hasErrors && (

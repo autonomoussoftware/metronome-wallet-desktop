@@ -1,31 +1,9 @@
-import { LoadingBar, TextInput, Flex, Btn, Sp } from '../common'
-import { connect } from 'react-redux'
+import { TextInput, Btn, Sp } from '../common'
+import AltLayout from './AltLayout'
 import PropTypes from 'prop-types'
-import actions from '../actions'
 import styled from 'styled-components'
-import Banner from './Banner'
 import React from 'react'
 import bip39 from 'bip39'
-
-const Container = styled(Flex.Column)`
-  min-height: 100vh;
-  padding: 3.2rem;
-  background: ${p => p.theme.colors.bg.dark} url('./images/pattern.png')
-    repeat-x top center;
-`
-
-const Body = styled.div`
-  max-width: 30rem;
-  width: 100%;
-`
-
-const Title = styled.div`
-  line-height: 3rem;
-  font-size: 2.4rem;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`
 
 const Message = styled.div`
   font-size: 1.6rem;
@@ -47,13 +25,12 @@ const Mnemonic = styled.div`
   word-spacing: 1.6rem;
 `
 
-class Onboarding extends React.Component {
+export default class Onboarding extends React.Component {
   static propTypes = {
-    onboardingCompleted: PropTypes.func.isRequired
+    onOnboardingCompleted: PropTypes.func.isRequired
   }
 
   state = {
-    mnemonicWasAccepted: false,
     passwordWasDefined: false,
     termsWereAccepted: false,
     passwordAgain: null,
@@ -94,15 +71,14 @@ class Onboarding extends React.Component {
   }
 
   onMnemonicAccepted = () => {
-    const { password, mnemonic } = this.state
-    this.setState({ mnemonicWasAccepted: true }, () =>
-      this.props.onboardingCompleted({ password, mnemonic })
-    )
+    this.props.onOnboardingCompleted({
+      password: this.state.password,
+      mnemonic: this.state.mnemonic
+    })
   }
 
   render() {
     const {
-      mnemonicWasAccepted,
       passwordWasDefined,
       termsWereAccepted,
       passwordAgain,
@@ -111,74 +87,68 @@ class Onboarding extends React.Component {
       errors
     } = this.state
 
+    const title = !termsWereAccepted
+      ? 'Accept to Continue'
+      : !passwordWasDefined ? 'Define a Password' : 'Recovery Passphrase'
+
     return (
-      <Container align="center">
-        <Sp mb={10}>
-          <Banner />
-        </Sp>
+      <AltLayout title={title}>
         {!termsWereAccepted && (
-          <Body>
-            <Title>Accept to Continue</Title>
-            <Sp mt={2}>
-              <Message>
-                By clicking “Accept”, you confirm you have read and agreed to
-                our{' '}
-                <a href="#" target="_blank">
-                  software license
-                </a>.
-              </Message>
-            </Sp>
+          <React.Fragment>
+            <Message>
+              By clicking “Accept”, you confirm you have read and agreed to our{' '}
+              <a href="#" target="_blank">
+                software license
+              </a>.
+            </Message>
+
             <Sp mt={6}>
               <Btn block onClick={this.onTermsAccepted}>
                 Accept
               </Btn>
             </Sp>
-          </Body>
+          </React.Fragment>
         )}
         {termsWereAccepted &&
           !passwordWasDefined && (
-            <Body>
-              <form onSubmit={this.onPasswordSubmitted}>
-                <Title>Define a Password</Title>
-                <Sp my={2}>
-                  <Message>It must be at least 8 characters long.</Message>
-                </Sp>
+            <form onSubmit={this.onPasswordSubmitted}>
+              <Message>It must be at least 8 characters long.</Message>
+              <Sp mt={2}>
                 <TextInput
                   onChange={this.onInputChanged}
                   error={errors.password}
                   label="Password"
                   value={password}
+                  type="password"
                   id="password"
                 />
-                <Sp mt={3}>
-                  <TextInput
-                    onChange={this.onInputChanged}
-                    error={errors.passwordAgain}
-                    label="Repeat password"
-                    value={passwordAgain}
-                    id="passwordAgain"
-                  />
-                </Sp>
-                <Sp mt={6}>
-                  <Btn block submit>
-                    Save Password
-                  </Btn>
-                </Sp>
-              </form>
-            </Body>
+              </Sp>
+              <Sp mt={3}>
+                <TextInput
+                  onChange={this.onInputChanged}
+                  error={errors.passwordAgain}
+                  label="Repeat password"
+                  value={passwordAgain}
+                  type="password"
+                  id="passwordAgain"
+                />
+              </Sp>
+              <Sp mt={6}>
+                <Btn block submit>
+                  Continue
+                </Btn>
+              </Sp>
+            </form>
           )}
         {termsWereAccepted &&
-          passwordWasDefined &&
-          !mnemonicWasAccepted && (
-            <Body>
-              <Title>Recovery Passphrase</Title>
-              <Sp mt={2}>
-                <Message>
-                  Copy the following word list and keep it in a safe place. You
-                  will need these to recover your wallet in the future—don’t
-                  lose it.
-                </Message>
-              </Sp>
+          passwordWasDefined && (
+            <React.Fragment>
+              <Message>
+                Copy the following word list and keep it in a safe place. You
+                will need these to recover your wallet in the future—don’t lose
+                it.
+              </Message>
+
               <Sp mt={3} mx={-8}>
                 <Mnemonic>{mnemonic}</Mnemonic>
               </Sp>
@@ -187,21 +157,9 @@ class Onboarding extends React.Component {
                   Done
                 </Btn>
               </Sp>
-            </Body>
+            </React.Fragment>
           )}
-        {termsWereAccepted &&
-          passwordWasDefined &&
-          mnemonicWasAccepted && (
-            <Body>
-              <Title>Contacting Network...</Title>
-              <Sp mt={9}>
-                <LoadingBar />
-              </Sp>
-            </Body>
-          )}
-      </Container>
+      </AltLayout>
     )
   }
 }
-
-export default connect(null, actions)(Onboarding)

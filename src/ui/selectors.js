@@ -9,12 +9,8 @@ export const getActiveWallet = createSelector(
   (active, wallets) => wallets[active]
 )
 
-// Returns true if Main Process has sent the wallet status on bootstrap
-export const isReady = createSelector(getWallets, wallets => wallets !== null)
-
-// Returns true if the wallet has at least one address
-export const isInitialized = createSelector(
+// Returns true if Main Process has sent enough data to render dashboard
+export const hasEnoughData = createSelector(
   getWallets,
-  isReady,
-  (wallets, isReady) => isReady && Object.keys(wallets).length > 0
+  wallets => wallets !== null
 )

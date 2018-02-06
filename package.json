@@ -6,6 +6,7 @@
     "axios": "^0.17.1",
     "bignumber.js": "^6.0.0",
     "bip39": "^2.5.0",
+    "cuid": "^2.0.2",
     "electron-debug": "^1.5.0",
     "electron-settings": "^3.1.4",
     "ethereumjs-tx": "^1.3.3",
@@ -41,6 +42,7 @@
     "electron": "ELECTRON_START_URL=http://localhost:3000 electron ."
   },
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "^1.7.11",
     "electron-devtools-installer": "^2.2.3",
     "electron-rebuild": "^1.7.3",

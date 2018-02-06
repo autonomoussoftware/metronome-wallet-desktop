@@ -33,8 +33,5 @@ export default function(initialState) {
   // Initialize all the Main Process subscriptions
   subscribeToMainProcessMessages(store)
 
-  // Notify the Main Process that we are ready to receive messages now
-  ipcRenderer.send('ui-start')
-
   return store
 }

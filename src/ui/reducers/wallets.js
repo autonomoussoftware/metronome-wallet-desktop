@@ -9,22 +9,28 @@ const initialState = {
 
 const reducer = handleActions(
   {
-    'wallets-retrieved': (state, action) => ({
+    'open-wallets': (state, action) => ({
       ...state,
-      // must return a dictionary of type { [address]: Wallet }
+      // must return a dictionary of type { [id]: Wallet }
       all: action.payload
-        ? action.payload.reduce((all, wallet) => {
-            if (wallet.address) {
-              all[wallet.address] = wallet
-            }
+        ? action.payload.data.walletIds.reduce((all, walletId) => {
+            all[walletId] = {}
             return all
           }, {})
         : {},
-      // must return the first available address or null if no addresses
-      active:
-        action.payload && action.payload.length > 0
-          ? action.payload[0].address
-          : null
+      // must return the first available id or null if no addresses
+      active: action.payload.data.walletIds[0] || null
+    }),
+
+    'wallet-state-changed': (state, action) => ({
+      ...state,
+      all: {
+        ...state.all,
+        [action.payload.walletId]: {
+          ...state.all[action.payload.walletId],
+          MTNbalance: action.payload.balance
+        }
+      }
     }),
 
     [actions.activeWalletChanged]: (state, action) => ({
