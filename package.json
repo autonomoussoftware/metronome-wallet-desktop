@@ -2,6 +2,7 @@
   "name": "metronome-desktop-wallet",
   "version": "0.1.0",
   "private": true,
+  "description": "Metronome Wallet for desktop",
   "repository": {
     "type": "git",
     "url": "git@github.com:MetronomeToken/metronome-desktop-wallet.git"
@@ -46,11 +47,11 @@
   },
   "homepage": "./",
   "main": "public/electron.js",
-  "productName": "Metronome Wallet",
   "copyright": "Copyright © 2018 ${author}",
   "author": "Bloq Labs",
   "build": {
     "appId": "com.bloqlabs.metronome",
+    "productName": "Metronome Wallet",
     "files": [
       "build/**/*",
       "node_modules/**/*"
