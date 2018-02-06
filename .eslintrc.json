@@ -1,3 +1,11 @@
 {
-  "extends": ["react-app", "plugin:react/recommended", "standard", "prettier"]
+  "extends": [
+    "plugin:react/recommended",
+    "prettier",
+    "react-app",
+    "standard"
+  ],
+  "rules": {
+    "no-unused-vars": ["error", { "vars": "all", "args": "after-used" }]
+  }
 }
