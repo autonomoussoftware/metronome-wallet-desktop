@@ -125,9 +125,10 @@ function broadcastWalletInfo (webContents, walletId) {
         settings.set(`user.wallets.${walletId}.addresses.${address}`, { balance })
         webContents.send('wallet-state-changed', {
           [walletId]: {
-            address: {
-              balance
-              // transactions
+            addresses: {
+              [address]: {
+                balance
+              }
             }
           }
         })
