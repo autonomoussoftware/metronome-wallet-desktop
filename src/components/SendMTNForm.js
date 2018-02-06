@@ -1,6 +1,10 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
+import { sendToMainProcess } from '../utils'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
 import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
+import settings from '../config/settings'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
@@ -27,10 +31,12 @@ const Footer = styled.div`
   height: 100%;
 `
 
-export default class SendMTNForm extends React.Component {
+class SendMTNForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
-    MTNprice: PropTypes.string.isRequired
+    MTNprice: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    from: PropTypes.string.isRequired
   }
 
   static defaultProps = {
@@ -105,7 +111,24 @@ export default class SendMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    // TODO: send transaction
+    const { toAddress, ethAmount } = this.state
+
+    this.setState({ status: 'pending', error: null }, () =>
+      sendToMainProcess('send-token', {
+        password: this.props.password,
+        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+        token: settings.MTN_TOKEN_ADDR,
+        from: this.props.from,
+        to: toAddress
+      })
+        .then(console.log)
+        .catch(e =>
+          this.setState({
+            status: 'failure',
+            error: e.message || 'Unknown error'
+          })
+        )
+    )
   }
 
   // Perform validations and return an object of type { fieldId: [String] }
@@ -130,8 +153,8 @@ export default class SendMTNForm extends React.Component {
 
     return (
       <Flex.Column grow="1">
-        <form onSubmit={this.onSubmit}>
-          <Sp pt={4} pb={3} px={3}>
+        <Sp pt={4} pb={3} px={3}>
+          <form onSubmit={this.onSubmit} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               onChange={this.onInputchange}
@@ -168,14 +191,21 @@ export default class SendMTNForm extends React.Component {
                 </Flex.Item>
               </Flex.Row>
             </Sp>
-          </Sp>
-          <Footer>
-            <Btn block submit>
-              Review Send
-            </Btn>
-          </Footer>
-        </form>
+          </form>
+        </Sp>
+        <Footer>
+          <Btn block submit form="sendForm">
+            Review Send
+          </Btn>
+        </Footer>
       </Flex.Column>
     )
   }
 }
+
+const mapStateToProps = state => ({
+  password: selectors.getPassword(state),
+  from: selectors.getActiveWalletAddresses(state)[0]
+})
+
+export default connect(mapStateToProps)(SendMTNForm)
