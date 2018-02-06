@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 
 function encrypt (password, data) {
-  const cipher = crypto.createCipheriv('aes-256-cbc', password)
+  const cipher = crypto.createCipher('aes-256-cbc', password)
 
   let encrypted = cipher.update(data, 'utf-8', 'hex')
   encrypted += cipher.final('hex')
@@ -9,7 +9,7 @@ function encrypt (password, data) {
 }
 
 function decrypt (password, data) {
-  const decipher = crypto.createDecipheriv('aes-256-cbc', password)
+  const decipher = crypto.createDecipher('aes-256-cbc', password)
 
   var decrypted = decipher.update(data, 'hex', 'utf-8')
   decrypted += decipher.final('utf-8')
