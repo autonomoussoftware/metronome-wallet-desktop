@@ -11,7 +11,12 @@ export function sendToMainProcess(event, data, timeout = 10000) {
   function listener(event, { id: _id, data: _data }) {
     if (_id !== id) return
 
-    deferred.resolve(_data)
+    if (_data.error) {
+      deferred.reject(_data.error)
+    } else {
+      deferred.resolve(_data)
+    }
+
     ipcRenderer.removeListener(event, listener)
   }
 

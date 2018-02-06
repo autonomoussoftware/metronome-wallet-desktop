@@ -34,7 +34,12 @@ export default class PasswordRequest extends React.Component {
     this.setState({ status: 'pending', error: null }, () =>
       sendToMainProcess('open-wallets', { password: this.state.password })
         .then(this.props.onPasswordAccepted)
-        .catch(e => this.setState({ status: 'failure', error: e.message }))
+        .catch(e =>
+          this.setState({
+            status: 'failure',
+            error: e.message || 'Unknown error'
+          })
+        )
     )
   }
 

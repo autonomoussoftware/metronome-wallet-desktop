@@ -5,7 +5,7 @@ export const subscribeToMainProcessMessages = store => {
    * Subscribe to an array of ipc channels (messages) and dispatch
    * an action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
-  subscribeTo(['open-wallets', 'wallet-state-changed'])
+  subscribeTo(['open-wallets', 'wallet-state-changed', 'error'])
 
   /**
    * For more complex subscriptions you can do the following
@@ -17,9 +17,9 @@ export const subscribeToMainProcessMessages = store => {
 
   function subscribeTo(types) {
     return types.forEach(type =>
-      ipcRenderer.on(type, (event, payload) =>
-        store.dispatch({ type, payload })
-      )
+      ipcRenderer.on(type, (event, { data }) => {
+        if (data && !data.error) store.dispatch({ type, payload: data })
+      })
     )
   }
 }
