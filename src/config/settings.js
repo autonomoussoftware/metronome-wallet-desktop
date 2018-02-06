@@ -5,6 +5,6 @@ const config = {
   MTN_TOKEN_ADDR: '0x2d9a998fa591ef40563dc56bac835d03680f8d23',
   WS_AUCTION_STATUS_TOPIC: 'AUCTION_STATUS_TASK',
   SECURE_STORAGE_KEY: 'seed'
-};
+}
 
-export default config;
+export default config
