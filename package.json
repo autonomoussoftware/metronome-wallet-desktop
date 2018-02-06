@@ -80,7 +80,7 @@
       ]
     },
     "win": {
-      "target": "nsis",
+      "target": "NSIS",
       "icon": "dist-assets/icon.ico",
       "legalTrademarks": ""
     }
