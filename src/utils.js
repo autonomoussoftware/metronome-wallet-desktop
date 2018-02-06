@@ -1,4 +1,4 @@
-import Deferred from '../lib/Deferred'
+import Deferred from './lib/Deferred'
 import cuid from 'cuid'
 
 const { ipcRenderer } = window.require('electron')

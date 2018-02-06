@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import mockTransactions from '../../services/tx-mock'
+import mockTransactions from '../services/tx-mock'
 
 const initialState = mockTransactions
 

@@ -1,10 +1,10 @@
 import { ThemeProvider } from 'styled-components'
 import { Provider } from 'react-redux'
-import createStore from './ui/createStore'
+import createStore from './createStore'
 import ReactDOM from 'react-dom'
-import theme from './ui/theme'
+import theme from './theme'
 import React from 'react'
-import App from './ui/App'
+import App from './App'
 
 // We could pass some initial state to createStore()
 const store = createStore()

@@ -1,7 +1,7 @@
 import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
 import { TransitionGroup } from 'react-transition-group'
 import ReceiveDrawer from './ReceiveDrawer'
-import transactions from '../../services/tx-mock'
+import transactions from '../services/tx-mock'
 import ReceiptModal from './ReceiptModal'
 import SendDrawer from './SendDrawer'
 import styled from 'styled-components'

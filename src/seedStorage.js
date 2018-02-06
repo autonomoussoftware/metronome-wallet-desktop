@@ -1,4 +1,4 @@
-import settings from '../config/settings'
+import settings from './config/settings'
 
 export function storeSeed(value) {
   return window.localStorage.setItem(settings.SECURE_STORAGE_KEY, value)

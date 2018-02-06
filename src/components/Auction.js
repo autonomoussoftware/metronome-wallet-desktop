@@ -1,7 +1,7 @@
 import { DarkLayout, Text, Btn, Sp } from '../common'
 import CountDownProvider from '../providers/CountDownProvider'
 import BuyMTNDrawer from './BuyMTNDrawer'
-import auction from '../../services/auction'
+import auction from '../services/auction'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'

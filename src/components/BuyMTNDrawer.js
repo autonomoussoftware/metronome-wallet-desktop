@@ -1,11 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-
 import PurchaseFormProvider from '../providers/PurchaseFormProvider'
-
 import { Drawer, Btn, Sp } from '../common'
-import auction from '../../services/auction'
+import PropTypes from 'prop-types'
+import auction from '../services/auction'
+import styled from 'styled-components'
+import React from 'react'
 
 const Label = styled.label`
   line-height: 1.6rem;
