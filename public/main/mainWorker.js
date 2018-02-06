@@ -2,6 +2,7 @@ const { ipcMain } = require('electron')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 const unhandled = require('electron-unhandled')
+const coincap = require('coincap-lib')
 
 const {
   createWallet,
@@ -63,7 +64,20 @@ function presetDefaultSettings () {
 function initMainWorker () {
   presetDefaultSettings()
 
-  onRendererEvent('ui-ready', function () {
+  onRendererEvent('ui-ready', function (data, webContents) {
+    coincap.open()
+    coincap.on('trades', function (trade) {
+      const { coin, market_id, msg: { short, price } } = trade
+
+      // eslint-disable-next-line camelcase
+      if (coin !== 'ETH' || market_id !== 'ETH_USD') {
+        return
+      }
+
+      logger.debug(`ETH price updated: ${price}`)
+      webContents.send('rates-updated', { coin, to: short, price })
+    })
+
     const onboardingComplete = !!settings.get('user.passwordHash')
     return { onboardingComplete }
   })
