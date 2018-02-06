@@ -1,22 +1,18 @@
-const unhandled = require('electron-unhandled');
-const logger = require('electron-log');
+const unhandled = require('electron-unhandled')
+const logger = require('electron-log')
 
-unhandled({ logger: logger.error });
+unhandled({ logger: logger.error })
 
 function initMainWorker () {
   const { ipcMain } = require('electron')
-  const bip39 = require('bip39')
   const settings = require('electron-settings')
-  // Only in the main process you can config the electron-log 
-  // https://www.npmjs.com/package/electron-log#transport
-  
 
   const { createWallet, broadcastWalletInfo } = require('./ethWallet')
   const { sha256 } = require('./cryptoUtils')
   const WalletError = require('./WalletError')
 
   if (!settings.get('app')) {
-    const defaultSettings = require('./default')
+    const defaultSettings = require('./defaultSettings')
     settings.set('app', defaultSettings.app)
   }
 
