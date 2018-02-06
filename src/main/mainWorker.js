@@ -47,13 +47,13 @@ function initMainWorker () {
 
     if (!password) {
       const error = new Error('Invalid password')
-      event.sender.send('create-wallet', { id, data: { error } })
+      event.sender.send('open-wallets', { id, data: { error } })
       return
     }
 
     if (sha256(password) !== settings.get('user.passwordHash')) {
       const error = new Error('Invalid password')
-      event.sender.send('create-wallet', { id, data: { error } })
+      event.sender.send('open-wallets', { id, data: { error } })
       return
     }
 
