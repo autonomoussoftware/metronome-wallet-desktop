@@ -20,7 +20,7 @@ export default class MTNWalletProvider extends React.Component {
     index: 0 // use first address by default
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.api = new Web3(new Web3.providers.WebsocketProvider(props.nodeUrl))
     this.state = {
@@ -30,7 +30,7 @@ export default class MTNWalletProvider extends React.Component {
     }
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const { getTransactions, getBalance } = this.props
     const { address } = this.state
 
@@ -51,7 +51,7 @@ export default class MTNWalletProvider extends React.Component {
       .catch(e => this.setState({ error: e.message }))
   }
 
-  getAddress(index) {
+  getAddress (index) {
     const wallet = hdkey
       .fromMasterSeed(ethutils.toBuffer(ethutils.addHexPrefix(this.props.seed)))
       .derivePath(`m/44'/60'/0'/0/${index}`)
@@ -93,7 +93,7 @@ export default class MTNWalletProvider extends React.Component {
     return this.sendTransaction({ value, to: this.props.auctionAddress })
   }
 
-  render() {
+  render () {
     const { lastTransactions, balance, address, privKey, pubKey } = this.state
 
     return this.props.children({

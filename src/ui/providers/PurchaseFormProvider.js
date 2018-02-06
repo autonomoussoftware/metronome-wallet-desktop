@@ -11,7 +11,7 @@ export default class PurchaseFormProvider extends React.Component {
     amount: PropTypes.string
   }
 
-  render() {
+  render () {
     const { disclaimerAccepted, currentPrice, amount } = this.props
 
     let isValidAmount

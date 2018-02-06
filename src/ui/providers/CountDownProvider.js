@@ -9,16 +9,16 @@ export default class CountDownProvider extends React.Component {
     children: PropTypes.func.isRequired
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = this.getCountdownValues(props.targetTimestamp)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.intervalId = window.setInterval(this.updateCountdown, 1000)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.intervalId) window.clearInterval(this.intervalId)
   }
 
@@ -30,7 +30,7 @@ export default class CountDownProvider extends React.Component {
     return moment.preciseDiff(moment.unix(targetTime), moment(), true)
   }
 
-  render() {
+  render () {
     return this.props.children(this.state)
   }
 }
