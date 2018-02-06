@@ -3,20 +3,28 @@ import { createSelector } from 'reselect'
 export const getWallets = state => state.wallets.all
 export const getActiveWalletId = state => state.wallets.active
 
-export const getActiveWallet = createSelector(
+export const getActiveWalletData = createSelector(
   getActiveWalletId,
   getWallets,
-  (activeId, wallets) => (activeId ? wallets[activeId] : null)
+  (activeId, wallets) => (activeId ? wallets[activeId] : {})
 )
 
-export const getActiveWalletBalances = createSelector(
-  getActiveWallet,
-  activeWallet => (activeWallet ? activeWallet.balance : null)
+export const getActiveWalletAddresses = createSelector(
+  getActiveWalletData,
+  activeWallet => Object.keys(activeWallet.addresses || {})
+)
+
+export const getBalance = createSelector(
+  getActiveWalletAddresses,
+  getActiveWalletData,
+  (addresses, activeWallet) =>
+    activeWallet && addresses.length > 0
+      ? activeWallet.addresses[addresses[0]].balance
+      : null
 )
 
 // Returns true if Main Process has sent enough data to render dashboard
 export const hasEnoughData = createSelector(
-  getActiveWalletBalances,
-  getWallets,
-  (balances, wallets) => wallets !== null && !!balances
+  getBalance,
+  balance => balance !== null
 )

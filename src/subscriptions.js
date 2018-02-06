@@ -17,8 +17,15 @@ export const subscribeToMainProcessMessages = store => {
 
   function subscribeTo(types) {
     return types.forEach(type =>
-      ipcRenderer.on(type, (event, { data }) => {
-        if (data && !data.error) store.dispatch({ type, payload: data })
+      ipcRenderer.on(type, (event, { id, data, ...other }) => {
+        // ignore messages returned as promises with errors
+        if (id && data && data.error) return
+
+        if (id && data && !data.error) {
+          store.dispatch({ type, payload: data })
+        } else {
+          store.dispatch({ type, payload: { ...other } })
+        }
       })
     )
   }

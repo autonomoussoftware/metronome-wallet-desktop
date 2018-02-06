@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
-import walletReducer from './wallet'
 import actions from '../actions'
+import _ from 'lodash'
 
 const initialState = {
   all: null,
@@ -11,14 +11,10 @@ const reducer = handleActions(
   {
     'open-wallets': (state, action) => ({
       ...state,
-      // must return a dictionary of type { [id]: Wallet }
-      all: action.payload
-        ? action.payload.walletIds.reduce((all, walletId) => {
-            all[walletId] = {}
-            return all
-          }, {})
-        : {},
-      // must return the first available id or null if no addresses
+      all: action.payload.walletIds.reduce((all, walletId) => {
+        all[walletId] = { addresses: {} }
+        return all
+      }, {}),
       active: action.payload.walletIds[0] || null
     }),
 
@@ -26,30 +22,37 @@ const reducer = handleActions(
       ...state,
       all: {
         ...state.all,
-        [action.payload.walletId]: {
-          ...state.all[action.payload.walletId],
-          MTNbalance: action.payload.balance
-        }
+        ..._.mapValues(action.payload, (updateWalletData, walletId) =>
+          reduceWallet(state.all[walletId], updateWalletData)
+        )
       }
     }),
 
     [actions.activeWalletChanged]: (state, action) => ({
       ...state,
       active: action.payload
-    }),
-
-    [actions.walletBalanceUpdated]: (state, action) => ({
-      ...state,
-      all: {
-        ...state.all,
-        [action.payload.address]: walletReducer(
-          state[action.payload.address],
-          action
-        )
-      }
     })
   },
   initialState
 )
+
+function reduceWallet(wallet = { addresses: {} }, payload) {
+  return {
+    ...wallet,
+    addresses: {
+      ...wallet.addresses,
+      ..._.mapValues(payload.addresses, (updateAddressData, address) =>
+        reduceAddress(wallet.addresses[address], updateAddressData)
+      )
+    }
+  }
+}
+
+function reduceAddress(addressData = {}, payload) {
+  return {
+    ...addressData,
+    ...payload
+  }
+}
 
 export default reducer
