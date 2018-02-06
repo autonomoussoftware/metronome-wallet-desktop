@@ -9,6 +9,7 @@
 
 # building
 /build
+/dist
 
 # testing
 /coverage

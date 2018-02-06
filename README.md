@@ -4,41 +4,45 @@
 
 In console:
 
-```
+```bash
 npm install
 ```
 
 ## Run in development mode
 
-In console, start the React app:
+Run in console:
 
-```
-npm start
-```
-
-Wait for the development server to startup and then run:
-
-```
-npm run electron
+```bash
+npm run electron-dev
 ```
 
 ## Create distribution bundle
 
-In console, build the React app:
-
-```
-npm run build
+```bash
+npm run electron-dist
 ```
 
-Then follow these instructions https://electronjs.org/docs/tutorial/application-distribution
-The files you need to copy are the following:
+## Create distribution bundle and publish it
 
+```bash
+npm run electron-release
 ```
-/build
-/node_modules
-electron-starter.js
-package.json
+
+## Create base pack bundle without target any OS
+
+```bash
+npm run electron-pack
 ```
+
+# Logs
+
+The log output is in the next directories:
+
+ * **on Linux:** `~/.config/<app name>/log.log`
+ * **on OS X:** `~/Library/Logs/<app name>/log.log`
+ * **on Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
+
+More info https://github.com/megahertz/electron-log
 
 ## Development notes
 
