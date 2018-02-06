@@ -4,6 +4,7 @@ function initMainWorker () {
 
   const { createWallet, broadcastWalletInfo } = require('./ethWallet')
   const { sha256 } = require('./cryptoUtils')
+  const WalletError = require('./WalletError')
 
   if (!settings.get('app')) {
     const defaultSettings = require('../config/default')
@@ -19,7 +20,7 @@ function initMainWorker () {
     const { mnemonic, password } = data
 
     if (!password) {
-      const error = new Error('Invalid password')
+      const error = new WalletError('Invalid password')
       event.sender.send('create-wallet', { id, data: { error } })
       return
     }
@@ -29,7 +30,7 @@ function initMainWorker () {
     }
 
     if (sha256(password) !== settings.get('user.passwordHash')) {
-      const error = new Error('Invalid password')
+      const error = new WalletError('Invalid password')
       event.sender.send('create-wallet', { id, data: { error } })
       return
     }
@@ -46,13 +47,13 @@ function initMainWorker () {
     const { password } = data
 
     if (!password) {
-      const error = new Error('Invalid password')
+      const error = new WalletError('Invalid password')
       event.sender.send('open-wallets', { id, data: { error } })
       return
     }
 
     if (sha256(password) !== settings.get('user.passwordHash')) {
-      const error = new Error('Invalid password')
+      const error = new WalletError('Invalid password')
       event.sender.send('open-wallets', { id, data: { error } })
       return
     }

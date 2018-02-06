@@ -3,6 +3,7 @@ const settings = require('electron-settings')
 const bip39 = require('bip39')
 
 const { encrypt, decrypt, sha256 } = require('../cryptoUtils')
+const WalletError = require('../WalletError')
 
 const getWeb3 = require('./web3')
 
@@ -70,7 +71,7 @@ function sendTransaction (password, from, to, value) {
 
 function createWallet (mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
-    const error = new Error('Invalid mnemonic')
+    const error = new WalletError('Invalid mnemonic')
     return { error }
   }
 
@@ -111,8 +112,7 @@ function broadcastWalletInfo (webContents, walletId) {
   const walletInfo = settings.get(`user.wallets.${walletId}`)
 
   if (!walletInfo) {
-    const error = new Error('No wallet data')
-    error.data = { walletId }
+    const error = new WalletError('No wallet data', { walletId })
     webContents.send('error', { error })
     return
   }
@@ -132,7 +132,8 @@ function broadcastWalletInfo (webContents, walletId) {
           }
         })
       })
-      .catch(function (error) {
+      .catch(function (err) {
+        const error = new WalletError('Could not get balance', err)
         webContents.send('error', { error })
       })
   })
