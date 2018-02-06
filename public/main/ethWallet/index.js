@@ -1,7 +1,8 @@
 // TODO hdkey uses deprecated coinstring and shall use bs58check
-const hdkey = require('ethereumjs-wallet/hdkey')
-const settings = require('electron-settings')
 const bip39 = require('bip39')
+const hdkey = require('ethereumjs-wallet/hdkey')
+const logger = require('electron-log')
+const settings = require('electron-settings')
 
 const { encrypt, decrypt, sha256 } = require('../cryptoUtils')
 const WalletError = require('../WalletError')
@@ -114,6 +115,7 @@ function broadcastWalletInfo (webContents, walletId) {
   if (!walletInfo) {
     const error = new WalletError('No wallet data', { walletId })
     webContents.send('error', { error })
+    logger.warn(`No wallet data - ${walletId}`)
     return
   }
 
@@ -132,10 +134,12 @@ function broadcastWalletInfo (webContents, walletId) {
             }
           }
         })
+        logger.debug(`Wallet balance updated - ${address} ${balance}`)
       })
       .catch(function (err) {
         const error = new WalletError('Could not get balance', err)
         webContents.send('error', { error })
+        logger.warn(`Could not get balance - ${address}`)
       })
   })
 }

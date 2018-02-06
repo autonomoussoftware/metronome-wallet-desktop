@@ -13,7 +13,7 @@ const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
-    logger.debug(`--> ${eventName}:${id}`)
+    logger.debug(`--> ${eventName}:${id} ${JSON.stringify(data)}`)
     const result = Promise.resolve(listener(data, event.sender))
 
     result
@@ -22,13 +22,15 @@ function onRendererEvent (eventName, listener) {
       })
       .then(function (res) {
         event.sender.send(eventName, { id, data: res })
+        return res
       })
       .catch(function (err) {
         const error = new WalletError(err.message)
         event.sender.send(eventName, { id, data: { error } })
+        return { error }
       })
-      .then(function () {
-        logger.debug(`<-- ${eventName}:${id}`)
+      .then(function (res) {
+        logger.debug(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
       })
   })
 }
@@ -75,8 +77,8 @@ function initMainWorker () {
         return
       }
 
-      logger.silly(`ETH price updated: ${price}`)
       webContents.send('rates-updated', { coin, to: short, price })
+      logger.silly(`ETH price updated: ${price}`)
     })
 
     const onboardingComplete = !!settings.get('user.passwordHash')
