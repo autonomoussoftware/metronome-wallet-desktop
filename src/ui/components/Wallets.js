@@ -4,7 +4,6 @@ import ReceiveDrawer from './ReceiveDrawer'
 import transactions from '../../services/tx-mock'
 import ReceiptModal from './ReceiptModal'
 import SendDrawer from './SendDrawer'
-import wallet from '../../services/wallet'
 import styled from 'styled-components'
 import TxRow from './TxRow'
 import React from 'react'
@@ -200,14 +199,8 @@ export default class Wallets extends React.Component {
   state = {
     activeModal: null,
     selectedTx: null,
-    address: wallet.getAddress(),
+    address: '',
     balance: null
-  }
-
-  componentDidMount() {
-    wallet.getBalance().then(balance => {
-      this.setState({ balance })
-    })
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })

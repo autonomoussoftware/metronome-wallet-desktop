@@ -13,13 +13,13 @@ const reducer = handleActions(
       ...state,
       // must return a dictionary of type { [id]: Wallet }
       all: action.payload
-        ? action.payload.data.walletIds.reduce((all, walletId) => {
+        ? action.payload.walletIds.reduce((all, walletId) => {
             all[walletId] = {}
             return all
           }, {})
         : {},
       // must return the first available id or null if no addresses
-      active: action.payload.data.walletIds[0] || null
+      active: action.payload.walletIds[0] || null
     }),
 
     'wallet-state-changed': (state, action) => ({
