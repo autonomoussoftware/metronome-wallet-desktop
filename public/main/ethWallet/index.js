@@ -1,3 +1,4 @@
+// TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
 const settings = require('electron-settings')
 const bip39 = require('bip39')
@@ -13,8 +14,7 @@ function getAddressBalance (address) {
   return web3.eth.getBalance(address)
 }
 
-// TODO
-function sendTransaction (password, from, to, value) {
+function sendTransaction ({ password, from, to, value }) {
   const promiseAllProps = require('promise-all-props')
 
   if (!password) {
@@ -140,4 +140,4 @@ function broadcastWalletInfo (webContents, walletId) {
   })
 }
 
-module.exports = { createWallet, broadcastWalletInfo }
+module.exports = { createWallet, broadcastWalletInfo, sendTransaction }

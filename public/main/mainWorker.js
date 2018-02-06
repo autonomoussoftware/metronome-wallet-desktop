@@ -1,75 +1,118 @@
-const unhandled = require('electron-unhandled')
+const { ipcMain } = require('electron')
 const logger = require('electron-log')
+const settings = require('electron-settings')
+const unhandled = require('electron-unhandled')
+
+const {
+  createWallet,
+  broadcastWalletInfo,
+  sendTransaction
+} = require('./ethWallet')
+const { sha256 } = require('./cryptoUtils')
+const WalletError = require('./WalletError')
 
 unhandled({ logger: logger.error })
 
-function initMainWorker () {
-  const { ipcMain } = require('electron')
-  const settings = require('electron-settings')
+function onRendererEvent (eventName, listener) {
+  ipcMain.on(eventName, function (event, { id, data }) {
+    logger.debug(`--> ${eventName}:${id}`)
+    const result = Promise.resolve(listener(data, event.sender))
 
-  const { createWallet, broadcastWalletInfo } = require('./ethWallet')
-  const { sha256 } = require('./cryptoUtils')
-  const WalletError = require('./WalletError')
+    result
+      .then(function (res) {
+        return res.error ? Promise.reject(res.error) : res
+      })
+      .then(function (res) {
+        event.sender.send(eventName, { id, data: res })
+      })
+      .catch(function (err) {
+        const error = new WalletError(err.message)
+        event.sender.send(eventName, { id, data: { error } })
+      })
+      .then(function () {
+        logger.debug(`<-- ${eventName}:${id}`)
+      })
+  })
+}
 
-  if (!settings.get('app')) {
-    const defaultSettings = require('./defaultSettings')
-    settings.set('app', defaultSettings.app)
+function validPassword (password, useAsDefault) {
+  const passwordHash = settings.get('user.passwordHash')
+
+  if (!passwordHash && useAsDefault) {
+    logger.verbose('No password set, using current as default')
+    settings.set('user.passwordHash', sha256(password))
+    return true
   }
 
-  ipcMain.on('ui-ready', function (event, { id }) {
+  logger.verbose('Checking supplied password')
+  return password && sha256(password) === passwordHash
+}
+
+function presetDefaultSettings () {
+  logger.verbose(`Settings file: ${settings.file()}`)
+
+  if (Object.keys(settings.getAll()).length) {
+    logger.verbose('Setting found')
+    return
+  }
+  logger.verbose('Setting defaults')
+  const defaultSettings = require('./defaultSettings')
+  settings.setAll(defaultSettings)
+}
+
+function initMainWorker () {
+  presetDefaultSettings()
+
+  onRendererEvent('ui-ready', function () {
     const onboardingComplete = !!settings.get('user.passwordHash')
-    event.sender.send('ui-ready', { id, data: { onboardingComplete } })
+    return { onboardingComplete }
   })
 
-  ipcMain.on('create-wallet', function (event, { id, data }) {
+  onRendererEvent('create-wallet', function (data, webContents) {
     const { mnemonic, password } = data
 
-    if (!password) {
+    if (!validPassword(password, true)) {
       const error = new WalletError('Invalid password')
-      event.sender.send('create-wallet', { id, data: { error } })
-      return
-    }
-
-    if (!settings.get('user.passwordHash')) {
-      settings.set('user.passwordHash', sha256(password))
-    }
-
-    if (sha256(password) !== settings.get('user.passwordHash')) {
-      const error = new WalletError('Invalid password')
-      event.sender.send('create-wallet', { id, data: { error } })
-      return
+      return { error }
     }
 
     const result = createWallet(mnemonic, password)
+
     if (!result.error) {
-      broadcastWalletInfo(event.sender, result.walletId)
+      broadcastWalletInfo(webContents, result.walletId)
     }
 
-    event.sender.send('create-wallet', { id, data: result })
+    return result
   })
 
-  ipcMain.on('open-wallets', function (event, { id, data }) {
+  onRendererEvent('open-wallets', function (data, webContents) {
     const { password } = data
 
-    if (!password) {
+    if (!validPassword(password)) {
       const error = new WalletError('Invalid password')
-      event.sender.send('open-wallets', { id, data: { error } })
-      return
-    }
-
-    if (sha256(password) !== settings.get('user.passwordHash')) {
-      const error = new WalletError('Invalid password')
-      event.sender.send('open-wallets', { id, data: { error } })
-      return
+      return { error }
     }
 
     const walletIds = Object.keys(settings.get('user.wallets'))
     walletIds.forEach(function (walletId) {
-      broadcastWalletInfo(event.sender, walletId)
+      broadcastWalletInfo(webContents, walletId)
     })
 
-    event.sender.send('open-wallets', { id, data: { walletIds } })
+    return { walletIds }
   })
+
+  onRendererEvent('send-eth', function (data) {
+    const { password } = data
+
+    if (!validPassword(password)) {
+      const error = new WalletError('Invalid password')
+      return { error }
+    }
+
+    return sendTransaction(data)
+  })
+
+  // TODO send-token
 }
 
 module.exports = { initMainWorker }

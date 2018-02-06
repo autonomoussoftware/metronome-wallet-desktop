@@ -1,3 +1,5 @@
+// TODO replace createCipher by createCipheriv
+
 const crypto = require('crypto')
 
 function encrypt (password, data) {
