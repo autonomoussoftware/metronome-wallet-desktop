@@ -10,12 +10,13 @@ import Router from './Router'
 
 class App extends Component {
   static propTypes = {
-    hasEnoughData: PropTypes.bool.isRequired
+    sessionIsActive: PropTypes.bool.isRequired,
+    hasEnoughData: PropTypes.bool.isRequired,
+    dispatch: PropTypes.func.isRequired
   }
 
   state = {
-    onboardingComplete: null,
-    sessionIsActive: false
+    onboardingComplete: null
   }
 
   componentDidMount() {
@@ -26,15 +27,17 @@ class App extends Component {
 
   onOnboardingCompleted = ({ password, mnemonic }) => {
     sendToMainProcess('create-wallet', { password, mnemonic }).then(() => {
-      this.setState({ onboardingComplete: true, sessionIsActive: true })
+      this.setState({ onboardingComplete: true })
+      this.props.dispatch({ type: 'session-started', payload: { password } })
     })
   }
 
-  onPasswordAccepted = () => this.setState({ sessionIsActive: true })
+  onPasswordAccepted = ({ password }) =>
+    this.props.dispatch({ type: 'session-started', payload: { password } })
 
   render() {
-    const { onboardingComplete, sessionIsActive } = this.state
-    const { hasEnoughData } = this.props
+    const { sessionIsActive, hasEnoughData } = this.props
+    const { onboardingComplete } = this.state
 
     if (onboardingComplete === null) return null
 
@@ -51,6 +54,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
+  sessionIsActive: selectors.sessionIsActive(state),
   hasEnoughData: selectors.hasEnoughData(state)
 })
 

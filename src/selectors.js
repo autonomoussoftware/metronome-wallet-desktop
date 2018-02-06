@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect'
 
+export const getPassword = state => state.session.password
+
+export const sessionIsActive = createSelector(getPassword, pass => !!pass)
+
 export const getWallets = state => state.wallets.all
 export const getActiveWalletId = state => state.wallets.active
 
