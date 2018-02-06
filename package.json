@@ -51,7 +51,7 @@
   "author": "Bloq Labs",
   "build": {
     "appId": "com.bloqlabs.metronome",
-    "productName": "Metronome Wallet",
+    "productName": "Metronome-Wallet",
     "files": [
       "build/**/*",
       "node_modules/**/*"
@@ -109,7 +109,6 @@
     "electron-builder": "^19.56.0",
     "electron-devtools-installer": "^2.2.3",
     "electron-is-dev": "^0.3.0",
-    "electron-rebuild": "^1.7.3",
     "eslint": "^4.17.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0-beta.0",

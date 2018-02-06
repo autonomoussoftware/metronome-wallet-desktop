@@ -12,8 +12,6 @@ const {
 const { sha256 } = require('./cryptoUtils')
 const WalletError = require('./WalletError')
 
-unhandled({ logger: logger.error })
-
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
     logger.debug(`--> ${eventName}:${id}`)
@@ -63,6 +61,10 @@ function presetDefaultSettings () {
 
 function initMainWorker () {
   presetDefaultSettings()
+  
+  ipcMain.on("log.error", function (event, args) {
+    logger.error(args)
+  })
 
   onRendererEvent('ui-ready', function (data, webContents) {
     coincap.open()

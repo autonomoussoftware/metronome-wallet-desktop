@@ -1,14 +1,8 @@
+const path = require('path')
+const logger = require('electron-log')
 const isDev = require('electron-is-dev');
 const autoUpdater = require('electron-updater').autoUpdater;
 const notifier = require('node-notifier');
-
-const logger = require('electron-log');
-
-const unhandled = require('electron-unhandled');
-
-unhandled({
-  logger: logger.error
-});
 
 let mainWindow
 
@@ -23,22 +17,33 @@ function loadWindow () {
 
   // TODO this should be comming from config
   mainWindow = new BrowserWindow({
+    show: false,
     width: 1140,
     height: 700
   })
 
-  // TODO shall remove dev server env variable for security
-  const startUrl = url.format({
-    pathname: path.join(__dirname, './build/index.html'),
-    protocol: 'file:',
-    slashes: true
-  })
+  const appUrl = isDev ? process.env.ELECTRON_START_URL : `file://${path.join(__dirname, '../index.html')}`
+  logger.info('loading url:', appUrl)
 
-  mainWindow.loadURL(isDev ? process.env.ELECTRON_START_URL : startUrl)
+  mainWindow.loadURL(appUrl)
+
   // WIP: autoupdate feature. Only last to have the artifact we want to use.
   // initAutoUpdate();
+
+  mainWindow.webContents.on('crashed', function (event, killed) {
+    logger.error(event, killed)
+  })
+
+  mainWindow.on('unresponsive', function () {
+    logger.error(event, killed)
+  })
+
   mainWindow.on('closed', function () {
     mainWindow = null
+  })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
   })
 }
 
