@@ -101,11 +101,7 @@ function createWallet (mnemonic, password) {
   // TODO get balance, update and broadcast
   // TODO get transactions, update and broadcast
 
-  return {
-    [walletId]: {
-      addresses
-    }
-  }
+  return { walletId }
 }
 
 // TODO updateWalletInfo, subscribeToWalletChanges
