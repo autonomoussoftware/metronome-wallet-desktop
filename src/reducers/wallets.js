@@ -9,6 +9,16 @@ const initialState = {
 
 const reducer = handleActions(
   {
+    'create-wallet': (state, action) => ({
+      ...state,
+      all: {
+        [action.payload.walletId]: {
+          addresses: {}
+        }
+      },
+      active: action.payload.walletId
+    }),
+
     'open-wallets': (state, action) => ({
       ...state,
       all: action.payload.walletIds.reduce((all, walletId) => {
