@@ -132,6 +132,9 @@ function broadcastWalletInfo (webContents, walletId) {
           }
         })
       })
+      .catch(function (error) {
+        webContents.send('error', { error })
+      })
   })
 }
 
