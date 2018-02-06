@@ -1,14 +1,14 @@
 const path = require('path')
 const { app } = require('electron')
-const isDev = require('electron-is-dev');
+const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const unhandled = require('electron-unhandled')
 
-logger.transports.file.appName = 'metronome-wallet';
+logger.transports.file.appName = 'metronome-wallet'
 
 if (isDev) {
-  logger.transports.console.level = "debug"
-  logger.transports.file.level = "debug"
+  logger.transports.console.level = 'debug'
+  logger.transports.file.level = 'debug'
 
   app.on('ready', function () {
     require('electron-debug')({ enabled: true })

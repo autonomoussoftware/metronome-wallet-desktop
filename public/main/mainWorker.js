@@ -1,7 +1,6 @@
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
 const settings = require('electron-settings')
-const unhandled = require('electron-unhandled')
 const coincap = require('coincap-lib')
 
 const {
@@ -61,8 +60,8 @@ function presetDefaultSettings () {
 
 function initMainWorker () {
   presetDefaultSettings()
-  
-  ipcMain.on("log.error", function (event, args) {
+
+  ipcMain.on('log.error', function (event, args) {
     logger.error(args)
   })
 
@@ -76,7 +75,7 @@ function initMainWorker () {
         return
       }
 
-      logger.debug(`ETH price updated: ${price}`)
+      logger.silly(`ETH price updated: ${price}`)
       webContents.send('rates-updated', { coin, to: short, price })
     })
 
