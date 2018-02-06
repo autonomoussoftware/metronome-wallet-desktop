@@ -2,6 +2,10 @@
   "name": "metronome-desktop-wallet",
   "version": "0.1.0",
   "private": true,
+  "repository": { 
+    "type": "git", 
+    "url" : "git@github.com:MetronomeToken/metronome-desktop-wallet.git"
+  },
   "dependencies": {
     "axios": "^0.17.1",
     "bignumber.js": "^6.0.0",
