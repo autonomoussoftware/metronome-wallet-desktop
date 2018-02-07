@@ -6,6 +6,7 @@
     "standard"
   ],
   "rules": {
+    "no-shadow": ["error", { "builtinGlobals": true }],
     "no-unused-vars": ["error", { "vars": "all", "args": "after-used" }]
   }
 }
