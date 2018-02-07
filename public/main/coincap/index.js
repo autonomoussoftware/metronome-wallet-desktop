@@ -4,7 +4,7 @@ const throttle = require('lodash/throttle')
 const logger = require('electron-log')
 
 function init (data, webContents) {
-  const ethPriceEmitRateMs = settings.get('app.ethPriceEmitRate') * 1000
+  const ethPriceEmitRateMs = settings.get('coincap.ethPriceEmitRate') * 1000
 
   const emitEthPrice = throttle(function (price) {
     const priceData = { token: 'ETH', currency: 'USD', price }
