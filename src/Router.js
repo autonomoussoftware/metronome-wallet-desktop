@@ -16,6 +16,7 @@ const Container = styled.div`
 
 const Main = styled.div`
   flex-grow: 1;
+  overflow-x: hidden;
   overflow-y: auto;
 `
 
