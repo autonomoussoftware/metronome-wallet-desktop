@@ -1,7 +1,6 @@
 import { DarkLayout, Text, Btn, Sp } from '../common'
 import CountDownProvider from '../providers/CountDownProvider'
 import BuyMTNDrawer from './BuyMTNDrawer'
-import auction from '../services/auction'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
@@ -51,11 +50,6 @@ export default class Auction extends React.Component {
   state = {
     activeModal: null,
     status: null
-  }
-
-  componentDidMount() {
-    // TODO: Retrive status after a new block is mined
-    auction.getStatus().then(status => this.setState({ status }))
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })

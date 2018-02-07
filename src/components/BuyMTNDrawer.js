@@ -1,7 +1,6 @@
 import PurchaseFormProvider from '../providers/PurchaseFormProvider'
 import { Drawer, Btn, Sp } from '../common'
 import PropTypes from 'prop-types'
-import auction from '../services/auction'
 import styled from 'styled-components'
 import React from 'react'
 
@@ -70,10 +69,10 @@ export default class BuyMTNDrawer extends React.Component {
 
     this.setState({ status: 'pending' })
 
-    auction
-      .buy(this.state.input)
-      .then(receipt => this.setState({ status: 'success', receipt }))
-      .catch(e => this.setState({ status: 'failure', error: e.message }))
+    // auction
+    //   .buy(this.state.input)
+    //   .then(receipt => this.setState({ status: 'success', receipt }))
+    //   .catch(e => this.setState({ status: 'failure', error: e.message }))
   }
 
   render() {

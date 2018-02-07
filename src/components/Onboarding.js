@@ -5,13 +5,17 @@ import styled from 'styled-components'
 import React from 'react'
 import bip39 from 'bip39'
 
+const { shell } = window.require('electron')
+
 const Message = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
   line-height: 1.5;
   text-align: center;
 
-  & a {
+  & span {
+    text-decoration: underline;
+    cursor: pointer;
     color: ${p => p.theme.colors.success};
   }
 `
@@ -97,9 +101,9 @@ export default class Onboarding extends React.Component {
           <React.Fragment>
             <Message>
               By clicking “Accept”, you confirm you have read and agreed to our{' '}
-              <a href="#" target="_blank">
+              <span onClick={() => shell.openExternal('http://metronome.io')}>
                 software license
-              </a>.
+              </span>.
             </Message>
 
             <Sp mt={6}>
