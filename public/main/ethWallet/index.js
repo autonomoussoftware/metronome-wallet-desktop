@@ -15,7 +15,7 @@ function getAddressBalance (address) {
   return web3.eth.getBalance(address)
 }
 
-function sendTransaction ({ password, from, to, value }) {
+function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
   const promiseAllProps = require('promise-all-props')
 
   if (!password) {
@@ -47,7 +47,7 @@ function sendTransaction ({ password, from, to, value }) {
   const web3 = getWeb3()
   return promiseAllProps({
     chainId: web3.eth.net.getId(),
-    gas: web3.eth.estimateGas({ to, value }),
+    gas: gas || web3.eth.estimateGas({ to, value }),
     gasPrice: web3.eth.getGasPrice(),
     nonce: web3.eth.getTransactionCount(from)
   }).then(function ({ chainId, gas, gasPrice, nonce }) {
@@ -60,13 +60,24 @@ function sendTransaction ({ password, from, to, value }) {
       to,
       value: web3.utils.toHex(value),
       gasPrice: web3.utils.toHex(gasPrice),
-      gas
+      gas,
+      data
     }
     const tx = new EthereumTx(txParams)
     tx.sign(privateKey)
     const serializedTx = tx.serialize()
 
+    logger.debug('Sending signed Ethereum tx')
     return web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
+      .once('transactionHash', function (hash) {
+        logger.debug('Transactin send', hash)
+      })
+      .once('receipt', function (receipt) {
+        logger.debug('Transaction recepit received', receipt)
+      })
+      .on('error', function (error) {
+        logger.debug('Transaction send error', error.message)
+      })
   })
 }
 
@@ -174,10 +185,8 @@ function getHooks () {
   }, {
     eventName: 'send-eth',
     auth: true,
-    handler: function (data) {
-      return sendTransaction(data)
-    }
+    handler: sendSignedTransaction
   }]
 }
 
-module.exports = { getHooks }
+module.exports = { getHooks, getWeb3, sendSignedTransaction }

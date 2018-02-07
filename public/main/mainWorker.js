@@ -83,6 +83,7 @@ function initMainWorker () {
     .use(require('./onboarding'))
     .use(require('./coincap'))
     .use(require('./ethWallet'))
+    .use(require('./tokens'))
     // metronome -- buy, change
     // erc20 -- send token
     .attach()

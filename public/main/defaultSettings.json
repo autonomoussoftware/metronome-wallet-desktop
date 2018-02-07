@@ -7,5 +7,10 @@
   },
   "coincap": {
     "ethPriceEmitRate": 5
+  },
+  "tokens": {
+    "0xb407296cb664cc9eae4f18037932154a4a5bf696": {
+      "symbol": "MTN"
+    }
   }
 }
