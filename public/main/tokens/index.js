@@ -2,7 +2,38 @@ const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-const { getWeb3, sendSignedTransaction } = require('../ethWallet')
+const { getWeb3, sendSignedTransaction, getEvents } = require('../ethWallet')
+
+const ethEvents = getEvents()
+
+ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+  const contractAddresses = Object.keys(settings.get('tokens'))
+
+  const web3 = getWeb3()
+  const contracts = contractAddresses.map(address => new web3.eth.Contract(abi, address))
+
+  addresses.forEach(function (address) {
+    contracts.forEach(function (contract) {
+      contract.methods.balanceOf(address).call()
+        .then(function (balance) {
+          webContents.send('wallet-state-changed', {
+            [walletId]: {
+              addresses: {
+                [address]: {
+                  token: {
+                    [contract.address]: {
+                      balance
+                    }
+                  }
+                }
+              }
+            }
+          })
+          logger.debug(`Address MTN balance updated - ${address} ${balance}`)
+        })
+    })
+  })
+})
 
 function sendToken ({ password, token: address, from, to, value }) {
   const symbol = settings.get(`tokens.${address}.symbol`)
