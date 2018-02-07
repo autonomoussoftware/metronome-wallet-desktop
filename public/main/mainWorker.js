@@ -1,7 +1,9 @@
 const { ipcMain } = require('electron')
-const logger = require('electron-log')
-const settings = require('electron-settings')
 const coincap = require('coincap-lib')
+const logger = require('electron-log')
+const merge = require('lodash/merge')
+const settings = require('electron-settings')
+const throttle = require('lodash/throttle')
 
 const {
   createWallet,
@@ -51,13 +53,9 @@ function validPassword (password, useAsDefault) {
 function presetDefaultSettings () {
   logger.verbose(`Settings file: ${settings.file()}`)
 
-  if (Object.keys(settings.getAll()).length) {
-    logger.verbose('Setting found')
-    return
-  }
-  logger.verbose('Setting defaults')
+  const currentSettings = settings.getAll()
   const defaultSettings = require('./defaultSettings')
-  settings.setAll(defaultSettings)
+  settings.setAll(merge(defaultSettings, currentSettings))
 }
 
 function initMainWorker () {
@@ -68,17 +66,21 @@ function initMainWorker () {
   })
 
   onRendererEvent('ui-ready', function (data, webContents) {
+    const emitEthPrice = throttle(function (price) {
+      webContents.send('eth-price-updated', { token: 'ETH', currency: 'USD', price })
+      logger.debug(`ETH price updated: ${price}`)
+    }, settings.get('app.ethPriceEmitRate') * 1000)
+
     coincap.open()
     coincap.on('trades', function (trade) {
-      const { coin, market_id, msg: { short, price } } = trade
+      const { coin, market_id, msg: { price } } = trade
 
       // eslint-disable-next-line camelcase
       if (coin !== 'ETH' || market_id !== 'ETH_USD') {
         return
       }
 
-      webContents.send('rates-updated', { coin, to: short, price })
-      logger.silly(`ETH price updated: ${price}`)
+      emitEthPrice(price)
     })
 
     const onboardingComplete = !!settings.get('user.passwordHash')
