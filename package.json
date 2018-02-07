@@ -65,7 +65,7 @@
       "buildResources": "assets"
     },
     "mac": {
-      "category": "com.bloqlabs.metronome.category.type"
+      "category": "com.bloqlabs.metronome.category.finance"
     },
     "dmg": {
       "contents": [
@@ -93,17 +93,22 @@
       "legalTrademarks": ""
     }
   },
+  "config": {
+    "cra_dev_serv": "http://localhost:3000"
+  },
   "scripts": {
     "start": "react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "prepare": "patch-package",
-    "electron-pack": "react-scripts build && electron-builder --dir",
-    "electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && ELECTRON_START_URL=http://localhost:3000 electron .\"",
-    "electron-debug": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && ELECTRON_START_URL=http://localhost:3000 electron . --inspect\"",
-    "electron-dist": "react-scripts build && build --em.main=build/electron.js",
-    "electron-release": "react-scripts build && build --em.main=build/electron.js --publish=always",
-    "electron-postinstall": "electron-builder install-app-deps"
+    "pack": "react-scripts build && builder --dir",
+    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dist": "react-scripts build && build --em.main=build/electron.js",
+    "release": "react-scripts build && build --em.main=build/electron.js --publish=always",
+    "release:win": "react-scripts build && build --em.main=build/electron.js --publish=always --win",
+    "release:linux": "react-scripts build && build --em.main=build/electron.js --publish=always --linux",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

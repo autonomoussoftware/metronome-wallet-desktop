@@ -16,25 +16,25 @@ npm install
 Run in console:
 
 ```bash
-npm run electron-dev
+npm run dev
 ```
 
 ## Create distribution bundle
 
 ```bash
-npm run electron-dist
+npm run dist
 ```
 
 ## Create distribution bundle and publish it
 
 ```bash
-npm run electron-release
+npm run release
 ```
 
 ## Create base pack bundle without target any OS
 
 ```bash
-npm run electron-pack
+npm run pack
 ```
 
 # Logs

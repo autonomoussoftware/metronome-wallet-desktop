@@ -41,9 +41,9 @@ script:
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
         electronuserland/builder:wine \
-        /bin/bash -c "npm --link-duplicates --pure-lockfile && npm run electron-release --linux --win"
+        /bin/bash -c "npm run release -- --linux --win"
     else
-      npm run electron-release
+      npm run release
     fi
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
