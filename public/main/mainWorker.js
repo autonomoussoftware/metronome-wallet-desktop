@@ -66,17 +66,18 @@ function initMainWorker () {
   })
 
   onRendererEvent('ui-ready', function (data, webContents) {
+    const ethPriceEmitRateMs = settings.get('app.ethPriceEmitRate') * 1000
     const emitEthPrice = throttle(function (price) {
-      webContents.send('eth-price-updated', { token: 'ETH', currency: 'USD', price })
+      const priceData = { token: 'ETH', currency: 'USD', price }
+      webContents.send('eth-price-updated', priceData)
       logger.debug(`ETH price updated: ${price}`)
-    }, settings.get('app.ethPriceEmitRate') * 1000)
+    }, ethPriceEmitRateMs, { leading: true, trailing: false })
 
     coincap.open()
     coincap.on('trades', function (trade) {
-      const { coin, market_id, msg: { price } } = trade
+      const { coin, market_id: marketId, msg: { price } } = trade
 
-      // eslint-disable-next-line camelcase
-      if (coin !== 'ETH' || market_id !== 'ETH_USD') {
+      if (coin !== 'ETH' || marketId !== 'ETH_USD') {
         return
       }
 
