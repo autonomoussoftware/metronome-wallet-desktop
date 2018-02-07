@@ -47,10 +47,10 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
   const web3 = getWeb3()
   return promiseAllProps({
     chainId: web3.eth.net.getId(),
-    gas: gas || web3.eth.estimateGas({ to, value }),
+    estimatedGas: gas || web3.eth.estimateGas({ to, value }),
     gasPrice: web3.eth.getGasPrice(),
     nonce: web3.eth.getTransactionCount(from)
-  }).then(function ({ chainId, gas, gasPrice, nonce }) {
+  }).then(function ({ chainId, estimatedGas, gasPrice, nonce }) {
     const EthereumTx = require('ethereumjs-tx')
 
     const txParams = {
@@ -60,7 +60,7 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
       to,
       value: web3.utils.toHex(value),
       gasPrice: web3.utils.toHex(gasPrice),
-      gas,
+      gas: estimatedGas,
       data
     }
     const tx = new EthereumTx(txParams)
