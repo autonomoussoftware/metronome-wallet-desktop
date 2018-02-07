@@ -3,11 +3,14 @@ const bip39 = require('bip39')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
 const settings = require('electron-settings')
+const EventEmitter = require('events')
 
 const { encrypt, decrypt, sha256 } = require('../cryptoUtils')
 const WalletError = require('../WalletError')
 
 const getWeb3 = require('./web3')
+
+const emitter = new EventEmitter()
 
 function getAddressBalance (address) {
   const web3 = getWeb3()
@@ -145,7 +148,7 @@ function broadcastWalletInfo (webContents, walletId) {
             }
           }
         })
-        logger.debug(`Wallet balance updated - ${address} ${balance}`)
+        logger.debug(`Address ETH balance updated - ${address} ${balance}`)
       })
       .catch(function (err) {
         const error = new WalletError('Could not get balance', err)
@@ -153,6 +156,8 @@ function broadcastWalletInfo (webContents, walletId) {
         logger.warn(`Could not get balance - ${address}`)
       })
   })
+
+  emitter.emit('wallet-opened', { walletId, addresses: Object.keys(addresses), webContents })
 }
 
 function getHooks () {
@@ -189,4 +194,8 @@ function getHooks () {
   }]
 }
 
-module.exports = { getHooks, getWeb3, sendSignedTransaction }
+function getEvents () {
+  return emitter
+}
+
+module.exports = { getHooks, getWeb3, sendSignedTransaction, getEvents }
