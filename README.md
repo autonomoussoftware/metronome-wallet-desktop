@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet.svg?token=zFtwnjoHbEAEPUQyswR1&branch=master)](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 # Metronome Desktop Wallet
 
 ## Install the project dependencies
@@ -51,3 +54,5 @@ To remove the settings of the app and start again:
 ```
 $ rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
 ```
+
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
