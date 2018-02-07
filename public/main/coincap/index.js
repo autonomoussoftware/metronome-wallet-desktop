@@ -46,7 +46,28 @@ function init (data, webContents) {
     initEmitter()
   }
 
-  emitter.on('price', emitPrice(webContents))
+  const emit = emitPrice(webContents)
+
+  logger.debug('Attaching listener to ETH price changes')
+  emitter.on('price', emit)
+
+  function removeListener () {
+    emitter.removeListener('price', emit)
+
+    logger.debug('Remove ETH price changes listener')
+
+    if (!emitter.listenerCount('price')) {
+      coincap.off('trades')
+      coincap.close()
+
+      emitter = null
+
+      logger.debug('CoinCap listener stopped')
+    }
+  }
+
+  webContents.on('destroyed', removeListener)
+  // TODO remove listeners on window reload too
 }
 
 function getHooks () {
