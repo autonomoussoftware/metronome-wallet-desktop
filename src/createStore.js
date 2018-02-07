@@ -4,7 +4,13 @@ import reducer from './reducers'
 
 const { ipcRenderer } = window.require('electron')
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composeEnhancers =
+  typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        actionsBlacklist: ['price-updated$'],
+        features: { dispatch: true }
+      })
+    : compose
 
 /**
  * Custom Redux middleware for forwarding actions to Main Process via IPC
