@@ -1,13 +1,6 @@
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
-const settings = require('electron-settings')
 
-const {
-  createWallet,
-  broadcastWalletInfo,
-  sendTransaction
-} = require('./ethWallet')
-const { init: initCoinCap } = require('./coincap')
 const { isValidPassword } = require('./user')
 const { presetDefault: presetDefaultSettings } = require('./settings')
 const WalletError = require('./WalletError')
@@ -36,6 +29,49 @@ function onRendererEvent (eventName, listener) {
   })
 }
 
+function createRendererEventsRouter () {
+  const allHooks = []
+
+  return {
+    use: function (module) {
+      const hooks = module.getHooks()
+
+      hooks.forEach(function (hook) {
+        const existingHook = allHooks.find(h => h.eventName === hook.eventName)
+
+        if (existingHook) {
+          existingHook.handlers.push(hook.handler)
+          existingHook.auth |= hook.auth
+        } else {
+          allHooks.push({
+            eventName: hook.eventName,
+            handlers: [hook.handler],
+            auth: hook.auth
+          })
+        }
+      })
+
+      return this
+    },
+    attach: function () {
+      allHooks.forEach(function (hook) {
+        const { eventName, handlers, auth } = hook
+
+        onRendererEvent(eventName, function (data, webContents) {
+          if (auth && !isValidPassword(data.password)) {
+            return { error: new WalletError('Invalid password') }
+          }
+
+          return Promise.all(handlers.map(fn => fn(data, webContents)))
+            .then(function (results) {
+              return Object.assign({}, ...results)
+            })
+        })
+      })
+    }
+  }
+}
+
 function initMainWorker () {
   presetDefaultSettings()
 
@@ -43,58 +79,13 @@ function initMainWorker () {
     logger.error(args)
   })
 
-  onRendererEvent('ui-ready', function (data, webContents) {
-    initCoinCap(webContents)
-
-    const onboardingComplete = !!settings.get('user.passwordHash')
-    return { onboardingComplete }
-  })
-
-  onRendererEvent('create-wallet', function (data, webContents) {
-    const { mnemonic, password } = data
-
-    if (!isValidPassword(password, true)) {
-      const error = new WalletError('Invalid password')
-      return { error }
-    }
-
-    const result = createWallet(mnemonic, password)
-
-    if (!result.error) {
-      broadcastWalletInfo(webContents, result.walletId)
-    }
-
-    return result
-  })
-
-  onRendererEvent('open-wallets', function (data, webContents) {
-    const { password } = data
-
-    if (!isValidPassword(password)) {
-      const error = new WalletError('Invalid password')
-      return { error }
-    }
-
-    const walletIds = Object.keys(settings.get('user.wallets'))
-    walletIds.forEach(function (walletId) {
-      broadcastWalletInfo(webContents, walletId)
-    })
-
-    return { walletIds }
-  })
-
-  onRendererEvent('send-eth', function (data) {
-    const { password } = data
-
-    if (!isValidPassword(password)) {
-      const error = new WalletError('Invalid password')
-      return { error }
-    }
-
-    return sendTransaction(data)
-  })
-
-  // TODO send-token
+  createRendererEventsRouter()
+    .use(require('./onboarding'))
+    .use(require('./coincap'))
+    .use(require('./ethWallet'))
+    // metronome -- buy, change
+    // erc20 -- send token
+    .attach()
 }
 
 module.exports = { initMainWorker }

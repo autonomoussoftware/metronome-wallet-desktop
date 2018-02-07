@@ -144,4 +144,40 @@ function broadcastWalletInfo (webContents, walletId) {
   })
 }
 
-module.exports = { createWallet, broadcastWalletInfo, sendTransaction }
+function getHooks () {
+  return [{
+    eventName: 'create-wallet',
+    auth: true,
+    handler: function (data, webContents) {
+      const { password, mnemonic } = data
+
+      const result = createWallet(mnemonic, password)
+
+      if (!result.error) {
+        broadcastWalletInfo(webContents, result.walletId)
+      }
+
+      return result
+    }
+  }, {
+    eventName: 'open-wallets',
+    auth: true,
+    handler: function (data, webContents) {
+      const walletIds = Object.keys(settings.get('user.wallets'))
+
+      walletIds.forEach(function (walletId) {
+        broadcastWalletInfo(webContents, walletId)
+      })
+
+      return { walletIds }
+    }
+  }, {
+    eventName: 'send-eth',
+    auth: true,
+    handler: function (data) {
+      return sendTransaction(data)
+    }
+  }]
+}
+
+module.exports = { getHooks }

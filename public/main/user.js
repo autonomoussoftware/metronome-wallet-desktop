@@ -2,7 +2,8 @@ const { sha256 } = require('./cryptoUtils')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-function isValidPassword (password, useAsDefault) {
+// TODO fix the default!!!
+function isValidPassword (password, useAsDefault = true) {
   const passwordHash = settings.get('user.passwordHash')
 
   if (!passwordHash && useAsDefault) {
