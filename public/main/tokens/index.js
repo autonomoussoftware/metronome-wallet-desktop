@@ -12,7 +12,7 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
   const web3 = getWeb3()
   const contracts = contractAddresses.map(address => new web3.eth.Contract(abi, address))
 
-  addresses.forEach(function (address) {
+  addresses.map(a => a.toLowerCase()).forEach(function (address) {
     contracts.forEach(function (contract) {
       contract.methods.balanceOf(address).call()
         .then(function (balance) {
@@ -21,7 +21,7 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
               addresses: {
                 [address]: {
                   token: {
-                    [contract.address]: {
+                    [contract.options.address.toLowerCase()]: {
                       balance
                     }
                   }

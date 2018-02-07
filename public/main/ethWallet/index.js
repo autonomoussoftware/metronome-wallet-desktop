@@ -135,7 +135,7 @@ function broadcastWalletInfo (webContents, walletId) {
 
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
-  Object.keys(addresses).forEach(function (address) {
+  Object.keys(addresses).map(a => a.toLowerCase()).forEach(function (address) {
     getAddressBalance(address)
       .then(function (balance) {
         settings.set(`user.wallets.${walletId}.addresses.${address}.balance`, balance)
