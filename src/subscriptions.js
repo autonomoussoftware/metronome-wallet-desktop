@@ -2,8 +2,8 @@ const { ipcRenderer } = window.require('electron')
 
 export const subscribeToMainProcessMessages = store => {
   /**
-   * Subscribe to an array of ipc channels (messages) and dispatch
-   * an action of type { type: MSG_CHANNEL, payload: MSG_ARG }
+   * Subscribe to an array of IPC messages and dispatch a Redux
+   * action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
   subscribeTo([
     'wallet-state-changed',

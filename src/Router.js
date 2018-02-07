@@ -20,7 +20,7 @@ const Main = styled.div`
   overflow-y: auto;
 `
 
-class Router extends Component {
+export default class Router extends Component {
   render() {
     return (
       <HashRouter>
@@ -42,5 +42,3 @@ class Router extends Component {
     )
   }
 }
-
-export default Router

@@ -20,5 +20,6 @@ export default {
       darkGradient: 'linear-gradient(to bottom, #353535, #323232)'
     }
   },
+
   spacing: 0.8 // used as rem multiplier
 }

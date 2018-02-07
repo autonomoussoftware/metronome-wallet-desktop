@@ -53,6 +53,7 @@ const ErrorMsg = styled.div`
 export default class TextInput extends React.Component {
   static propTypes = {
     placeholder: PropTypes.string,
+    autoFocus: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     error: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string),
@@ -73,7 +74,17 @@ export default class TextInput extends React.Component {
   }
 
   render() {
-    const { placeholder, onChange, error, label, value, type, id } = this.props
+    const {
+      placeholder,
+      autoFocus,
+      onChange,
+      error,
+      label,
+      value,
+      type,
+      id
+    } = this.props
+
     const { isPristine } = this.state
 
     const hasErrors = error && error.length > 0
@@ -88,6 +99,7 @@ export default class TextInput extends React.Component {
           isPristine={isPristine}
           onChange={onChange}
           hasErrors={hasErrors}
+          autoFocus={autoFocus}
           value={value || ''}
           type={type || 'text'}
           id={id}

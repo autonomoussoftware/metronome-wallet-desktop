@@ -67,6 +67,7 @@ export default class PasswordRequest extends React.Component {
         <form onSubmit={this.onPasswordSubmitted}>
           <Sp mt={4}>
             <TextInput
+              autoFocus
               onChange={this.onInputChanged}
               error={errors.password}
               label="Password"
@@ -77,7 +78,7 @@ export default class PasswordRequest extends React.Component {
           </Sp>
           <Sp mt={6}>
             <Btn block submit disabled={status === 'pending'}>
-              {status === 'pending' ? 'Sending...' : 'Send'}
+              Send
             </Btn>
           </Sp>
           {error && <ErrorMsg>{error}</ErrorMsg>}
