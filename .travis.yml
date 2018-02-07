@@ -1,3 +1,6 @@
+notifications:
+  email: false
+
 matrix:
   include:
     - os: osx
@@ -41,7 +44,7 @@ script:
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
         electronuserland/builder:wine \
-        /bin/bash -c "npm run release -- --linux --win"
+        /bin/bash -c "npm run release:docker"
     else
       npm run release
     fi

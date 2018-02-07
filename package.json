@@ -106,8 +106,7 @@
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
     "release": "react-scripts build && build --em.main=build/electron.js --publish=always",
-    "release:win": "react-scripts build && build --em.main=build/electron.js --publish=always --win",
-    "release:linux": "react-scripts build && build --em.main=build/electron.js --publish=always --linux",
+    "release:docker": "react-scripts build && build --em.main=build/electron.js --publish=always --win --linux",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
