@@ -128,6 +128,7 @@ const USDValue = styled.div`
   font-size: 2.4rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  opacity: ${p => (p.hide ? '0' : '1')};
 `
 
 const Right = styled.div`
@@ -249,12 +250,12 @@ class Dashboard extends React.Component {
             <Balance>
               <CoinSymbol>MTN</CoinSymbol>
               <Value large>{mtnBalanceWei}</Value>
-              <USDValue>{mtnBalanceUSD} (USD)</USDValue>
+              <USDValue hide>${mtnBalanceUSD} (USD)</USDValue>
             </Balance>
             <Balance>
               <CoinSymbol>ETH</CoinSymbol>
               <Value>{ethBalanceWei}</Value>
-              <USDValue>{ethBalanceUSD} (USD)</USDValue>
+              <USDValue>${ethBalanceUSD} (USD)</USDValue>
             </Balance>
           </Left>
 

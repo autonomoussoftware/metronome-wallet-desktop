@@ -33,25 +33,38 @@ export const getActiveWalletEthBalance = createSelector(
 
 export const getRates = state => state.rates
 
-export const getEthRate = createSelector(getRates, rates => rates.ETH)
+export const getEthRate = createSelector(
+  getRates,
+  ({ ETH }) => (ETH ? ETH.price : null)
+)
 
-export const getMtnRate = createSelector(getRates, rates => rates.MTN)
+export const getMtnRate = createSelector(
+  getRates,
+  ({ MTN }) => (MTN ? MTN.price : null)
+)
 
 // Returns true if Main Process has sent enough data to render dashboard
 export const hasEnoughData = createSelector(
   getActiveWalletEthBalance,
   getEthRate,
-  (ethBalance, ethRate) => ethBalance !== null && !!ethRate
+  (ethBalance, ethRate) => ethBalance !== null && ethRate !== null
 )
 
-export const getMtnBalanceWei = state => 0
+export const getMtnBalanceWei = state => '0'
 
-export const getMtnBalanceUSD = state => 0
+export const getMtnBalanceUSD = state => '0'
 
 export const getEthBalanceWei = getActiveWalletEthBalance
 
 export const getEthBalanceUSD = createSelector(
   getActiveWalletEthBalance,
   getEthRate,
-  (balance, rate) => (balance && rate ? balance * rate.price : 0)
+  (balance, rate) => (balance && rate ? String(balance * rate) : '0')
+)
+
+export const getAuction = state => state.auction
+
+export const getAuctionStatus = createSelector(
+  getAuction,
+  auction => auction.status
 )

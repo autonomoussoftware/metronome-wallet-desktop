@@ -1,8 +1,13 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
-import { sendToMainProcess } from '../utils'
+import {
+  sendToMainProcess,
+  isGreaterThanZero,
+  isWeiable,
+  toETH,
+  toUSD
+} from '../utils'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
-import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -23,6 +28,11 @@ const MaxBtn = BaseBtn.extend`
   }
 `
 
+const ErrorMsg = styled.div`
+  color: ${p => p.theme.colors.danger};
+  margin-top: 1.6rem;
+`
+
 const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
   padding: 6.4rem 2.4rem;
@@ -32,15 +42,10 @@ const Footer = styled.div`
 
 class SendETHForm extends React.Component {
   static propTypes = {
-    availableMTN: PropTypes.string.isRequired,
-    MTNprice: PropTypes.string.isRequired,
+    availableETH: PropTypes.string.isRequired,
+    ETHprice: PropTypes.number.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
-  }
-
-  static defaultProps = {
-    availableMTN: '123456789012345678',
-    MTNprice: '980' // 1 MTN = 980 USD
   }
 
   state = {
@@ -53,54 +58,21 @@ class SendETHForm extends React.Component {
   }
 
   onMaxClick = () => {
+    const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.setState({
-      ethAmount: this.props.availableMTN,
-      usdAmount: this.toUSD(Web3.utils.fromWei(this.props.availableMTN))
+      usdAmount: toUSD(ethAmount, this.props.ETHprice),
+      ethAmount
     })
   }
 
-  // Maybe we can extract this kind of helpers to some utils file
-  toUSD = ethAmount => {
-    let isValidAmount
-    let usdAmount
-    try {
-      usdAmount =
-        parseFloat(ethAmount.replace(',', '.'), 10) *
-        parseFloat(this.props.MTNprice, 10)
-      isValidAmount = usdAmount > 0
-    } catch (e) {
-      isValidAmount = false
-    }
-
-    const expectedUSDamount = isValidAmount ? usdAmount.toString() : '--'
-
-    return expectedUSDamount
-  }
-
-  toETH = usdAmount => {
-    let isValidAmount
-    let weiAmount
-    try {
-      weiAmount = new BigNumber(Web3.utils.toWei(usdAmount.replace(',', '.')))
-      isValidAmount = weiAmount.gt(new BigNumber(0))
-    } catch (e) {
-      isValidAmount = false
-    }
-
-    const expectedETHamount = isValidAmount
-      ? weiAmount.dividedBy(new BigNumber(this.props.MTNprice)).toString()
-      : '--'
-
-    return expectedETHamount
-  }
-
-  onInputchange = e => {
+  onInputChange = e => {
     const { id, value } = e.target
+    const { ETHprice } = this.props
 
     this.setState(state => ({
       ...state,
-      usdAmount: id === 'ethAmount' ? this.toUSD(value) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? this.toETH(value) : state.ethAmount,
+      usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
+      ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
       [id]: value
     }))
   }
@@ -113,7 +85,7 @@ class SendETHForm extends React.Component {
 
     const { toAddress, ethAmount } = this.state
 
-    this.setState({ status: 'pending', error: null }, () =>
+    this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-eth', {
         password: this.props.password,
         value: Web3.utils.toWei(ethAmount.replace(',', '.')),
@@ -132,7 +104,7 @@ class SendETHForm extends React.Component {
 
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { toAddress } = this.state
+    const { ethAmount, toAddress } = this.state
     const errors = {}
 
     // validations for address field
@@ -142,13 +114,20 @@ class SendETHForm extends React.Component {
       errors.toAddress = 'Invalid address'
     }
 
-    // TODO: other validations
+    // validations for amount field
+    if (!ethAmount) {
+      errors.ethAmount = 'Amount is required'
+    } else if (!isWeiable(ethAmount)) {
+      errors.ethAmount = 'Invalid amount'
+    } else if (!isGreaterThanZero(ethAmount)) {
+      errors.ethAmount = 'Amount must be greater than 0'
+    }
 
     return errors
   }
 
   render() {
-    const { toAddress, ethAmount, usdAmount, errors } = this.state
+    const { toAddress, ethAmount, usdAmount, errors, error } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -156,7 +135,8 @@ class SendETHForm extends React.Component {
           <form onSubmit={this.onSubmit} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
-              onChange={this.onInputchange}
+              autoFocus
+              onChange={this.onInputChange}
               error={errors.toAddress}
               label="Send to Address"
               value={toAddress}
@@ -168,7 +148,7 @@ class SendETHForm extends React.Component {
                   <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
                   <TextInput
                     placeholder="0.00"
-                    onChange={this.onInputchange}
+                    onChange={this.onInputChange}
                     label="Amount (ETH)"
                     value={ethAmount}
                     error={errors.ethAmount}
@@ -181,7 +161,7 @@ class SendETHForm extends React.Component {
                 <Flex.Item grow="1" basis="0">
                   <TextInput
                     placeholder="0.00"
-                    onChange={this.onInputchange}
+                    onChange={this.onInputChange}
                     label="Amount (USD)"
                     value={usdAmount}
                     error={errors.usdAmount}
@@ -196,6 +176,7 @@ class SendETHForm extends React.Component {
           <Btn block submit form="sendForm">
             Review Send
           </Btn>
+          {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>
       </Flex.Column>
     )
@@ -203,6 +184,8 @@ class SendETHForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  availableETH: selectors.getEthBalanceWei(state),
+  ETHprice: selectors.getEthRate(state),
   password: selectors.getPassword(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })

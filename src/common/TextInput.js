@@ -27,10 +27,7 @@ const Input = styled.input`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   transition: box-shadow 300ms;
   box-shadow: 0 2px 0 0px
-    ${p =>
-      p.hasErrors
-        ? p.theme.colors.danger
-        : p.isPristine ? 'transparent' : p.theme.colors.success};
+    ${p => (p.hasErrors ? p.theme.colors.danger : 'transparent')};
 
   &:focus {
     outline: none;

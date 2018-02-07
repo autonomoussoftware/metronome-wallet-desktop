@@ -1,9 +1,11 @@
+import BigNumber from 'bignumber.js'
 import Deferred from './lib/Deferred'
 import cuid from 'cuid'
+import Web3 from 'web3'
 
 const { ipcRenderer } = window.require('electron')
 
-export function sendToMainProcess(event, data, timeout = 10000) {
+export function sendToMainProcess(eventName, data, timeout = 10000) {
   const id = cuid()
 
   const deferred = new Deferred()
@@ -17,18 +19,69 @@ export function sendToMainProcess(event, data, timeout = 10000) {
       deferred.resolve(_data)
     }
 
-    ipcRenderer.removeListener(event, listener)
+    ipcRenderer.removeListener(eventName, listener)
   }
 
-  ipcRenderer.on(event, listener)
-  ipcRenderer.send(event, { id, data })
+  ipcRenderer.on(eventName, listener)
+  ipcRenderer.send(eventName, { id, data })
 
   setTimeout(() => {
     deferred.reject(
-      new Error(`Event "${event}"" timed out after ${timeout}ms.`)
+      new Error(`Event "${eventName}"" timed out after ${timeout}ms.`)
     )
-    ipcRenderer.removeListener(event, listener)
+    ipcRenderer.removeListener(eventName, listener)
   }, timeout)
 
   return deferred.promise
+}
+
+export function isWeiable(amount) {
+  let isValid
+  try {
+    Web3.utils.toWei(amount.replace(',', '.'))
+    isValid = true
+  } catch (e) {
+    isValid = false
+  }
+  return isValid
+}
+
+export function isGreaterThanZero(amount) {
+  const weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+  return weiAmount.gt(new BigNumber(0))
+}
+
+export function toUSD(amount, rate, errorValue = 'Invalid amount') {
+  let isValidAmount
+  let usdAmount
+  try {
+    if (!isWeiable(amount.replace(',', '.'))) throw new Error()
+    usdAmount = parseFloat(amount.replace(',', '.'), 10) * parseFloat(rate, 10)
+    isValidAmount = usdAmount >= 0
+  } catch (e) {
+    isValidAmount = false
+  }
+
+  const expectedUSDamount = isValidAmount ? usdAmount.toString() : errorValue
+
+  return expectedUSDamount
+}
+
+export function toETH(amount, rate, errorValue = 'Invalid amount') {
+  let isValidAmount
+  let weiAmount
+  try {
+    weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+    isValidAmount = weiAmount.gte(new BigNumber(0))
+  } catch (e) {
+    isValidAmount = false
+  }
+
+  const expectedETHamount = isValidAmount
+    ? weiAmount
+        .dividedBy(new BigNumber(Web3.utils.toWei(String(rate))))
+        .toString()
+    : errorValue
+
+  return expectedETHamount
 }

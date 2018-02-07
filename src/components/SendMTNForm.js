@@ -1,8 +1,7 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
-import { sendToMainProcess } from '../utils'
+import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from '../common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
-import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
 import settings from '../config/settings'
 import styled from 'styled-components'
@@ -34,75 +33,25 @@ const Footer = styled.div`
 class SendMTNForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
-    MTNprice: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
 
-  static defaultProps = {
-    availableMTN: '123456789012345678',
-    MTNprice: '980' // 1 MTN = 980 USD
-  }
-
   state = {
-    status: 'init',
-    errors: {},
+    mtnAmount: null,
     toAddress: null,
-    ethAmount: null,
-    usdAmount: null
+    status: 'init',
+    errors: {}
   }
 
   onMaxClick = () => {
-    this.setState({
-      ethAmount: this.props.availableMTN,
-      usdAmount: this.toUSD(Web3.utils.fromWei(this.props.availableMTN))
-    })
+    const mtnAmount = Web3.utils.fromWei(this.props.availableMTN)
+    this.setState({ mtnAmount })
   }
 
-  // Maybe we can extract this kind of helpers to some utils file
-  toUSD = ethAmount => {
-    let isValidAmount
-    let usdAmount
-    try {
-      usdAmount =
-        parseFloat(ethAmount.replace(',', '.'), 10) *
-        parseFloat(this.props.MTNprice, 10)
-      isValidAmount = usdAmount > 0
-    } catch (e) {
-      isValidAmount = false
-    }
-
-    const expectedUSDamount = isValidAmount ? usdAmount.toString() : '--'
-
-    return expectedUSDamount
-  }
-
-  toETH = usdAmount => {
-    let isValidAmount
-    let weiAmount
-    try {
-      weiAmount = new BigNumber(Web3.utils.toWei(usdAmount.replace(',', '.')))
-      isValidAmount = weiAmount.gt(new BigNumber(0))
-    } catch (e) {
-      isValidAmount = false
-    }
-
-    const expectedETHamount = isValidAmount
-      ? weiAmount.dividedBy(new BigNumber(this.props.MTNprice)).toString()
-      : '--'
-
-    return expectedETHamount
-  }
-
-  onInputchange = e => {
+  onInputChange = e => {
     const { id, value } = e.target
-
-    this.setState(state => ({
-      ...state,
-      usdAmount: id === 'ethAmount' ? this.toUSD(value) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? this.toETH(value) : state.ethAmount,
-      [id]: value
-    }))
+    this.setState({ [id]: value })
   }
 
   onSubmit = e => {
@@ -111,12 +60,12 @@ class SendMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { toAddress, ethAmount } = this.state
+    const { toAddress, mtnAmount } = this.state
 
-    this.setState({ status: 'pending', error: null }, () =>
+    this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-token', {
         password: this.props.password,
-        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+        value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         token: settings.MTN_TOKEN_ADDR,
         from: this.props.from,
         to: toAddress
@@ -133,7 +82,7 @@ class SendMTNForm extends React.Component {
 
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { toAddress } = this.state
+    const { toAddress, mtnAmount } = this.state
     const errors = {}
 
     // validations for address field
@@ -143,13 +92,20 @@ class SendMTNForm extends React.Component {
       errors.toAddress = 'Invalid address'
     }
 
-    // TODO: other validations
+    // validations for amount field
+    if (!mtnAmount) {
+      errors.mtnAmount = 'Amount is required'
+    } else if (!isWeiable(mtnAmount)) {
+      errors.mtnAmount = 'Invalid amount'
+    } else if (!isGreaterThanZero(mtnAmount)) {
+      errors.mtnAmount = 'Amount must be greater than 0'
+    }
 
     return errors
   }
 
   render() {
-    const { toAddress, ethAmount, usdAmount, errors } = this.state
+    const { toAddress, mtnAmount, errors } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -157,39 +113,23 @@ class SendMTNForm extends React.Component {
           <form onSubmit={this.onSubmit} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
-              onChange={this.onInputchange}
+              autoFocus
+              onChange={this.onInputChange}
               error={errors.toAddress}
               label="Send to Address"
               value={toAddress}
               id="toAddress"
             />
             <Sp mt={3}>
-              <Flex.Row justify="space-between">
-                <Flex.Item grow="1" basis="0">
-                  <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
-                  <TextInput
-                    placeholder="0.00"
-                    onChange={this.onInputchange}
-                    label="Amount (MNT)"
-                    value={ethAmount}
-                    error={errors.ethAmount}
-                    id="ethAmount"
-                  />
-                </Flex.Item>
-                <Sp mt={6} mx={1}>
-                  <TxIcon />
-                </Sp>
-                <Flex.Item grow="1" basis="0">
-                  <TextInput
-                    placeholder="0.00"
-                    onChange={this.onInputchange}
-                    label="Amount (USD)"
-                    value={usdAmount}
-                    error={errors.usdAmount}
-                    id="usdAmount"
-                  />
-                </Flex.Item>
-              </Flex.Row>
+              <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
+              <TextInput
+                placeholder="0.00"
+                onChange={this.onInputChange}
+                label="Amount (MNT)"
+                value={mtnAmount}
+                error={errors.mtnAmount}
+                id="mtnAmount"
+              />
             </Sp>
           </form>
         </Sp>
@@ -204,6 +144,7 @@ class SendMTNForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  availableMTN: selectors.getMtnBalanceWei(state),
   password: selectors.getPassword(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
