@@ -7,7 +7,7 @@ export const subscribeToMainProcessMessages = store => {
    */
   subscribeTo([
     'wallet-state-changed',
-    'rates-updated',
+    'eth-price-updated',
     'create-wallet',
     'open-wallets',
     'error'

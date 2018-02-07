@@ -6,13 +6,5 @@ import { createActions } from 'redux-actions'
  */
 
 export default createActions({
-  'onboarding-completed': [
-    ({ password, mnemonic }) => ({ password, mnemonic }),
-    () => ({ ipc: true })
-  ],
-  'recover-from-mnemonic': [
-    mnemonic => mnemonic,
-    () => ({ ipc: true })
-  ],
-  'active-wallet-changed': newAddress => newAddress
+  'recover-from-mnemonic': [mnemonic => mnemonic, () => ({ ipc: true })]
 })
