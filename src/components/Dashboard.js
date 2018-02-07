@@ -1,9 +1,12 @@
 import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
 import { TransitionGroup } from 'react-transition-group'
+import * as selectors from '../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
 import transactions from '../services/tx-mock'
 import ReceiptModal from './ReceiptModal'
+import { connect } from 'react-redux'
 import SendDrawer from './SendDrawer'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import TxRow from './TxRow'
 import React from 'react'
@@ -195,12 +198,18 @@ const FooterLogo = styled.div`
   margin: 0 auto;
 `
 
-export default class Wallets extends React.Component {
+class Dashboard extends React.Component {
+  static propTypes = {
+    mtnBalanceWei: PropTypes.string.isRequired,
+    mtnBalanceUSD: PropTypes.string.isRequired,
+    ethBalanceWei: PropTypes.string.isRequired,
+    ethBalanceUSD: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired
+  }
+
   state = {
     activeModal: null,
-    selectedTx: null,
-    address: '',
-    balance: null
+    selectedTx: null
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
@@ -211,9 +220,16 @@ export default class Wallets extends React.Component {
 
   onCloseModal = () => this.setState({ activeModal: null })
 
-  onCopyToClipboardClick = () => clipboard.writeText(this.state.address)
+  onCopyToClipboardClick = () => clipboard.writeText(this.props.address)
 
   render() {
+    const {
+      mtnBalanceWei,
+      mtnBalanceUSD,
+      ethBalanceWei,
+      ethBalanceUSD
+    } = this.props
+
     return (
       <Container>
         <FixedContainer>
@@ -222,27 +238,26 @@ export default class Wallets extends React.Component {
             <AddressContainer>
               <Label>Address</Label>
               <Bg>
-                <Address>{this.state.address}</Address>
+                <Address>{this.props.address}</Address>
                 <CopyBtn onClick={this.onCopyToClipboardClick}>Copy</CopyBtn>
               </Bg>
             </AddressContainer>
           </Header>
         </FixedContainer>
         <Hero>
-          {this.state.balance && (
-            <Left>
-              <Balance>
-                <CoinSymbol>MTN</CoinSymbol>
-                <Value large>{this.state.balance.mtn}</Value>
-                <USDValue>$4567890 (USD)</USDValue>
-              </Balance>
-              <Balance>
-                <CoinSymbol>ETH</CoinSymbol>
-                <Value>{this.state.balance.eth}</Value>
-                <USDValue>$4567890 (USD)</USDValue>
-              </Balance>
-            </Left>
-          )}
+          <Left>
+            <Balance>
+              <CoinSymbol>MTN</CoinSymbol>
+              <Value large>{mtnBalanceWei}</Value>
+              <USDValue>{mtnBalanceUSD} (USD)</USDValue>
+            </Balance>
+            <Balance>
+              <CoinSymbol>ETH</CoinSymbol>
+              <Value>{ethBalanceWei}</Value>
+              <USDValue>{ethBalanceUSD} (USD)</USDValue>
+            </Balance>
+          </Left>
+
           <Right>
             <Btn block data-modal="send" onClick={this.onOpenModal}>
               Send
@@ -327,3 +342,13 @@ export default class Wallets extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  mtnBalanceWei: selectors.getMtnBalanceWei(state),
+  mtnBalanceUSD: selectors.getMtnBalanceUSD(state),
+  ethBalanceWei: selectors.getEthBalanceWei(state),
+  ethBalanceUSD: selectors.getEthBalanceUSD(state),
+  address: selectors.getActiveWalletAddresses(state)[0]
+})
+
+export default connect(mapStateToProps)(Dashboard)
