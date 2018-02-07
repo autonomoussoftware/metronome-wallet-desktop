@@ -10,8 +10,8 @@ function sendToken ({ password, token: address, from, to, value }) {
   logger.debug('Sending ERC20 tokens', { from, to, value, token: symbol })
 
   const web3 = getWeb3()
-  const tokenContract = new web3.eth.Contract(abi, address)
-  const transfer = tokenContract.methods.transfer(to, value)
+  const contract = new web3.eth.Contract(abi, address)
+  const transfer = contract.methods.transfer(to, value)
   const data = transfer.encodeABI()
 
   // TODO estimate gas with transfer.estimateGas()
