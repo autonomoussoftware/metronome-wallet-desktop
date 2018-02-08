@@ -35,9 +35,9 @@ class DisplayValue extends React.Component {
     const valBN = new BigNumber(Web3.utils.fromWei(value))
 
     const decimalPlaces = valBN.isGreaterThanOrEqualTo(BigNumber('100'))
-      ? 0
+      ? 2
       : valBN.isGreaterThanOrEqualTo(BigNumber('0.000001'))
-        ? 6
+        ? 7
         : this.props.maxDecimals
 
     return valBN.toFormat(decimalPlaces)
@@ -56,13 +56,19 @@ class DisplayValue extends React.Component {
   render() {
     const { size: { width }, value, post, pre } = this.props
 
-    const formattedValue = this.round(value, width)
+    let formattedValue
+
+    try {
+      formattedValue = this.round(value, width)
+    } catch (e) {
+      formattedValue = null
+    }
     const fontSize = this.getFontSize(formattedValue, width)
 
     return (
       <div style={{ fontSize }}>
         {pre}
-        {formattedValue}
+        {formattedValue || '--'}
         {post}
       </div>
     )
