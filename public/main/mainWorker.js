@@ -7,7 +7,7 @@ const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
-    logger.debug(`--> ${eventName}:${id} ${JSON.stringify(data)}`)
+    logger.debug(`--> ${eventName}:${id} ${JSON.stringify(data) || ''}`)
     const result = Promise.resolve(listener(data, event.sender))
 
     result
@@ -85,7 +85,6 @@ function initMainWorker () {
     .use(require('./ethWallet'))
     .use(require('./tokens'))
     // metronome -- buy, change
-    // erc20 -- send token
     .attach()
 }
 

@@ -148,7 +148,7 @@ function broadcastWalletInfo (webContents, walletId) {
             }
           }
         })
-        logger.debug(`Address ETH balance updated - ${address} ${balance}`)
+        logger.debug(`<-- ETH ${address} ${balance}`)
       })
       .catch(function (err) {
         const error = new WalletError('Could not get balance', err)

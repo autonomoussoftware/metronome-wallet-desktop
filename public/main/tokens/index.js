@@ -7,13 +7,18 @@ const { getWeb3, sendSignedTransaction, getEvents } = require('../ethWallet')
 const ethEvents = getEvents()
 
 ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
-  const contractAddresses = Object.keys(settings.get('tokens'))
+  const tokens = settings.get('tokens')
+  const contractAddresses = Object.keys(tokens)
 
   const web3 = getWeb3()
-  const contracts = contractAddresses.map(address => new web3.eth.Contract(abi, address))
+  const contracts = contractAddresses.map(address => ({
+    contractAddresse: address.toLowerCase(),
+    contract: new web3.eth.Contract(abi, address),
+    symbol: tokens[address].symbol
+  }))
 
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
-    contracts.forEach(function (contract) {
+    contracts.forEach(function ({ contractAddresse, contract, symbol }) {
       contract.methods.balanceOf(address).call()
         .then(function (balance) {
           webContents.send('wallet-state-changed', {
@@ -21,7 +26,7 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
               addresses: {
                 [address]: {
                   token: {
-                    [contract.options.address.toLowerCase()]: {
+                    [contractAddresse]: {
                       balance
                     }
                   }
@@ -29,7 +34,7 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
               }
             }
           })
-          logger.debug(`Address MTN balance updated - ${address} ${balance}`)
+          logger.debug(`<-- ${symbol} ${address} ${balance}`)
         })
     })
   })
