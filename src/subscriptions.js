@@ -6,6 +6,7 @@ export const subscribeToMainProcessMessages = store => {
    * action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
   subscribeTo([
+    'auction-status-updated',
     'wallet-state-changed',
     'eth-price-updated',
     'create-wallet',

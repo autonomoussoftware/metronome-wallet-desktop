@@ -1,9 +1,26 @@
-import { DarkLayout, Text, Btn, Sp } from '../common'
+import {
+  DisplayValue,
+  DarkLayout,
+  LoadingBar,
+  Text,
+  Flex,
+  Btn,
+  Sp
+} from '../common'
 import CountDownProvider from '../providers/CountDownProvider'
+import * as selectors from '../selectors'
 import BuyMTNDrawer from './BuyMTNDrawer'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+
+const LoadingContainer = styled.div`
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+`
 
 const Row = styled.div`
   margin-top: 1.6rem;
@@ -36,20 +53,58 @@ const Cell = styled.div`
   }
 `
 
-const CurrentPrice = styled.div`
-  padding: 3.5rem 2.4rem;
-  margin-top: 1.6rem;
+const StatsContainer = styled.div`
   border-radius: 4px;
   background-color: ${p => p.theme.colors.lightShade};
+`
+
+const Label = styled.div`
   line-height: 4rem;
   font-size: 3.2rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  margin-right: 2em;
 `
 
-export default class Auction extends React.Component {
+const Badge = styled.div`
+  display: inline-block;
+  line-height: 2.5rem;
+  border-radius: 1.4rem;
+  background-color: ${p => p.theme.colors.bg.primary};
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.4rem 0.8rem;
+`
+const Price = styled.div`
+  font-size: 2.4rem;
+  line-height: 3rem;
+  font-weight: 600;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+`
+
+const USDPrice = styled.div`
+  line-height: 2rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: right;
+`
+
+const AvailableAmount = styled.div`
+  line-height: 3rem;
+  font-weight: 600;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+`
+
+class Auction extends React.Component {
+  static propTypes = {
+    auctionPriceUSD: PropTypes.string.isRequired,
+    auctionStatus: PropTypes.shape({
+      currentPrice: PropTypes.string.isRequired
+    })
+  }
+
   state = {
-    activeModal: null,
-    status: null
+    activeModal: null
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
@@ -57,14 +112,16 @@ export default class Auction extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
+    const { auctionPriceUSD, auctionStatus } = this.props
+
     return (
       <DarkLayout title="Metronome Auction">
-        {this.state.status ? (
+        {auctionStatus ? (
           <Sp py={4} px={6}>
             <Text>Time Remaining</Text>
 
             <CountDownProvider
-              targetTimestamp={this.state.status.nextAuctionStartTime}
+              targetTimestamp={auctionStatus.nextAuctionStartTime}
             >
               {({ days, hours, minutes, seconds }) => (
                 <Row>
@@ -80,25 +137,74 @@ export default class Auction extends React.Component {
               )}
             </CountDownProvider>
 
-            <CurrentPrice>
-              Current Price:{' '}
-              {Web3.utils.fromWei(this.state.status.currentPrice)} ETH
-            </CurrentPrice>
-            <Sp mt={4}>
-              <Btn data-modal="buy" onClick={this.onOpenModal}>
-                Buy Metronome
-              </Btn>
+            <Sp mt={6}>
+              <Flex.Row>
+                <Flex.Column>
+                  <StatsContainer>
+                    <Sp py={4} px={3}>
+                      <Flex.Row justify="space-between" align="baseline">
+                        <Label>Current Price</Label>
+                        <Flex.Column>
+                          <Flex.Row align="baseline">
+                            <Badge>1 MTN</Badge>
+                            <Price>
+                              <DisplayValue
+                                maxSize="2.4rem"
+                                pre=" = "
+                                value={auctionStatus.currentPrice}
+                                post=" ETH"
+                              />
+                            </Price>
+                          </Flex.Row>
+                          <USDPrice>${auctionPriceUSD}</USDPrice>
+                        </Flex.Column>
+                      </Flex.Row>
+                    </Sp>
+                    <Sp py={4} px={3}>
+                      <Flex.Row justify="space-between" align="baseline">
+                        <Label>Available</Label>
+                        <AvailableAmount>
+                          <DisplayValue
+                            maxSize="2.4rem"
+                            value={auctionStatus.tokenRemaining}
+                            post=" MTN"
+                          />
+                        </AvailableAmount>
+                      </Flex.Row>
+                    </Sp>
+                  </StatsContainer>
+                </Flex.Column>
+                <Sp mt={4} ml={2}>
+                  <Btn data-modal="buy" onClick={this.onOpenModal}>
+                    Buy Metronome
+                  </Btn>
+                </Sp>
+                <BuyMTNDrawer
+                  onRequestClose={this.onCloseModal}
+                  currentPrice={auctionStatus.currentPrice}
+                  isOpen={this.state.activeModal === 'buy'}
+                />
+              </Flex.Row>
             </Sp>
-            <BuyMTNDrawer
-              onRequestClose={this.onCloseModal}
-              currentPrice={this.state.status.currentPrice}
-              isOpen={this.state.activeModal === 'buy'}
-            />
           </Sp>
         ) : (
-          <p>Loading...</p>
+          <Sp p={6}>
+            <LoadingContainer>
+              <Text>Waiting for auction status...</Text>
+              <Sp py={2}>
+                <LoadingBar />
+              </Sp>
+            </LoadingContainer>
+          </Sp>
         )}
       </DarkLayout>
     )
   }
 }
+
+const mapStateToProps = state => ({
+  auctionPriceUSD: selectors.getAuctionPriceUSD(state),
+  auctionStatus: selectors.getAuctionStatus(state)
+})
+
+export default connect(mapStateToProps)(Auction)

@@ -1,10 +1,15 @@
 import { handleActions } from 'redux-actions'
 
-const initialState = {}
+const initialState = {
+  status: null
+}
 
 const reducer = handleActions(
   {
-    'new-auction-status': (state, { payload }) => payload
+    'auction-status-updated': (state, { payload }) => ({
+      ...state,
+      status: payload
+    })
   },
   initialState
 )

@@ -36,8 +36,8 @@ class DisplayValue extends React.Component {
 
     const decimalPlaces = valBN.isGreaterThanOrEqualTo(BigNumber('100'))
       ? 0
-      : valBN.isGreaterThanOrEqualTo(BigNumber('0.001'))
-        ? 3
+      : valBN.isGreaterThanOrEqualTo(BigNumber('0.000001'))
+        ? 6
         : this.props.maxDecimals
 
     return valBN.toFormat(decimalPlaces)

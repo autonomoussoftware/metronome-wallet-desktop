@@ -82,9 +82,9 @@ export const getEthBalanceWei = getActiveWalletEthBalance
 export const getEthBalanceUSD = createSelector(
   getActiveWalletEthBalance,
   getEthRate,
-  (balance, rate) => {
-    if (!balance || !rate) return '0'
-    const usdValue = parseFloat(Web3.utils.fromWei(balance)) * rate
+  (balance, ethRate) => {
+    if (!balance || !ethRate) return '0'
+    const usdValue = parseFloat(Web3.utils.fromWei(balance)) * ethRate
     return usdValue.toFixed(usdValue > 100 ? 0 : 2)
   }
 )
@@ -94,4 +94,15 @@ export const getAuction = state => state.auction
 export const getAuctionStatus = createSelector(
   getAuction,
   auction => auction.status
+)
+
+export const getAuctionPriceUSD = createSelector(
+  getAuctionStatus,
+  getEthRate,
+  (auctionStatus, ethRate) => {
+    if (!auctionStatus || !ethRate) return '0'
+    const usdValue =
+      parseFloat(Web3.utils.fromWei(auctionStatus.currentPrice)) * ethRate
+    return usdValue.toFixed(usdValue > 100 ? 0 : usdValue > 1 ? 2 : 6)
+  }
 )

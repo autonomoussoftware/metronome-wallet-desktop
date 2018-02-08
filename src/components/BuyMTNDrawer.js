@@ -1,31 +1,32 @@
+import { Drawer, BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
+import {
+  sendToMainProcess,
+  isGreaterThanZero,
+  isWeiable,
+  toETH,
+  toUSD
+} from '../utils'
 import PurchaseFormProvider from '../providers/PurchaseFormProvider'
-import { Drawer, Btn, Sp } from '../common'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
+import Web3 from 'web3'
 
-const Label = styled.label`
-  line-height: 1.6rem;
-  font-size: 1.3rem;
+const MaxBtn = BaseBtn.extend`
+  float: right;
+  line-height: 1.8rem;
+  opacity: 0.5;
+  font-size: 1.4rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`
+  margin-top: 0.4rem;
 
-const Input = styled.input`
-  border: none;
-  display: block;
-  height: 5.6rem;
-  padding: 0.8rem 1.6rem;
-  background-color: rgba(126, 97, 248, 0.2);
-  margin-top: 0.8rem;
-  width: 100%;
-  line-height: 4rem;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 1.3rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  &:hover {
+    opacity: 1;
+  }
 `
 
 const ErrorMsg = styled.p`
@@ -39,22 +40,34 @@ const BtnContainer = styled.div`
   flex-grow: 1;
 `
 
-export default class BuyMTNDrawer extends React.Component {
+class BuyMTNDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     currentPrice: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired
+    availableETH: PropTypes.string.isRequired,
+    ETHprice: PropTypes.number.isRequired,
+    password: PropTypes.string.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    from: PropTypes.string.isRequired
   }
 
   static initialState = {
-    disclaimerAccepted: true,
-    receipt: null,
+    ethAmount: null,
+    usdAmount: null,
+    errors: {},
     status: 'init',
-    error: null,
-    input: null
+    error: null
   }
 
   state = BuyMTNDrawer.initialState
+
+  onMaxClick = () => {
+    const ethAmount = Web3.utils.fromWei(this.props.availableETH)
+    this.setState({
+      usdAmount: toUSD(ethAmount, this.props.ETHprice),
+      ethAmount
+    })
+  }
 
   componentWillReceiveProps(newProps) {
     if (newProps.isOpen !== this.props.isOpen) {
@@ -62,21 +75,61 @@ export default class BuyMTNDrawer extends React.Component {
     }
   }
 
-  onInputChanged = e => this.setState({ input: e.target.value })
+  onInputChange = e => {
+    const { id, value } = e.target
+    const { ETHprice } = this.props
+
+    this.setState(state => ({
+      ...state,
+      usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
+      ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
+      [id]: value
+    }))
+  }
 
   onSubmit = e => {
     e.preventDefault()
 
-    this.setState({ status: 'pending' })
+    const errors = this.validate()
+    if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    // auction
-    //   .buy(this.state.input)
-    //   .then(receipt => this.setState({ status: 'success', receipt }))
-    //   .catch(e => this.setState({ status: 'failure', error: e.message }))
+    const { ethAmount } = this.state
+
+    this.setState({ status: 'pending', error: null, errors: {} }, () =>
+      sendToMainProcess('mtn-buy', {
+        password: this.props.password,
+        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+        from: this.props.from
+      })
+        .then(console.log)
+        .catch(e =>
+          this.setState({
+            status: 'failure',
+            error: e.message || 'Unknown error'
+          })
+        )
+    )
+  }
+
+  // Perform validations and return an object of type { fieldId: [String] }
+  validate = () => {
+    const { ethAmount } = this.state
+    const errors = {}
+
+    // validations for amount field
+    if (!ethAmount) {
+      errors.ethAmount = 'Amount is required'
+    } else if (!isWeiable(ethAmount)) {
+      errors.ethAmount = 'Invalid amount'
+    } else if (!isGreaterThanZero(ethAmount)) {
+      errors.ethAmount = 'Amount must be greater than 0'
+    }
+
+    return errors
   }
 
   render() {
-    const { disclaimerAccepted, receipt, status, error, input } = this.state
+    const { ethAmount, usdAmount, status, errors, error } = this.state
     const { onRequestClose, isOpen, currentPrice } = this.props
 
     return (
@@ -86,9 +139,9 @@ export default class BuyMTNDrawer extends React.Component {
         title="Buy Metronome"
       >
         <PurchaseFormProvider
-          disclaimerAccepted={disclaimerAccepted}
+          disclaimerAccepted
           currentPrice={currentPrice}
-          amount={input}
+          amount={ethAmount}
         >
           {({
             expectedMTNamount,
@@ -98,43 +151,51 @@ export default class BuyMTNDrawer extends React.Component {
           }) => (
             <form onSubmit={this.onSubmit}>
               <Sp py={4} px={3}>
-                <div>
-                  <Label>ETH amount</Label>
-                  <Input
-                    placeholder="Enter a valid amount"
-                    onChange={this.onInputChanged}
-                    disabled={status !== 'init'}
-                    value={input === null ? '' : input}
-                  />
-                </div>
+                <Flex.Row justify="space-between">
+                  <Flex.Item grow="1" basis="0">
+                    <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
+                    <TextInput
+                      placeholder="0.00"
+                      autoFocus
+                      onChange={this.onInputChange}
+                      label="Amount (ETH)"
+                      value={ethAmount}
+                      error={errors.ethAmount}
+                      disabled={status !== 'init'}
+                      id="ethAmount"
+                    />
+                  </Flex.Item>
+                  <Sp mt={6} mx={1}>
+                    <TxIcon />
+                  </Sp>
+                  <Flex.Item grow="1" basis="0">
+                    <TextInput
+                      placeholder="0.00"
+                      onChange={this.onInputChange}
+                      label="Amount (USD)"
+                      value={usdAmount}
+                      error={errors.usdAmount}
+                      disabled={status !== 'init'}
+                      id="usdAmount"
+                    />
+                  </Flex.Item>
+                </Flex.Row>
+
                 {expectedMTNamount && (
                   <div>
                     <p>You would get</p>
                     <p>{expectedMTNamount} MTN</p>
                   </div>
                 )}
-                {!isValidAmount &&
-                  !isPristine && <ErrorMsg>Invalid ETH amount</ErrorMsg>}
-                {status === 'success' && (
-                  <div>
-                    <p>Your receipt:</p>
-                    <pre>{JSON.stringify(receipt, null, 2)}</pre>
-                  </div>
-                )}
-                {status === 'pending' && (
-                  <div>
-                    <p>Waiting for receipt...</p>
-                  </div>
-                )}
+
                 {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
               </Sp>
-              {status === 'init' && (
-                <BtnContainer>
-                  <Btn block submit disabled={!isValidPurchase}>
-                    Buy
-                  </Btn>
-                </BtnContainer>
-              )}
+
+              <BtnContainer>
+                <Btn block submit disabled={!isValidPurchase}>
+                  Buy
+                </Btn>
+              </BtnContainer>
             </form>
           )}
         </PurchaseFormProvider>
@@ -142,3 +203,12 @@ export default class BuyMTNDrawer extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  availableETH: selectors.getEthBalanceWei(state),
+  password: selectors.getPassword(state),
+  ETHprice: selectors.getEthRate(state),
+  from: selectors.getActiveWalletAddresses(state)[0]
+})
+
+export default connect(mapStateToProps)(BuyMTNDrawer)
