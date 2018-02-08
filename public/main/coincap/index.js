@@ -38,6 +38,8 @@ function emitPrice (webContents) {
 
     webContents.send('eth-price-updated', priceData)
     logger.debug(`<-- eth-price-updated ${JSON.stringify(price)}`)
+
+    settings.set('coincap.ETH_USD', price)
   }
 }
 
@@ -47,6 +49,12 @@ function init (data, webContents) {
   }
 
   const emit = emitPrice(webContents)
+
+  const cachedPrice = settings.get('coincap.ETH_USD')
+  if (cachedPrice) {
+    logger.debug('Sending cached ETH price')
+    emit(cachedPrice)
+  }
 
   logger.debug('Attaching listener to ETH price changes')
   emitter.on('price', emit)
