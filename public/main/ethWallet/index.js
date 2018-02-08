@@ -179,13 +179,14 @@ function getHooks () {
     eventName: 'open-wallets',
     auth: true,
     handler: function (data, webContents) {
+      const activeWallet = settings.get('user.activeWallet')
       const walletIds = Object.keys(settings.get('user.wallets'))
 
       walletIds.forEach(function (walletId) {
         broadcastWalletInfo(webContents, walletId)
       })
 
-      return { walletIds }
+      return { walletIds, activeWallet }
     }
   }, {
     eventName: 'send-eth',
