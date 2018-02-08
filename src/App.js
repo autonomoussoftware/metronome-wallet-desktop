@@ -20,8 +20,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-    sendToMainProcess('ui-ready').then(({ onboardingComplete }) => {
-      this.setState({ onboardingComplete })
+    sendToMainProcess('ui-ready')
+      .then(({ onboardingComplete }) => {
+        this.setState({ onboardingComplete })
+      })
+      .catch(console.warn)
+
+    window.addEventListener('beforeunload', function(event) {
+      sendToMainProcess('ui-unload')
     })
   }
 
