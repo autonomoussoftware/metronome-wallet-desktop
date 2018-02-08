@@ -68,6 +68,7 @@ function getHooks () {
     handler: listenForBlocks
   }, {
     eventName: 'mtn-buy',
+    auth: true,
     handler: buyMetronome
   }]
 }
