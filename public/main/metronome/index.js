@@ -2,7 +2,7 @@ const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
-const { getWeb3 } = require('../ethWallet')
+const { getWeb3, sendSignedTransaction } = require('../ethWallet')
 
 let listening = false
 
@@ -48,10 +48,24 @@ function listenForBlocks (_, webContents) {
   })
 }
 
+function buyMetronome ({ password, from, value }) {
+  const address = settings.get('metronome.contracts.auctions')
+
+  logger.debug('Buying MTN in auction', { from, value, address })
+  
+  // TODO estimate gas with transfer.estimateGas()
+  const gas = 200000
+
+  return sendSignedTransaction({ password, from, to: address, gas })
+}
+
 function getHooks () {
   return [{
     eventName: 'ui-ready',
     handler: listenForBlocks
+  }, {
+    eventName: 'mtn-buy',
+    handler: buyMetronome
   }]
 }
 
