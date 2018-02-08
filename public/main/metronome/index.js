@@ -28,10 +28,13 @@ function listenForBlocks (_, webContents) {
     // TODO throttle this to 30'
 
     const calls = {
-      genesisTime: auctions.methods.genesisTime().call().then(t => Number.parseInt(t, 10)),
+      genesisTime: auctions.methods.genesisTime().call()
+        .then(t => Number.parseInt(t, 10)),
       currentPrice: auctions.methods.currentPrice().call(),
-      tokenRemaining: auctions.methods.mintable().call().then(t => Number.parseInt(t, 10)),
-      nextAuctionStartTime: auctions.methods.nextAuction().call().then(data => data._startTime)
+      tokenRemaining: auctions.methods.mintable().call(),
+      nextAuctionStartTime: auctions.methods.nextAuction().call()
+        .then(data => data._startTime)
+        .then(t => Number.parseInt(t, 10))
     }
 
     promiseAllProps(calls).then(function (auctionStatus) {
