@@ -8,6 +8,12 @@
   "coincap": {
     "ethPriceEmitRate": 5
   },
+  "metronome": {
+    "contracts": {
+      "token": "0xb407296cb664cc9eae4f18037932154a4a5bf696",
+      "auctions": "0xae6e5f1471b30ef80af5a0e641a3880cbaf27d76"
+    }
+  },
   "tokens": {
     "0xb407296cb664cc9eae4f18037932154a4a5bf696": {
       "symbol": "MTN"

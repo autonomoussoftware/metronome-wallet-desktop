@@ -84,7 +84,7 @@ function initMainWorker () {
     .use(require('./coincap'))
     .use(require('./ethWallet'))
     .use(require('./tokens'))
-    // metronome -- buy, change
+    .use(require('./metronome'))
     .attach()
 }
 
