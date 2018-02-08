@@ -183,7 +183,7 @@ function unsubscribeUpdates (_, webContents) {
   const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
 
   toUnsubscribe.forEach(function (s) {
-    logger.debug('Unsubscribing wallet balance update fn')
+    logger.debug('Unsubscribing wallet balance update ')
     s.blocksSubscription.unsubscribe()
   })
 

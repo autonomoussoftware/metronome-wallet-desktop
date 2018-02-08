@@ -4,17 +4,11 @@ const settings = require('electron-settings')
 
 const { getWeb3, sendSignedTransaction } = require('../ethWallet')
 
-let listening = false
-
 const auctionsAbi = require('./contracts/Auctions')
 
+let subscriptions = []
+
 function listenForBlocks (_, webContents) {
-  if (listening) {
-    return
-  }
-
-  listening = true
-
   const web3 = getWeb3()
 
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
@@ -49,6 +43,23 @@ function listenForBlocks (_, webContents) {
 
     // TODO notify error
   })
+
+  webContents.on('destroyed', function () {
+    blocksSubscription.unsubscribe()
+  })
+
+  subscriptions.push({ webContents, blocksSubscription })
+}
+
+function unsubscribeUpdates (_, webContents) {
+  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
+
+  toUnsubscribe.forEach(function (s) {
+    logger.debug('Unsubscribing auction status update')
+    s.blocksSubscription.unsubscribe()
+  })
+
+  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
 function buyMetronome ({ password, from, value }) {
@@ -66,6 +77,9 @@ function getHooks () {
   return [{
     eventName: 'ui-ready',
     handler: listenForBlocks
+  }, {
+    eventName: 'ui-unload',
+    handler: unsubscribeUpdates
   }, {
     eventName: 'mtn-buy',
     auth: true,
