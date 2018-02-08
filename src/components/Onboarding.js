@@ -119,6 +119,7 @@ export default class Onboarding extends React.Component {
               <Message>It must be at least 8 characters long.</Message>
               <Sp mt={2}>
                 <TextInput
+                  autoFocus
                   onChange={this.onInputChanged}
                   error={errors.password}
                   label="Password"

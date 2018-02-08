@@ -18,7 +18,7 @@ const reducer = handleActions(
     'open-wallets': (state, { payload }) => ({
       ...state,
       allIds: payload.walletIds,
-      active: payload.walletIds[0] || null
+      active: payload.activeWallet || payload.walletIds[0] || null
     }),
 
     'wallet-state-changed': (state, { payload }) => ({

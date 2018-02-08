@@ -1,76 +1,77 @@
-import { DarkLayout, Btn } from '../common'
+import { DarkLayout, Btn, Sp, TextInput } from '../common'
+import { sendToMainProcess } from '../utils'
 import { withRouter } from 'react-router-dom'
+import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import actions from '../actions'
 import styled from 'styled-components'
 import bip39 from 'bip39'
 import React from 'react'
 
-const Form = styled.form`
-  padding: 2.4rem 4.8rem;
-`
-
-const Msg = styled.p``
-
-const InputContainer = styled.div``
-
-const Input = styled.textarea`
-  display: block;
-  border: none;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 4px;
-  font-size: 2.4rem;
-  resize: vertical;
-  &:focus {
-    outline: none;
-  }
-`
-
-const ErrorMsg = styled.p``
-
-const DoneBtn = Btn.extend`
-  min-width: 15rem;
-  margin-top: 2rem;
+const ErrorMsg = styled.p`
+  color: ${p => p.theme.colors.danger};
 `
 
 class RecoverFromMnemonic extends React.Component {
   static propTypes = {
-    recoverFromMnemonic: PropTypes.func.isRequired,
+    password: PropTypes.string.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
     }).isRequired
   }
 
   state = {
-    input: null,
+    mnemonic: null,
+    errors: {},
+    status: 'init',
     error: null
   }
 
-  onDonePressed = e => {
+  onSubmit = e => {
     e.preventDefault()
-    const { input } = this.state
-    if (bip39.validateMnemonic(input)) {
-      this.props.recoverFromMnemonic(input)
-      this.props.history.push('/wallets')
-    } else {
-      this.setState({
-        error: "These words don't look like a valid recovery phrase."
+
+    const errors = this.validate()
+    if (Object.keys(errors).length > 0) return this.setState({ errors })
+
+    this.setState({ status: 'pending', error: null, errors: {} }, () =>
+      sendToMainProcess('create-wallet', {
+        password: this.props.password,
+        mnemonic: this.state.mnemonic
       })
+        .then(() => this.props.history.push('/wallets'))
+        .catch(e =>
+          this.setState({
+            status: 'failure',
+            error: e.message || 'Unknown error'
+          })
+        )
+    )
+  }
+
+  validate = () => {
+    const { mnemonic } = this.state
+    const errors = {}
+
+    if (!mnemonic) {
+      errors.mnemonic = 'The phrase is required'
+    } else if (!bip39.validateMnemonic(mnemonic)) {
+      errors.mnemonic = "These words don't look like a valid recovery phrase"
     }
+
+    return errors
   }
 
   onInputChanged = e => {
-    this.setState({ input: e.target.value, error: null })
+    const { id, value } = e.target
+    this.setState({ [id]: value, error: null })
   }
 
   render() {
-    const { input, error } = this.state
+    const { mnemonic, error, errors } = this.state
 
     const weHave12words =
-      input &&
-      input
+      mnemonic &&
+      mnemonic
         .trim()
         .split(' ')
         .map(w => w.trim())
@@ -78,25 +79,37 @@ class RecoverFromMnemonic extends React.Component {
 
     return (
       <DarkLayout title="Recover wallet">
-        <Form onSubmit={this.onDonePressed}>
-          <Msg>Enter the 12 words to recover your wallet.</Msg>
-          <p>This action will replace your current stored seed!</p>
-          <InputContainer>
-            <Input
-              autofocus
+        <Sp py={4} px={6}>
+          <form onSubmit={this.onSubmit}>
+            <p>Enter the 12 words to recover your wallet.</p>
+            <p>This action will replace your current stored seed!</p>
+
+            <TextInput
+              autoFocus
               onChange={this.onInputChanged}
-              value={input || ''}
+              label="Recovery phrase"
+              error={errors.mnemonic}
+              value={mnemonic || ''}
               rows="3"
+              id="mnemonic"
             />
-          </InputContainer>
-          {error && <ErrorMsg>{error}</ErrorMsg>}
-          <DoneBtn disabled={!weHave12words} submit>
-            Done
-          </DoneBtn>
-        </Form>
+
+            {error && <ErrorMsg>{error}</ErrorMsg>}
+
+            <Sp mt={4}>
+              <Btn disabled={!weHave12words} submit>
+                Recover
+              </Btn>
+            </Sp>
+          </form>
+        </Sp>
       </DarkLayout>
     )
   }
 }
 
-export default connect(null, actions)(withRouter(RecoverFromMnemonic))
+const mapStateToProps = state => ({
+  password: selectors.getPassword(state)
+})
+
+export default connect(mapStateToProps)(withRouter(RecoverFromMnemonic))

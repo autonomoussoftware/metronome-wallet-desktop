@@ -237,7 +237,7 @@ class Dashboard extends React.Component {
       <Container>
         <FixedContainer>
           <Header>
-            <Title>My Wallet 1</Title>
+            <Title>My Wallet</Title>
             <AddressContainer>
               <Label>Address</Label>
               <Bg>

@@ -28,10 +28,7 @@ class DisplayValue extends React.Component {
     maxDecimals: 18
   }
 
-  /**
-   * Returns a formatted rounded string representation of a big number
-   */
-  round(value, width) {
+  altRound(value, width) {
     const valBN = new BigNumber(Web3.utils.fromWei(value))
 
     const decimalPlaces = valBN.isGreaterThanOrEqualTo(BigNumber('100'))
@@ -41,6 +38,17 @@ class DisplayValue extends React.Component {
         : this.props.maxDecimals
 
     return valBN.toFormat(decimalPlaces)
+  }
+
+  round(value) {
+    let n = Number.parseFloat(Web3.utils.fromWei(value), 10)
+    let decimals = -Math.log10(n) + 10
+    if (decimals < 2) {
+      decimals = 2
+    } else if (decimals >= 18) {
+      decimals = 18
+    }
+    return String(Number.parseFloat(n.toFixed(Math.ceil(decimals)), 10))
   }
 
   /**
