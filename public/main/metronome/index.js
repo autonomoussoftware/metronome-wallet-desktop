@@ -55,11 +55,11 @@ function buyMetronome ({ password, from, value }) {
   const address = settings.get('metronome.contracts.auctions')
 
   logger.debug('Buying MTN in auction', { from, value, address })
-  
+
   // TODO estimate gas with transfer.estimateGas()
   const gas = 200000
 
-  return sendSignedTransaction({ password, from, to: address, gas })
+  return sendSignedTransaction({ password, from, to: address, value, gas })
 }
 
 function getHooks () {
