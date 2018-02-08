@@ -29,6 +29,10 @@ const MaxBtn = BaseBtn.extend`
   }
 `
 
+const ExpectedMsg = styled.div`
+  font-size: 1.3rem;
+`
+
 const ErrorMsg = styled.p`
   color: red;
 `
@@ -182,18 +186,25 @@ class BuyMTNDrawer extends React.Component {
                 </Flex.Row>
 
                 {expectedMTNamount && (
-                  <div>
-                    <p>You would get</p>
-                    <p>{expectedMTNamount} MTN</p>
-                  </div>
+                  <Sp mt={2}>
+                    <ExpectedMsg>
+                      You would get
+                      <br />
+                      {expectedMTNamount} MTN
+                    </ExpectedMsg>
+                  </Sp>
                 )}
 
                 {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
               </Sp>
 
               <BtnContainer>
-                <Btn block submit disabled={!isValidPurchase}>
-                  Buy
+                <Btn
+                  disabled={!isValidPurchase || status === 'pending'}
+                  submit
+                  block
+                >
+                  {status === 'pending' ? 'Buying...' : 'Buy'}
                 </Btn>
               </BtnContainer>
             </form>

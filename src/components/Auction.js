@@ -14,7 +14,6 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
-import Web3 from 'web3'
 
 const LoadingContainer = styled.div`
   text-align: center;
