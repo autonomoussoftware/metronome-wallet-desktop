@@ -6,7 +6,7 @@ const { getWeb3, sendSignedTransaction, getEvents } = require('../ethWallet')
 
 const ethEvents = getEvents()
 
-ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+function sendBalances ({ walletId, addresses, webContents }) {
   const tokens = settings.get('tokens')
   const contractAddresses = Object.keys(tokens)
 
@@ -38,7 +38,37 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
         })
     })
   })
+}
+
+let subscriptions = []
+
+ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+  sendBalances({ walletId, addresses, webContents })
+
+  const web3 = getWeb3()
+  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
+
+  blocksSubscription.on('data', function () {
+    sendBalances({ walletId, addresses, webContents })
+  })
+
+  webContents.on('destroyed', function () {
+    blocksSubscription.unsubscribe()
+  })
+
+  subscriptions.push({ webContents, blocksSubscription })
 })
+
+function unsubscribeUpdates (_, webContents) {
+  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
+
+  toUnsubscribe.forEach(function (s) {
+    logger.debug('Unsubscribing token balance update fn')
+    s.blocksSubscription.unsubscribe()
+  })
+
+  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
+}
 
 function sendToken ({ password, token: address, from, to, value }) {
   const symbol = settings.get(`tokens.${address}.symbol`)
@@ -61,6 +91,9 @@ function getHooks () {
     eventName: 'send-token',
     auth: true,
     handler: sendToken
+  }, {
+    eventName: 'ui-unload',
+    handler: unsubscribeUpdates
   }]
 }
 

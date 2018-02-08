@@ -123,16 +123,7 @@ function createWallet (mnemonic, password) {
 // TODO updateWalletInfo, subscribeToWalletChanges
 // TODO activateWallet
 
-function broadcastWalletInfo (webContents, walletId) {
-  const walletInfo = settings.get(`user.wallets.${walletId}`)
-
-  if (!walletInfo) {
-    const error = new WalletError('No wallet data', { walletId })
-    webContents.send('error', { error })
-    logger.warn(`No wallet data - ${walletId}`)
-    return
-  }
-
+function sendBalances ({ walletId, webContents }) {
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
   Object.keys(addresses).map(a => a.toLowerCase()).forEach(function (address) {
@@ -156,8 +147,47 @@ function broadcastWalletInfo (webContents, walletId) {
         logger.warn(`Could not get balance - ${address}`)
       })
   })
+}
 
-  emitter.emit('wallet-opened', { walletId, addresses: Object.keys(addresses), webContents })
+function sendWalletOpen (webContents, walletId) {
+  const addresses = settings.get(`user.wallets.${walletId}.addresses`)
+
+  emitter.emit('wallet-opened', {
+    walletId,
+    addresses: Object.keys(addresses),
+    webContents
+  })
+
+  sendBalances({ walletId, webContents })
+}
+
+let subscriptions = []
+
+function openWallet ({ webContents, walletId }) {
+  sendWalletOpen(webContents, walletId)
+
+  const web3 = getWeb3()
+  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
+  blocksSubscription.on('data', function () {
+    sendBalances({ webContents, walletId: walletId })
+  })
+
+  webContents.on('destroyed', function () {
+    blocksSubscription.unsubscribe()
+  })
+
+  subscriptions.push({ webContents, blocksSubscription })
+}
+
+function unsubscribeUpdates (_, webContents) {
+  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
+
+  toUnsubscribe.forEach(function (s) {
+    logger.debug('Unsubscribing wallet balance update fn')
+    s.blocksSubscription.unsubscribe()
+  })
+
+  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
 function getHooks () {
@@ -169,9 +199,11 @@ function getHooks () {
 
       const result = createWallet(mnemonic, password)
 
-      if (!result.error) {
-        broadcastWalletInfo(webContents, result.walletId)
+      if (result.error) {
+        return result
       }
+
+      openWallet({ webContents, walletId: result.walletId })
 
       return result
     }
@@ -183,7 +215,7 @@ function getHooks () {
       const walletIds = Object.keys(settings.get('user.wallets'))
 
       walletIds.forEach(function (walletId) {
-        broadcastWalletInfo(webContents, walletId)
+        openWallet({ webContents, walletId })
       })
 
       return { walletIds, activeWallet }
@@ -192,6 +224,9 @@ function getHooks () {
     eventName: 'send-eth',
     auth: true,
     handler: sendSignedTransaction
+  }, {
+    eventName: 'ui-unload',
+    handler: unsubscribeUpdates
   }]
 }
 
