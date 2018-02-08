@@ -1,4 +1,4 @@
-import { ItemFilter, LogoIcon, Btn, Sp } from '../common'
+import { DisplayValue, ItemFilter, LogoIcon, Btn, Sp } from '../common'
 import { TransitionGroup } from 'react-transition-group'
 import * as selectors from '../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
@@ -112,6 +112,8 @@ const CoinSymbol = styled.div`
   font-size: 2rem;
   font-weight: 600;
   text-align: center;
+  position: relative;
+  top: 3px;
 `
 
 const Value = styled.div`
@@ -249,12 +251,16 @@ class Dashboard extends React.Component {
           <Left>
             <Balance>
               <CoinSymbol>MTN</CoinSymbol>
-              <Value large>{mtnBalanceWei}</Value>
+              <Value>
+                <DisplayValue maxSize="4.8rem" value={mtnBalanceWei} />
+              </Value>
               <USDValue hide>${mtnBalanceUSD} (USD)</USDValue>
             </Balance>
             <Balance>
               <CoinSymbol>ETH</CoinSymbol>
-              <Value>{ethBalanceWei}</Value>
+              <Value>
+                <DisplayValue maxSize="3.2rem" value={ethBalanceWei} />
+              </Value>
               <USDValue>${ethBalanceUSD} (USD)</USDValue>
             </Balance>
           </Left>

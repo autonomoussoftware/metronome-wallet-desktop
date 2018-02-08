@@ -1,5 +1,6 @@
 import { BaseBtn, Btn } from './Btn'
 import ConverterIcon from './ConverterIcon'
+import DisplayValue from './DisplayValue'
 import AuctionIcon from './AuctionIcon'
 import Collapsable from './Collapsable'
 import ItemFilter from './ItemFilter'
@@ -20,6 +21,7 @@ import Sp from './Spacing'
 
 export {
   ConverterIcon,
+  DisplayValue,
   AuctionIcon,
   Collapsable,
   ItemFilter,

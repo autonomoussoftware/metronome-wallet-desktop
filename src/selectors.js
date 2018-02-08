@@ -1,4 +1,6 @@
 import { createSelector } from 'reselect'
+import settings from './config/settings'
+import Web3 from 'web3'
 import _ from 'lodash'
 
 export const getPassword = state => state.session.password
@@ -31,6 +33,25 @@ export const getActiveWalletEthBalance = createSelector(
       : null
 )
 
+export const getActiveWalletMtnBalance = createSelector(
+  getActiveWalletAddresses,
+  getActiveWalletData,
+  (addresses, activeWallet) =>
+    activeWallet && addresses && addresses.length > 0
+      ? _.get(
+          activeWallet,
+          [
+            'addresses',
+            addresses[0],
+            'token',
+            settings.MTN_TOKEN_ADDR,
+            'balance'
+          ],
+          null
+        )
+      : null
+)
+
 export const getRates = state => state.rates
 
 export const getEthRate = createSelector(
@@ -46,11 +67,13 @@ export const getMtnRate = createSelector(
 // Returns true if Main Process has sent enough data to render dashboard
 export const hasEnoughData = createSelector(
   getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
   getEthRate,
-  (ethBalance, ethRate) => ethBalance !== null && ethRate !== null
+  (ethBalance, mtnBalance, ethRate) =>
+    ethBalance !== null && mtnBalance !== null && ethRate !== null
 )
 
-export const getMtnBalanceWei = state => '0'
+export const getMtnBalanceWei = getActiveWalletMtnBalance
 
 export const getMtnBalanceUSD = state => '0'
 
@@ -59,7 +82,11 @@ export const getEthBalanceWei = getActiveWalletEthBalance
 export const getEthBalanceUSD = createSelector(
   getActiveWalletEthBalance,
   getEthRate,
-  (balance, rate) => (balance && rate ? String(balance * rate) : '0')
+  (balance, rate) => {
+    if (!balance || !rate) return '0'
+    const usdValue = parseFloat(Web3.utils.fromWei(balance)) * rate
+    return usdValue.toFixed(usdValue > 100 ? 0 : 2)
+  }
 )
 
 export const getAuction = state => state.auction
