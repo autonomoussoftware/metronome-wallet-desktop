@@ -70,7 +70,7 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
     tx.sign(privateKey)
     const serializedTx = tx.serialize()
 
-    logger.debug('Sending signed Ethereum tx')
+    logger.debug('Sending signed Ethereum tx', txParams)
     return web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
       .once('transactionHash', function (hash) {
         logger.debug('Transaction sent', hash)
