@@ -6,8 +6,12 @@ const EventEmitter = require('events')
 
 let emitter
 
-function initEmitter () {
-  logger.debug('Initializing CoinCap listener')
+function startEmitter () {
+  if (emitter) {
+    return
+  }
+
+  logger.verbose('Initializing CoinCap listener')
 
   emitter = new EventEmitter()
 
@@ -32,56 +36,84 @@ function initEmitter () {
   // TODO capture Socket.IO error events
 }
 
+function stopEmitter () {
+  if (!emitter || emitter.listenerCount('price')) {
+    return
+  }
+
+  coincap.off('trades')
+  coincap.close()
+
+  emitter = null
+
+  logger.verbose('CoinCap listener stopped')
+}
+
 function emitPrice (webContents) {
   return function (price) {
     const priceData = { token: 'ETH', currency: 'USD', price }
 
     webContents.send('eth-price-updated', priceData)
-    logger.debug(`<-- eth-price-updated ${JSON.stringify(price)}`)
+    logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
 
     settings.set('coincap.ETH_USD', price)
   }
 }
 
-function init (data, webContents) {
-  if (!emitter) {
-    initEmitter()
+const listeners = []
+
+function registerListener (webContents, listener) {
+  listeners.push({ webContents, listener })
+}
+
+function removeListener (webContents) {
+  const index = listeners.findIndex(r => r.webContents === webContents)
+
+  if (index === -1) {
+    return
   }
+
+  logger.verbose('Remove ETH price changes listener')
+
+  const record = listeners.splice(index, 1)[0]
+
+  emitter.removeListener('price', record.listener)
+
+  stopEmitter()
+}
+
+function startCoinCap (data, webContents) {
+  startEmitter()
 
   const emit = emitPrice(webContents)
 
   const cachedPrice = settings.get('coincap.ETH_USD')
   if (cachedPrice) {
-    logger.debug('Sending cached ETH price')
+    logger.verbose('Sending cached ETH price')
     emit(cachedPrice)
   }
 
-  logger.debug('Attaching listener to ETH price changes')
+  logger.verbose('Attaching listener to ETH price changes')
   emitter.on('price', emit)
 
-  function removeListener () {
-    emitter.removeListener('price', emit)
+  registerListener(webContents, emit)
 
-    logger.debug('Remove ETH price changes listener')
+  webContents.on('destroyed', function () {
+    removeListener(webContents)
+  })
+}
 
-    if (!emitter.listenerCount('price')) {
-      coincap.off('trades')
-      coincap.close()
-
-      emitter = null
-
-      logger.debug('CoinCap listener stopped')
-    }
-  }
-
-  webContents.on('destroyed', removeListener)
-  // TODO remove listeners on window reload too
+function stopCoinCap (data, webContents) {
+  removeListener(webContents)
 }
 
 function getHooks () {
   return [{
     eventName: 'ui-ready',
-    handler: init
+    handler: startCoinCap
+  }, {
+    eventName: 'ui-unload',
+    handler: stopCoinCap
   }]
 }
 // TODO listen window events to stop and restart the coincap listener
