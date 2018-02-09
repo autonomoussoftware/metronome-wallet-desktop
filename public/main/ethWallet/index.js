@@ -34,7 +34,7 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
     .find(walletId => Object.keys(wallets[walletId].addresses).includes(from))
 
   if (!wallet) {
-    // TODO error
+    // TODO handle error
     return
   }
 
@@ -79,12 +79,17 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
       .once('transactionHash', function (hash) {
         logger.debug('Transaction sent', hash)
         deferred.resolve({ hash })
+
+        web3.eth.getTransaction(hash).then(function (transaction) {
+          emitter.emit('unconfirmed-tx', transaction)
+        })
       })
       .once('receipt', function (receipt) {
         logger.debug('Transaction recepit received', receipt)
-        // TODO send recepit? It will be received on a next block anyway...
+
+        emitter.emit('tx-recepit', receipt)
       })
-      .on('error', function (err) {
+      .once('error', function (err) {
         logger.debug('Transaction send error', err.message)
         deferred.reject(err)
       })
@@ -168,43 +173,28 @@ function sendWalletOpen (webContents, walletId) {
   })
 }
 
-function analyzeBlock ({ header, walletId, webContents }) {
-  const { number } = header
-  const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+function parseTransaction ({ transaction, addresses, walletId, webContents }) {
+  const from = transaction.from.toLowerCase()
+  const to = transaction.to.toLowerCase()
+  const { value } = transaction
 
-  const web3 = getWeb3()
-  web3.eth.getBlock(number, true).then(function (block) {
-    const { transactions } = block
+  if (!addresses.includes(from) && !addresses.includes(to)) {
+    return
+  }
 
-    if (!transactions.length) {
-      return
+  addresses.forEach(function (address) {
+    const meta = {}
+
+    if (from === address) {
+      meta.outgoing = true
+    } else {
+      meta.incoming = true
     }
 
-    // TODO optimize when this is called
-    sendBalances({ webContents, walletId })
-
-    transactions.forEach(function (transaction) {
-      const from = transaction.from.toLowerCase()
-      const to = transaction.to.toLowerCase()
-      const { value } = transaction
-
-      if (!addresses.includes(from) && !addresses.includes(to)) {
-        return
-      }
-
-      addresses.forEach(function (address) {
-        const meta = {}
-
-        // TODO use bignumber
-        if (value !== '0') {
-          if (from === address) {
-            meta.outgoing = true
-          } else {
-            meta.incoming = true
-          }
-        }
-
-        // TODO gather information on the tx from the other modules > meta
+    // TODO gather information on the tx from the other modules > meta
+    Promise.all(txParsers.map(txParser => txParser({ transaction })))
+      .then(function (metas) {
+        Object.assign(meta, ...metas)
 
         // TODO store in db
 
@@ -223,6 +213,26 @@ function analyzeBlock ({ header, walletId, webContents }) {
         })
         logger.debug(`<-- Transaction ${address} ${transaction.hash}`)
       })
+  })
+}
+
+function parseBlock ({ header, walletId, webContents }) {
+  const { number } = header
+  const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+
+  const web3 = getWeb3()
+  web3.eth.getBlock(number, true).then(function (block) {
+    const { transactions } = block
+
+    if (!transactions.length) {
+      return
+    }
+
+    // TODO optimize when this is called
+    sendBalances({ webContents, walletId })
+
+    transactions.forEach(function (transaction) {
+      parseTransaction({ transaction, addresses, walletId, webContents })
     })
   })
 }
@@ -237,7 +247,7 @@ function openWallet ({ webContents, walletId }) {
   const web3 = getWeb3()
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
   blocksSubscription.on('data', function (header) {
-    analyzeBlock({ header, walletId, webContents })
+    parseBlock({ header, walletId, webContents })
   })
 
   webContents.on('destroyed', function () {
@@ -245,6 +255,12 @@ function openWallet ({ webContents, walletId }) {
   })
 
   subscriptions.push({ webContents, blocksSubscription })
+
+  emitter.on('unconfirmed-tx', function (transaction) {
+    const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+
+    parseTransaction({ transaction, addresses, walletId, webContents })
+  })
 }
 
 function unsubscribeUpdates (_, webContents) {
@@ -302,4 +318,16 @@ function getEvents () {
   return emitter
 }
 
-module.exports = { getHooks, getWeb3, sendSignedTransaction, getEvents }
+const txParsers = []
+
+function registerTxParser (parser) {
+  txParsers.push(parser)
+}
+
+module.exports = {
+  getHooks,
+  getWeb3,
+  sendSignedTransaction,
+  getEvents,
+  registerTxParser
+}

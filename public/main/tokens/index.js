@@ -2,7 +2,12 @@ const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-const { getWeb3, sendSignedTransaction, getEvents } = require('../ethWallet')
+const {
+  getWeb3,
+  sendSignedTransaction,
+  getEvents,
+  registerTxParser
+} = require('../ethWallet')
 
 const ethEvents = getEvents()
 
@@ -86,7 +91,16 @@ function sendToken ({ password, token: address, from, to, value }) {
   return sendSignedTransaction({ password, from, to: address, data, gas })
 }
 
+function transactionParser ({ transaction }) {
+  // TODO analyze the tx, tx receipt and return promise data to be merged with meta
+  // Transfer
+  // Approval
+  return Promise.resolve({ token: { parsed: true } })
+}
+
 function getHooks () {
+  registerTxParser(transactionParser)
+
   return [{
     eventName: 'send-token',
     auth: true,
