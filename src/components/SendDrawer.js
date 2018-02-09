@@ -1,19 +1,10 @@
+import { ItemFilter, CheckIcon, Drawer, Flex, Tabs, Sp } from './common'
 import SendMTNForm from './SendMTNForm'
 import SendETHForm from './SendETHForm'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
 import React from 'react'
-import {
-  LoadingBar,
-  ItemFilter,
-  CheckIcon,
-  CloseIcon,
-  Drawer,
-  Flex,
-  Tabs,
-  Sp
-} from './common'
 
 const Title = styled.div`
   line-height: 3rem;
@@ -38,14 +29,27 @@ export default class SendDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  state = {
+  static initialState = {
+    transactionHash: null,
     status: 'init',
     error: null
   }
 
+  state = SendDrawer.initialState
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
+      this.setState(SendDrawer.initialState)
+    }
+  }
+
+  onSuccess = ({ hash: transactionHash }) => {
+    this.setState({ status: 'success', transactionHash })
+  }
+
   render() {
     const { onRequestClose, isOpen } = this.props
-    const { status, error } = this.state
+    const { status } = this.state
 
     return (
       <Drawer
@@ -73,19 +77,14 @@ export default class SendDrawer extends React.Component {
                   ]}
                 />
                 {filteredItems.map(i =>
-                  React.createElement(i.component, { key: i.name })
+                  React.createElement(i.component, {
+                    onSuccess: this.onSuccess,
+                    key: i.name
+                  })
                 )}
               </React.Fragment>
             )}
           </ItemFilter>
-        )}
-        {status === 'pending' && (
-          <Sp m={6}>
-            <Title>Processing...</Title>
-            <Sp mt={3}>
-              <LoadingBar />
-            </Sp>
-          </Sp>
         )}
         {status === 'success' && (
           <Sp my={19} mx={12}>
@@ -98,17 +97,6 @@ export default class SendDrawer extends React.Component {
                 You can view the status of this transaction in the transaction
                 list.
               </Message>
-            </Flex.Column>
-          </Sp>
-        )}
-        {status === 'failure' && (
-          <Sp my={19} mx={12}>
-            <Flex.Column align="center">
-              <CloseIcon size="4.8rem" color={theme.colors.danger} />
-              <Sp my={2}>
-                <Title>Error</Title>
-              </Sp>
-              <Message>{error}</Message>
             </Flex.Column>
           </Sp>
         )}

@@ -43,6 +43,7 @@ const Footer = styled.div`
 class SendETHForm extends React.Component {
   static propTypes = {
     availableETH: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired,
     ETHprice: PropTypes.number.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
@@ -52,8 +53,8 @@ class SendETHForm extends React.Component {
     toAddress: null,
     ethAmount: null,
     usdAmount: null,
-    errors: {},
     status: 'init',
+    errors: {},
     error: null
   }
 
@@ -92,7 +93,7 @@ class SendETHForm extends React.Component {
         from: this.props.from,
         to: toAddress
       })
-        .then(console.log)
+        .then(this.props.onSuccess)
         .catch(e =>
           this.setState({
             status: 'failure',
@@ -127,7 +128,14 @@ class SendETHForm extends React.Component {
   }
 
   render() {
-    const { toAddress, ethAmount, usdAmount, errors, error } = this.state
+    const {
+      toAddress,
+      ethAmount,
+      usdAmount,
+      status,
+      errors,
+      error
+    } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -145,7 +153,9 @@ class SendETHForm extends React.Component {
             <Sp mt={3}>
               <Flex.Row justify="space-between">
                 <Flex.Item grow="1" basis="0">
-                  <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
+                  <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                    MAX
+                  </MaxBtn>
                   <TextInput
                     placeholder="0.00"
                     onChange={this.onInputChange}
@@ -173,8 +183,8 @@ class SendETHForm extends React.Component {
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm">
-            Review Send
+          <Btn block submit form="sendForm" disabled={status === 'pending'}>
+            {status === 'pending' ? 'Sending...' : 'Send'}
           </Btn>
           {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>

@@ -1,8 +1,14 @@
-import { ConverterIcon, Collapsable, AuctionIcon, TxIcon } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
 import React from 'react'
+import {
+  ConverterIcon,
+  DisplayValue,
+  Collapsable,
+  AuctionIcon,
+  TxIcon
+} from './common'
 
 const Tx = styled.div`
   margin-left: 1.6rem;
@@ -54,26 +60,34 @@ const Address = styled.span`
 const Amount = styled.div`
   line-height: 2.5rem;
   text-align: right;
-  font-size: 2rem;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   color: ${p => (p.isPending ? p.theme.colors.copy : p.theme.colors.primary)};
 `
 
 export default class TxRow extends React.Component {
   static propTypes = {
-    pending: PropTypes.number,
-    amount: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['sent', 'received', 'auction', 'converted'])
-      .isRequired,
-    from: PropTypes.string,
-    to: PropTypes.string,
-    id: PropTypes.string.isRequired
+    transaction: PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      hash: PropTypes.string.isRequired,
+      from: PropTypes.string,
+      to: PropTypes.string
+    }).isRequired,
+    meta: PropTypes.shape({
+      outgoing: PropTypes.bool.isRequired
+    }).isRequired,
+    pending: PropTypes.number
   }
 
   render() {
-    const { pending = null, amount, type, from, to, id, ...other } = this.props
+    const {
+      transaction: { value, from, to },
+      pending = null,
+      meta: { outgoing },
+      ...other
+    } = this.props
 
     const isPending = pending !== null
+    const type = outgoing ? 'sent' : 'received'
 
     return (
       <Collapsable maxHeight="6.5rem" {...other}>
@@ -89,7 +103,9 @@ export default class TxRow extends React.Component {
 
           {isPending && <Pending>{pending}</Pending>}
           <div>
-            <Amount isPending={isPending}>{amount} MTN</Amount>
+            <Amount isPending={isPending}>
+              <DisplayValue value={value} maxSize="2rem" post=" MTN" />
+            </Amount>
             <Details isPending={isPending}>
               {type === 'converted' && (
                 <div>

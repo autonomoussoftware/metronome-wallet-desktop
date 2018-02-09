@@ -23,6 +23,11 @@ const MaxBtn = BaseBtn.extend`
   }
 `
 
+const ErrorMsg = styled.div`
+  color: ${p => p.theme.colors.danger};
+  margin-top: 1.6rem;
+`
+
 const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
   padding: 6.4rem 2.4rem;
@@ -33,6 +38,7 @@ const Footer = styled.div`
 class SendMTNForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
@@ -41,7 +47,8 @@ class SendMTNForm extends React.Component {
     mtnAmount: null,
     toAddress: null,
     status: 'init',
-    errors: {}
+    errors: {},
+    error: null
   }
 
   onMaxClick = () => {
@@ -70,7 +77,7 @@ class SendMTNForm extends React.Component {
         from: this.props.from,
         to: toAddress
       })
-        .then(console.log)
+        .then(this.props.onSuccess)
         .catch(e =>
           this.setState({
             status: 'failure',
@@ -105,7 +112,7 @@ class SendMTNForm extends React.Component {
   }
 
   render() {
-    const { toAddress, mtnAmount, errors } = this.state
+    const { toAddress, mtnAmount, errors, status, error } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -121,7 +128,9 @@ class SendMTNForm extends React.Component {
               id="toAddress"
             />
             <Sp mt={3}>
-              <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
+              <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                MAX
+              </MaxBtn>
               <TextInput
                 placeholder="0.00"
                 onChange={this.onInputChange}
@@ -134,9 +143,10 @@ class SendMTNForm extends React.Component {
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm">
-            Review Send
+          <Btn block submit form="sendForm" disabled={status === 'pending'}>
+            {status === 'pending' ? 'Sending...' : 'Send'}
           </Btn>
+          {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>
       </Flex.Column>
     )
