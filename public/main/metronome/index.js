@@ -9,7 +9,7 @@ const { getConverterStatus } = require('./converter')
 let subscriptions = []
 
 function sendStatus ({ web3, webContents }) {
-  const auctionsAddress = settings.get('metronome.contracts.auctions')
+  const auctionsAddress = settings.get('metronome.contracts.auctions').toLowerCase()
   getAuctionStatus({ web3, address: auctionsAddress })
     .then(function (auctionStatus) {
       logger.debug('Auction status', auctionStatus)
@@ -17,7 +17,7 @@ function sendStatus ({ web3, webContents }) {
       webContents.send('auction-status-updated', auctionStatus)
     })
 
-  const converterAddress = settings.get('metronome.contracts.converter')
+  const converterAddress = settings.get('metronome.contracts.converter').toLowerCase()
   getConverterStatus({ web3, address: converterAddress })
     .then(function (auctionStatus) {
       logger.debug('Auction status', auctionStatus)
@@ -66,7 +66,7 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function buyMetronome ({ password, from, value }) {
-  const address = settings.get('metronome.contracts.auctions')
+  const address = settings.get('metronome.contracts.auctions').toLowerCase() 
 
   logger.debug('Buying MTN in auction', { from, value, address })
 

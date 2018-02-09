@@ -115,6 +115,7 @@ function createWallet (mnemonic, password) {
     .derivePath(`${derivationPath}/${index}`)
     .getWallet()
     .getChecksumAddressString()
+    .toLowerCase()
 
   const addresses = {
     [address]: {
@@ -183,7 +184,7 @@ function parseTransaction ({ transaction, addresses, walletId, webContents }) {
     return
   }
 
-  addresses.forEach(function (address) {
+  addresses.map(a => a.toLowerCase()).forEach(function (address) {
     const meta = {}
 
     if (from === address) {

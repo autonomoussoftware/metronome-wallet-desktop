@@ -16,8 +16,8 @@ function sendBalances ({ walletId, addresses, webContents }) {
   const contractAddresses = Object.keys(tokens)
 
   const web3 = getWeb3()
-  const contracts = contractAddresses.map(address => ({
-    contractAddresse: address.toLowerCase(),
+  const contracts = contractAddresses.map(a => a.toLowerCase()).map(address => ({
+    contractAddresse: address,
     contract: new web3.eth.Contract(abi, address),
     symbol: tokens[address].symbol
   }))
@@ -76,7 +76,7 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function sendToken ({ password, token: address, from, to, value }) {
-  const symbol = settings.get(`tokens.${address}.symbol`)
+  const symbol = settings.get(`tokens.${address.toLowerCase()}.symbol`)
 
   logger.debug('Sending ERC20 tokens', { from, to, value, token: symbol })
 
