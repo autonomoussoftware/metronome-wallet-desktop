@@ -1,18 +1,39 @@
-import { Drawer, BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import {
-  sendToMainProcess,
-  isGreaterThanZero,
-  isWeiable,
-  toETH,
-  toUSD
-} from '../utils'
 import PurchaseFormProvider from './providers/PurchaseFormProvider'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import theme from '../theme'
 import React from 'react'
 import Web3 from 'web3'
+import {
+  TextInput,
+  CheckIcon,
+  BaseBtn,
+  Drawer,
+  TxIcon,
+  Flex,
+  Btn,
+  Sp
+} from './common'
+
+const Title = styled.div`
+  line-height: 3rem;
+  font-size: 2.4rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+`
+
+const Message = styled.div`
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+`
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -56,6 +77,7 @@ class BuyMTNDrawer extends React.Component {
   }
 
   static initialState = {
+    transactionHash: null,
     ethAmount: null,
     usdAmount: null,
     errors: {},
@@ -68,13 +90,13 @@ class BuyMTNDrawer extends React.Component {
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.setState({
-      usdAmount: toUSD(ethAmount, this.props.ETHprice),
+      usdAmount: utils.toUSD(ethAmount, this.props.ETHprice),
       ethAmount
     })
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isOpen !== this.props.isOpen) {
+    if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
       this.setState(BuyMTNDrawer.initialState)
     }
   }
@@ -85,8 +107,10 @@ class BuyMTNDrawer extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
+      usdAmount:
+        id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
+      ethAmount:
+        id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
       [id]: value
     }))
   }
@@ -100,12 +124,15 @@ class BuyMTNDrawer extends React.Component {
     const { ethAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('mtn-buy', {
-        password: this.props.password,
-        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-        from: this.props.from
-      })
-        .then(console.log)
+      utils
+        .sendToMainProcess('mtn-buy', {
+          password: this.props.password,
+          value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+          from: this.props.from
+        })
+        .then(({ hash: transactionHash }) => {
+          this.setState({ status: 'success', transactionHash })
+        })
         .catch(e =>
           this.setState({
             status: 'failure',
@@ -123,9 +150,9 @@ class BuyMTNDrawer extends React.Component {
     // validations for amount field
     if (!ethAmount) {
       errors.ethAmount = 'Amount is required'
-    } else if (!isWeiable(ethAmount)) {
+    } else if (!utils.isWeiable(ethAmount)) {
       errors.ethAmount = 'Invalid amount'
-    } else if (!isGreaterThanZero(ethAmount)) {
+    } else if (!utils.isGreaterThanZero(ethAmount)) {
       errors.ethAmount = 'Amount must be greater than 0'
     }
 
@@ -142,74 +169,92 @@ class BuyMTNDrawer extends React.Component {
         isOpen={isOpen}
         title="Buy Metronome"
       >
-        <PurchaseFormProvider
-          disclaimerAccepted
-          currentPrice={currentPrice}
-          amount={ethAmount}
-        >
-          {({
-            expectedMTNamount,
-            isValidPurchase,
-            isValidAmount,
-            isPristine
-          }) => (
-            <form onSubmit={this.onSubmit}>
-              <Sp py={4} px={3}>
-                <Flex.Row justify="space-between">
-                  <Flex.Item grow="1" basis="0">
-                    <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
-                    <TextInput
-                      placeholder="0.00"
-                      autoFocus
-                      onChange={this.onInputChange}
-                      label="Amount (ETH)"
-                      value={ethAmount}
-                      error={errors.ethAmount}
-                      disabled={status !== 'init'}
-                      id="ethAmount"
-                    />
-                  </Flex.Item>
-                  <Sp mt={6} mx={1}>
-                    <TxIcon />
-                  </Sp>
-                  <Flex.Item grow="1" basis="0">
-                    <TextInput
-                      placeholder="0.00"
-                      onChange={this.onInputChange}
-                      label="Amount (USD)"
-                      value={usdAmount}
-                      error={errors.usdAmount}
-                      disabled={status !== 'init'}
-                      id="usdAmount"
-                    />
-                  </Flex.Item>
-                </Flex.Row>
+        {status !== 'success' && (
+          <PurchaseFormProvider
+            disclaimerAccepted
+            currentPrice={currentPrice}
+            amount={ethAmount}
+          >
+            {({
+              expectedMTNamount,
+              isValidPurchase,
+              isValidAmount,
+              isPristine
+            }) => (
+              <form onSubmit={this.onSubmit}>
+                <Sp py={4} px={3}>
+                  <Flex.Row justify="space-between">
+                    <Flex.Item grow="1" basis="0">
+                      <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                        MAX
+                      </MaxBtn>
+                      <TextInput
+                        placeholder="0.00"
+                        autoFocus
+                        onChange={this.onInputChange}
+                        disabled={status !== 'init'}
+                        error={errors.ethAmount}
+                        label="Amount (ETH)"
+                        value={ethAmount}
+                        id="ethAmount"
+                      />
+                    </Flex.Item>
+                    <Sp mt={6} mx={1}>
+                      <TxIcon />
+                    </Sp>
+                    <Flex.Item grow="1" basis="0">
+                      <TextInput
+                        placeholder="0.00"
+                        onChange={this.onInputChange}
+                        disabled={status !== 'init'}
+                        error={errors.usdAmount}
+                        label="Amount (USD)"
+                        value={usdAmount}
+                        id="usdAmount"
+                      />
+                    </Flex.Item>
+                  </Flex.Row>
 
-                {expectedMTNamount && (
-                  <Sp mt={2}>
-                    <ExpectedMsg>
-                      You would get
-                      <br />
-                      {expectedMTNamount} MTN
-                    </ExpectedMsg>
-                  </Sp>
-                )}
+                  {expectedMTNamount && (
+                    <Sp mt={2}>
+                      <ExpectedMsg>
+                        You would get
+                        <br />
+                        {expectedMTNamount} MTN
+                      </ExpectedMsg>
+                    </Sp>
+                  )}
 
-                {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
+                  {error && <ErrorMsg>{error}</ErrorMsg>}
+                </Sp>
+
+                <BtnContainer>
+                  <Btn
+                    disabled={!isValidPurchase || status === 'pending'}
+                    submit
+                    block
+                  >
+                    {status === 'pending' ? 'Buying...' : 'Buy'}
+                  </Btn>
+                </BtnContainer>
+              </form>
+            )}
+          </PurchaseFormProvider>
+        )}
+        {status === 'success' && (
+          <Sp my={19} mx={12}>
+            <Flex.Column align="center">
+              <CheckIcon color={theme.colors.success} />
+              <Sp my={2}>
+                <Title>Success!</Title>
               </Sp>
-
-              <BtnContainer>
-                <Btn
-                  disabled={!isValidPurchase || status === 'pending'}
-                  submit
-                  block
-                >
-                  {status === 'pending' ? 'Buying...' : 'Buy'}
-                </Btn>
-              </BtnContainer>
-            </form>
-          )}
-        </PurchaseFormProvider>
+              <Message>
+                You can view the status of this transaction in the transaction
+                list.
+              </Message>
+            </Flex.Column>
+          </Sp>
+        )}
       </Drawer>
     )
   }
