@@ -55,10 +55,13 @@ export const getActiveWalletMtnBalance = createSelector(
 export const getActiveWalletTransactions = createSelector(
   getActiveWalletAddresses,
   getActiveWalletData,
-  (addresses, activeWallet) =>
-    activeWallet && addresses && addresses.length > 0
-      ? activeWallet.addresses[addresses[0]].transactions || []
-      : []
+  (addresses, activeWallet) => {
+    const result =
+      activeWallet && addresses && addresses.length > 0
+        ? activeWallet.addresses[addresses[0]].transactions || []
+        : []
+    return _.sortBy(result, 'transaction.blockNumber').reverse()
+  }
 )
 
 export const getRates = state => state.rates

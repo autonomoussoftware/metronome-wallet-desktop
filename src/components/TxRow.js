@@ -73,7 +73,7 @@ export default class TxRow extends React.Component {
       to: PropTypes.string
     }).isRequired,
     meta: PropTypes.shape({
-      outgoing: PropTypes.bool.isRequired
+      outgoing: PropTypes.bool
     }).isRequired,
     pending: PropTypes.number
   }

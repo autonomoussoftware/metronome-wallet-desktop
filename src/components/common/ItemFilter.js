@@ -17,22 +17,30 @@ export default class ItemFilter extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      filteredItems: this.filterItems(props.defaultFilter),
+      filteredItems: this.filterItems(props.defaultFilter, props.items),
       activeFilter: props.defaultFilter
     }
   }
 
-  filterItems = filterValue => {
+  filterItems = (filterValue, items) => {
     return filterValue
-      ? this.props.items.filter(
-          item => this.props.extractValue(item) === filterValue
-        )
-      : this.props.items
+      ? items.filter(item => this.props.extractValue(item) === filterValue)
+      : items
   }
 
   onFilterChange = filterValue => {
-    const filteredItems = this.filterItems(filterValue)
+    const filteredItems = this.filterItems(filterValue, this.props.items)
     this.setState({ filteredItems, activeFilter: filterValue })
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.items.length !== this.props.items.length) {
+      const filteredItems = this.filterItems(
+        this.state.activeFilter,
+        newProps.items
+      )
+      this.setState({ filteredItems })
+    }
   }
 
   render() {

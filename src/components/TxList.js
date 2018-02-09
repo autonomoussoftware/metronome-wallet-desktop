@@ -93,7 +93,7 @@ export default class TxList extends React.Component {
 
     return (
       <React.Fragment>
-        <ItemFilter extractValue={tx => tx.type} items={items}>
+        <ItemFilter extractValue={tx => tx.meta.outgoing} items={items}>
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <Sp mt={6}>
               <ListHeader>
@@ -106,14 +106,14 @@ export default class TxList extends React.Component {
                     All
                   </Tab>
                   <Tab
-                    isActive={activeFilter === 'sent'}
-                    onClick={() => onFilterChange('sent')}
+                    isActive={activeFilter === true}
+                    onClick={() => onFilterChange(true)}
                   >
                     Sent
                   </Tab>
                   <Tab
-                    isActive={activeFilter === 'received'}
-                    onClick={() => onFilterChange('received')}
+                    isActive={activeFilter === false}
+                    onClick={() => onFilterChange(false)}
                   >
                     Received
                   </Tab>

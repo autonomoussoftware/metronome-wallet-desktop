@@ -23,7 +23,16 @@ const reducer = handleActions(
 
     'wallet-state-changed': (state, { payload }) => ({
       ...state,
-      byId: _.merge({}, state.byId || {}, payload)
+      byId: _.mergeWith(
+        {},
+        state.byId || {},
+        payload,
+        (objValue, srcValue, key) => {
+          if (key === 'transactions') {
+            return _.unionBy(objValue, srcValue, 'transaction.hash')
+          }
+        }
+      )
     })
   },
   initialState

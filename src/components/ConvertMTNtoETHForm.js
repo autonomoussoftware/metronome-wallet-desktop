@@ -112,6 +112,7 @@ class ConvertMTNtoETHForm extends React.Component {
               </MaxBtn>
               <TextInput
                 placeholder="0.00"
+                autoFocus
                 onChange={this.onInputChange}
                 label="Amount (MNT)"
                 value={mtnAmount}

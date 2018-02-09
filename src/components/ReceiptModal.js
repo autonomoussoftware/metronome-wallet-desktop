@@ -1,4 +1,4 @@
-import { Modal, Btn } from './common'
+import { DisplayValue, Modal, Btn } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -37,7 +37,6 @@ const Value = styled.div`
 const Amount = styled.div`
   color: ${p => p.theme.colors.primary};
   line-height: 2.5rem;
-  font-size: 2rem;
   text-align: right;
 `
 
@@ -63,28 +62,44 @@ export default class ReceiptModal extends React.Component {
     onRequestClose: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired,
     tx: PropTypes.shape({
-      id: PropTypes.string.isRequired
+      transaction: PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        hash: PropTypes.string.isRequired,
+        from: PropTypes.string,
+        to: PropTypes.string
+      }).isRequired,
+      meta: PropTypes.shape({
+        outgoing: PropTypes.bool
+      }).isRequired
     })
   }
 
   render() {
-    const { onRequestClose, isOpen, tx = {} } = this.props
+    const {
+      onRequestClose,
+      isOpen,
+      tx = { transaction: {}, meta: {} }
+    } = this.props
+
+    const type = tx.meta.outgoing ? 'sent' : 'received'
 
     return (
       <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
         <Container>
           <Row first>
             <Label>Amount</Label>
-            <Amount>{tx.amount}</Amount>
+            <Amount>
+              <DisplayValue value={tx.transaction.value} maxSize="2rem" />
+            </Amount>
           </Row>
           <Row>
             <Label>Type</Label>
-            <Type>{tx.type}</Type>
+            <Type>{type}</Type>
           </Row>
-          {tx.from && (
+          {tx.transaction.from && (
             <Row>
               <Label>Received from</Label>
-              <Address>{tx.from}</Address>
+              <Address>{tx.transaction.from}</Address>
             </Row>
           )}
           {tx.status && (

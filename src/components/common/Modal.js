@@ -77,7 +77,7 @@ export default class Modal extends React.Component {
             display: 'flex',
             padding: '0',
             border: 'none',
-            width: '304px',
+            width: '320px',
             right: 'auto',
             left: '50%',
             top: '10rem'
