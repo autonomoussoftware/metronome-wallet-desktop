@@ -157,8 +157,65 @@ function sendWalletOpen (webContents, walletId) {
     addresses: Object.keys(addresses),
     webContents
   })
+}
 
-  sendBalances({ walletId, webContents })
+function analyzeBlock ({ header, walletId, webContents }) {
+  const { number } = header
+  const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+
+  const web3 = getWeb3()
+  web3.eth.getBlock(number, true).then(function (block) {
+    const { transactions } = block
+
+    if (!transactions.length) {
+      return
+    }
+
+    // TODO optimize when this is called
+    sendBalances({ webContents, walletId })
+
+    transactions.forEach(function (transaction) {
+      const from = transaction.from.toLowerCase()
+      const to = transaction.to.toLowerCase()
+      const { value } = transaction
+
+      if (!addresses.includes(from) && !addresses.includes(to)) {
+        return
+      }
+
+      addresses.forEach(function (address) {
+        const meta = {}
+
+        // TODO use bignumber
+        if (value !== '0') {
+          if (from === address) {
+            meta.outgoing = true
+          } else {
+            meta.incoming = true
+          }
+        }
+
+        // TODO gather information on the tx from the other modules > meta
+
+        // TODO store in db
+
+        webContents.send('wallet-state-changed', {
+          [walletId]: {
+            addresses: {
+              [address]: {
+                transactions: [{
+                  transaction,
+                  meta,
+                  recepit: {}
+                }]
+              }
+            }
+          }
+        })
+        logger.debug(`<-- Transaction ${address} ${transaction.hash}`)
+      })
+    })
+  })
 }
 
 let subscriptions = []
@@ -166,10 +223,12 @@ let subscriptions = []
 function openWallet ({ webContents, walletId }) {
   sendWalletOpen(webContents, walletId)
 
+  sendBalances({ walletId, webContents })
+
   const web3 = getWeb3()
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-  blocksSubscription.on('data', function () {
-    sendBalances({ webContents, walletId: walletId })
+  blocksSubscription.on('data', function (header) {
+    analyzeBlock({ header, walletId, webContents })
   })
 
   webContents.on('destroyed', function () {
