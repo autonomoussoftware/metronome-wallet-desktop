@@ -33,7 +33,10 @@ function sendSignedTransaction ({ password, from: _from, to, value = 0, data, ga
   const wallets = settings.get('user.wallets')
 
   const wallet = Object.keys(wallets)
-    .find(walletId => Object.keys(wallets[walletId].addresses).includes(from))
+    .find(walletId => Object.keys(wallets[walletId].addresses)
+      .map(a => a.toLowerCase())
+      .includes(from)
+    )
 
   if (!wallet) {
     // TODO handle error
@@ -171,15 +174,16 @@ function sendWalletOpen (webContents, walletId) {
 
   emitter.emit('wallet-opened', {
     walletId,
-    addresses: Object.keys(addresses),
+    addresses: Object.keys(addresses).map(a => a.toLowerCase()),
     webContents
   })
 }
 
-function parseTransaction ({ transaction, addresses, walletId, webContents }) {
+function parseTransaction ({ transaction, addresses: _addresses, walletId, webContents }) {
   const from = transaction.from.toLowerCase()
   const to = transaction.to.toLowerCase()
-  const { value } = transaction
+  // const { value } = transaction
+  const addresses = _addresses.map(a => a.toLowerCase())
 
   if (!addresses.includes(from) && !addresses.includes(to)) {
     return
@@ -252,7 +256,7 @@ function sendTransactions ({ walletId, webContents }) {
 
   const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
 
-  addresses.forEach(function (address) {
+  addresses.map(a => a.toLowerCase()).forEach(function (address) {
     const query = { walletId, address }
     // TODO unhardcode limit
     // TODO null first
