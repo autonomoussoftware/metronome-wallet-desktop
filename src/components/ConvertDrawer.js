@@ -1,5 +1,5 @@
-import SendMTNForm from './SendMTNForm'
-import SendETHForm from './SendETHForm'
+import ConvertETHtoMTNForm from './ConvertETHtoMTNForm'
+import ConvertMTNtoETHForm from './ConvertMTNtoETHForm'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
@@ -10,8 +10,8 @@ import {
   CheckIcon,
   CloseIcon,
   Drawer,
-  Flex,
   Tabs,
+  Flex,
   Sp
 } from '../common'
 
@@ -32,7 +32,16 @@ const Message = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
-export default class SendDrawer extends React.Component {
+const Arrow = styled.span`
+  color: ${p => p.theme.colors.primary};
+  position: relative;
+  top: -7px;
+  margin: 0 8px;
+  transform: scale3d(1.5, 2, 1);
+  display: inline-block;
+`
+
+export default class ConvertDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired
@@ -48,18 +57,14 @@ export default class SendDrawer extends React.Component {
     const { status, error } = this.state
 
     return (
-      <Drawer
-        onRequestClose={onRequestClose}
-        isOpen={isOpen}
-        title="Send Transaction"
-      >
+      <Drawer onRequestClose={onRequestClose} isOpen={isOpen} title="Converter">
         {status === 'init' && (
           <ItemFilter
-            defaultFilter="mtn"
+            defaultFilter="ethToMtn"
             extractValue={({ name }) => name}
             items={[
-              { name: 'mtn', component: SendMTNForm },
-              { name: 'eth', component: SendETHForm }
+              { name: 'ethToMtn', component: ConvertETHtoMTNForm },
+              { name: 'mtnToEth', component: ConvertMTNtoETHForm }
             ]}
           >
             {({ filteredItems, onFilterChange, activeFilter }) => (
@@ -68,8 +73,22 @@ export default class SendDrawer extends React.Component {
                   onClick={onFilterChange}
                   active={activeFilter}
                   items={[
-                    { id: 'mtn', label: 'MTN' },
-                    { id: 'eth', label: 'ETH' }
+                    {
+                      id: 'ethToMtn',
+                      label: (
+                        <React.Fragment>
+                          ETH<Arrow>&rarr;</Arrow>MTN
+                        </React.Fragment>
+                      )
+                    },
+                    {
+                      id: 'mtnToEth',
+                      label: (
+                        <React.Fragment>
+                          MTN<Arrow>&rarr;</Arrow>ETH
+                        </React.Fragment>
+                      )
+                    }
                   ]}
                 />
                 {filteredItems.map(i =>

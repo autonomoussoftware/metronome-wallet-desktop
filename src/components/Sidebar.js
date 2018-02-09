@@ -29,6 +29,9 @@ const Button = styled(NavLink)`
   transition: 0.5s;
   opacity: 0.5;
   border-bottom: 2px solid ${p => p.theme.colors.darkShade};
+  &:focus {
+    outline: none;
+  }
   &:first-child {
     border-top: 2px solid ${p => p.theme.colors.darkShade};
   }
@@ -53,6 +56,9 @@ const SecondaryBtn = styled(NavLink)`
   opacity: 0.5;
   transition: 0.6s;
   position: relative;
+  &:focus {
+    outline: none;
+  }
   &.active {
     opacity: 1;
     padding-left: 3.2rem;

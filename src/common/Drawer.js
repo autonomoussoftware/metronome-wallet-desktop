@@ -93,6 +93,7 @@ export default class Drawer extends React.Component {
             flexDirection: 'column',
             borderRadius: '0',
             boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
+            overflowX: 'hidden',
             overflowY: 'auto',
             position: 'absolute',
             outline: 'none',

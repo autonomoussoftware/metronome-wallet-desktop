@@ -15,6 +15,7 @@ import LogoIcon from './LogoIcon'
 import TxIcon from './TxIcon'
 import Drawer from './Drawer'
 import Modal from './Modal'
+import Tabs from './Tabs'
 import Text from './Text'
 import Flex from './Flex'
 import Sp from './Spacing'
@@ -37,6 +38,7 @@ export {
   TxIcon,
   Drawer,
   Modal,
+  Tabs,
   Text,
   Flex,
   Btn,

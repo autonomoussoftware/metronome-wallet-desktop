@@ -6,6 +6,7 @@ export const subscribeToMainProcessMessages = store => {
    * action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
   subscribeTo([
+    'mtn-converter-status-updated',
     'auction-status-updated',
     'wallet-state-changed',
     'eth-price-updated',
@@ -21,7 +22,6 @@ export const subscribeToMainProcessMessages = store => {
    *   do something with event and arg here...
    * })
    */
-
   function subscribeTo(types) {
     return types.forEach(type =>
       ipcRenderer.on(type, (event, { id, data, ...other }) => {
