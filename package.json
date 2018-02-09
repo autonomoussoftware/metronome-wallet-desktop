@@ -72,6 +72,7 @@
       "category": "com.bloqlabs.metronome.category.finance"
     },
     "dmg": {
+      "backgroundColor": "#7e61f8",
       "contents": [
         {
           "x": 110,
@@ -92,7 +93,7 @@
       ]
     },
     "win": {
-      "target": "portable",
+      "target": "nsis",
       "icon": "assets/icon.ico",
       "legalTrademarks": ""
     }
