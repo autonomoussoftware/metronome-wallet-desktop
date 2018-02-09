@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify'
 import { ThemeProvider } from 'styled-components'
 import { Provider } from 'react-redux'
 import createStore from './createStore'
@@ -12,7 +13,10 @@ const store = createStore()
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
-      <App />
+      <React.Fragment>
+        <App />
+        <ToastContainer position="top-center" hideProgressBar />
+      </React.Fragment>
     </ThemeProvider>
   </Provider>,
   document.getElementById('root')

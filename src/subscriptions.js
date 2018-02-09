@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify'
 const { ipcRenderer } = window.require('electron')
 
 export const subscribeToMainProcessMessages = store => {
@@ -11,9 +12,10 @@ export const subscribeToMainProcessMessages = store => {
     'wallet-state-changed',
     'eth-price-updated',
     'create-wallet',
-    'open-wallets',
-    'error'
+    'open-wallets'
   ])
+
+  ipcRenderer.on('error', (event, { error }) => toast.error(error.message))
 
   /**
    * For more complex subscriptions you can do the following
