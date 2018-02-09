@@ -7,6 +7,7 @@ const EventEmitter = require('events')
 
 const { encrypt, decrypt, sha256 } = require('../cryptoUtils')
 const WalletError = require('../WalletError')
+const Deferred = require('../lib/Deferred')
 
 const getWeb3 = require('./web3')
 
@@ -71,16 +72,24 @@ function sendSignedTransaction ({ password, from, to, value = 0, data, gas }) {
     const serializedTx = tx.serialize()
 
     logger.debug('Sending signed Ethereum tx', txParams)
-    return web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
+
+    const deferred = new Deferred()
+
+    web3.eth.sendSignedTransaction(`0x${serializedTx.toString('hex')}`)
       .once('transactionHash', function (hash) {
         logger.debug('Transaction sent', hash)
+        deferred.resolve({ hash })
       })
       .once('receipt', function (receipt) {
         logger.debug('Transaction recepit received', receipt)
+        // TODO send recepit? It will be received on a next block anyway...
       })
-      .on('error', function (error) {
-        logger.debug('Transaction send error', error.message)
+      .on('error', function (err) {
+        logger.debug('Transaction send error', err.message)
+        deferred.reject(err)
       })
+
+    return deferred.promise
   })
 }
 
