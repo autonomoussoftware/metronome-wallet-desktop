@@ -1,19 +1,10 @@
+import { ItemFilter, CheckIcon, Drawer, Tabs, Flex, Sp } from './common'
 import ConvertETHtoMTNForm from './ConvertETHtoMTNForm'
 import ConvertMTNtoETHForm from './ConvertMTNtoETHForm'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
 import React from 'react'
-import {
-  LoadingBar,
-  ItemFilter,
-  CheckIcon,
-  CloseIcon,
-  Drawer,
-  Tabs,
-  Flex,
-  Sp
-} from './common'
 
 const Title = styled.div`
   line-height: 3rem;
@@ -47,14 +38,27 @@ export default class ConvertDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  state = {
+  static initialState = {
+    transactionHash: null,
     status: 'init',
     error: null
   }
 
+  state = ConvertDrawer.initialState
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
+      this.setState(ConvertDrawer.initialState)
+    }
+  }
+
+  onSuccess = ({ hash: transactionHash }) => {
+    this.setState({ status: 'success', transactionHash })
+  }
+
   render() {
     const { onRequestClose, isOpen } = this.props
-    const { status, error } = this.state
+    const { status } = this.state
 
     return (
       <Drawer onRequestClose={onRequestClose} isOpen={isOpen} title="Converter">
@@ -92,19 +96,14 @@ export default class ConvertDrawer extends React.Component {
                   ]}
                 />
                 {filteredItems.map(i =>
-                  React.createElement(i.component, { key: i.name })
+                  React.createElement(i.component, {
+                    onSuccess: this.onSuccess,
+                    key: i.name
+                  })
                 )}
               </React.Fragment>
             )}
           </ItemFilter>
-        )}
-        {status === 'pending' && (
-          <Sp m={6}>
-            <Title>Processing...</Title>
-            <Sp mt={3}>
-              <LoadingBar />
-            </Sp>
-          </Sp>
         )}
         {status === 'success' && (
           <Sp my={19} mx={12}>
@@ -117,17 +116,6 @@ export default class ConvertDrawer extends React.Component {
                 You can view the status of this transaction in the transaction
                 list.
               </Message>
-            </Flex.Column>
-          </Sp>
-        )}
-        {status === 'failure' && (
-          <Sp my={19} mx={12}>
-            <Flex.Column align="center">
-              <CloseIcon size="4.8rem" color={theme.colors.danger} />
-              <Sp my={2}>
-                <Title>Error</Title>
-              </Sp>
-              <Message>{error}</Message>
             </Flex.Column>
           </Sp>
         )}

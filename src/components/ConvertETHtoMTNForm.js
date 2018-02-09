@@ -1,4 +1,10 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+import Web3 from 'web3'
 import {
   sendToMainProcess,
   isGreaterThanZero,
@@ -6,12 +12,6 @@ import {
   toETH,
   toUSD
 } from '../utils'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import React from 'react'
-import Web3 from 'web3'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -32,16 +32,17 @@ const ErrorMsg = styled.p`
   color: red;
 `
 
-const BtnContainer = styled.div`
+const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
-  height: 100%;
   padding: 6.4rem 2.4rem;
   flex-grow: 1;
+  height: 100%;
 `
 
 class ConvertETHtoMTNForm extends React.Component {
   static propTypes = {
     availableETH: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired,
     ETHprice: PropTypes.number.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
@@ -50,8 +51,8 @@ class ConvertETHtoMTNForm extends React.Component {
   state = {
     ethAmount: null,
     usdAmount: null,
-    errors: {},
     status: 'init',
+    errors: {},
     error: null
   }
 
@@ -89,7 +90,7 @@ class ConvertETHtoMTNForm extends React.Component {
         value: Web3.utils.toWei(ethAmount.replace(',', '.')),
         from: this.props.from
       })
-        .then(console.log)
+        .then(this.props.onSuccess)
         .catch(e =>
           this.setState({
             status: 'failure',
@@ -120,47 +121,49 @@ class ConvertETHtoMTNForm extends React.Component {
     const { ethAmount, usdAmount, status, errors, error } = this.state
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <Sp py={4} px={3}>
-          <Flex.Row justify="space-between">
-            <Flex.Item grow="1" basis="0">
-              <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
-              <TextInput
-                placeholder="0.00"
-                autoFocus
-                onChange={this.onInputChange}
-                label="Amount (ETH)"
-                value={ethAmount}
-                error={errors.ethAmount}
-                disabled={status !== 'init'}
-                id="ethAmount"
-              />
-            </Flex.Item>
-            <Sp mt={6} mx={1}>
-              <TxIcon />
-            </Sp>
-            <Flex.Item grow="1" basis="0">
-              <TextInput
-                placeholder="0.00"
-                onChange={this.onInputChange}
-                label="Amount (USD)"
-                value={usdAmount}
-                error={errors.usdAmount}
-                disabled={status !== 'init'}
-                id="usdAmount"
-              />
-            </Flex.Item>
-          </Flex.Row>
-
-          {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
+      <Flex.Column grow="1">
+        <Sp pt={4} pb={3} px={3}>
+          <form onSubmit={this.onSubmit} id="convertForm">
+            <Flex.Row justify="space-between">
+              <Flex.Item grow="1" basis="0">
+                <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                  MAX
+                </MaxBtn>
+                <TextInput
+                  placeholder="0.00"
+                  autoFocus
+                  onChange={this.onInputChange}
+                  label="Amount (ETH)"
+                  value={ethAmount}
+                  error={errors.ethAmount}
+                  disabled={status !== 'init'}
+                  id="ethAmount"
+                />
+              </Flex.Item>
+              <Sp mt={6} mx={1}>
+                <TxIcon />
+              </Sp>
+              <Flex.Item grow="1" basis="0">
+                <TextInput
+                  placeholder="0.00"
+                  onChange={this.onInputChange}
+                  label="Amount (USD)"
+                  value={usdAmount}
+                  error={errors.usdAmount}
+                  disabled={status !== 'init'}
+                  id="usdAmount"
+                />
+              </Flex.Item>
+            </Flex.Row>
+          </form>
         </Sp>
-
-        <BtnContainer>
-          <Btn disabled={status === 'pending'} submit block>
+        <Footer>
+          <Btn block submit form="convertForm" disabled={status === 'pending'}>
             {status === 'pending' ? 'Converting...' : 'Convert'}
           </Btn>
-        </BtnContainer>
-      </form>
+          {error && <ErrorMsg>{error}</ErrorMsg>}
+        </Footer>
+      </Flex.Column>
     )
   }
 }

@@ -1,5 +1,5 @@
 import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
-import { BaseBtn, TextInput, Btn, Sp } from './common'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -26,16 +26,17 @@ const ErrorMsg = styled.p`
   color: red;
 `
 
-const BtnContainer = styled.div`
+const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
-  height: 100%;
   padding: 6.4rem 2.4rem;
   flex-grow: 1;
+  height: 100%;
 `
 
 class ConvertMTNtoETHForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired,
     password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
@@ -43,7 +44,8 @@ class ConvertMTNtoETHForm extends React.Component {
   state = {
     mtnAmount: null,
     status: 'init',
-    errors: {}
+    errors: {},
+    error: null
   }
 
   onMaxClick = () => {
@@ -70,7 +72,7 @@ class ConvertMTNtoETHForm extends React.Component {
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         from: this.props.from
       })
-        .then(console.log)
+        .then(this.props.onSuccess)
         .catch(e =>
           this.setState({
             status: 'failure',
@@ -101,25 +103,31 @@ class ConvertMTNtoETHForm extends React.Component {
     const { mtnAmount, status, errors, error } = this.state
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <Sp py={4} px={3}>
-          <MaxBtn onClick={this.onMaxClick}>MAX</MaxBtn>
-          <TextInput
-            placeholder="0.00"
-            onChange={this.onInputChange}
-            label="Amount (MNT)"
-            value={mtnAmount}
-            error={errors.mtnAmount}
-            id="mtnAmount"
-          />
+      <Flex.Column grow="1">
+        <Sp pt={4} pb={3} px={3}>
+          <form onSubmit={this.onSubmit} id="convertForm">
+            <div>
+              <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                MAX
+              </MaxBtn>
+              <TextInput
+                placeholder="0.00"
+                onChange={this.onInputChange}
+                label="Amount (MNT)"
+                value={mtnAmount}
+                error={errors.mtnAmount}
+                id="mtnAmount"
+              />
+            </div>
+          </form>
         </Sp>
-        {status === 'failure' && <ErrorMsg>{error}</ErrorMsg>}
-        <BtnContainer>
-          <Btn disabled={status === 'pending'} submit block>
+        <Footer>
+          <Btn block submit form="convertForm" disabled={status === 'pending'}>
             {status === 'pending' ? 'Converting...' : 'Convert'}
           </Btn>
-        </BtnContainer>
-      </form>
+          {error && <ErrorMsg>{error}</ErrorMsg>}
+        </Footer>
+      </Flex.Column>
     )
   }
 }

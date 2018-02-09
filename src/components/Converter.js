@@ -1,3 +1,9 @@
+import * as selectors from '../selectors'
+import ConvertDrawer from './ConvertDrawer'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 import {
   DisplayValue,
   DarkLayout,
@@ -7,12 +13,6 @@ import {
   Btn,
   Sp
 } from './common'
-import * as selectors from '../selectors'
-import ConvertDrawer from './ConvertDrawer'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import React from 'react'
 
 const LoadingContainer = styled.div`
   text-align: center;

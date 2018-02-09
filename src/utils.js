@@ -34,7 +34,7 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   if (timeout) {
     setTimeout(() => {
       deferred.reject(
-        new Error(`Event "${eventName}"" timed out after ${timeout}ms.`)
+        new Error(`Event "${eventName}" timed out after ${timeout}ms.`)
       )
       ipcRenderer.removeListener(eventName, listener)
     }, timeout)
