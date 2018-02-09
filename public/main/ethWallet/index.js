@@ -20,7 +20,7 @@ function getAddressBalance (address) {
   return web3.eth.getBalance(address)
 }
 
-function sendSignedTransaction ({ password, _from, to, value = 0, data, gas }) {
+function sendSignedTransaction ({ password, from: _from, to, value = 0, data, gas }) {
   const from = _from.toLowerCase()
 
   if (!password) {
