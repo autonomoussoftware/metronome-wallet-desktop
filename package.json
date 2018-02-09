@@ -28,6 +28,7 @@
     "metronomejs": "git@github.com:MetronomeToken/metronomejs.git#develop",
     "moment": "^2.20.1",
     "moment-precise-range-plugin": "^1.3.0",
+    "nedb": "^1.8.0",
     "node-notifier": "^5.2.1",
     "promise-all-props": "^1.0.1",
     "qrcode.react": "^0.7.2",

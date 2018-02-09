@@ -66,7 +66,7 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function buyMetronome ({ password, from, value }) {
-  const address = settings.get('metronome.contracts.auctions').toLowerCase() 
+  const address = settings.get('metronome.contracts.auctions').toLowerCase()
 
   logger.debug('Buying MTN in auction', { from, value, address })
 

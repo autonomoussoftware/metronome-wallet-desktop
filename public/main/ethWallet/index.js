@@ -7,9 +7,10 @@ const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
 const { encrypt, decrypt, sha256 } = require('../cryptoUtils')
-const WalletError = require('../WalletError')
 const Deferred = require('../lib/Deferred')
+const WalletError = require('../WalletError')
 
+const { initDatabase, getDatabase } = require('./db')
 const getWeb3 = require('./web3')
 
 const emitter = new EventEmitter()
@@ -184,6 +185,8 @@ function parseTransaction ({ transaction, addresses, walletId, webContents }) {
     return
   }
 
+  const db = getDatabase()
+
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
     const meta = {}
 
@@ -198,17 +201,22 @@ function parseTransaction ({ transaction, addresses, walletId, webContents }) {
       .then(function (metas) {
         Object.assign(meta, ...metas)
 
-        // TODO store in db
+        const parsedTx = {
+          transaction,
+          meta,
+          recepit: {}
+        }
+
+        const query = { 'transaction.hash': transaction.hash }
+        const update = Object.assign({ walletId, address }, parsedTx)
+        db.update(query, update, { upsert: true })
+        // TODO handle db error
 
         webContents.send('wallet-state-changed', {
           [walletId]: {
             addresses: {
               [address]: {
-                transactions: [{
-                  transaction,
-                  meta,
-                  recepit: {}
-                }]
+                transactions: [parsedTx]
               }
             }
           }
@@ -239,12 +247,48 @@ function parseBlock ({ header, walletId, webContents }) {
   })
 }
 
+function sendTransactions ({ walletId, webContents }) {
+  const db = getDatabase()
+
+  const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+
+  addresses.forEach(function (address) {
+    const query = { walletId, address }
+    // TODO unhardcode limit
+    // TODO null first
+    db.find(query).sort({ 'transaction.hash': -1 }).limit(10).exec(function (err, transactions) {
+      // TODO handle error
+      if (err) {
+        logger.error('Error getting data from db', err.message, err)
+        return
+      }
+
+      logger.debug(transactions.map(t => t.transaction.hash))
+
+      webContents.send('wallet-state-changed', {
+        [walletId]: {
+          addresses: {
+            [address]: {
+              transactions
+            }
+          }
+        }
+      })
+      logger.debug(`<-- Transactions ${address} ${transactions.length}`)
+    })
+  })
+}
+
+// TODO move all subscription code to a single place that other modules can reuse
+
 let subscriptions = []
 
 function openWallet ({ webContents, walletId }) {
   sendWalletOpen(webContents, walletId)
 
   sendBalances({ walletId, webContents })
+
+  sendTransactions({ walletId, webContents })
 
   const web3 = getWeb3()
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
@@ -277,6 +321,8 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function getHooks () {
+  initDatabase()
+
   return [{
     eventName: 'create-wallet',
     auth: true,
