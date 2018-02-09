@@ -1,41 +1,44 @@
 const logger = require('electron-log')
-const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
 const { getWeb3, sendSignedTransaction } = require('../ethWallet')
 
-const auctionsAbi = require('./contracts/Auctions')
+const { getAuctionStatus } = require('./auctions')
+const { getConverterStatus } = require('./converter')
 
 let subscriptions = []
+
+function sendStatus ({ web3, webContents }) {
+  const auctionsAddress = settings.get('metronome.contracts.auctions')
+  getAuctionStatus({ web3, address: auctionsAddress })
+    .then(function (auctionStatus) {
+      logger.debug('Auction status', auctionStatus)
+
+      webContents.send('auction-status-updated', auctionStatus)
+    })
+
+  const converterAddress = settings.get('metronome.contracts.converter')
+  getConverterStatus({ web3, address: converterAddress })
+    .then(function (auctionStatus) {
+      logger.debug('Auction status', auctionStatus)
+
+      webContents.send('mtn-converter-status-updated', auctionStatus)
+    })
+}
 
 function listenForBlocks (_, webContents) {
   const web3 = getWeb3()
 
-  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
+  sendStatus({ web3, webContents })
 
-  const auctionsAddress = settings.get('metronome.contracts.auctions')
-  const auctions = new web3.eth.Contract(auctionsAbi, auctionsAddress)
+  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
 
   blocksSubscription.on('data', function (header) {
     logger.debug('New block header', header.number)
 
     // TODO throttle this to 30'
 
-    const calls = {
-      genesisTime: auctions.methods.genesisTime().call()
-        .then(t => Number.parseInt(t, 10)),
-      currentPrice: auctions.methods.currentPrice().call(),
-      tokenRemaining: auctions.methods.mintable().call(),
-      nextAuctionStartTime: auctions.methods.nextAuction().call()
-        .then(data => data._startTime)
-        .then(t => Number.parseInt(t, 10))
-    }
-
-    promiseAllProps(calls).then(function (auctionStatus) {
-      logger.debug('Auction status', auctionStatus)
-
-      webContents.send('auction-status-updated', auctionStatus)
-    })
+    sendStatus({ web3, webContents })
   })
 
   blocksSubscription.on('error', function (err) {

@@ -11,7 +11,8 @@
   "metronome": {
     "contracts": {
       "token": "0xb407296cb664cc9eae4f18037932154a4a5bf696",
-      "auctions": "0xae6e5f1471b30ef80af5a0e641a3880cbaf27d76"
+      "auctions": "0xae6e5f1471b30ef80af5a0e641a3880cbaf27d76",
+      "converter": "0xe969a7d8ffdbfe8cfd61886890daa3e45f548e0d"
     }
   },
   "tokens": {
