@@ -1,4 +1,5 @@
 import { CopyIcon, BaseBtn, Drawer, Flex, Sp } from '../common'
+import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -133,4 +134,8 @@ class Receive extends React.Component {
   }
 }
 
-export default connect(state => ({ address: state.wallets.active }))(Receive)
+const mapStateToProps = state => ({
+  address: selectors.getActiveWalletAddresses(state)[0]
+})
+
+export default connect(mapStateToProps)(Receive)
