@@ -6,7 +6,7 @@ import {
   Flex,
   Btn,
   Sp
-} from '../common'
+} from './common'
 import * as selectors from '../selectors'
 import ConvertDrawer from './ConvertDrawer'
 import { connect } from 'react-redux'

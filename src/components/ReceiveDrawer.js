@@ -1,4 +1,4 @@
-import { CopyIcon, BaseBtn, Drawer, Flex, Sp } from '../common'
+import { CopyIcon, BaseBtn, Drawer, Flex, Sp } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'

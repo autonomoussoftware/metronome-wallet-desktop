@@ -6,8 +6,8 @@ import {
   Flex,
   Btn,
   Sp
-} from '../common'
-import CountDownProvider from '../providers/CountDownProvider'
+} from './common'
+import CountDownProvider from './providers/CountDownProvider'
 import * as selectors from '../selectors'
 import BuyMTNDrawer from './BuyMTNDrawer'
 import { connect } from 'react-redux'

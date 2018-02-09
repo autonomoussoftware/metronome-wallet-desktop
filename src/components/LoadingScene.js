@@ -1,4 +1,4 @@
-import { LoadingBar } from '../common'
+import { LoadingBar } from './common'
 import AltLayout from './AltLayout'
 import React from 'react'
 

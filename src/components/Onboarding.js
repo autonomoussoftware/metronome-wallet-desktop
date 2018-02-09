@@ -1,4 +1,4 @@
-import { TextInput, Btn, Sp } from '../common'
+import { TextInput, Btn, Sp } from './common'
 import AltLayout from './AltLayout'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'

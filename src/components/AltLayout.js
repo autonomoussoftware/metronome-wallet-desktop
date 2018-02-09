@@ -1,4 +1,4 @@
-import { Flex, Sp } from '../common'
+import { Flex, Sp } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Banner from './Banner'

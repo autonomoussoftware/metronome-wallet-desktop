@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import settings from './config/settings'
+import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
@@ -44,12 +44,21 @@ export const getActiveWalletMtnBalance = createSelector(
             'addresses',
             addresses[0],
             'token',
-            settings.MTN_TOKEN_ADDR,
+            config.MTN_TOKEN_ADDR,
             'balance'
           ],
           null
         )
       : null
+)
+
+export const getActiveWalletTransactions = createSelector(
+  getActiveWalletAddresses,
+  getActiveWalletData,
+  (addresses, activeWallet) =>
+    activeWallet && addresses && addresses.length > 0
+      ? activeWallet.addresses[addresses[0]].transactions || []
+      : []
 )
 
 export const getRates = state => state.rates

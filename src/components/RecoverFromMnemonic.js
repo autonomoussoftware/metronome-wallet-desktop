@@ -1,4 +1,4 @@
-import { DarkLayout, Btn, Sp, TextInput } from '../common'
+import { DarkLayout, Btn, Sp, TextInput } from './common'
 import { sendToMainProcess } from '../utils'
 import { withRouter } from 'react-router-dom'
 import * as selectors from '../selectors'

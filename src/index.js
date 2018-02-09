@@ -4,7 +4,7 @@ import createStore from './createStore'
 import ReactDOM from 'react-dom'
 import theme from './theme'
 import React from 'react'
-import App from './App'
+import App from './components/App'
 
 // We could pass some initial state to createStore()
 const store = createStore()

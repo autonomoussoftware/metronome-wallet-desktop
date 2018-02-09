@@ -1,4 +1,4 @@
-import { ConverterIcon, Collapsable, AuctionIcon, TxIcon } from '../common'
+import { ConverterIcon, Collapsable, AuctionIcon, TxIcon } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'

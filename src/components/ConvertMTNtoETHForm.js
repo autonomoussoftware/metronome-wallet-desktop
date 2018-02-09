@@ -1,5 +1,5 @@
 import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
-import { BaseBtn, TextInput, Btn, Sp } from '../common'
+import { BaseBtn, TextInput, Btn, Sp } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'

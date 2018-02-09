@@ -1,4 +1,4 @@
-import { TextInput, Btn, Sp } from '../common'
+import { TextInput, Btn, Sp } from './common'
 import { sendToMainProcess } from '../utils'
 import AltLayout from './AltLayout'
 import PropTypes from 'prop-types'

@@ -5,6 +5,12 @@ import Web3 from 'web3'
 
 const { ipcRenderer } = window.require('electron')
 
+/**
+ * Sends a message to Main Process and returns a Promise.
+ *
+ * This makes it easier to handle IPC inside components
+ * without the need of manual (un)subscriptions.
+ */
 export function sendToMainProcess(eventName, data, timeout = 10000) {
   const id = cuid()
 
@@ -25,12 +31,14 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   ipcRenderer.on(eventName, listener)
   ipcRenderer.send(eventName, { id, data })
 
-  setTimeout(() => {
-    deferred.reject(
-      new Error(`Event "${eventName}"" timed out after ${timeout}ms.`)
-    )
-    ipcRenderer.removeListener(eventName, listener)
-  }, timeout)
+  if (timeout) {
+    setTimeout(() => {
+      deferred.reject(
+        new Error(`Event "${eventName}"" timed out after ${timeout}ms.`)
+      )
+      ipcRenderer.removeListener(eventName, listener)
+    }, timeout)
+  }
 
   return deferred.promise
 }

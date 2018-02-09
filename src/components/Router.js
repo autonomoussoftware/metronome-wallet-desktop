@@ -1,13 +1,13 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
-import RecoverFromMnemonic from './components/RecoverFromMnemonic'
-import Dashboard from './components/Dashboard'
-import Converter from './components/Converter'
-import Settings from './components/Settings'
-import Sidebar from './components/Sidebar'
-import Auction from './components/Auction'
+import RecoverFromMnemonic from './RecoverFromMnemonic'
+import Dashboard from './Dashboard'
+import Converter from './Converter'
+import Settings from './Settings'
+import Sidebar from './Sidebar'
+import Auction from './Auction'
 import styled from 'styled-components'
-import Help from './components/Help'
+import Help from './Help'
 
 const Container = styled.div`
   display: flex;

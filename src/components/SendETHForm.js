@@ -1,4 +1,4 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
+import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
 import {
   sendToMainProcess,
   isGreaterThanZero,

@@ -1,4 +1,4 @@
-import { ConverterIcon, AuctionIcon, WalletIcon, LogoIcon, Sp } from '../common'
+import { ConverterIcon, AuctionIcon, WalletIcon, LogoIcon, Sp } from './common'
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'

@@ -1,8 +1,7 @@
-import { DisplayValue, ItemFilter, LogoIcon, Btn, Sp } from '../common'
+import { DisplayValue, ItemFilter, LogoIcon, Btn, Sp } from './common'
 import { TransitionGroup } from 'react-transition-group'
 import * as selectors from '../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
-import transactions from '../services/tx-mock'
 import ReceiptModal from './ReceiptModal'
 import { connect } from 'react-redux'
 import SendDrawer from './SendDrawer'
@@ -207,6 +206,11 @@ class Dashboard extends React.Component {
     mtnBalanceUSD: PropTypes.string.isRequired,
     ethBalanceWei: PropTypes.string.isRequired,
     ethBalanceUSD: PropTypes.string.isRequired,
+    transactions: PropTypes.arrayOf(
+      PropTypes.shape({
+        hash: PropTypes.string.isRequired
+      })
+    ).isRequired,
     address: PropTypes.string.isRequired
   }
 
@@ -230,7 +234,8 @@ class Dashboard extends React.Component {
       mtnBalanceWei,
       mtnBalanceUSD,
       ethBalanceWei,
-      ethBalanceUSD
+      ethBalanceUSD,
+      transactions
     } = this.props
 
     return (
@@ -355,6 +360,7 @@ const mapStateToProps = state => ({
   mtnBalanceUSD: selectors.getMtnBalanceUSD(state),
   ethBalanceWei: selectors.getEthBalanceWei(state),
   ethBalanceUSD: selectors.getEthBalanceUSD(state),
+  transactions: selectors.getActiveWalletTransactions(state),
   address: selectors.getActiveWalletAddresses(state)[0]
 })
 

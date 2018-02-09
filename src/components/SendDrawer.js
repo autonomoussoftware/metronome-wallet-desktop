@@ -13,7 +13,7 @@ import {
   Flex,
   Tabs,
   Sp
-} from '../common'
+} from './common'
 
 const Title = styled.div`
   line-height: 3rem;

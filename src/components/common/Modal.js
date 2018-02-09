@@ -2,7 +2,7 @@ import ReactModal from 'react-modal'
 import CloseIcon from './CloseIcon'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import theme from '../theme'
+import theme from '../../theme'
 import React from 'react'
 
 const Container = styled(ReactModal)`

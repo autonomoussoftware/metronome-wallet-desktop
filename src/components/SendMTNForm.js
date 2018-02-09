@@ -1,10 +1,10 @@
 import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
-import { BaseBtn, TextInput, Flex, Btn, Sp } from '../common'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import settings from '../config/settings'
 import styled from 'styled-components'
+import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -66,7 +66,7 @@ class SendMTNForm extends React.Component {
       sendToMainProcess('send-token', {
         password: this.props.password,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
-        token: settings.MTN_TOKEN_ADDR,
+        token: config.MTN_TOKEN_ADDR,
         from: this.props.from,
         to: toAddress
       })

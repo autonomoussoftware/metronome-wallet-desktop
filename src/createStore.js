@@ -7,8 +7,9 @@ const { ipcRenderer } = window.require('electron')
 const composeEnhancers =
   typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        // actionsBlacklist: ['price-updated$'],
-        features: { dispatch: true }
+        actionsBlacklist: ['price-updated$'],
+        features: { dispatch: true },
+        maxAge: 100 // default: 50
       })
     : compose
 

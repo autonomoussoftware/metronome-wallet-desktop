@@ -1,4 +1,4 @@
-import { DarkLayout, Sp } from '../common'
+import { DarkLayout, Sp } from './common'
 // import PropTypes from 'prop-types';
 import React from 'react'
 

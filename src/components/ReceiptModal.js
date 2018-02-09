@@ -1,4 +1,4 @@
-import { Modal, Btn } from '../common'
+import { Modal, Btn } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'

@@ -1,4 +1,4 @@
-import { Drawer, BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from '../common'
+import { Drawer, BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
 import {
   sendToMainProcess,
   isGreaterThanZero,
@@ -6,7 +6,7 @@ import {
   toETH,
   toUSD
 } from '../utils'
-import PurchaseFormProvider from '../providers/PurchaseFormProvider'
+import PurchaseFormProvider from './providers/PurchaseFormProvider'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
