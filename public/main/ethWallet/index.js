@@ -18,8 +18,8 @@ function sendTransaction (args) {
   const deferred = new Deferred()
 
   signAndSendTransaction(args)
-    .then(function ({ emitter }) {
-      emitter
+    .then(function ({ emitter: txEmitter }) {
+      txEmitter
         .once('transactionHash', function (hash) {
           logger.verbose('Transaction sent', hash)
           deferred.resolve({ hash })
