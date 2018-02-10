@@ -55,7 +55,11 @@
   "homepage": "./",
   "main": "public/electron.js",
   "copyright": "Copyright © 2018 ${author}",
-  "author": "Bloq Labs",
+  "author": {
+    "name": "Bloq Labs",
+    "email": "labs@bloq.com",
+    "url": "http://bloq.com/"
+  },
   "build": {
     "appId": "com.bloqlabs.metronome",
     "productName": "Metronome-Wallet",
