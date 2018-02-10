@@ -80,13 +80,21 @@ export default class TxRow extends React.Component {
 
   render() {
     const {
-      transaction: { value, from, to },
-      pending = null,
+      transaction: { blockHash, value, from, to },
       meta: { outgoing },
       ...other
     } = this.props
 
-    const isPending = pending !== null
+    // TODO pending is the number of confirmations
+    // it shall be calculated as (latestBlockNumber - blockNumber + 1)
+    // latestBlockNumber can be taken from the eth-block event
+    // blockNumber is a prop of props.transaction
+    // set to 6 until proper calculation is in place
+    const pending = blockHash ? 6 : 0
+
+    // waiting for 6 block by convention
+    const isPending = pending < 6
+
     const type = outgoing ? 'sent' : 'received'
 
     return (

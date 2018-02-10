@@ -205,6 +205,7 @@ function parseBlock ({ header, walletId, webContents }) {
       return parseTransaction({ transaction, addresses, walletId, webContents })
     })).then(function () {
       settings.set('app.bestBlock', { number, hash })
+      webContents.send('eth-block', { number, hash })
       logger.verbose('New best block', { number, hash })
     })
   })
