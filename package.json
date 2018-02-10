@@ -2,6 +2,7 @@
   "name": "metronome-desktop-wallet",
   "version": "0.1.0",
   "private": true,
+  "author": "labs@bloq.com",
   "description": "Metronome Wallet for desktop",
   "repository": {
     "type": "git",
