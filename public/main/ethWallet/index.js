@@ -138,7 +138,10 @@ function sendWalletOpen (webContents, walletId) {
 
 function parseTransaction ({ transaction, addresses: _addresses, walletId, webContents }) {
   const from = transaction.from.toLowerCase()
-  const to = transaction.to.toLowerCase()
+
+  // TODO cleanup as contract creation have no "to"
+  const to = transaction.to ? transaction.to.toLowerCase() : 'contract'
+
   // const { value } = transaction
   const addresses = _addresses.map(a => a.toLowerCase())
 
