@@ -7,7 +7,7 @@ const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
-    logger.debug(`--> ${eventName}:${id} ${JSON.stringify(data) || ''}`)
+    logger.verbose(`--> ${eventName}:${id} ${JSON.stringify(data) || ''}`)
     const result = Promise.resolve(listener(data, event.sender))
 
     result
@@ -24,7 +24,7 @@ function onRendererEvent (eventName, listener) {
         return { error }
       })
       .then(function (res) {
-        logger.debug(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
+        logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
       })
   })
 }

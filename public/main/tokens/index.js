@@ -4,7 +4,7 @@ const settings = require('electron-settings')
 
 const {
   getWeb3,
-  sendSignedTransaction,
+  sendTransaction,
   getEvents,
   registerTxParser
 } = require('../ethWallet')
@@ -39,7 +39,7 @@ function sendBalances ({ walletId, addresses, webContents }) {
               }
             }
           })
-          logger.debug(`<-- ${symbol} ${address} ${balance}`)
+          logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
     })
   })
@@ -68,7 +68,7 @@ function unsubscribeUpdates (_, webContents) {
   const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
 
   toUnsubscribe.forEach(function (s) {
-    logger.debug('Unsubscribing token balance update')
+    logger.verbose('Unsubscribing token balance update')
     s.blocksSubscription.unsubscribe()
   })
 
@@ -78,17 +78,14 @@ function unsubscribeUpdates (_, webContents) {
 function sendToken ({ password, token: address, from, to, value }) {
   const symbol = settings.get(`tokens.${address.toLowerCase()}.symbol`)
 
-  logger.debug('Sending ERC20 tokens', { from, to, value, token: symbol })
+  logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
 
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, address)
   const transfer = contract.methods.transfer(to, value)
   const data = transfer.encodeABI()
 
-  // TODO estimate gas with transfer.estimateGas()
-  const gas = 200000
-
-  return sendSignedTransaction({ password, from, to: address, data, gas })
+  return sendTransaction({ password, from, to: address, data, gasMult: 2 })
 }
 
 function transactionParser ({ transaction }) {
