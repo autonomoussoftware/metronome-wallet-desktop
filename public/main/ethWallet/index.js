@@ -220,7 +220,7 @@ function sendCachedTransactions ({ walletId, webContents }) {
     const query = { walletId, address }
     // TODO unhardcode limit
     // TODO null first
-    db.find(query).sort({ 'transaction.hash': -1 }).limit(10).exec(function (err, transactions) {
+    db.find(query).sort({ 'transaction.blockNumber': -1 }).limit(100).exec(function (err, transactions) {
       // TODO handle error
       if (err) {
         logger.error('Error getting data from db', err.message, err)
