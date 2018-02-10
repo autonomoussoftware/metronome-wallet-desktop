@@ -4,7 +4,11 @@ const settings = require('electron-settings')
 const { getWeb3, sendTransaction } = require('../ethWallet')
 
 const { getAuctionStatus } = require('./auctions')
-const { getConverterStatus } = require('./converter')
+const {
+  encodeConvertEthToMtn,
+  encodeConvertMtnToEth,
+  getConverterStatus
+} = require('./converter')
 
 // TODO move all subscription code to a single place in ethWallet
 
@@ -75,6 +79,26 @@ function buyMetronome ({ password, from, value }) {
   return sendTransaction({ password, from, to: address, value, gasMult: 2 })
 }
 
+function convertEthToMtn ({ password, from, value }) {
+  const web3 = getWeb3()
+  const address = settings.get('metronome.contracts.converter').toLowerCase()
+  const data = encodeConvertEthToMtn({ web3, address, value })
+
+  logger.verbose('Converting MTN to ETH', { from, value, address })
+
+  return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
+}
+
+function convertMtnToEth ({ password, from, value }) {
+  const web3 = getWeb3()
+  const address = settings.get('metronome.contracts.converter').toLowerCase()
+  const data = encodeConvertMtnToEth({ web3, address, value })
+
+  logger.verbose('Converting ETH to MTN', { from, value, address })
+
+  return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
+}
+
 function getHooks () {
   return [{
     eventName: 'ui-ready',
@@ -86,6 +110,14 @@ function getHooks () {
     eventName: 'mtn-buy',
     auth: true,
     handler: buyMetronome
+  }, {
+    eventName: 'mtn-convert-eth',
+    auth: true,
+    handler: convertEthToMtn
+  }, {
+    eventName: 'mtn-convert-mtn',
+    auth: true,
+    handler: convertMtnToEth
   }]
 }
 
