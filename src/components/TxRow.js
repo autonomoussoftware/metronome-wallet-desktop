@@ -104,7 +104,7 @@ export default class TxRow extends React.Component {
           {isPending && <Pending>{pending}</Pending>}
           <div>
             <Amount isPending={isPending}>
-              <DisplayValue value={value} maxSize="2rem" post=" MTN" />
+              <DisplayValue value={value} maxSize="2rem" post=" ETH" />
             </Amount>
             <Details isPending={isPending}>
               {type === 'converted' && (
