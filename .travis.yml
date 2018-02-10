@@ -48,7 +48,7 @@ script:
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       docker run --rm \
-        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|q|_KEY|AWS_|STRIP|BUILD_') \
+        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|q|_KEY|AWS_|STRIP|BUILD_|GH_TOKEN') \
         -v ${PWD}:/project \
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
