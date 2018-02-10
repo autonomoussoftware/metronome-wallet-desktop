@@ -26,13 +26,13 @@ function sendTransaction (args) {
 
           const web3 = getWeb3()
           web3.eth.getTransaction(hash).then(function (transaction) {
-            emitter.emit('unconfirmed-tx', transaction)
+            moduleEmitter.emit('unconfirmed-tx', transaction)
           })
         })
         .once('receipt', function (receipt) {
           logger.verbose('Transaction recepit received', receipt)
 
-          emitter.emit('tx-recepit', receipt)
+          moduleEmitter.emit('tx-recepit', receipt)
         })
         .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
@@ -43,7 +43,7 @@ function sendTransaction (args) {
   return deferred.promise
 }
 
-const emitter = new EventEmitter()
+const moduleEmitter = new EventEmitter()
 
 function createWallet (mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
@@ -129,7 +129,7 @@ function sendBalances ({ walletId, webContents }) {
 function sendWalletOpen (webContents, walletId) {
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
-  emitter.emit('wallet-opened', {
+  moduleEmitter.emit('wallet-opened', {
     walletId,
     addresses: Object.keys(addresses).map(a => a.toLowerCase()),
     webContents
@@ -260,7 +260,7 @@ function syncTransactions ({ walletId, webContents }) {
     }
 
     logger.verbose('Synching up to best block', { bestNumber, number })
-
+    moduleEmitter.emit('syncing', { current: bestNumber, latest: number })
     return parseBlock({ header: { number: bestNumber + 1 }, walletId, webContents })
       .then(() => syncTransactions({ walletId, webContents }))
   })
@@ -294,7 +294,7 @@ function openWallet ({ webContents, walletId }) {
 
   subscriptions.push({ webContents, blocksSubscription })
 
-  emitter.on('unconfirmed-tx', function (transaction) {
+  moduleEmitter.on('unconfirmed-tx', function (transaction) {
     const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
 
     parseTransaction({ transaction, addresses, walletId, webContents })
@@ -355,7 +355,7 @@ function getHooks () {
 }
 
 function getEvents () {
-  return emitter
+  return moduleEmitter
 }
 
 const txParsers = []
