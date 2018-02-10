@@ -1,4 +1,4 @@
-const { merge, pick } = require('lodash')
+const { merge } = require('lodash')
 const EthereumTx = require('ethereumjs-tx')
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
