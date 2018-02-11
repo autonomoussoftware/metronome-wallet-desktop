@@ -247,7 +247,7 @@ function sendCachedTransactions ({ walletId, webContents }) {
 function syncTransactions ({ walletId, webContents }) {
   const web3 = getWeb3()
 
-  return web3.eth.getBlockNumber().then(function (number) {
+  return web3.eth.getBlockNumber().then(function (latest) {
     const bestBlock = settings.get('app.bestBlock')
 
     if (!bestBlock) {
@@ -255,15 +255,16 @@ function syncTransactions ({ walletId, webContents }) {
       return
     }
 
-    const bestNumber = bestBlock.number
+    const current = bestBlock.number
 
-    if (number <= bestNumber) {
+    if (latest <= current) {
+      webContents.send('eth-syncing', { done: true })
       return
     }
 
-    logger.verbose('Synching up to best block', { bestNumber, number })
-    moduleEmitter.emit('syncing', { current: bestNumber, latest: number })
-    return parseBlock({ header: { number: bestNumber + 1 }, walletId, webContents })
+    logger.verbose('Synching up to best block', { current, latest })
+    webContents.send('eth-syncing', { current, latest })
+    return parseBlock({ header: { number: current + 1 }, walletId, webContents })
       .then(() => syncTransactions({ walletId, webContents }))
   })
 }
