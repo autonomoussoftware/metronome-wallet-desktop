@@ -158,6 +158,7 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
 
       meta.outgoing = any(meta.outgoing)
       meta.incoming = any(meta.incoming)
+      meta.ours = any(meta.ours)
 
       const parsedTransaction = { transaction, receipt, meta }
 
@@ -353,7 +354,7 @@ function getHooks () {
   }]
 }
 
-function parseIncomigOutgoingTransaction ({ transaction, walletId }) {
+function transactionParser ({ transaction, walletId }) {
   const from = transaction.from.toLowerCase()
   const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
 
@@ -374,14 +375,14 @@ function parseIncomigOutgoingTransaction ({ transaction, walletId }) {
 
   if (outgoing || incoming) {
     meta.walletIds = [walletId]
-    meta.ours = true
+    meta.ours = [true]
   }
 
   return meta
 }
 
 const txParsers = [
-  parseIncomigOutgoingTransaction
+  transactionParser
 ]
 
 function registerTxParser (parser) {

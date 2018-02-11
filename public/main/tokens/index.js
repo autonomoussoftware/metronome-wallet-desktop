@@ -150,7 +150,7 @@ function transactionParser ({ transaction, receipt, walletId }) {
             processing: false
           }
 
-          meta.ours = true
+          meta.ours = [true]
         }
       }
     })

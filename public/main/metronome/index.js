@@ -4,6 +4,7 @@ const settings = require('electron-settings')
 const { getWeb3, sendTransaction } = require('../ethWallet')
 
 const { getAuctionStatus } = require('./auctions')
+const { isAddressInWallet, registerTxParser } = require('../ethWallet')
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
@@ -99,7 +100,35 @@ function convertMtnToEth ({ password, from, value }) {
   return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
 }
 
+function transactionParser ({ transaction, walletId }) {
+  const from = transaction.from.toLowerCase()
+  const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
+
+  const metronome = {}
+  const meta = { metronome }
+
+  const outgoing = isAddressInWallet({ walletId, address: from })
+  const toAuction = to === settings.get('metronome.contracts.auctions').toLowerCase()
+  const toConverter = to === settings.get('metronome.contracts.converter').toLowerCase()
+
+  if (outgoing) {
+    if (toAuction) {
+      metronome.auction = true
+    }
+
+    if (toConverter) {
+      metronome.converter = true
+    }
+
+    meta.ours = [true]
+  }
+
+  return meta
+}
+
 function getHooks () {
+  registerTxParser(transactionParser)
+
   return [{
     eventName: 'ui-ready',
     handler: listenForBlocks
