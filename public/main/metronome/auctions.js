@@ -1,6 +1,6 @@
 const promiseAllProps = require('promise-all-props')
 
-const auctionsAbi = require('./contracts/Auctions.d046bb5')
+const auctionsAbi = require('./contracts/Auctions.0a5d422')
 
 function getAuctionStatus ({ web3, address }) {
   const auctions = new web3.eth.Contract(auctionsAbi, address)
