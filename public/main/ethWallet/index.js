@@ -4,6 +4,7 @@ const EventEmitter = require('events')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
 const settings = require('electron-settings')
+const { mergeWith, isArray } = require('lodash')
 
 const { encrypt, sha256 } = require('../cryptoUtils')
 const Deferred = require('../lib/Deferred')
@@ -13,6 +14,8 @@ const { initDatabase, getDatabase } = require('./db')
 const getWeb3 = require('./web3')
 const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
+const { getAllTransactionsAndReceipts } = require('./block')
+const { getWalletAddresses, isAddressInWallet } = require('./settings')
 
 function sendTransaction (args) {
   const deferred = new Deferred()
@@ -44,6 +47,10 @@ function sendTransaction (args) {
 }
 
 const moduleEmitter = new EventEmitter()
+
+function getEvents () {
+  return moduleEmitter
+}
 
 function createWallet (mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
@@ -136,43 +143,31 @@ function sendWalletOpen (webContents, walletId) {
   })
 }
 
-function parseTransaction ({ transaction, addresses: _addresses, walletId, webContents }) {
-  const from = transaction.from.toLowerCase()
+const any = array => array.reduce((acc, element) => acc || element, false)
 
-  // TODO cleanup as contract creation have no "to"
-  const to = transaction.to ? transaction.to.toLowerCase() : 'contract'
-
-  // const { value } = transaction
-  const addresses = _addresses.map(a => a.toLowerCase())
-
-  if (!addresses.includes(from) && !addresses.includes(to)) {
-    return
+function concatArrays (objValue, srcValue) {
+  if (isArray(objValue)) {
+    return objValue.concat(srcValue)
   }
+}
 
-  const db = getDatabase()
+function parseTransaction ({ transaction, receipt, walletId, webContents }) {
+  return Promise.all(txParsers.map(txParser => txParser({ transaction, receipt, walletId })))
+    .then(function (metas) {
+      const meta = mergeWith({}, ...metas, concatArrays)
 
-  return Promise.all(addresses.map(a => a.toLowerCase()).map(function (address) {
-    const meta = {}
+      meta.outgoing = any(meta.outgoing)
+      meta.incoming = any(meta.incoming)
 
-    if (from === address) {
-      meta.outgoing = true
-    } else {
-      meta.incoming = true
-    }
+      const parsedTransaction = { transaction, receipt, meta }
 
-    // TODO gather information on the tx from the other modules > meta
-    return Promise.all(txParsers.map(txParser => txParser({ transaction })))
-      .then(function (metas) {
-        Object.assign(meta, ...metas)
+      if (meta.ours) {
+        const address = (meta.addressFrom && meta.addressFrom[0]) || (meta.addressTo && meta.addressTo[0])
 
-        const parsedTx = {
-          transaction,
-          meta,
-          recepit: {}
-        }
+        const db = getDatabase()
 
         const query = { 'transaction.hash': transaction.hash }
-        const update = Object.assign({ walletId, address }, parsedTx)
+        const update = Object.assign({ walletId, address }, parsedTransaction)
         db.update(query, update, { upsert: true })
         // TODO handle db error
 
@@ -180,38 +175,40 @@ function parseTransaction ({ transaction, addresses: _addresses, walletId, webCo
           [walletId]: {
             addresses: {
               [address]: {
-                transactions: [parsedTx]
+                transactions: [parsedTransaction]
               }
             }
           }
         })
-        logger.verbose(`<-- Transaction ${address} ${transaction.hash}`)
-      })
-  }))
+        logger.verbose(`<-- Transaction ${address} ${transaction.hash}`, meta)
+      }
+
+      return parsedTransaction
+    })
 }
 
 function parseBlock ({ header, walletId, webContents }) {
-  const { number } = header
-  const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
+  const { hash, number } = header
 
   const web3 = getWeb3()
 
-  return web3.eth.getBlock(number, true).then(function (block) {
-    const { transactions, hash } = block
+  return getAllTransactionsAndReceipts({ web3, header })
+    .then(function (transactions) {
+      return Promise.all(transactions.map(function ({ transaction, receipt }) {
+        return parseTransaction({ transaction, receipt, walletId, webContents })
+      }))
+        .then(function (parsedTransactions) {
+          const ourTransactions = parsedTransactions.filter(t => t.meta.ours)
+          if (ourTransactions.length) {
+            // TODO optimize when this is called
+            sendBalances({ webContents, walletId })
+          }
 
-    if (transactions.length) {
-      // TODO optimize when this is called
-      sendBalances({ webContents, walletId })
-    }
-
-    return Promise.all(transactions.map(function (transaction) {
-      return parseTransaction({ transaction, addresses, walletId, webContents })
-    })).then(function () {
-      settings.set('app.bestBlock', { number, hash })
-      webContents.send('eth-block', { number, hash })
-      logger.verbose('New best block', { number, hash })
+          settings.set('app.bestBlock', { number, hash })
+          webContents.send('eth-block', { number, hash })
+          logger.verbose('New best block', { number, hash })
+        })
     })
-  })
 }
 
 function sendCachedTransactions ({ walletId, webContents }) {
@@ -223,7 +220,7 @@ function sendCachedTransactions ({ walletId, webContents }) {
     const query = { walletId, address }
     // TODO unhardcode limit
     // TODO null first
-    db.find(query).sort({ 'transaction.blockNumber': -1 }).limit(100).exec(function (err, transactions) {
+    db.find(query).sort({ 'transaction.blockNumber': -1 }).limit(25).exec(function (err, transactions) {
       // TODO handle error
       if (err) {
         logger.error('Error getting data from db', err.message, err)
@@ -282,26 +279,24 @@ function openWallet ({ webContents, walletId }) {
   sendCachedTransactions({ walletId, webContents })
 
   syncTransactions({ walletId, webContents })
-  // TODO should subscribe after syncing
+    .then(function () {
+      const web3 = getWeb3()
+      const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
+      blocksSubscription.on('data', function (header) {
+        parseBlock({ header, walletId, webContents })
+      })
 
-  const web3 = getWeb3()
-  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-  blocksSubscription.on('data', function (header) {
-    parseBlock({ header, walletId, webContents })
-  })
+      // TODO handle on error
 
-  // TODO handle on error
+      webContents.on('destroyed', function () {
+        blocksSubscription.unsubscribe()
+      })
 
-  webContents.on('destroyed', function () {
-    blocksSubscription.unsubscribe()
-  })
-
-  subscriptions.push({ webContents, blocksSubscription })
+      subscriptions.push({ webContents, blocksSubscription })
+    })
 
   moduleEmitter.on('unconfirmed-tx', function (transaction) {
-    const addresses = Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
-
-    parseTransaction({ transaction, addresses, walletId, webContents })
+    parseTransaction({ transaction, walletId, webContents })
   })
 }
 
@@ -358,11 +353,36 @@ function getHooks () {
   }]
 }
 
-function getEvents () {
-  return moduleEmitter
+function parseIncomigOutgoingTransaction ({ transaction, walletId }) {
+  const from = transaction.from.toLowerCase()
+  const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
+
+  const outgoing = isAddressInWallet({ walletId, address: from })
+  const incoming = isAddressInWallet({ walletId, address: to })
+
+  const meta = {
+    outgoing: [outgoing],
+    incoming: [incoming]
+  }
+
+  if (outgoing) {
+    meta.addressFrom = [from]
+  }
+  if (incoming) {
+    meta.addressTo = [to]
+  }
+
+  if (outgoing || incoming) {
+    meta.walletIds = [walletId]
+    meta.ours = true
+  }
+
+  return meta
 }
 
-const txParsers = []
+const txParsers = [
+  parseIncomigOutgoingTransaction
+]
 
 function registerTxParser (parser) {
   txParsers.push(parser)
@@ -373,5 +393,6 @@ module.exports = {
   getWeb3,
   sendTransaction,
   getEvents,
-  registerTxParser
+  registerTxParser,
+  isAddressInWallet
 }

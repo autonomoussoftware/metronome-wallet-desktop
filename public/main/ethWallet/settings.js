@@ -32,10 +32,16 @@ function getWalletAddressIndex ({ walletId, address }) {
   return wallet.addresses[address.toLowerCase()].index
 }
 
+function isAddressInWallet ({ walletId, address }) {
+  const addresses = getWalletAddresses(walletId)
+  return addresses.includes(address.toLowerCase())
+}
+
 module.exports = {
   findWalletId,
   getWallet,
   getWalletAddresses,
   getWalletAddressIndex,
-  setAddressBalance
+  setAddressBalance,
+  isAddressInWallet
 }

@@ -1,25 +1,26 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
-const settings = require('electron-settings')
 
 const {
   getWeb3,
   sendTransaction,
   getEvents,
-  registerTxParser
+  registerTxParser,
+  isAddressInWallet
 } = require('../ethWallet')
+
+const { getTokenContractAddresses, getTokenSymbol } = require('./settings')
 
 const ethEvents = getEvents()
 
 function sendBalances ({ walletId, addresses, webContents }) {
-  const tokens = settings.get('tokens')
-  const contractAddresses = Object.keys(tokens)
+  const contractAddresses = getTokenContractAddresses()
 
   const web3 = getWeb3()
   const contracts = contractAddresses.map(a => a.toLowerCase()).map(address => ({
     contractAddresse: address,
     contract: new web3.eth.Contract(abi, address),
-    symbol: tokens[address].symbol
+    symbol: getTokenSymbol(address)
   }))
 
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
@@ -45,6 +46,9 @@ function sendBalances ({ walletId, addresses, webContents }) {
   })
 }
 
+// TODO move all subscription code to a single place in ethWallet
+// TODO and into getHooks()
+
 let subscriptions = []
 
 ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
@@ -53,6 +57,7 @@ ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
   const web3 = getWeb3()
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
 
+  // TODO listen for new txs of wallets instead of all blocks
   blocksSubscription.on('data', function () {
     sendBalances({ walletId, addresses, webContents })
   })
@@ -76,7 +81,7 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function sendToken ({ password, token: address, from, to, value }) {
-  const symbol = settings.get(`tokens.${address.toLowerCase()}.symbol`)
+  const symbol = getTokenSymbol(address)
 
   logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
 
@@ -88,11 +93,70 @@ function sendToken ({ password, token: address, from, to, value }) {
   return sendTransaction({ password, from, to: address, data, gasMult: 2 })
 }
 
-function transactionParser ({ transaction }) {
+const ERC20_TRANSFER_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+
+function transactionParser ({ transaction, receipt, walletId }) {
   // TODO analyze the tx, tx receipt and return promise data to be merged with meta
   // Transfer
   // Approval
-  return Promise.resolve({ token: { parsed: true } })
+
+  const addresses = getTokenContractAddresses()
+
+  const tokens = {}
+  const meta = { tokens }
+
+  if (!receipt) {
+    const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
+
+    const related = addresses.filter(a => a === to)
+
+    related.forEach(function (address) {
+      tokens[address] = {
+        processing: true
+      }
+    })
+
+    return meta
+  }
+
+  addresses.forEach(function (address) {
+    const events = receipt.logs.filter(l => l.address.toLowerCase() === address)
+
+    events.forEach(function (log) {
+      const signature = log.topics[0]
+      if (signature === ERC20_TRANSFER_SIGNATURE) {
+        const from = `0x${log.topics[1].substr(-40)}`
+        const to = `0x${log.topics[2].substr(-40)}`
+
+        const outgoing = isAddressInWallet({ walletId, address: from })
+        const incoming = isAddressInWallet({ walletId, address: to })
+
+        meta.outgoing = [outgoing]
+        meta.incoming = [incoming]
+
+        if (outgoing) {
+          meta.addressFrom = [from]
+        }
+        if (incoming) {
+          meta.addressTo = [to]
+        }
+
+        if (outgoing || incoming) {
+          tokens[address] = {
+            event: 'Transfer',
+            incoming,
+            outgoing,
+            value: log.data,
+            processing: false
+          }
+
+          meta.ours = true
+        }
+      }
+    })
+  })
+
+  return meta
 }
 
 function getHooks () {
