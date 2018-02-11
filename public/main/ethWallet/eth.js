@@ -21,7 +21,13 @@ function completedTransactionParams (params, options) {
   const web3 = getWeb3()
   const promises = {
     chainId: web3.eth.net.getId(),
-    gas: web3.eth.estimateGas(params).then(gas => gas * (gasMult || 1)),
+    gas: web3.eth.estimateGas(params)
+      .then(gas => gas * (gasMult || 1))
+      .catch(function (err) {
+        logger.warn('Could not estimate gas', err.message)
+        // TODO unhack this...
+        return 200000
+      }),
     gasPrice: web3.eth.getGasPrice().then(price => web3.utils.toHex(price)),
     nonce: web3.eth.getTransactionCount(from)
   }
