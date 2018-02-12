@@ -9,33 +9,51 @@
 
 
 ## Install the project dependencies
+The applicatipon need Yarn for install dependencies and run tasks. 
+More info and install steps in https://yarnpkg.com/
 
 ```bash
+<<<<<<< Updated upstream
 $ npm i
+=======
+yarn install
+>>>>>>> Stashed changes
 ```
 
 ## Run in development mode
 
 ```bash
+<<<<<<< Updated upstream
 $ npm run dev
+=======
+yarn dev
+>>>>>>> Stashed changes
 ```
 
 ## Create distribution bundle
 
 ```bash
+<<<<<<< Updated upstream
 $ npm run dist
+=======
+yarn dist
+>>>>>>> Stashed changes
 ```
 
 ## Create distribution bundle and publish it
 
 ```bash
-npm run release
+yarn release
 ```
 
 ## Create base pack bundle without target any OS
 
 ```bash
+<<<<<<< Updated upstream
 $ npm run pack
+=======
+yarn pack
+>>>>>>> Stashed changes
 ```
 
 ## Logs
