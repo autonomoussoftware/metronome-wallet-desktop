@@ -364,7 +364,8 @@ function transactionParser ({ transaction, walletId }) {
 
   const meta = {
     outgoing: [outgoing],
-    incoming: [incoming]
+    incoming: [incoming],
+    ours: [outgoing || incoming]
   }
 
   if (outgoing) {
@@ -374,9 +375,8 @@ function transactionParser ({ transaction, walletId }) {
     meta.addressTo = [to]
   }
 
-  if (outgoing || incoming) {
+  if (meta.ours) {
     meta.walletIds = [walletId]
-    meta.ours = [true]
   }
 
   return meta
