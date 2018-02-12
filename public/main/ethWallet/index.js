@@ -143,7 +143,7 @@ function sendWalletOpen (webContents, walletId) {
   })
 }
 
-const any = array => array.reduce((acc, element) => acc || element, false)
+const any = array => array && array.length ? array.reduce((acc, element) => acc || element, false) : null
 
 function concatArrays (objValue, srcValue) {
   if (isArray(objValue)) {
