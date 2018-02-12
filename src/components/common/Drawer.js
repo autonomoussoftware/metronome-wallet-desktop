@@ -13,22 +13,24 @@ injectGlobal`
     overflow: hidden;
   }
   .ReactModal__Overlay {
-    background-color: transparent !important;
-    transition: 0.3s;
+    background-color: rgba(50, 50, 50, 0) !important;
+    // transition: background-color 0.3s;
+    will-change: background-color;
     z-index: 1;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
     background-color: rgba(50, 50, 50, 0.8) !important;
   }
   .ReactModal__Overlay.ReactModal__Overlay--before-close {
-    background-color: transparent !important;
-    transition: 0.6s;
+    background-color: rgba(50, 50, 50, 0) !important;
+    // transition: background-color 0.6s;
   }
 `
 
 const Container = styled(Modal)`
   &.ReactModal__Content {
-    transition: 0.6s;
+    transition: transform 0.6s;
+    will-change: transform;
     transform: translate3d(100%, 0, 0);
   }
   &.ReactModal__Content--after-open {
@@ -89,7 +91,7 @@ export default class Drawer extends React.Component {
         isOpen={isOpen}
         style={{
           content: {
-            backgroundImage: 'linear-gradient(to bottom, #272727, #323232)',
+            background: '#323232',
             flexDirection: 'column',
             borderRadius: '0',
             boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
