@@ -7,7 +7,7 @@ const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
-    logger.verbose(`--> ${eventName}:${id} ${JSON.stringify(data) || ''}`)
+    logger.verbose(`--> ${eventName}:${id} ${getLogData()}`)
     const result = Promise.resolve(listener(data, event.sender))
 
     result
@@ -27,6 +27,16 @@ function onRendererEvent (eventName, listener) {
         logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
       })
   })
+}
+
+function getLogData (data) {
+  if (!data) { return '' }
+  const logData = Object.assign({}, data)
+
+  const blackList = ['password']
+  blackList.forEach(w => delete logData[w])
+
+  return JSON.stringify(logData)
 }
 
 function createRendererEventsRouter () {
