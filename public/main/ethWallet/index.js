@@ -143,7 +143,7 @@ function sendWalletOpen (webContents, walletId) {
   })
 }
 
-const any = array => array && array.length ? array.reduce((acc, element) => acc || element, false) : null
+const any = array => array.reduce((acc, element) => acc || element, false)
 
 function concatArrays (objValue, srcValue) {
   if (isArray(objValue)) {
@@ -155,15 +155,13 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
   return Promise.all(txParsers.map(txParser => txParser({ transaction, receipt, walletId })))
     .then(function (metas) {
       const meta = mergeWith({}, ...metas, concatArrays)
-
-      meta.outgoing = any(meta.outgoing)
-      meta.incoming = any(meta.incoming)
-      meta.ours = any(meta.ours)
-
       const parsedTransaction = { transaction, receipt, meta }
 
-      if (meta.ours) {
-        const address = (meta.addressFrom && meta.addressFrom[0]) || (meta.addressTo && meta.addressTo[0])
+      if (meta.ours && any(meta.ours)) {
+        const { addresses } = meta
+
+        // TODO should not assume there will be only one address...
+        const address = addresses[0]
 
         const db = getDatabase()
 
@@ -363,20 +361,12 @@ function transactionParser ({ transaction, walletId }) {
   const incoming = isAddressInWallet({ walletId, address: to })
 
   const meta = {
-    outgoing: [outgoing],
-    incoming: [incoming],
     ours: [outgoing || incoming]
-  }
-
-  if (outgoing) {
-    meta.addressFrom = [from]
-  }
-  if (incoming) {
-    meta.addressTo = [to]
   }
 
   if (meta.ours) {
     meta.walletIds = [walletId]
+    meta.addresses = [outgoing ? from : to]
   }
 
   return meta

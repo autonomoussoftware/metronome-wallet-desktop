@@ -94,6 +94,7 @@ function sendToken ({ password, token: address, from, to, value }) {
 }
 
 const ERC20_TRANSFER_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+const ERC20_APPROVAL_SIGNATURE = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
 
 function transactionParser ({ transaction, receipt, walletId }) {
   // TODO analyze the tx, tx receipt and return promise data to be merged with meta
@@ -102,8 +103,8 @@ function transactionParser ({ transaction, receipt, walletId }) {
 
   const addresses = getTokenContractAddresses()
 
+  const meta = {}
   const tokens = {}
-  const meta = { tokens }
 
   if (!receipt) {
     const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
@@ -114,6 +115,8 @@ function transactionParser ({ transaction, receipt, walletId }) {
       tokens[address] = {
         processing: true
       }
+
+      meta.tokens = tokens
     })
 
     return meta
@@ -124,32 +127,28 @@ function transactionParser ({ transaction, receipt, walletId }) {
 
     events.forEach(function (log) {
       const signature = log.topics[0]
-      if (signature === ERC20_TRANSFER_SIGNATURE) {
+      if ([ERC20_TRANSFER_SIGNATURE, ERC20_APPROVAL_SIGNATURE].includes(signature)) {
         const from = `0x${log.topics[1].substr(-40)}`
         const to = `0x${log.topics[2].substr(-40)}`
+
+        const web3 = getWeb3()
+        const value = web3.utils.toBN(log.data).toString()
 
         const outgoing = isAddressInWallet({ walletId, address: from })
         const incoming = isAddressInWallet({ walletId, address: to })
 
-        meta.outgoing = [outgoing]
-        meta.incoming = [incoming]
-
-        if (outgoing) {
-          meta.addressFrom = [from]
-        }
-        if (incoming) {
-          meta.addressTo = [to]
-        }
-
         if (outgoing || incoming) {
           tokens[address] = {
-            event: 'Transfer',
-            incoming,
-            outgoing,
-            value: log.data,
+            event: signature === ERC20_TRANSFER_SIGNATURE ? 'Transfer' : 'Approval',
+            from,
+            to,
+            value,
             processing: false
           }
 
+          meta.tokens = tokens
+          meta.walletId = [walletId]
+          meta.addresses = [outgoing ? from : to]
           meta.ours = [true]
         }
       }
