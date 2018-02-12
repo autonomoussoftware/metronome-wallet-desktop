@@ -4,41 +4,37 @@
 # Metronome Desktop Wallet
 > 💻💰 Metronome wallet for desktop devices
 
-### Install the project dependencies
-
-In console:
+## Install the project dependencies
 
 ```bash
-npm install
+$ npm i
 ```
 
-### Run in development mode
-
-Run in console:
+## Run in development mode
 
 ```bash
-npm run dev
+$ npm run dev
 ```
 
-### Create distribution bundle
+## Create distribution bundle
 
 ```bash
-npm run dist
+$ npm run dist
 ```
 
-### Create distribution bundle and publish it
+## Create distribution bundle and publish it
 
 ```bash
 npm run release
 ```
 
-### Create base pack bundle without target any OS
+## Create base pack bundle without target any OS
 
 ```bash
-npm run pack
+$ npm run pack
 ```
 
-### Logs
+## Logs
 
 The log output is in the next directories:
 
@@ -48,7 +44,7 @@ The log output is in the next directories:
 
 More info https://github.com/megahertz/electron-log
 
-### Development notes
+## Development notes
 
 To remove the settings of the app and start again:
 
