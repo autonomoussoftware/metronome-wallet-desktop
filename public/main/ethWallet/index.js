@@ -33,9 +33,9 @@ function sendTransaction (args) {
           })
         })
         .once('receipt', function (receipt) {
-          logger.verbose('Transaction recepit received', receipt)
+          logger.verbose('Transaction receipt received', receipt)
 
-          moduleEmitter.emit('tx-recepit', receipt)
+          moduleEmitter.emit('tx-receipt', receipt)
         })
         .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
