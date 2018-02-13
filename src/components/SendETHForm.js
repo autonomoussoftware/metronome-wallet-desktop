@@ -1,12 +1,13 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isGreaterThanZero, isWeiable, toETH, toUSD } from '../utils'
-import { validateEthAmount, validatePassword, validateToAddress } from '../validator'
-import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+
+import * as selectors from '../selectors'
+import { sendToMainProcess, toETH, toUSD } from '../utils'
+import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
+import { validateEthAmount, validatePassword, validateToAddress } from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;

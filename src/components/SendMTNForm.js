@@ -1,12 +1,14 @@
-import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
-import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import config from '../config'
-import React from 'react'
 import Web3 from 'web3'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+
+import config from '../config'
+import * as selectors from '../selectors'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess } from '../utils'
+import { validateMtnAmount, validatePassword, validateToAddress } from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -90,26 +92,13 @@ class SendMTNForm extends React.Component {
 
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { toAddress, mtnAmount } = this.state
-    const errors = {}
+    const { password, toAddress, mtnAmount } = this.state
 
-    // validations for address field
-    if (!toAddress) {
-      errors.toAddress = 'Address is required'
-    } else if (!Web3.utils.isAddress(this.state.toAddress)) {
-      errors.toAddress = 'Invalid address'
+    return {
+      ...validateToAddress(toAddress),
+      ...validateMtnAmount(mtnAmount),
+      ...validatePassword(password)
     }
-
-    // validations for amount field
-    if (!mtnAmount) {
-      errors.mtnAmount = 'Amount is required'
-    } else if (!isWeiable(mtnAmount)) {
-      errors.mtnAmount = 'Invalid amount'
-    } else if (!isGreaterThanZero(mtnAmount)) {
-      errors.mtnAmount = 'Amount must be greater than 0'
-    }
-
-    return errors
   }
 
   render() {
