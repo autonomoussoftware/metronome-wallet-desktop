@@ -79,7 +79,7 @@ class BuyMTNDrawer extends React.Component {
     transactionHash: null,
     ethAmount: null,
     usdAmount: null,
-    password: '',
+    password: null,
     errors: {},
     status: 'init',
     error: null
@@ -109,11 +109,8 @@ class BuyMTNDrawer extends React.Component {
       ...state,
       usdAmount: id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
       ethAmount: id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
-      [id]: value,
-      errors: {
-        ...state.errors,
-        [id]: null
-      }
+      errors: { ...state.errors, [id]: null },
+      [id]: value
     }))
   }
 
@@ -123,12 +120,12 @@ class BuyMTNDrawer extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { ethAmount } = this.state
+    const { ethAmount, password } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       utils
         .sendToMainProcess('mtn-buy', {
-          password: this.state.password,
+          password,
           value: Web3.utils.toWei(ethAmount.replace(',', '.')),
           from: this.props.from
         })

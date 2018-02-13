@@ -46,6 +46,7 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
+    password: null,
     status: 'init',
     errors: {},
     error: null
@@ -112,7 +113,7 @@ class SendMTNForm extends React.Component {
   }
 
   render() {
-    const { toAddress, mtnAmount, errors, status, error } = this.state
+    const { password, toAddress, mtnAmount, errors, status, error } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -139,6 +140,18 @@ class SendMTNForm extends React.Component {
                 error={errors.mtnAmount}
                 id="mtnAmount"
               />
+            </Sp>
+            <Sp my={2}>
+              <Flex.Item grow="1" basis="0">
+                <TextInput
+                  type="password"
+                  onChange={this.onInputChange}
+                  label="Password"
+                  value={password}
+                  error={errors.password}
+                  id="password"
+                />
+              </Flex.Item>
             </Sp>
           </form>
         </Sp>
