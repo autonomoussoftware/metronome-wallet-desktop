@@ -41,7 +41,6 @@ class SendMTNForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
     onSuccess: PropTypes.func.isRequired,
-    password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
 
@@ -70,11 +69,11 @@ class SendMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { toAddress, mtnAmount } = this.state
+    const { password, toAddress, mtnAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-token', {
-        password: this.props.password,
+        password,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         token: config.MTN_TOKEN_ADDR,
         from: this.props.from,
@@ -157,7 +156,6 @@ class SendMTNForm extends React.Component {
 
 const mapStateToProps = state => ({
   availableMTN: selectors.getMtnBalanceWei(state),
-  password: selectors.getPassword(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
 

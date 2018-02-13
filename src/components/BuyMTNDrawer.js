@@ -1,22 +1,15 @@
-import PurchaseFormProvider from './providers/PurchaseFormProvider'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import * as utils from '../utils'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import theme from '../theme'
-import React from 'react'
 import Web3 from 'web3'
-import {
-  TextInput,
-  CheckIcon,
-  BaseBtn,
-  Drawer,
-  TxIcon,
-  Flex,
-  Btn,
-  Sp
-} from './common'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+
+import theme from '../theme'
+import * as utils from '../utils'
+import * as selectors from '../selectors'
+import PurchaseFormProvider from './providers/PurchaseFormProvider'
+import { TextInput, CheckIcon, BaseBtn, Drawer, TxIcon, Flex, Btn, Sp } from './common'
+import { validateEthAmount, validatePassword } from '../validator'
 
 const Title = styled.div`
   line-height: 3rem;
@@ -141,27 +134,13 @@ class BuyMTNDrawer extends React.Component {
     )
   }
 
-  // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
     const { ethAmount, password } = this.state
-    const errors = {}
 
-    // validations for amount field
-    if (!ethAmount) {
-      errors.ethAmount = 'Amount is required'
-    } else if (!utils.isWeiable(ethAmount)) {
-      errors.ethAmount = 'Invalid amount'
-    } else if (!utils.isGreaterThanZero(ethAmount)) {
-      errors.ethAmount = 'Amount must be greater than 0'
+    return {
+      ...validateEthAmount(ethAmount),
+      ...validatePassword(password)
     }
-
-    if (!password) {
-      errors.password = 'Password is required'
-    } else if (password.length < 8) {
-      errors.password = 'Password length must be equal or greater than 8 characters'
-    }
-
-    return errors
   }
 
   render() {
