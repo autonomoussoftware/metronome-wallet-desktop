@@ -12,7 +12,8 @@ export const subscribeToMainProcessMessages = store => {
     'wallet-state-changed',
     'eth-price-updated',
     'create-wallet',
-    'open-wallets'
+    'open-wallets',
+    'eth-block'
   ])
 
   ipcRenderer.on('error', (event, { error }) => toast.error(error.message))
