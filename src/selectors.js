@@ -142,7 +142,7 @@ export const getActiveWalletTransactions = createSelector(
         ? activeWallet.addresses[addresses[0]].transactions || []
         : []
 
-    function parseTx({ transaction, meta }) {
+    function parseTx({ transaction, receipt, meta }) {
       const tokenData = Object.values(meta.tokens || {})[0] || null
 
       const myAddress =
@@ -188,6 +188,7 @@ export const getActiveWalletTransactions = createSelector(
 
       return {
         transaction,
+        receipt,
         parsed: {
           mtnBoughtInAuction,
           ethSpentInAuction,
