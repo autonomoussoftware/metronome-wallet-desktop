@@ -210,6 +210,12 @@ function parseBlock ({ header, walletId, webContents }) {
     })
 }
 
+function sendBestBlock ({ webContents }) {
+  const bestBlock = settings.get('app.bestBlock') || { number: 0 }
+  webContents.send('eth-block', bestBlock)
+  logger.verbose('Current best block', bestBlock)
+}
+
 function sendCachedTransactions ({ walletId, webContents }) {
   const db = getDatabase()
 
@@ -275,6 +281,8 @@ function openWallet ({ webContents, walletId }) {
   sendWalletOpen(webContents, walletId)
 
   sendBalances({ walletId, webContents })
+
+  sendBestBlock({ webContents })
 
   sendCachedTransactions({ walletId, webContents })
 
