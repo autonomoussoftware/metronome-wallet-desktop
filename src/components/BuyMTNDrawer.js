@@ -71,7 +71,6 @@ class BuyMTNDrawer extends React.Component {
     currentPrice: PropTypes.string.isRequired,
     availableETH: PropTypes.string.isRequired,
     ETHprice: PropTypes.number.isRequired,
-    password: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired,
     from: PropTypes.string.isRequired
   }
@@ -80,6 +79,7 @@ class BuyMTNDrawer extends React.Component {
     transactionHash: null,
     ethAmount: null,
     usdAmount: null,
+    password: '',
     errors: {},
     status: 'init',
     error: null
@@ -107,11 +107,13 @@ class BuyMTNDrawer extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
-      [id]: value
+      usdAmount: id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
+      ethAmount: id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
+      [id]: value,
+      errors: {
+        ...state.errors,
+        [id]: null
+      }
     }))
   }
 
@@ -126,7 +128,7 @@ class BuyMTNDrawer extends React.Component {
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       utils
         .sendToMainProcess('mtn-buy', {
-          password: this.props.password,
+          password: this.state.password,
           value: Web3.utils.toWei(ethAmount.replace(',', '.')),
           from: this.props.from
         })
@@ -144,7 +146,7 @@ class BuyMTNDrawer extends React.Component {
 
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { ethAmount } = this.state
+    const { ethAmount, password } = this.state
     const errors = {}
 
     // validations for amount field
@@ -156,11 +158,17 @@ class BuyMTNDrawer extends React.Component {
       errors.ethAmount = 'Amount must be greater than 0'
     }
 
+    if (!password) {
+      errors.password = 'Password is required'
+    } else if (password.length < 8) {
+      errors.password = 'Password length must be equal or greater than 8 characters'
+    }
+
     return errors
   }
 
   render() {
-    const { ethAmount, usdAmount, status, errors, error } = this.state
+    const { ethAmount, usdAmount, password, status, errors, error } = this.state
     const { onRequestClose, isOpen, currentPrice } = this.props
 
     return (
@@ -215,6 +223,22 @@ class BuyMTNDrawer extends React.Component {
                     </Flex.Item>
                   </Flex.Row>
 
+                  <Flex.Row justify="space-between">
+                    <Flex.Item grow="1" basis="0">
+                      <Sp my={2}>
+                        <TextInput
+                          type="password"
+                          onChange={this.onInputChange}
+                          disabled={status !== 'init'}
+                          error={errors.password}
+                          label="Password"
+                          value={password}
+                          id="password"
+                        />
+                      </Sp>
+                    </Flex.Item>
+                  </Flex.Row>
+
                   {expectedMTNamount && (
                     <Sp mt={2}>
                       <ExpectedMsg>
@@ -262,7 +286,6 @@ class BuyMTNDrawer extends React.Component {
 
 const mapStateToProps = state => ({
   availableETH: selectors.getEthBalanceWei(state),
-  password: selectors.getPassword(state),
   ETHprice: selectors.getEthRate(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
