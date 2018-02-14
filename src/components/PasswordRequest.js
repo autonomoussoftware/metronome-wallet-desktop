@@ -1,9 +1,11 @@
-import { TextInput, Btn, Sp } from './common'
-import { sendToMainProcess } from '../utils'
-import AltLayout from './AltLayout'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import React from 'react'
+
+import AltLayout from './AltLayout'
+import { sendToMainProcess } from '../utils'
+import { TextInput, Btn, Sp } from './common'
+import { validatePassword } from '../validator'
 
 const ErrorMsg = styled.div`
   color: ${p => p.theme.colors.danger};
@@ -45,18 +47,9 @@ export default class PasswordRequest extends React.Component {
     )
   }
 
-  // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
     const { password } = this.state
-    const errors = {}
-
-    if (!password) {
-      errors.password = 'Password is required'
-    } else if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long'
-    }
-
-    return errors
+    return { ...validatePassword(password) }
   }
 
   render() {
