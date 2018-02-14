@@ -92,15 +92,17 @@ class RecoverFromMnemonic extends React.Component {
               id="mnemonic"
             />
 
-            <TextInput
-              type="password"
-              onChange={this.onInputChanged}
-              label="Password"
-              error={errors.password}
-              value={password || ''}
-              rows="3"
-              id="password"
-            />
+            <Sp my="2">
+              <TextInput
+                type="password"
+                onChange={this.onInputChanged}
+                label="Password"
+                error={errors.password}
+                value={password || ''}
+                rows="3"
+                id="password"
+              />
+            </Sp>
 
             {error && <ErrorMsg>{error}</ErrorMsg>}
 
