@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.2.0",
+  "version": "0.0.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -59,13 +59,15 @@
   "copyright": "Copyright © 2018 ${author}",
   "build": {
     "appId": "com.bloqlabs.metronome",
-    "productName": "Metronome-Wallet",
+    "productName": "metronome-desktop-wallet",
     "files": [
       "build/**/*",
       "node_modules/**/*"
     ],
     "publish": {
-      "provider": "github"
+      "provider": "github",
+      "private": "true",
+      "token": "0a1119807ddc49a8770c20966ab18b2051517d84"
     },
     "directories": {
       "buildResources": "assets"
