@@ -14,7 +14,6 @@ const ErrorMsg = styled.p`
 
 class RecoverFromMnemonic extends React.Component {
   static propTypes = {
-    password: PropTypes.string.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
     }).isRequired

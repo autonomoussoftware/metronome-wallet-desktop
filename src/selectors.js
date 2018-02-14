@@ -19,9 +19,9 @@ function getTxType (meta, tokenData, transaction, address) {
   return 'unknown'
 }
 
-export const getPassword = state => state.session.password
+export const getIsLoggedIn = state => state.session.isLoggedIn
 
-export const sessionIsActive = createSelector(getPassword, pass => !!pass)
+export const isSessionActive = createSelector(getIsLoggedIn, pass => !!pass)
 
 export const getWalletsById = state => state.wallets.byId
 export const getActiveWalletId = state => state.wallets.active

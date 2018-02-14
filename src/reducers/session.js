@@ -1,14 +1,14 @@
 import { handleActions } from 'redux-actions'
 
 const initialState = {
-  password: null
+  isLoggedIn: false
 }
 
 const reducer = handleActions(
   {
     'session-started': (state, action) => ({
       ...state,
-      password: action.payload.password
+      isLoggedIn: true
     })
   },
   initialState

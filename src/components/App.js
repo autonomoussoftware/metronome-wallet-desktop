@@ -10,7 +10,7 @@ import Router from './Router'
 
 class App extends Component {
   static propTypes = {
-    sessionIsActive: PropTypes.bool.isRequired,
+    isSessionActive: PropTypes.bool.isRequired,
     hasEnoughData: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired
   }
@@ -34,22 +34,22 @@ class App extends Component {
   onOnboardingCompleted = ({ password, mnemonic }) => {
     sendToMainProcess('create-wallet', { password, mnemonic }).then(() => {
       this.setState({ onboardingComplete: true })
-      this.props.dispatch({ type: 'session-started', payload: { password } })
+      this.props.dispatch({ type: 'session-started' })
     })
   }
 
-  onPasswordAccepted = ({ password }) =>
-    this.props.dispatch({ type: 'session-started', payload: { password } })
+  onPasswordAccepted = () =>
+    this.props.dispatch({ type: 'session-started' })
 
   render() {
-    const { sessionIsActive, hasEnoughData } = this.props
+    const { isSessionActive, hasEnoughData } = this.props
     const { onboardingComplete } = this.state
 
     if (onboardingComplete === null) return null
 
     return !onboardingComplete ? (
       <Onboarding onOnboardingCompleted={this.onOnboardingCompleted} />
-    ) : !sessionIsActive ? (
+    ) : !isSessionActive ? (
       <PasswordRequest onPasswordAccepted={this.onPasswordAccepted} />
     ) : !hasEnoughData ? (
       <LoadingScene />
@@ -60,7 +60,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  sessionIsActive: selectors.sessionIsActive(state),
+  isSessionActive: selectors.isSessionActive(state),
   hasEnoughData: selectors.hasEnoughData(state)
 })
 
