@@ -10,7 +10,7 @@ if (isDev) {
   logger.transports.console.level = 'debug'
   logger.transports.file.level = 'debug'
 
-  app.on('ready', function () {
+  app.on('ready', function() {
     require('electron-debug')({ enabled: true })
 
     const {
@@ -27,7 +27,7 @@ if (isDev) {
 
 unhandled({ logger: logger.error })
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -39,7 +39,7 @@ createWindow()
 
 const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 
-app.on('ready', function () {
+app.on('ready', function() {
   logger.info('App ready, initlilizing...')
   initMainWorker()
 })

@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import { isWeiable } from './utils'
 
-function validateAmout (amount, propName, errors = {}) {
+function validateAmout(amount, propName, errors = {}) {
   if (!amount) {
     errors[propName] = 'Amount is required'
   } else if (!isWeiable(amount)) {
@@ -19,7 +19,7 @@ export function validateMtnAmount(mtnAmount, errors = {}) {
   return validateAmout(mtnAmount, 'mtnAmount', errors)
 }
 
-export function validateToAddress (toAddress, errors = {}) {
+export function validateToAddress(toAddress, errors = {}) {
   if (!toAddress) {
     errors.toAddress = 'Address is required'
   } else if (!Web3.utils.isAddress(toAddress)) {
@@ -29,11 +29,12 @@ export function validateToAddress (toAddress, errors = {}) {
   return errors
 }
 
-export function validatePassword (password, errors = {}) {
+export function validatePassword(password, errors = {}) {
   if (!password) {
     errors.password = 'Password is required'
   } else if (password.length < 8) {
-    errors.password = 'Password length must be equal or greater than 8 characters'
+    errors.password =
+      'Password length must be equal or greater than 8 characters'
   }
 
   return errors
