@@ -57,7 +57,11 @@ class RecoverFromMnemonic extends React.Component {
 
   onInputChanged = e => {
     const { id, value } = e.target
-    this.setState({ [id]: value, error: null })
+    this.setState(state => ({
+      ...state,
+      [id]: value,
+      errors: { ...state.errors, [id]: null },
+    }))
   }
 
   render() {
