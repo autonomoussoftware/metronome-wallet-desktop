@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import bip39 from 'bip39'
 import { isWeiable } from './utils'
 
 function validateAmout(amount, propName, errors = {}) {
@@ -27,6 +28,14 @@ export function validateToAddress(toAddress, errors = {}) {
   }
 
   return errors
+}
+
+export function validateMnemonic(mnemonic, errors = {}) {
+  if (!mnemonic) {
+    errors.mnemonic = 'The phrase is required'
+  } else if (!bip39.validateMnemonic(mnemonic)) {
+    errors.mnemonic = "These words don't look like a valid recovery phrase"
+  }
 }
 
 export function validatePassword(password, errors = {}) {
