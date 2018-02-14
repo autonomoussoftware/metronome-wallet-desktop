@@ -52,18 +52,6 @@ export const getActiveWalletMtnBalance = createSelector(
       : null
 )
 
-export const getActiveWalletTransactions = createSelector(
-  getActiveWalletAddresses,
-  getActiveWalletData,
-  (addresses, activeWallet) => {
-    const result =
-      activeWallet && addresses && addresses.length > 0
-        ? activeWallet.addresses[addresses[0]].transactions || []
-        : []
-    return _.sortBy(result, 'transaction.blockNumber').reverse()
-  }
-)
-
 export const getRates = state => state.rates
 
 export const getEthRate = createSelector(
@@ -74,15 +62,6 @@ export const getEthRate = createSelector(
 export const getMtnRate = createSelector(
   getRates,
   ({ MTN }) => (MTN ? MTN.price : null)
-)
-
-// Returns true if Main Process has sent enough data to render dashboard
-export const hasEnoughData = createSelector(
-  getActiveWalletEthBalance,
-  getActiveWalletMtnBalance,
-  getEthRate,
-  (ethBalance, mtnBalance, ethRate) =>
-    ethBalance !== null && mtnBalance !== null && ethRate !== null
 )
 
 export const getMtnBalanceWei = getActiveWalletMtnBalance
@@ -135,4 +114,108 @@ export const getConverterPriceUSD = createSelector(
       parseFloat(Web3.utils.fromWei(converterStatus.currentPrice)) * ethRate
     return usdValue.toFixed(usdValue > 1 ? 2 : 6)
   }
+)
+
+export const getBlockchain = state => state.blockchain
+
+export const getBlockHeight = createSelector(
+  getBlockchain,
+  blockchain => blockchain.height
+)
+
+export const getTxConfirmations = createSelector(
+  getBlockHeight,
+  (state, props) => props.transaction.blockNumber,
+  (blockHeight, txBlockNumber) =>
+    txBlockNumber === null || txBlockNumber > blockHeight
+      ? 0
+      : blockHeight - txBlockNumber + 1
+)
+
+export const getActiveWalletTransactions = createSelector(
+  getActiveWalletAddresses,
+  getActiveWalletData,
+  getBlockHeight,
+  (addresses, activeWallet, blockHeight) => {
+    const txs =
+      activeWallet && addresses && addresses.length > 0
+        ? activeWallet.addresses[addresses[0]].transactions || []
+        : []
+
+    function parseTx({ transaction, receipt, meta }) {
+      const tokenData = Object.values(meta.tokens || {})[0] || null
+
+      const myAddress =
+        activeWallet && addresses && addresses.length > 0
+          ? addresses[0].toLowerCase()
+          : ''
+
+      const txType = meta.metronome.auction
+        ? 'auction'
+        : meta.metronome.converter
+          ? 'converted'
+          : (!tokenData && transaction.from.toLowerCase() === myAddress) ||
+            (tokenData && tokenData.from.toLowerCase() === myAddress)
+            ? 'sent'
+            : (!tokenData && transaction.to.toLowerCase() === myAddress) ||
+              (tokenData && tokenData.to.toLowerCase() === myAddress)
+              ? 'received'
+              : 'unknown'
+
+      const from =
+        txType === 'received' && tokenData
+          ? tokenData.from.toLowerCase()
+          : transaction.from.toLowerCase()
+
+      const to =
+        txType === 'sent' && tokenData
+          ? tokenData.to.toLowerCase()
+          : transaction.to.toLowerCase()
+
+      const value =
+        ['received', 'sent'].includes(txType) && tokenData
+          ? tokenData.value
+          : transaction.value
+
+      const ethSpentInAuction = txType === 'auction' ? transaction.value : null
+
+      const mtnBoughtInAuction =
+        txType === 'auction' && transaction.blockHash ? tokenData.value : null
+
+      const symbol = ['received', 'sent'].includes(txType)
+        ? tokenData ? 'MTN' : 'ETH'
+        : null
+
+      return {
+        transaction,
+        receipt,
+        parsed: {
+          mtnBoughtInAuction,
+          ethSpentInAuction,
+          txType,
+          symbol,
+          value,
+          from,
+          to
+        }
+      }
+    }
+
+    return _.sortBy(txs, 'transaction.blockNumber')
+      .reverse()
+      .map(parseTx)
+  }
+)
+
+// Returns true if Main Process has sent enough data to render dashboard
+export const hasEnoughData = createSelector(
+  getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
+  getBlockHeight,
+  getEthRate,
+  (ethBalance, mtnBalance, blockHeight, ethRate) =>
+    ethBalance !== null &&
+    mtnBalance !== null &&
+    ethRate !== null &&
+    blockHeight !== null
 )

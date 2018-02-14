@@ -29,7 +29,7 @@ const reducer = handleActions(
         payload,
         (objValue, srcValue, key) => {
           if (key === 'transactions') {
-            return _.unionBy(objValue, srcValue, 'transaction.hash')
+            return _.unionBy(srcValue, objValue, 'transaction.hash')
           }
         }
       )

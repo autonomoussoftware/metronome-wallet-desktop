@@ -1,4 +1,6 @@
 import { DisplayValue, Modal, Btn } from './common'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -49,6 +51,12 @@ const Address = Value.extend`
   word-break: break-word;
 `
 
+const Hash = Value.extend`
+  word-wrap: break-word;
+  word-break: break-word;
+  font-size: 1.2rem;
+`
+
 const ExplorerBtn = Btn.extend`
   line-height: 1.5rem;
   opacity: 0.7;
@@ -57,60 +65,144 @@ const ExplorerBtn = Btn.extend`
   border-radius: 0;
 `
 
-export default class ReceiptModal extends React.Component {
+const Arrow = styled.span`
+  color: ${p => p.theme.colors.primary};
+  position: relative;
+  top: -6px;
+  margin: 0 12px;
+  transform: scale3d(1.5, 2, 1);
+  display: inline-block;
+`
+
+class ReceiptModal extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    confirmations: PropTypes.number.isRequired,
+    isPending: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     tx: PropTypes.shape({
-      transaction: PropTypes.shape({
-        value: PropTypes.string.isRequired,
-        hash: PropTypes.string.isRequired,
-        from: PropTypes.string,
-        to: PropTypes.string
-      }).isRequired,
-      meta: PropTypes.shape({
-        outgoing: PropTypes.bool
-      }).isRequired
+      parsed: PropTypes.oneOfType([
+        PropTypes.shape({
+          txType: PropTypes.oneOf(['unknown']).isRequired
+        }),
+        PropTypes.shape({
+          txType: PropTypes.oneOf(['sent']).isRequired,
+          symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          value: PropTypes.string.isRequired,
+          to: PropTypes.string.isRequired
+        }),
+        PropTypes.shape({
+          txType: PropTypes.oneOf(['received']).isRequired,
+          symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          value: PropTypes.string.isRequired,
+          from: PropTypes.string.isRequired
+        }),
+        PropTypes.shape({
+          txType: PropTypes.oneOf(['auction']).isRequired,
+          mtnBoughtInAuction: PropTypes.string,
+          ethSpentInAuction: PropTypes.string.isRequired
+        }),
+        PropTypes.shape({
+          txType: PropTypes.oneOf(['converted']).isRequired,
+          convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          fromValue: PropTypes.string.isRequired,
+          toValue: PropTypes.string.isRequired
+        })
+      ]).isRequired
     })
   }
 
   render() {
-    const {
-      onRequestClose,
-      isOpen,
-      tx = { transaction: {}, meta: {} }
-    } = this.props
+    const { onRequestClose, isOpen, tx, confirmations, isPending } = this.props
 
-    const type = tx.meta.outgoing ? 'sent' : 'received'
+    if (!tx) return null
 
     return (
       <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
         <Container>
           <Row first>
             <Label>Amount</Label>
-            <Amount>
-              <DisplayValue value={tx.transaction.value} maxSize="2rem" />
+            <Amount isPending={isPending}>
+              {tx.parsed.txType === 'auction' ? (
+                <React.Fragment>
+                  <DisplayValue
+                    maxSize="1.6rem"
+                    value={tx.parsed.ethSpentInAuction}
+                    post=" ETH"
+                  />
+                  {tx.parsed.mtnBoughtInAuction && (
+                    <React.Fragment>
+                      <Arrow>&darr;</Arrow>
+                      <DisplayValue
+                        maxSize="1.6rem"
+                        value={tx.parsed.mtnBoughtInAuction}
+                        post=" MTN"
+                      />
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
+              ) : (
+                <DisplayValue
+                  maxSize="2rem"
+                  value={tx.parsed.value}
+                  post={` ${tx.parsed.symbol}`}
+                />
+              )}
             </Amount>
           </Row>
+
           <Row>
             <Label>Type</Label>
-            <Type>{type}</Type>
+            <Type>{tx.parsed.txType}</Type>
           </Row>
-          {tx.transaction.from && (
+
+          {tx.parsed.txType === 'received' && (
             <Row>
-              <Label>Received from</Label>
-              <Address>{tx.transaction.from}</Address>
+              <Label>{isPending ? 'Pending' : 'Received'} from</Label>
+              <Address>{tx.parsed.from}</Address>
             </Row>
           )}
-          {tx.status && (
+
+          {tx.parsed.txType === 'sent' && (
             <Row>
-              <Label>Status</Label>
-              <Value>Pending {tx.status}</Value>
+              <Label>{isPending ? 'Pending' : 'Sent'} to</Label>
+              <Address>{tx.parsed.to}</Address>
             </Row>
           )}
+
+          <Row>
+            <Label>Confirmations</Label>
+            <Value>{confirmations}</Value>
+          </Row>
+
+          {tx.receipt && (
+            <Row>
+              <Label>Gas used</Label>
+              <Value>{tx.receipt.gasUsed}</Value>
+            </Row>
+          )}
+
+          <Row>
+            <Label>Transaction hash</Label>
+            <Hash>{tx.transaction.hash}</Hash>
+          </Row>
+
           <ExplorerBtn block>VIEW IN EXPLORER</ExplorerBtn>
         </Container>
       </Modal>
     )
   }
 }
+
+const mapStateToProps = (state, props) => {
+  const confirmations = props.tx
+    ? selectors.getTxConfirmations(state, props.tx)
+    : 0
+
+  return {
+    confirmations,
+    isPending: confirmations < 6
+  }
+}
+
+export default connect(mapStateToProps)(ReceiptModal)
