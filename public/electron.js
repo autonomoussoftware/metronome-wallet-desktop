@@ -4,7 +4,7 @@ const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const unhandled = require('electron-unhandled')
 
-logger.transports.file.appName = 'metronome-wallet'
+logger.transports.file.appName = 'metronome-desktop-wallet'
 
 if (isDev) {
   logger.transports.console.level = 'debug'
