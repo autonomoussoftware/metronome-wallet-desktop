@@ -3,6 +3,22 @@ import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
+function getTxType (meta, tokenData, transaction, address) {
+  if (meta.metronome.auction) {
+    return 'auction'
+  } else if (meta.metronome.converter) {
+    return 'converted'
+  } else if ((!tokenData && transaction.from && transaction.from.toLowerCase() === address) ||
+    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address)) {
+      return 'sent'
+  } else if ((!tokenData && transaction.to && transaction.to.toLowerCase() === address) ||
+    (tokenData && tokenData.to && tokenData.to.toLowerCase() === address)) {
+    return 'received'
+  }
+
+  return 'unknown'
+}
+
 export const getPassword = state => state.session.password
 
 export const sessionIsActive = createSelector(getPassword, pass => !!pass)
@@ -150,17 +166,7 @@ export const getActiveWalletTransactions = createSelector(
           ? addresses[0].toLowerCase()
           : ''
 
-      const txType = meta.metronome.auction
-        ? 'auction'
-        : meta.metronome.converter
-          ? 'converted'
-          : (!tokenData && transaction.from.toLowerCase() === myAddress) ||
-            (tokenData && tokenData.from.toLowerCase() === myAddress)
-            ? 'sent'
-            : (!tokenData && transaction.to.toLowerCase() === myAddress) ||
-              (tokenData && tokenData.to.toLowerCase() === myAddress)
-              ? 'received'
-              : 'unknown'
+      const txType = getTxType(meta, tokenData, transaction, myAddress)
 
       const from =
         txType === 'received' && tokenData
