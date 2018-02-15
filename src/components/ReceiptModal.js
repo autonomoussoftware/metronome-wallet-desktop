@@ -120,38 +120,40 @@ class ReceiptModal extends React.Component {
     return (
       <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
         <Container>
-          <Row first>
-            <Label>Amount</Label>
-            <Amount isPending={isPending}>
-              {tx.parsed.txType === 'auction' ? (
-                <React.Fragment>
+          {tx.parsed.txType !== 'unknown' && (
+            <Row first>
+              <Label>Amount</Label>
+              <Amount isPending={isPending}>
+                {tx.parsed.txType === 'auction' ? (
+                  <React.Fragment>
+                    <DisplayValue
+                      maxSize="1.6rem"
+                      value={tx.parsed.ethSpentInAuction}
+                      post=" ETH"
+                    />
+                    {tx.parsed.mtnBoughtInAuction && (
+                      <React.Fragment>
+                        <Arrow>&darr;</Arrow>
+                        <DisplayValue
+                          maxSize="1.6rem"
+                          value={tx.parsed.mtnBoughtInAuction}
+                          post=" MTN"
+                        />
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
+                ) : (
                   <DisplayValue
-                    maxSize="1.6rem"
-                    value={tx.parsed.ethSpentInAuction}
-                    post=" ETH"
+                    maxSize="2rem"
+                    value={tx.parsed.value}
+                    post={` ${tx.parsed.symbol}`}
                   />
-                  {tx.parsed.mtnBoughtInAuction && (
-                    <React.Fragment>
-                      <Arrow>&darr;</Arrow>
-                      <DisplayValue
-                        maxSize="1.6rem"
-                        value={tx.parsed.mtnBoughtInAuction}
-                        post=" MTN"
-                      />
-                    </React.Fragment>
-                  )}
-                </React.Fragment>
-              ) : (
-                <DisplayValue
-                  maxSize="2rem"
-                  value={tx.parsed.value}
-                  post={` ${tx.parsed.symbol}`}
-                />
-              )}
-            </Amount>
-          </Row>
+                )}
+              </Amount>
+            </Row>
+          )}
 
-          <Row>
+          <Row first={tx.parsed.txType === 'unknown'}>
             <Label>Type</Label>
             <Type>{tx.parsed.txType}</Type>
           </Row>
