@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -65,15 +65,14 @@
       "node_modules/**/*"
     ],
     "publish": {
-      "provider": "github",
-      "private": "true",
-      "token": "0a1119807ddc49a8770c20966ab18b2051517d84"
+      "provider": "github"
     },
     "directories": {
       "buildResources": "assets"
     },
     "mac": {
-      "category": "com.bloqlabs.metronome.category.finance"
+      "artifactName": "${name}_v${version}.${ext}",
+      "category": "com.bloqlabs.metronome.category.utility"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",
@@ -91,12 +90,12 @@
       ]
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "artifactName": "${name}_v${version}.${ext}",
+      "category": "Utility",
+      "target": ["AppImage", "deb", "rpm", "snap"]
     },
     "win": {
+      "artifactName": "${name}_v${version}.${ext}",
       "target": "nsis",
       "icon": "./assets/icon",
       "legalTrademarks": ""
@@ -114,7 +113,7 @@
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
-    "release": "react-scripts build && build --em.main=build/electron.js",
+    "release": "react-scripts build && build --em.main=build/electron.js --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
