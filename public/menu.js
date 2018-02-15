@@ -7,7 +7,13 @@ const template = [
   {
     label: 'Application',
     submenu: [
-      { label: 'Quit', accelerator: 'Command+Q', click() { app.quit(0) } }
+      {
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        click() {
+          app.quit(0)
+        }
+      }
     ]
   },
 
@@ -20,11 +26,15 @@ const template = [
       { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
       { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
       { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
-      { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
+      {
+        label: 'Select All',
+        accelerator: 'CmdOrCtrl+A',
+        selector: 'selectAll:'
+      }
     ]
   }
 ]
 
-module.exports = function () {
+module.exports = function() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
