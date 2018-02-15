@@ -118,7 +118,7 @@ class App extends Component {
           <SecondaryBtn activeClassName="active" to="/tools">
             Tools
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/settings" disabled>
+          <SecondaryBtn activeClassName="active" to="/settings">
             Settings
           </SecondaryBtn>
           <SecondaryBtn activeClassName="active" to="/help" disabled>
