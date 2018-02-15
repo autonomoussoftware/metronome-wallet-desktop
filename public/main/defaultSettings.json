@@ -11,13 +11,13 @@
   },
   "metronome": {
     "contracts": {
-      "token": "0xde806d6efd432cdee42573760682d99ededc1d89",
-      "auctions": "0x09d140eaa1d5b1bb73899edba931f2cef95be63a",
-      "converter": "0x97e85be59018897cad777554c8d01fee89e992be"
+      "token": "0xf583c8fe0cbf447727378e3b1e921b1ef81adda8",
+      "auctions": "0xddfd00e05901fae4df5d1b01f4212e62887177fc",
+      "converter": "0xfe3e820560bd3af2c3a807cae8a2e92bc3577a7e"
     }
   },
   "tokens": {
-    "0xde806d6efd432cdee42573760682d99ededc1d89": {
+    "0xf583c8fe0cbf447727378e3b1e921b1ef81adda8": {
       "symbol": "MTN"
     }
   }
