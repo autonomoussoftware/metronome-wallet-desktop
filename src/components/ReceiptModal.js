@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 
-import * as selectors from '../selectors'
 import config from '../config'
+import * as selectors from '../selectors'
 import { DisplayValue, Modal, Btn } from './common'
 
 const { shell } = window.require('electron')
@@ -123,7 +123,7 @@ class ReceiptModal extends React.Component {
   render() {
     const { onRequestClose, isOpen, tx, confirmations, isPending } = this.props
 
-    if (!tx) return null
+    if (!tx) { return null }
 
     return <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
         <Container>
