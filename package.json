@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -44,7 +44,6 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.0",
-    "react-sizeme": "^2.3.6",
     "react-toastify": "^3.3.2",
     "react-transition-group": "^2.2.1",
     "redux": "^3.7.2",
@@ -60,7 +59,7 @@
   "copyright": "Copyright © 2018 ${author}",
   "build": {
     "appId": "com.bloqlabs.metronome",
-    "productName": "Metronome-Wallet",
+    "productName": "metronome-desktop-wallet",
     "files": [
       "build/**/*",
       "node_modules/**/*"
@@ -72,7 +71,8 @@
       "buildResources": "assets"
     },
     "mac": {
-      "category": "com.bloqlabs.metronome.category.finance"
+      "artifactName": "${name}_v${version}.${ext}",
+      "category": "com.bloqlabs.metronome.category.utility"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",
@@ -90,12 +90,12 @@
       ]
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "artifactName": "${name}_v${version}.${ext}",
+      "category": "Utility",
+      "target": ["AppImage", "deb", "rpm", "snap"]
     },
     "win": {
+      "artifactName": "${name}_v${version}.${ext}",
       "target": "nsis",
       "icon": "./assets/icon",
       "legalTrademarks": ""
@@ -108,11 +108,12 @@
     "start": "react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "prettier": "prettier --write ./**/*.js",
     "pack": "react-scripts build && builder --dir",
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
-    "release": "react-scripts build && build --em.main=build/electron.js --publish=always",
+    "release": "react-scripts build && build --em.main=build/electron.js --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {

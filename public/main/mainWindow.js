@@ -27,8 +27,7 @@ function loadWindow () {
 
   mainWindow.loadURL(appUrl)
 
-  // WIP: autoupdate feature. Only last to have the artifact we want to use.
-  // initAutoUpdate();
+  initAutoUpdate();
 
   mainWindow.webContents.on('crashed', function (event, killed) {
     logger.error(event, killed)
@@ -48,16 +47,37 @@ function loadWindow () {
 }
 
 function initAutoUpdate() {
-  if (isDev) {
-    return;
-  }
+  // if (isDev) {
+  //   return;
+  // }
 
   if (process.platform === 'linux') {
     return;
   }
 
   autoUpdater.checkForUpdates();
-  autoUpdater.signals.updateDownloaded(showUpdateNotification);
+
+  autoUpdater.on('checking-for-update', () => {
+    logger.info('Checking for update...');
+  })
+  autoUpdater.on('update-available', (info) => {
+    logger.info('Update available.');
+  })
+  autoUpdater.on('update-not-available', (info) => {
+    logger.info('Update not available.');
+  })
+  autoUpdater.on('error', (err) => {
+    logger.error('Error in auto-updater. ' + err);
+  })
+  autoUpdater.on('download-progress', (progressObj) => {
+    let log_message = "Download speed: " + progressObj.bytesPerSecond;
+    log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+    log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+    logger.info(log_message);
+  })
+  autoUpdater.on('update-downloaded', (info) => {
+    showUpdateNotification(info)
+  });
 }
 
 function showUpdateNotification(it) {
@@ -69,15 +89,13 @@ function showUpdateNotification(it) {
   notifier.notify(
     {
       title: 'A new update is ready to install.',
+      wait: true,
+      sound: true,
       message: `${versionLabel} has been downloaded and will be automatically installed after restart.`,
-      closeLabel: 'Okay',
+      closeLabel: 'Ok',
       actions: restartNowAction
-    },
-    function(err, response, metadata) {
+    }, function  (err, response) {
       if (err) throw err;
-      if (metadata.activationValue !== restartNowAction) {
-        return;
-      }
       autoUpdater.quitAndInstall();
     }
   );

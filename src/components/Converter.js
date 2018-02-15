@@ -135,7 +135,7 @@ class Converter extends React.Component {
                 </StatsContainer>
               </Flex.Column>
               <Sp mt={4} ml={2}>
-                <Btn data-modal="convert" onClick={this.onOpenModal}>
+                <Btn data-modal="convert" onClick={this.onOpenModal} disabled>
                   Convert
                 </Btn>
               </Sp>

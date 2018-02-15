@@ -1,12 +1,14 @@
-import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
-import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import config from '../config'
-import React from 'react'
 import Web3 from 'web3'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+
+import config from '../config'
+import * as selectors from '../selectors'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess } from '../utils'
+import { validateMtnAmount, validatePassword, validateToAddress } from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -39,13 +41,13 @@ class SendMTNForm extends React.Component {
   static propTypes = {
     availableMTN: PropTypes.string.isRequired,
     onSuccess: PropTypes.func.isRequired,
-    password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
 
   state = {
     mtnAmount: null,
     toAddress: null,
+    password: null,
     status: 'init',
     errors: {},
     error: null
@@ -67,11 +69,11 @@ class SendMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { toAddress, mtnAmount } = this.state
+    const { password, toAddress, mtnAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-token', {
-        password: this.props.password,
+        password,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         token: config.MTN_TOKEN_ADDR,
         from: this.props.from,
@@ -89,30 +91,17 @@ class SendMTNForm extends React.Component {
 
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { toAddress, mtnAmount } = this.state
-    const errors = {}
+    const { password, toAddress, mtnAmount } = this.state
 
-    // validations for address field
-    if (!toAddress) {
-      errors.toAddress = 'Address is required'
-    } else if (!Web3.utils.isAddress(this.state.toAddress)) {
-      errors.toAddress = 'Invalid address'
+    return {
+      ...validateToAddress(toAddress),
+      ...validateMtnAmount(mtnAmount),
+      ...validatePassword(password)
     }
-
-    // validations for amount field
-    if (!mtnAmount) {
-      errors.mtnAmount = 'Amount is required'
-    } else if (!isWeiable(mtnAmount)) {
-      errors.mtnAmount = 'Invalid amount'
-    } else if (!isGreaterThanZero(mtnAmount)) {
-      errors.mtnAmount = 'Amount must be greater than 0'
-    }
-
-    return errors
   }
 
   render() {
-    const { toAddress, mtnAmount, errors, status, error } = this.state
+    const { password, toAddress, mtnAmount, errors, status, error } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -140,6 +129,18 @@ class SendMTNForm extends React.Component {
                 id="mtnAmount"
               />
             </Sp>
+            <Sp my={2}>
+              <Flex.Item grow="1" basis="0">
+                <TextInput
+                  type="password"
+                  onChange={this.onInputChange}
+                  label="Password"
+                  value={password}
+                  error={errors.password}
+                  id="password"
+                />
+              </Flex.Item>
+            </Sp>
           </form>
         </Sp>
         <Footer>
@@ -155,7 +156,6 @@ class SendMTNForm extends React.Component {
 
 const mapStateToProps = state => ({
   availableMTN: selectors.getMtnBalanceWei(state),
-  password: selectors.getPassword(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
 

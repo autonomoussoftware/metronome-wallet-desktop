@@ -98,7 +98,8 @@ class Auction extends React.Component {
   static propTypes = {
     auctionPriceUSD: PropTypes.string.isRequired,
     auctionStatus: PropTypes.shape({
-      currentPrice: PropTypes.string.isRequired
+      currentPrice: PropTypes.string.isRequired,
+      genesisTime: PropTypes.number.isRequired
     })
   }
 
@@ -113,78 +114,97 @@ class Auction extends React.Component {
   render() {
     const { auctionPriceUSD, auctionStatus } = this.props
 
+    const initialAuctionNotStarted =
+      auctionStatus && auctionStatus.genesisTime * 1000 > Date.now()
+
     return (
       <DarkLayout title="Metronome Auction">
         {auctionStatus ? (
           <Sp py={4} px={6}>
-            <Text>Time Remaining</Text>
+            <Text>
+              {initialAuctionNotStarted
+                ? 'Initial Auction starts in'
+                : 'Time Remaining'}
+            </Text>
 
             <CountDownProvider
-              targetTimestamp={auctionStatus.nextAuctionStartTime}
+              targetTimestamp={
+                initialAuctionNotStarted
+                  ? auctionStatus.genesisTime
+                  : auctionStatus.nextAuctionStartTime
+              }
             >
-              {({ days, hours, minutes, seconds }) => (
-                <Row>
-                  <Cell isFaded={days === 0}>{days} days</Cell>
-                  <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
-                  <Cell isFaded={days + hours + minutes === 0}>
-                    {minutes} mins
-                  </Cell>
-                  <Cell isFaded={days + hours + minutes + seconds === 0}>
-                    {seconds} segs
-                  </Cell>
-                </Row>
-              )}
+              {({ days, hours, minutes, seconds, inFuture }) =>
+                inFuture ? (
+                  <Row>
+                    <Cell isFaded={days === 0}>{days} days</Cell>
+                    <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
+                    <Cell isFaded={days + hours + minutes === 0}>
+                      {minutes} mins
+                    </Cell>
+                    <Cell isFaded={days + hours + minutes + seconds === 0}>
+                      {seconds} segs
+                    </Cell>
+                  </Row>
+                ) : (
+                  <Row>
+                    <Cell>Waiting to confirm auction start...</Cell>
+                  </Row>
+                )
+              }
             </CountDownProvider>
 
-            <Sp mt={6}>
-              <Flex.Row>
-                <Flex.Column>
-                  <StatsContainer>
-                    <Sp py={4} px={3}>
-                      <Flex.Row justify="space-between" align="baseline">
-                        <Label>Current Price</Label>
-                        <Flex.Column>
-                          <Flex.Row align="baseline">
-                            <Badge>1 MTN</Badge>
-                            <Price>
-                              <DisplayValue
-                                maxSize="2.4rem"
-                                pre=" = "
-                                value={auctionStatus.currentPrice}
-                                post=" ETH"
-                              />
-                            </Price>
-                          </Flex.Row>
-                          <USDPrice>${auctionPriceUSD}</USDPrice>
-                        </Flex.Column>
-                      </Flex.Row>
-                    </Sp>
-                    <Sp py={4} px={3}>
-                      <Flex.Row justify="space-between" align="baseline">
-                        <Label>Available</Label>
-                        <AvailableAmount>
-                          <DisplayValue
-                            maxSize="2.4rem"
-                            value={auctionStatus.tokenRemaining}
-                            post=" MTN"
-                          />
-                        </AvailableAmount>
-                      </Flex.Row>
-                    </Sp>
-                  </StatsContainer>
-                </Flex.Column>
-                <Sp mt={4} ml={2}>
-                  <Btn data-modal="buy" onClick={this.onOpenModal}>
-                    Buy Metronome
-                  </Btn>
-                </Sp>
-                <BuyMTNDrawer
-                  onRequestClose={this.onCloseModal}
-                  currentPrice={auctionStatus.currentPrice}
-                  isOpen={this.state.activeModal === 'buy'}
-                />
-              </Flex.Row>
-            </Sp>
+            {!initialAuctionNotStarted && (
+              <Sp mt={6}>
+                <Flex.Row>
+                  <Flex.Column>
+                    <StatsContainer>
+                      <Sp py={4} px={3}>
+                        <Flex.Row justify="space-between" align="baseline">
+                          <Label>Current Price</Label>
+                          <Flex.Column>
+                            <Flex.Row align="baseline">
+                              <Badge>1 MTN</Badge>
+                              <Price>
+                                <DisplayValue
+                                  maxSize="2.4rem"
+                                  pre=" = "
+                                  value={auctionStatus.currentPrice}
+                                  post=" ETH"
+                                />
+                              </Price>
+                            </Flex.Row>
+                            <USDPrice>${auctionPriceUSD}</USDPrice>
+                          </Flex.Column>
+                        </Flex.Row>
+                      </Sp>
+                      <Sp py={4} px={3}>
+                        <Flex.Row justify="space-between" align="baseline">
+                          <Label>Available</Label>
+                          <AvailableAmount>
+                            <DisplayValue
+                              maxSize="2.4rem"
+                              value={auctionStatus.tokenRemaining}
+                              post=" MTN"
+                            />
+                          </AvailableAmount>
+                        </Flex.Row>
+                      </Sp>
+                    </StatsContainer>
+                  </Flex.Column>
+                  <Sp mt={4} ml={2}>
+                    <Btn data-modal="buy" onClick={this.onOpenModal}>
+                      Buy Metronome
+                    </Btn>
+                  </Sp>
+                  <BuyMTNDrawer
+                    onRequestClose={this.onCloseModal}
+                    currentPrice={auctionStatus.currentPrice}
+                    isOpen={this.state.activeModal === 'buy'}
+                  />
+                </Flex.Row>
+              </Sp>
+            )}
           </Sp>
         ) : (
           <Sp p={6}>

@@ -3,9 +3,36 @@ import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
-export const getPassword = state => state.session.password
+function getTxType(meta, tokenData, transaction, address) {
+  if (_.get(meta, 'metronome.auction')) {
+    return 'auction'
+  } else if (_.get(meta, 'metronome.converter')) {
+    return 'converted'
+  } else if (
+    (!tokenData &&
+      transaction.from &&
+      transaction.from.toLowerCase() === address) ||
+    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address) ||
+    (tokenData &&
+      tokenData.processing &&
+      transaction.from.toLowerCase() === address)
+  ) {
+    return 'sent'
+  } else if (
+    (!tokenData &&
+      transaction.to &&
+      transaction.to.toLowerCase() === address) ||
+    (tokenData && tokenData.to && tokenData.to.toLowerCase() === address)
+  ) {
+    return 'received'
+  }
 
-export const sessionIsActive = createSelector(getPassword, pass => !!pass)
+  return 'unknown'
+}
+
+export const getIsLoggedIn = state => state.session.isLoggedIn
+
+export const isSessionActive = createSelector(getIsLoggedIn, pass => !!pass)
 
 export const getWalletsById = state => state.wallets.byId
 export const getActiveWalletId = state => state.wallets.active
@@ -52,18 +79,6 @@ export const getActiveWalletMtnBalance = createSelector(
       : null
 )
 
-export const getActiveWalletTransactions = createSelector(
-  getActiveWalletAddresses,
-  getActiveWalletData,
-  (addresses, activeWallet) => {
-    const result =
-      activeWallet && addresses && addresses.length > 0
-        ? activeWallet.addresses[addresses[0]].transactions || []
-        : []
-    return _.sortBy(result, 'transaction.blockNumber').reverse()
-  }
-)
-
 export const getRates = state => state.rates
 
 export const getEthRate = createSelector(
@@ -74,15 +89,6 @@ export const getEthRate = createSelector(
 export const getMtnRate = createSelector(
   getRates,
   ({ MTN }) => (MTN ? MTN.price : null)
-)
-
-// Returns true if Main Process has sent enough data to render dashboard
-export const hasEnoughData = createSelector(
-  getActiveWalletEthBalance,
-  getActiveWalletMtnBalance,
-  getEthRate,
-  (ethBalance, mtnBalance, ethRate) =>
-    ethBalance !== null && mtnBalance !== null && ethRate !== null
 )
 
 export const getMtnBalanceWei = getActiveWalletMtnBalance
@@ -106,6 +112,11 @@ export const getAuction = state => state.auction
 export const getAuctionStatus = createSelector(
   getAuction,
   auction => auction.status
+)
+
+export const getCurrentAuction = createSelector(
+  getAuctionStatus,
+  auctionStatus => auctionStatus.currentAuction
 )
 
 export const getAuctionPriceUSD = createSelector(
@@ -135,4 +146,101 @@ export const getConverterPriceUSD = createSelector(
       parseFloat(Web3.utils.fromWei(converterStatus.currentPrice)) * ethRate
     return usdValue.toFixed(usdValue > 1 ? 2 : 6)
   }
+)
+
+export const getBlockchain = state => state.blockchain
+
+export const getBlockHeight = createSelector(
+  getBlockchain,
+  blockchain => blockchain.height
+)
+
+export const getTxConfirmations = createSelector(
+  getBlockHeight,
+  (state, props) => props.transaction.blockNumber,
+  (blockHeight, txBlockNumber) =>
+    txBlockNumber === null || txBlockNumber > blockHeight
+      ? 0
+      : blockHeight - txBlockNumber + 1
+)
+
+export const getActiveWalletTransactions = createSelector(
+  getActiveWalletAddresses,
+  getActiveWalletData,
+  getBlockHeight,
+  (addresses, activeWallet, blockHeight) => {
+    const txs =
+      activeWallet && addresses && addresses.length > 0
+        ? activeWallet.addresses[addresses[0]].transactions || []
+        : []
+
+    function parseTx({ transaction, receipt, meta }) {
+      const tokenData = Object.values(meta.tokens || {})[0] || null
+
+      const isProcessing = tokenData && tokenData.processing
+
+      const myAddress =
+        activeWallet && addresses && addresses.length > 0
+          ? addresses[0].toLowerCase()
+          : ''
+
+      const txType = getTxType(meta, tokenData, transaction, myAddress)
+
+      const from =
+        txType === 'received' && tokenData
+          ? tokenData.from.toLowerCase()
+          : transaction.from.toLowerCase()
+
+      const to =
+        txType === 'sent' && tokenData && tokenData.to
+          ? tokenData.to.toLowerCase()
+          : transaction.to.toLowerCase()
+
+      const value =
+        ['received', 'sent'].includes(txType) && tokenData && tokenData.value
+          ? tokenData.value
+          : transaction.value
+
+      const ethSpentInAuction = txType === 'auction' ? transaction.value : null
+
+      const mtnBoughtInAuction =
+        txType === 'auction' && transaction.blockHash ? tokenData.value : null
+
+      const symbol = ['received', 'sent'].includes(txType)
+        ? tokenData ? 'MTN' : 'ETH'
+        : null
+
+      return {
+        transaction,
+        receipt,
+        parsed: {
+          mtnBoughtInAuction,
+          ethSpentInAuction,
+          isProcessing,
+          txType,
+          symbol,
+          value,
+          from,
+          to
+        }
+      }
+    }
+
+    return _.sortBy(txs, 'transaction.blockNumber')
+      .reverse()
+      .map(parseTx)
+  }
+)
+
+// Returns true if Main Process has sent enough data to render dashboard
+export const hasEnoughData = createSelector(
+  getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
+  getBlockHeight,
+  getEthRate,
+  (ethBalance, mtnBalance, blockHeight, ethRate) =>
+    ethBalance !== null &&
+    mtnBalance !== null &&
+    ethRate !== null &&
+    blockHeight !== null
 )

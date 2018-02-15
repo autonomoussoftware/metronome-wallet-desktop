@@ -1,6 +1,8 @@
 import { ItemFilter, CheckIcon, Drawer, Flex, Tabs, Sp } from './common'
+import * as selectors from '../selectors'
 import SendMTNForm from './SendMTNForm'
 import SendETHForm from './SendETHForm'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
@@ -23,8 +25,9 @@ const Message = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
-export default class SendDrawer extends React.Component {
+class SendDrawer extends React.Component {
   static propTypes = {
+    isInitialAuction: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
@@ -48,7 +51,7 @@ export default class SendDrawer extends React.Component {
   }
 
   render() {
-    const { onRequestClose, isOpen } = this.props
+    const { isInitialAuction, onRequestClose, isOpen } = this.props
     const { status } = this.state
 
     return (
@@ -57,35 +60,38 @@ export default class SendDrawer extends React.Component {
         isOpen={isOpen}
         title="Send Transaction"
       >
-        {status === 'init' && (
-          <ItemFilter
-            defaultFilter="mtn"
-            extractValue={({ name }) => name}
-            items={[
-              { name: 'mtn', component: SendMTNForm },
-              { name: 'eth', component: SendETHForm }
-            ]}
-          >
-            {({ filteredItems, onFilterChange, activeFilter }) => (
-              <React.Fragment>
-                <Tabs
-                  onClick={onFilterChange}
-                  active={activeFilter}
-                  items={[
-                    { id: 'mtn', label: 'MTN' },
-                    { id: 'eth', label: 'ETH' }
-                  ]}
-                />
-                {filteredItems.map(i =>
-                  React.createElement(i.component, {
-                    onSuccess: this.onSuccess,
-                    key: i.name
-                  })
-                )}
-              </React.Fragment>
-            )}
-          </ItemFilter>
-        )}
+        {status === 'init' &&
+          (isInitialAuction ? (
+            <SendETHForm onSuccess={this.onSuccess} />
+          ) : (
+            <ItemFilter
+              defaultFilter="mtn"
+              extractValue={({ name }) => name}
+              items={[
+                { name: 'mtn', component: SendMTNForm },
+                { name: 'eth', component: SendETHForm }
+              ]}
+            >
+              {({ filteredItems, onFilterChange, activeFilter }) => (
+                <React.Fragment>
+                  <Tabs
+                    onClick={onFilterChange}
+                    active={activeFilter}
+                    items={[
+                      { id: 'mtn', label: 'MTN' },
+                      { id: 'eth', label: 'ETH' }
+                    ]}
+                  />
+                  {filteredItems.map(i =>
+                    React.createElement(i.component, {
+                      onSuccess: this.onSuccess,
+                      key: i.name
+                    })
+                  )}
+                </React.Fragment>
+              )}
+            </ItemFilter>
+          ))}
         {status === 'success' && (
           <Sp my={19} mx={12}>
             <Flex.Column align="center">
@@ -104,3 +110,9 @@ export default class SendDrawer extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  isInitialAuction: selectors.getCurrentAuction(state) === '0'
+})
+
+export default connect(mapStateToProps)(SendDrawer)

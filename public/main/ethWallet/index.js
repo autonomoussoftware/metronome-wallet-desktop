@@ -1,21 +1,23 @@
 // TODO hdkey uses deprecated coinstring and shall use bs58check
+const { mergeWith, isArray } = require('lodash')
+const axios = require('axios')
 const bip39 = require('bip39')
 const EventEmitter = require('events')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
+const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
-const { mergeWith, isArray } = require('lodash')
 
 const { encrypt, sha256 } = require('../cryptoUtils')
 const Deferred = require('../lib/Deferred')
 const WalletError = require('../WalletError')
 
-const { initDatabase, getDatabase } = require('./db')
-const getWeb3 = require('./web3')
+const { getTransactionAndReceipt } = require('./block')
 const { getWalletBalances } = require('./wallet')
-const { signAndSendTransaction } = require('./send')
-const { getAllTransactionsAndReceipts } = require('./block')
+const { initDatabase, getDatabase } = require('./db')
 const { getWalletAddresses, isAddressInWallet } = require('./settings')
+const { signAndSendTransaction } = require('./send')
+const getWeb3 = require('./web3')
 
 function sendTransaction (args) {
   const deferred = new Deferred()
@@ -186,28 +188,10 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
     })
 }
 
-function parseBlock ({ header, walletId, webContents }) {
-  const { hash, number } = header
-
-  const web3 = getWeb3()
-
-  return getAllTransactionsAndReceipts({ web3, header })
-    .then(function (transactions) {
-      return Promise.all(transactions.map(function ({ transaction, receipt }) {
-        return parseTransaction({ transaction, receipt, walletId, webContents })
-      }))
-        .then(function (parsedTransactions) {
-          const ourTransactions = parsedTransactions.filter(t => t.meta.ours)
-          if (ourTransactions.length) {
-            // TODO optimize when this is called
-            sendBalances({ webContents, walletId })
-          }
-
-          settings.set('app.bestBlock', { number, hash })
-          webContents.send('eth-block', { number, hash })
-          logger.verbose('New best block', { number, hash })
-        })
-    })
+function sendBestBlock ({ webContents }) {
+  const bestBlock = settings.get('app.bestBlock') || { number: 0 }
+  webContents.send('eth-block', bestBlock)
+  logger.verbose('Current best block', bestBlock)
 }
 
 function sendCachedTransactions ({ walletId, webContents }) {
@@ -242,29 +226,80 @@ function sendCachedTransactions ({ walletId, webContents }) {
   })
 }
 
-function syncTransactions ({ walletId, webContents }) {
+function syncTransactions ({ number, walletId, webContents }) {
   const web3 = getWeb3()
 
-  return web3.eth.getBlockNumber().then(function (latest) {
-    const bestBlock = settings.get('app.bestBlock')
+  const indexerApiUrl = settings.get('app.indexerApiUrl')
+  const bestBlock = settings.get('app.bestBlock', -1)
 
-    if (!bestBlock) {
-      logger.verbose('No best block seen')
-      return
-    }
-
-    const current = bestBlock.number
-
-    if (latest <= current) {
-      webContents.send('eth-syncing', { done: true })
-      return
-    }
-
-    logger.verbose('Synching up to best block', { current, latest })
-    webContents.send('eth-syncing', { current, latest })
-    return parseBlock({ header: { number: current + 1 }, walletId, webContents })
-      .then(() => syncTransactions({ walletId, webContents }))
+  return promiseAllProps({
+    addresses: getWalletAddresses(walletId),
+    latest: number || web3.eth.getBlockNumber(),
+    indexed: axios.get(`${indexerApiUrl}/blocks/latest/number`)
+      .then(res => res.data)
+      .then(data => data.number)
+      .then(n => Number.parseInt(n, 10))
   })
+    .then(function ({ addresses, latest, indexed }) {
+      if (indexed < latest) {
+        logger.warn('Tried to sync ahead of indexer', { indexed, latest })
+      }
+      if (indexed <= bestBlock) {
+        logger.warn('Nothing to get from indexer', { indexed, bestBlock })
+        return
+      }
+
+      logger.debug('Syncing', addresses, indexed)
+      return Promise.all(addresses.map(function (address) {
+        const qs = `from=${bestBlock.number + 1}&to=${indexed}`
+        return promiseAllProps({
+          eth: axios.get(`${indexerApiUrl}/addresses/${address}/transactions?${qs}`)
+            .then(res => res.data),
+          tok: axios.get(`${indexerApiUrl}/addresses/${address}/tokentransactions?${qs}`)
+            .then(res => res.data)
+        })
+          .then(function ({ eth, tok }) {
+            const txCount = eth.length + Object.keys(tok).length
+            logger.debug('Got own txs', txCount)
+
+            if (txCount) {
+              sendBalances({ webContents, walletId })
+            }
+
+            return Promise.all([
+              Promise.all(eth.map(function (hash) {
+                logger.debug('Parsing ETH tx', hash)
+                return getTransactionAndReceipt({ web3, hash })
+                  .then(function ({ transaction, receipt }) {
+                    return parseTransaction({ transaction, receipt, walletId, webContents })
+                  })
+              })),
+              Promise.all(Object.keys(tok).map(function (tokenAddress) {
+                return tok[tokenAddress].map(function (hash) {
+                  logger.debug('Parsing token tx', hash)
+                  return getTransactionAndReceipt({ web3, hash })
+                    .then(function ({ transaction, receipt }) {
+                      return parseTransaction({ transaction, receipt, walletId, webContents })
+                    })
+                })
+              }))
+            ])
+          })
+          .then(function () {
+            settings.set('app.bestBlock', { number: indexed })
+            webContents.send('eth-block', { number: indexed })
+            logger.verbose('New best block', { number: indexed })
+          })
+          .catch(function (err) {
+            sendError({
+              webContents,
+              walletId,
+              message: 'Could not sync to the latest block',
+              err
+            })
+          })
+      }))
+    })
 }
 
 // TODO move all subscription code to a single place that other modules can reuse
@@ -276,14 +311,16 @@ function openWallet ({ webContents, walletId }) {
 
   sendBalances({ walletId, webContents })
 
+  sendBestBlock({ webContents })
+
   sendCachedTransactions({ walletId, webContents })
 
   syncTransactions({ walletId, webContents })
     .then(function () {
       const web3 = getWeb3()
       const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-      blocksSubscription.on('data', function (header) {
-        parseBlock({ header, walletId, webContents })
+      blocksSubscription.on('data', function ({ number }) {
+        syncTransactions({ number, walletId, webContents })
       })
 
       // TODO handle on error
@@ -366,7 +403,7 @@ function transactionParser ({ transaction, walletId }) {
 
   if (meta.ours) {
     meta.walletIds = [walletId]
-    meta.addresses = [outgoing ? from : to]
+    meta.addresses = outgoing ? [from] : incoming ? [to] : []
   }
 
   return meta

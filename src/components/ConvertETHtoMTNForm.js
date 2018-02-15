@@ -1,17 +1,13 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import React from 'react'
 import Web3 from 'web3'
-import {
-  sendToMainProcess,
-  isGreaterThanZero,
-  isWeiable,
-  toETH,
-  toUSD
-} from '../utils'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+
+import * as selectors from '../selectors'
+import { sendToMainProcess, toETH, toUSD } from '../utils'
+import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
+import { validateEthAmount, validatePassword } from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -51,6 +47,7 @@ class ConvertETHtoMTNForm extends React.Component {
   state = {
     ethAmount: null,
     usdAmount: null,
+    password: null,
     status: 'init',
     errors: {},
     error: null
@@ -72,6 +69,7 @@ class ConvertETHtoMTNForm extends React.Component {
       ...state,
       usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
       ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
+      errors: { ...state.errors, [id]: null },
       [id]: value
     }))
   }
@@ -82,11 +80,11 @@ class ConvertETHtoMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { ethAmount } = this.state
+    const { password, ethAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('mtn-convert-eth', {
-        password: this.props.password,
+        password,
         value: Web3.utils.toWei(ethAmount.replace(',', '.')),
         from: this.props.from
       })
@@ -100,25 +98,17 @@ class ConvertETHtoMTNForm extends React.Component {
     )
   }
 
-  // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { ethAmount } = this.state
-    const errors = {}
+    const { password, ethAmount } = this.state
 
-    // validations for amount field
-    if (!ethAmount) {
-      errors.ethAmount = 'Amount is required'
-    } else if (!isWeiable(ethAmount)) {
-      errors.ethAmount = 'Invalid amount'
-    } else if (!isGreaterThanZero(ethAmount)) {
-      errors.ethAmount = 'Amount must be greater than 0'
+    return {
+      ...validateEthAmount(ethAmount),
+      ...validatePassword(password)
     }
-
-    return errors
   }
 
   render() {
-    const { ethAmount, usdAmount, status, errors, error } = this.state
+    const { password, ethAmount, usdAmount, status, errors, error } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -155,6 +145,17 @@ class ConvertETHtoMTNForm extends React.Component {
                 />
               </Flex.Item>
             </Flex.Row>
+            <Sp my={3}>
+              <TextInput
+                type="password"
+                onChange={this.onInputChange}
+                label="Password"
+                value={password}
+                error={errors.password}
+                disabled={status !== 'init'}
+                id="password"
+              />
+            </Sp>
           </form>
         </Sp>
         <Footer>
@@ -170,7 +171,6 @@ class ConvertETHtoMTNForm extends React.Component {
 
 const mapStateToProps = state => ({
   availableETH: selectors.getEthBalanceWei(state),
-  password: selectors.getPassword(state),
   ETHprice: selectors.getEthRate(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })

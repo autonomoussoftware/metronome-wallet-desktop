@@ -34,13 +34,11 @@ export default class ItemFilter extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.items.length !== this.props.items.length) {
-      const filteredItems = this.filterItems(
-        this.state.activeFilter,
-        newProps.items
-      )
-      this.setState({ filteredItems })
-    }
+    const filteredItems = this.filterItems(
+      this.state.activeFilter,
+      newProps.items
+    )
+    this.setState({ filteredItems })
   }
 
   render() {

@@ -88,6 +88,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
   const expectedETHamount = isValidAmount
     ? weiAmount
         .dividedBy(new BigNumber(Web3.utils.toWei(String(rate))))
+        .decimalPlaces(18)
         .toString()
     : errorValue
 

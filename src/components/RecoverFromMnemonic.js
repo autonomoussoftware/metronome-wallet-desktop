@@ -1,12 +1,11 @@
-import { DarkLayout, Btn, Sp, TextInput } from './common'
-import { sendToMainProcess } from '../utils'
-import { withRouter } from 'react-router-dom'
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import bip39 from 'bip39'
-import React from 'react'
+import { withRouter } from 'react-router-dom'
+
+import { sendToMainProcess } from '../utils'
+import { DarkLayout, Btn, Sp, TextInput } from './common'
+import { validateMnemonic, validatePassword } from '../validator'
 
 const ErrorMsg = styled.p`
   color: ${p => p.theme.colors.danger};
@@ -14,7 +13,6 @@ const ErrorMsg = styled.p`
 
 class RecoverFromMnemonic extends React.Component {
   static propTypes = {
-    password: PropTypes.string.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
     }).isRequired
@@ -22,6 +20,7 @@ class RecoverFromMnemonic extends React.Component {
 
   state = {
     mnemonic: null,
+    password: null,
     errors: {},
     status: 'init',
     error: null
@@ -33,11 +32,10 @@ class RecoverFromMnemonic extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
+    const { password, mnemonic } = this.state
+
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('create-wallet', {
-        password: this.props.password,
-        mnemonic: this.state.mnemonic
-      })
+      sendToMainProcess('create-wallet', { password, mnemonic })
         .then(() => this.props.history.push('/wallets'))
         .catch(e =>
           this.setState({
@@ -49,25 +47,25 @@ class RecoverFromMnemonic extends React.Component {
   }
 
   validate = () => {
-    const { mnemonic } = this.state
-    const errors = {}
+    const { password, mnemonic } = this.state
 
-    if (!mnemonic) {
-      errors.mnemonic = 'The phrase is required'
-    } else if (!bip39.validateMnemonic(mnemonic)) {
-      errors.mnemonic = "These words don't look like a valid recovery phrase"
+    return {
+      ...validateMnemonic(mnemonic),
+      ...validatePassword(password)
     }
-
-    return errors
   }
 
   onInputChanged = e => {
     const { id, value } = e.target
-    this.setState({ [id]: value, error: null })
+    this.setState(state => ({
+      ...state,
+      [id]: value,
+      errors: { ...state.errors, [id]: null }
+    }))
   }
 
   render() {
-    const { mnemonic, error, errors } = this.state
+    const { password, mnemonic, error, errors } = this.state
 
     const weHave12words =
       mnemonic &&
@@ -94,6 +92,18 @@ class RecoverFromMnemonic extends React.Component {
               id="mnemonic"
             />
 
+            <Sp my={2}>
+              <TextInput
+                type="password"
+                onChange={this.onInputChanged}
+                label="Password"
+                error={errors.password}
+                value={password || ''}
+                rows="3"
+                id="password"
+              />
+            </Sp>
+
             {error && <ErrorMsg>{error}</ErrorMsg>}
 
             <Sp mt={4}>
@@ -108,8 +118,4 @@ class RecoverFromMnemonic extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  password: selectors.getPassword(state)
-})
-
-export default connect(mapStateToProps)(withRouter(RecoverFromMnemonic))
+export default withRouter(RecoverFromMnemonic)

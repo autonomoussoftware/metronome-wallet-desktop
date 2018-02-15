@@ -1,3 +1,5 @@
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
@@ -62,81 +64,125 @@ const Amount = styled.div`
   text-align: right;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   color: ${p => (p.isPending ? p.theme.colors.copy : p.theme.colors.primary)};
+  display: flex;
+  justify-content: flex-end;
 `
 
-export default class TxRow extends React.Component {
+const Arrow = styled.span`
+  color: ${p => p.theme.colors.primary};
+  position: relative;
+  top: -6px;
+  margin: 0 8px;
+  transform: scale3d(1.5, 2, 1);
+  display: inline-block;
+`
+
+class TxRow extends React.Component {
   static propTypes = {
-    transaction: PropTypes.shape({
-      value: PropTypes.string.isRequired,
-      hash: PropTypes.string.isRequired,
-      from: PropTypes.string,
-      to: PropTypes.string
-    }).isRequired,
-    meta: PropTypes.shape({
-      outgoing: PropTypes.bool
-    }).isRequired,
-    pending: PropTypes.number
+    confirmations: PropTypes.number.isRequired,
+    isPending: PropTypes.bool.isRequired,
+    parsed: PropTypes.oneOfType([
+      PropTypes.shape({
+        txType: PropTypes.oneOf(['unknown']).isRequired
+      }),
+      PropTypes.shape({
+        txType: PropTypes.oneOf(['sent']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        value: PropTypes.string.isRequired,
+        to: PropTypes.string.isRequired
+      }),
+      PropTypes.shape({
+        txType: PropTypes.oneOf(['received']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        value: PropTypes.string.isRequired,
+        from: PropTypes.string.isRequired
+      }),
+      PropTypes.shape({
+        txType: PropTypes.oneOf(['auction']).isRequired,
+        mtnBoughtInAuction: PropTypes.string,
+        ethSpentInAuction: PropTypes.string.isRequired
+      }),
+      PropTypes.shape({
+        txType: PropTypes.oneOf(['converted']).isRequired,
+        convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        fromValue: PropTypes.string.isRequired,
+        toValue: PropTypes.string.isRequired
+      })
+    ]).isRequired
   }
 
   render() {
-    const {
-      transaction: { blockHash, value, from, to },
-      meta: { outgoing },
-      ...other
-    } = this.props
-
-    // TODO pending is the number of confirmations
-    // it shall be calculated as (latestBlockNumber - blockNumber + 1)
-    // latestBlockNumber can be taken from the eth-block event
-    // blockNumber is a prop of props.transaction
-    // set to 6 until proper calculation is in place
-    const pending = blockHash ? 6 : 0
-
-    // waiting for 6 block by convention
-    const isPending = pending < 6
-
-    const type = outgoing ? 'sent' : 'received'
+    const { confirmations, isPending, parsed: tx, ...other } = this.props
 
     return (
       <Collapsable maxHeight="6.5rem" {...other}>
         <Tx>
-          {(type === 'received' || type === 'sent') &&
+          {(tx.txType === 'received' || tx.txType === 'sent') &&
             !isPending && <TxIcon color={theme.colors.primary} />}
 
-          {type === 'converted' &&
+          {tx.txType === 'converted' &&
             !isPending && <ConverterIcon color={theme.colors.primary} />}
 
-          {type === 'auction' &&
+          {tx.txType === 'auction' &&
             !isPending && <AuctionIcon color={theme.colors.primary} />}
 
-          {isPending && <Pending>{pending}</Pending>}
+          {(tx.txType === 'unknown' || isPending) && (
+            <Pending>{confirmations}</Pending>
+          )}
           <div>
             <Amount isPending={isPending}>
-              <DisplayValue value={value} maxSize="2rem" post=" ETH" />
+              {tx.txType === 'auction' ? (
+                <React.Fragment>
+                  <DisplayValue
+                    maxSize="2rem"
+                    value={tx.ethSpentInAuction}
+                    post=" ETH"
+                  />
+                  {tx.mtnBoughtInAuction && (
+                    <React.Fragment>
+                      <Arrow>&rarr;</Arrow>
+                      <DisplayValue
+                        maxSize="2rem"
+                        value={tx.mtnBoughtInAuction}
+                        post=" MTN"
+                      />
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
+              ) : tx.txType === 'unknown' || tx.isProcessing ? (
+                <div>New transaction</div>
+              ) : (
+                <DisplayValue
+                  maxSize="2rem"
+                  value={tx.value}
+                  post={` ${tx.symbol}`}
+                />
+              )}
             </Amount>
             <Details isPending={isPending}>
-              {type === 'converted' && (
+              {tx.txType === 'converted' && (
                 <div>
                   <Currency>MTN</Currency> exchanged for{' '}
                   <Currency>ETH</Currency>
                 </div>
               )}
-              {type === 'received' && (
+              {tx.txType === 'received' && (
                 <div>
                   {isPending ? 'Pending' : 'Received'} from{' '}
-                  <Address>{from}</Address>
+                  <Address>{tx.from}</Address>
                 </div>
               )}
-              {type === 'auction' && (
+              {tx.txType === 'auction' && (
                 <div>
                   <Currency>MTN</Currency> purchased in auction
                 </div>
               )}
-              {type === 'sent' && (
+              {tx.txType === 'sent' && (
                 <div>
-                  {isPending ? 'Pending' : 'Sent'} to <Address>{to}</Address>
+                  {isPending ? 'Pending' : 'Sent'} to <Address>{tx.to}</Address>
                 </div>
               )}
+              {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
             </Details>
           </div>
         </Tx>
@@ -144,3 +190,14 @@ export default class TxRow extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state, props) => {
+  const confirmations = selectors.getTxConfirmations(state, props)
+
+  return {
+    confirmations,
+    isPending: confirmations < 6
+  }
+}
+
+export default connect(mapStateToProps)(TxRow)

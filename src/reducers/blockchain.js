@@ -1,14 +1,14 @@
 import { handleActions } from 'redux-actions'
 
 const initialState = {
-  isLoggedIn: false
+  height: null
 }
 
 const reducer = handleActions(
   {
-    'session-started': (state, action) => ({
+    'eth-block': (state, { payload }) => ({
       ...state,
-      isLoggedIn: true
+      height: payload.number
     })
   },
   initialState
