@@ -93,7 +93,8 @@
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "Utility",
-      "target": ["deb"]
+      "target": ["deb"],
+      "icon": "./assets/icon.png"
     },
     "win": {
       "artifactName": "${name}_v${version}.${ext}",
