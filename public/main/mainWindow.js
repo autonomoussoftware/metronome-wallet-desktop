@@ -67,13 +67,13 @@ function initAutoUpdate() {
     logger.info('Update not available.');
   })
   autoUpdater.on('error', (err) => {
-    logger.info('Error in auto-updater. ' + err);
+    logger.error('Error in auto-updater. ' + err);
   })
   autoUpdater.on('download-progress', (progressObj) => {
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-    sendStatusToWindow(log_message);
+    logger.info(log_message);
   })
   autoUpdater.on('update-downloaded', (info) => {
     showUpdateNotification(info)
@@ -89,15 +89,13 @@ function showUpdateNotification(it) {
   notifier.notify(
     {
       title: 'A new update is ready to install.',
+      wait: true,
+      sound: true,
       message: `${versionLabel} has been downloaded and will be automatically installed after restart.`,
-      closeLabel: 'Okay',
+      closeLabel: 'Ok',
       actions: restartNowAction
-    },
-    function(err, response, metadata) {
+    }, function  (err, response) {
       if (err) throw err;
-      if (metadata.activationValue !== restartNowAction) {
-        return;
-      }
       autoUpdater.quitAndInstall();
     }
   );
