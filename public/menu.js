@@ -1,4 +1,5 @@
 const { Menu } = require('electron')
+const { app } = require('electron')
 
 // TODO: Re-think menu
 
@@ -6,7 +7,7 @@ const template = [
   {
     label: 'Application',
     submenu: [
-      { label: 'Quit', accelerator: 'Command+Q', click() { app.quit() } }
+      { label: 'Quit', accelerator: 'Command+Q', click() { app.quit(0) } }
     ]
   },
 
