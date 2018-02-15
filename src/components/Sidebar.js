@@ -56,6 +56,9 @@ const SecondaryBtn = styled(NavLink)`
   opacity: 0.5;
   transition: 0.6s;
   position: relative;
+  &[disabled] {
+    pointer-events: none;
+  }
   &:focus {
     outline: none;
   }
@@ -115,10 +118,10 @@ class App extends Component {
           <SecondaryBtn activeClassName="active" to="/tools">
             Tools
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/settings">
+          <SecondaryBtn activeClassName="active" to="/settings" disabled>
             Settings
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/help">
+          <SecondaryBtn activeClassName="active" to="/help" disabled>
             Help
           </SecondaryBtn>
         </Sp>
