@@ -12,7 +12,8 @@ function getAuctionStatus ({ web3, address }) {
     tokenRemaining: auctions.methods.mintable().call(),
     nextAuctionStartTime: auctions.methods.nextAuction().call()
       .then(data => data._startTime)
-      .then(t => Number.parseInt(t, 10))
+      .then(t => Number.parseInt(t, 10)),
+    currentAuction: auctions.methods.currentAuction().call()
   }
 
   return promiseAllProps(calls)
