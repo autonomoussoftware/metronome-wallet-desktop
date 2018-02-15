@@ -1,23 +1,36 @@
 import React from 'react'
-
 import { DarkLayout, Btn, Sp, TextInput } from './common'
+
+const { ipcRenderer } = window.require('electron')
 
 export default class Settings extends React.Component {
   static propTypes = {}
 
   state = {
-    ethereumNetworkUrl: null,
+    ethereumNetworkUrl: ipcRenderer.sendSync('settings-get', { key:'app.node.websocketApiUrl' }),
     errors: {},
     status: 'init',
     error: null
   }
 
-  onInputChanged () {
+  onInputChanged = e => {
+    const { id, value } = e.target
 
+    this.setState(state => ({
+      ...state,
+      errors: { ...state.errors, [id]: null },
+      [id]: value
+    }))
   }
 
-  onSubmit () {
+  onSubmit = e => {
+    e.preventDefault()
+    // TODO: validate ws URL
 
+    ipcRenderer.sendSync('settings-set', {
+      key: 'app.node.websocketApiUrl',
+      value: this.state.ethereumNetworkUrl
+    })
   }
 
   render() {
@@ -33,14 +46,13 @@ export default class Settings extends React.Component {
               onChange={this.onInputChanged}
               label="Ethereum Network URL"
               error={errors.ethereumNetworkUrl}
-              value={ethereumNetworkUrl || ''}
-              rows="3"
-              id="mnemonic"
+              value={ethereumNetworkUrl}
+              id="ethereumNetworkUrl"
             />
 
             <Sp mt={4}>
               <Btn submit>
-                Save
+                Save & Restart
               </Btn>
             </Sp>
 
