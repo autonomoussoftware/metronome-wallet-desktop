@@ -12,10 +12,7 @@ const { encrypt, sha256 } = require('../cryptoUtils')
 const Deferred = require('../lib/Deferred')
 const WalletError = require('../WalletError')
 
-const {
-  getAllTransactionsAndReceipts,
-  getTransactionAndReceipt
-} = require('./block')
+const { getTransactionAndReceipt } = require('./block')
 const { getWalletBalances } = require('./wallet')
 const { initDatabase, getDatabase } = require('./db')
 const { getWalletAddresses, isAddressInWallet } = require('./settings')
@@ -190,29 +187,6 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
       return parsedTransaction
     })
 }
-
-// function parseBlock ({ header, walletId, webContents }) {
-//   const { hash, number } = header
-//
-//   const web3 = getWeb3()
-//
-//   return getAllTransactionsAndReceipts({ web3, header })
-//     .then(function (transactions) {
-//       return Promise.all(transactions.map(function ({ transaction, receipt }) {
-//         return parseTransaction({ transaction, receipt, walletId, webContents })
-//       }))
-//         .then(function (parsedTransactions) {
-//           const ourTransactions = parsedTransactions.filter(t => t.meta.ours)
-//           if (ourTransactions.length) {
-//             sendBalances({ webContents, walletId })
-//           }
-//
-//           settings.set('app.bestBlock', { number, hash })
-//           webContents.send('eth-block', { number, hash })
-//           logger.verbose('New best block', { number, hash })
-//         })
-//     })
-// }
 
 function sendBestBlock ({ webContents }) {
   const bestBlock = settings.get('app.bestBlock') || { number: 0 }
