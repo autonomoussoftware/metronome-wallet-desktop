@@ -46,3 +46,4 @@ app.on('ready', function() {
   initMenu()
   initMainWorker()
 })
+
