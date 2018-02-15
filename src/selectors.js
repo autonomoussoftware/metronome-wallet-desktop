@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import _ from 'lodash'
 
 function getTxType(meta, tokenData, transaction, address) {
-  if (_.get(meta, 'metornome.auction')) {
+  if (_.get(meta, 'metronome.auction')) {
     return 'auction'
   } else if (_.get(meta, 'metronome.converter')) {
     return 'converted'
