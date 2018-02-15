@@ -1,12 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import styled from 'styled-components'
-
-import config from '../config'
-import * as selectors from '../selectors'
 import { DisplayValue, Modal, Btn } from './common'
-
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import config from '../config'
+import React from 'react'
 const { shell } = window.require('electron')
 
 const Container = styled.div`
@@ -85,6 +83,10 @@ class ReceiptModal extends React.Component {
     isPending: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     tx: PropTypes.shape({
+      transaction: PropTypes.shape({
+        blockNumber: PropTypes.number,
+        hash: PropTypes.string
+      }).isRequired,
       parsed: PropTypes.oneOfType([
         PropTypes.shape({
           txType: PropTypes.oneOf(['unknown']).isRequired
@@ -116,28 +118,51 @@ class ReceiptModal extends React.Component {
     })
   }
 
-  onExplorerLink (e, tx) {
-    shell.openExternal(`${config.MTN_EXPLORER_URL}/transactions/${tx.transaction.hash}`)
+  onExplorerLink = () => {
+    shell.openExternal(
+      `${config.MTN_EXPLORER_URL}/transactions/${
+        this.props.tx.transaction.hash
+      }`
+    )
   }
 
   render() {
     const { onRequestClose, isOpen, tx, confirmations, isPending } = this.props
 
-    if (!tx) { return null }
+    if (!tx) return null
 
-    return <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
+    return (
+      <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
         <Container>
           {tx.parsed.txType !== 'unknown' && (
             <Row first>
               <Label>Amount</Label>
               <Amount isPending={isPending}>
-              {tx.parsed.txType === 'auction' ? <React.Fragment>
-                  <DisplayValue maxSize="1.6rem" value={tx.parsed.ethSpentInAuction} post=" ETH" />
-                  {tx.parsed.mtnBoughtInAuction && <React.Fragment>
+                {tx.parsed.txType === 'auction' ? (
+                  <React.Fragment>
+                    <DisplayValue
+                      maxSize="1.6rem"
+                      value={tx.parsed.ethSpentInAuction}
+                      post=" ETH"
+                    />
+                    {tx.parsed.mtnBoughtInAuction && (
+                      <React.Fragment>
                         <Arrow>&darr;</Arrow>
-                      <DisplayValue maxSize="1.6rem" value={tx.parsed.mtnBoughtInAuction} post=" MTN" />
-                    </React.Fragment>}
-                </React.Fragment> : <DisplayValue maxSize="2rem" value={tx.parsed.value} post={` ${tx.parsed.symbol}`} />}
+                        <DisplayValue
+                          maxSize="1.6rem"
+                          value={tx.parsed.mtnBoughtInAuction}
+                          post=" MTN"
+                        />
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
+                ) : (
+                  <DisplayValue
+                    maxSize="2rem"
+                    value={tx.parsed.value}
+                    post={` ${tx.parsed.symbol}`}
+                  />
+                )}
               </Amount>
             </Row>
           )}
@@ -147,36 +172,50 @@ class ReceiptModal extends React.Component {
             <Type>{tx.parsed.txType}</Type>
           </Row>
 
-          {tx.parsed.txType === 'received' && <Row>
+          {tx.parsed.txType === 'received' && (
+            <Row>
               <Label>{isPending ? 'Pending' : 'Received'} from</Label>
               <Address>{tx.parsed.from}</Address>
-            </Row>}
+            </Row>
+          )}
 
-          {tx.parsed.txType === 'sent' && <Row>
+          {tx.parsed.txType === 'sent' && (
+            <Row>
               <Label>{isPending ? 'Pending' : 'Sent'} to</Label>
               <Address>{tx.parsed.to}</Address>
-            </Row>}
+            </Row>
+          )}
 
           <Row>
             <Label>Confirmations</Label>
             <Value>{confirmations}</Value>
           </Row>
 
-          {tx.receipt && <Row>
+          {tx.receipt && (
+            <Row>
               <Label>Gas used</Label>
               <Value>{tx.receipt.gasUsed}</Value>
-            </Row>}
+            </Row>
+          )}
 
           <Row>
             <Label>Transaction hash</Label>
             <Hash>{tx.transaction.hash}</Hash>
           </Row>
 
-          <ExplorerBtn block onClick={e => this.onExplorerLink(e, tx)}>
+          {tx.transaction.blockNumber && (
+            <Row>
+              <Label>Block number</Label>
+              <Hash>{tx.transaction.blockNumber}</Hash>
+            </Row>
+          )}
+
+          <ExplorerBtn block onClick={this.onExplorerLink}>
             VIEW IN EXPLORER
           </ExplorerBtn>
         </Container>
       </Modal>
+    )
   }
 }
 
