@@ -149,6 +149,8 @@ class TxRow extends React.Component {
                     </React.Fragment>
                   )}
                 </React.Fragment>
+              ) : tx.txType === 'unknown' ? (
+                <div>New transaction</div>
               ) : (
                 <DisplayValue
                   maxSize="2rem"
@@ -180,6 +182,7 @@ class TxRow extends React.Component {
                   {isPending ? 'Pending' : 'Sent'} to <Address>{tx.to}</Address>
                 </div>
               )}
+              {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
             </Details>
           </div>
         </Tx>
