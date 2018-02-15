@@ -3,16 +3,24 @@ import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
-function getTxType (meta, tokenData, transaction, address) {
-  if (meta.metronome.auction) {
+function getTxType(meta, tokenData, transaction, address) {
+  if (_.get(meta, 'metornome.auction')) {
     return 'auction'
-  } else if (meta.metronome.converter) {
+  } else if (_.get(meta, 'metronome.converter')) {
     return 'converted'
-  } else if ((!tokenData && transaction.from && transaction.from.toLowerCase() === address) ||
-    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address)) {
-      return 'sent'
-  } else if ((!tokenData && transaction.to && transaction.to.toLowerCase() === address) ||
-    (tokenData && tokenData.to && tokenData.to.toLowerCase() === address)) {
+  } else if (
+    (!tokenData &&
+      transaction.from &&
+      transaction.from.toLowerCase() === address) ||
+    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address)
+  ) {
+    return 'sent'
+  } else if (
+    (!tokenData &&
+      transaction.to &&
+      transaction.to.toLowerCase() === address) ||
+    (tokenData && tokenData.to && tokenData.to.toLowerCase() === address)
+  ) {
     return 'received'
   }
 
