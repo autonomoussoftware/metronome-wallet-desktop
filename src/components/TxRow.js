@@ -149,7 +149,7 @@ class TxRow extends React.Component {
                     </React.Fragment>
                   )}
                 </React.Fragment>
-              ) : tx.txType === 'unknown' ? (
+              ) : tx.txType === 'unknown' || tx.isProcessing ? (
                 <div>New transaction</div>
               ) : (
                 <DisplayValue

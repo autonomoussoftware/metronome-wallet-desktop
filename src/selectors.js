@@ -12,7 +12,10 @@ function getTxType(meta, tokenData, transaction, address) {
     (!tokenData &&
       transaction.from &&
       transaction.from.toLowerCase() === address) ||
-    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address)
+    (tokenData && tokenData.from && tokenData.from.toLowerCase() === address) ||
+    (tokenData &&
+      tokenData.processing &&
+      transaction.from.toLowerCase() === address)
   ) {
     return 'sent'
   } else if (
@@ -169,6 +172,8 @@ export const getActiveWalletTransactions = createSelector(
     function parseTx({ transaction, receipt, meta }) {
       const tokenData = Object.values(meta.tokens || {})[0] || null
 
+      const isProcessing = tokenData && tokenData.processing
+
       const myAddress =
         activeWallet && addresses && addresses.length > 0
           ? addresses[0].toLowerCase()
@@ -182,12 +187,12 @@ export const getActiveWalletTransactions = createSelector(
           : transaction.from.toLowerCase()
 
       const to =
-        txType === 'sent' && tokenData
+        txType === 'sent' && tokenData && tokenData.to
           ? tokenData.to.toLowerCase()
           : transaction.to.toLowerCase()
 
       const value =
-        ['received', 'sent'].includes(txType) && tokenData
+        ['received', 'sent'].includes(txType) && tokenData && tokenData.value
           ? tokenData.value
           : transaction.value
 
@@ -206,6 +211,7 @@ export const getActiveWalletTransactions = createSelector(
         parsed: {
           mtnBoughtInAuction,
           ethSpentInAuction,
+          isProcessing,
           txType,
           symbol,
           value,
