@@ -92,7 +92,7 @@
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "Utility",
-      "target": ["AppImage", "deb", "rpm", "snap"]
+      "target": ["deb"]
     },
     "win": {
       "artifactName": "${name}_v${version}.${ext}",
