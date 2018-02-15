@@ -45,12 +45,8 @@ before_script:
   - git lfs pull
 
 script:
-  - |
-    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      yarn release --linux
-    else
-      yarn release
-    fi
+  - yarn release
+
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
 
