@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./public/images/banner.svg" alt="metronome wallet">
+  <img src="./public/images/banner.png" alt="metronome wallet">
 </h1>
 
 💻💰 Metronome wallet for desktop devices
@@ -9,7 +9,7 @@
 
 
 ## Install the project dependencies
-The applicatipon need Yarn for install dependencies and run tasks. 
+The applicatipon need Yarn for install dependencies and run tasks.
 More info and install steps in https://yarnpkg.com/
 
 ```bash
