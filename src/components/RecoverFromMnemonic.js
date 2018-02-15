@@ -60,7 +60,7 @@ class RecoverFromMnemonic extends React.Component {
     this.setState(state => ({
       ...state,
       [id]: value,
-      errors: { ...state.errors, [id]: null },
+      errors: { ...state.errors, [id]: null }
     }))
   }
 
@@ -92,7 +92,7 @@ class RecoverFromMnemonic extends React.Component {
               id="mnemonic"
             />
 
-            <Sp my="2">
+            <Sp my={2}>
               <TextInput
                 type="password"
                 onChange={this.onInputChanged}
