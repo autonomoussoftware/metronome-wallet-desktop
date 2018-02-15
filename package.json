@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -59,7 +59,7 @@
   "copyright": "Copyright © 2018 ${author}",
   "build": {
     "appId": "com.bloqlabs.metronome",
-    "productName": "metronome-desktop-wallet",
+    "productName": "Metronome Wallet",
     "files": [
       "build/**/*",
       "node_modules/**/*"
@@ -72,7 +72,8 @@
     },
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "com.bloqlabs.metronome.category.utility"
+      "category": "com.bloqlabs.metronome.category.utility",
+      "icon": "./assets/icon.icns"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",
@@ -92,7 +93,8 @@
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "Utility",
-      "target": ["deb"]
+      "target": ["deb"],
+      "icon": "./assets/icon.png"
     },
     "win": {
       "artifactName": "${name}_v${version}.${ext}",
