@@ -243,12 +243,15 @@ function syncTransactions ({ number, walletId, webContents }) {
     .then(function ({ addresses, latest, indexed }) {
       if (indexed < latest) {
         logger.warn('Tried to sync ahead of indexer', { indexed, latest })
+      }
+      if (indexed <= bestBlock) {
+        logger.warn('Nothing to get from indexer', { indexed, bestBlock })
         return
       }
 
-      logger.debug('Syncing', addresses, latest)
+      logger.debug('Syncing', addresses, indexed)
       return Promise.all(addresses.map(function (address) {
-        const qs = `from=${bestBlock.number + 1}&to=${latest}`
+        const qs = `from=${bestBlock.number + 1}&to=${indexed}`
         return promiseAllProps({
           eth: axios.get(`${indexerApiUrl}/addresses/${address}/transactions?${qs}`)
             .then(res => res.data),
@@ -283,9 +286,9 @@ function syncTransactions ({ number, walletId, webContents }) {
             ])
           })
           .then(function () {
-            settings.set('app.bestBlock', { number: latest })
-            webContents.send('eth-block', { number: latest })
-            logger.verbose('New best block', { number: latest })
+            settings.set('app.bestBlock', { number: indexed })
+            webContents.send('eth-block', { number: indexed })
+            logger.verbose('New best block', { number: indexed })
           })
           .catch(function (err) {
             sendError({
