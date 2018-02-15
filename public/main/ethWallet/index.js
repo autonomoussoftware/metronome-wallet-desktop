@@ -403,7 +403,7 @@ function transactionParser ({ transaction, walletId }) {
 
   if (meta.ours) {
     meta.walletIds = [walletId]
-    meta.addresses = [outgoing ? from : to]
+    meta.addresses = outgoing ? [from] : incoming ? [to] : []
   }
 
   return meta
