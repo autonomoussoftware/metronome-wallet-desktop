@@ -114,6 +114,11 @@ export const getAuctionStatus = createSelector(
   auction => auction.status
 )
 
+export const getCurrentAuction = createSelector(
+  getAuctionStatus,
+  auctionStatus => auctionStatus.currentAuction
+)
+
 export const getAuctionPriceUSD = createSelector(
   getAuctionStatus,
   getEthRate,
