@@ -1,39 +1,94 @@
 const { Menu } = require('electron')
-const { app } = require('electron')
+const { app, shell } = require('electron')
 
-// TODO: Re-think menu
+const pkg = require('../package')
 
 const template = [
   {
-    label: 'Application',
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'selectall' }
+    ]
+  },
+
+  {
+    label: 'View',
     submenu: [
       {
-        label: 'Quit',
-        accelerator: 'Command+Q',
-        click() {
-          app.quit(0)
+        label: 'Toggle Full Screen',
+        accelerator: (() =>
+          process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11')(),
+        click(item, focusedWindow) {
+          focusedWindow &&
+            focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
         }
+      },
+
+      { type: 'separator' },
+      { label: 'Reload', accelerator: 'CmdOrCtrl+R', role: 'reload' },
+
+      {
+        label: 'Force Reload',
+        accelerator: 'Shift+CmdOrCtrl+R',
+        role: 'forcereload'
+      },
+
+      {
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+CmdOrCtrl+I',
+        role: 'toggledevtools'
       }
     ]
   },
 
   {
-    label: 'Edit',
+    role: 'window',
+    submenu: [{ role: 'minimize' }, { role: 'close' }]
+  },
+
+  {
+    role: 'help',
     submenu: [
-      { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
-      { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
-      { type: 'separator' },
-      { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
-      { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
-      { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
       {
-        label: 'Select All',
-        accelerator: 'CmdOrCtrl+A',
-        selector: 'selectAll:'
+        label: 'Learn More',
+        click() {
+          shell.openExternal('https://metronome.io')
+        }
       }
     ]
   }
 ]
+
+if (process.platform === 'darwin') {
+  const name = app.getName()
+
+  template.unshift({
+    label: name,
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  })
+
+  const windowMenu = template.find(m => m.role === 'window')
+
+  if (windowMenu) {
+    windowMenu.submenu.push({ type: 'separator' }, { role: 'front' })
+  }
+}
 
 module.exports = function() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
