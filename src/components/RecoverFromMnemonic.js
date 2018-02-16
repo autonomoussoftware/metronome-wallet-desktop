@@ -37,10 +37,10 @@ class RecoverFromMnemonic extends React.Component {
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('create-wallet', { password, mnemonic })
         .then(() => this.props.history.push('/wallets'))
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -88,7 +88,7 @@ class RecoverFromMnemonic extends React.Component {
               label="Recovery phrase"
               error={errors.mnemonic}
               value={mnemonic || ''}
-              rows="3"
+              rows={2}
               id="mnemonic"
             />
 
@@ -99,7 +99,6 @@ class RecoverFromMnemonic extends React.Component {
                 label="Password"
                 error={errors.password}
                 value={password || ''}
-                rows="3"
                 id="password"
               />
             </Sp>

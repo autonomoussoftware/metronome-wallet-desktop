@@ -22,7 +22,7 @@ if (isDev) {
     } = require('electron-devtools-installer')
 
     installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-      .then(name => console.log(`Added Extension:  ${name}`))
+      .then(extName => console.log(`Added Extension:  ${extName}`))
       .catch(err => console.log('An error occurred: ', err))
   })
 }

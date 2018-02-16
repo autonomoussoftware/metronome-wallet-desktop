@@ -1,4 +1,4 @@
-const { app, Menu } = require('electron')
+const { app, shell, Menu } = require('electron')
 
 const template = [
   {
@@ -10,30 +10,82 @@ const template = [
       { role: 'cut' },
       { role: 'copy' },
       { role: 'paste' },
-      { role: 'delete' },
       { role: 'selectall' }
     ]
   },
   {
-    role: 'window',
+    label: 'View',
     submenu: [
-      {role: 'minimize'},
-      {role: 'close'}
+      {
+        label: 'Toggle Full Screen',
+        accelerator: (() =>
+          process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11')(),
+        click(item, focusedWindow) {
+          focusedWindow &&
+            focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
+        }
+      },
+
+      { type: 'separator' },
+      { label: 'Reload', accelerator: 'CmdOrCtrl+R', role: 'reload' },
+
+      {
+        label: 'Force Reload',
+        accelerator: 'Shift+CmdOrCtrl+R',
+        role: 'forcereload'
+      },
+
+      {
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+CmdOrCtrl+I',
+        role: 'toggledevtools'
+      }
+    ]
+  },
+
+  {
+    role: 'window',
+    submenu: [{ role: 'minimize' }, { role: 'close' }]
+  },
+
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click() {
+          shell.openExternal('https://metronome.io')
+        }
+      }
     ]
   }
 ]
 
 if (process.platform === 'darwin') {
+  const name = app.getName()
+
   template.unshift({
-    label: app.getName(),
+    label: name,
     submenu: [
       { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
       { type: 'separator' },
       { role: 'quit' }
     ]
   })
+
+  const windowMenu = template.find(m => m.role === 'window')
+
+  if (windowMenu) {
+    windowMenu.submenu.push({ type: 'separator' }, { role: 'front' })
+  }
 }
 
-module.exports = function () {
+module.exports = function() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
