@@ -143,7 +143,7 @@ class Auction extends React.Component {
                       {minutes} mins
                     </Cell>
                     <Cell isFaded={days + hours + minutes + seconds === 0}>
-                      {seconds} segs
+                      {seconds} secs
                     </Cell>
                   </Row>
                 ) : (
