@@ -3,6 +3,7 @@ import * as selectors from '../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
 import { connect } from 'react-redux'
 import SendDrawer from './SendDrawer'
+import { toast } from 'react-toastify'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import TxList from './TxList'
@@ -162,7 +163,15 @@ class Dashboard extends React.Component {
 
   onCloseModal = () => this.setState({ activeModal: null })
 
-  onCopyToClipboardClick = () => clipboard.writeText(this.props.address)
+  onCopyToClipboardClick = () => {
+    clipboard.writeText(this.props.address)
+    if (!toast.isActive(this.toastId)) {
+      this.toastId = toast('Address copied to clipboard', {
+        closeButton: false,
+        autoClose: 2000
+      })
+    }
+  }
 
   render() {
     const {
