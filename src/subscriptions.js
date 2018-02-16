@@ -16,7 +16,7 @@ export const subscribeToMainProcessMessages = store => {
     'eth-block'
   ])
 
-  ipcRenderer.on('error', (event, { error }) => toast.error(error.message))
+  ipcRenderer.on('error', (ev, { error }) => toast.error(error.message))
 
   /**
    * For more complex subscriptions you can do the following
@@ -27,7 +27,7 @@ export const subscribeToMainProcessMessages = store => {
    */
   function subscribeTo(types) {
     return types.forEach(type =>
-      ipcRenderer.on(type, (event, { id, data, ...other }) => {
+      ipcRenderer.on(type, (ev, { id, data, ...other }) => {
         // ignore messages returned as promises with errors
         if (id && data && data.error) return
 
