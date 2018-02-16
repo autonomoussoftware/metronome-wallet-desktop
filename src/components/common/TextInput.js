@@ -14,7 +14,7 @@ const Label = styled.label`
 const Input = styled.input`
   border: none;
   display: block;
-  height: 5.6rem;
+  height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
   padding: 0.8rem 1.6rem;
   background-color: rgba(126, 97, 248, 0.2);
   margin-top: 0.8rem;
@@ -26,6 +26,7 @@ const Input = styled.input`
   letter-spacing: 0.5px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   transition: box-shadow 300ms;
+  resize: vertical;
   box-shadow: 0 2px 0 0px
     ${p => (p.hasErrors ? p.theme.colors.danger : 'transparent')};
 
@@ -59,10 +60,16 @@ export default class TextInput extends React.Component {
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
     type: PropTypes.string,
+    rows: PropTypes.number,
+    cols: PropTypes.number,
     id: PropTypes.string.isRequired
   }
 
   state = { isPristine: true }
+
+  InputControl = this.props.rows || this.props.cols
+    ? Input.withComponent('textarea')
+    : Input
 
   componentWillReceiveProps(newProps) {
     if (newProps.value !== this.props.value) {
@@ -79,6 +86,8 @@ export default class TextInput extends React.Component {
       label,
       value,
       type,
+      rows,
+      cols,
       id
     } = this.props
 
@@ -91,7 +100,7 @@ export default class TextInput extends React.Component {
         <Label isPristine={isPristine} hasErrors={hasErrors} htmlFor={id}>
           {label}
         </Label>
-        <Input
+        <this.InputControl
           placeholder={placeholder}
           isPristine={isPristine}
           onChange={onChange}
@@ -99,6 +108,8 @@ export default class TextInput extends React.Component {
           autoFocus={autoFocus}
           value={value || ''}
           type={type || 'text'}
+          rows={rows}
+          cols={cols}
           id={id}
         />
         {hasErrors && (
