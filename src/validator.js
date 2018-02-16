@@ -30,12 +30,14 @@ export function validateToAddress(toAddress, errors = {}) {
   return errors
 }
 
-export function validateMnemonic(mnemonic, errors = {}) {
+export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
   if (!mnemonic) {
-    errors.mnemonic = 'The phrase is required'
+    errors[propName] = 'The phrase is required'
   } else if (!bip39.validateMnemonic(mnemonic)) {
-    errors.mnemonic = "These words don't look like a valid recovery phrase"
+    errors[propName] = "These words don't look like a valid recovery phrase"
   }
+
+  return errors
 }
 
 export function validatePassword(password, errors = {}) {
