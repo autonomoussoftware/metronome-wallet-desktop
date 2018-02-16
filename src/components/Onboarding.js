@@ -1,4 +1,5 @@
-import { TextInput, Btn, Sp } from './common'
+import { TextInput, BaseBtn, Btn, Sp } from './common'
+import { validateMnemonic } from '../validator'
 import AltLayout from './AltLayout'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -29,6 +30,13 @@ const Mnemonic = styled.div`
   word-spacing: 1.6rem;
 `
 
+const RecoverBtn = styled(BaseBtn)`
+  font-size: 1.2rem;
+  :hover {
+    opacity: 0.75;
+  }
+`
+
 export default class Onboarding extends React.Component {
   static propTypes = {
     onOnboardingCompleted: PropTypes.func.isRequired
@@ -37,7 +45,9 @@ export default class Onboarding extends React.Component {
   state = {
     passwordWasDefined: false,
     termsWereAccepted: false,
+    useOwnMnemonic: false,
     passwordAgain: null,
+    userMnemonic: null,
     password: null,
     mnemonic: bip39.generateMnemonic(),
     errors: {}
@@ -45,19 +55,38 @@ export default class Onboarding extends React.Component {
 
   onTermsAccepted = () => this.setState({ termsWereAccepted: true })
 
-  onInputChanged = e => this.setState({ [e.target.id]: e.target.value })
+  onInputChanged = e => {
+    const { id, value } = e.target
+    this.setState(state => ({
+      ...state,
+      [id]: value,
+      errors: { ...state.errors, [id]: null }
+    }))
+  }
+
+  onUseOwnMnemonicToggled = () => {
+    this.setState(state => ({
+      ...state,
+      useOwnMnemonic: !state.useOwnMnemonic,
+      userMnemonic: null,
+      errors: {
+        ...state.errors,
+        userMnemonic: null
+      }
+    }))
+  }
 
   onPasswordSubmitted = e => {
     e.preventDefault()
 
-    const errors = this.validate()
+    const errors = this.validatePass()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
     this.setState({ passwordWasDefined: true })
   }
 
   // Perform validations and return an object of type { fieldId: [String] }
-  validate = () => {
+  validatePass = () => {
     const { password, passwordAgain } = this.state
     const errors = {}
 
@@ -74,10 +103,19 @@ export default class Onboarding extends React.Component {
     return errors
   }
 
-  onMnemonicAccepted = () => {
+  onMnemonicAccepted = e => {
+    e.preventDefault()
+
+    const { useOwnMnemonic, userMnemonic, mnemonic, password } = this.state
+
+    if (useOwnMnemonic) {
+      const errors = validateMnemonic(userMnemonic, 'userMnemonic')
+      if (Object.keys(errors).length > 0) return this.setState({ errors })
+    }
+
     this.props.onOnboardingCompleted({
-      password: this.state.password,
-      mnemonic: this.state.mnemonic
+      password,
+      mnemonic: useOwnMnemonic ? userMnemonic : mnemonic
     })
   }
 
@@ -85,7 +123,9 @@ export default class Onboarding extends React.Component {
     const {
       passwordWasDefined,
       termsWereAccepted,
+      useOwnMnemonic,
       passwordAgain,
+      userMnemonic,
       password,
       mnemonic,
       errors
@@ -147,22 +187,42 @@ export default class Onboarding extends React.Component {
           )}
         {termsWereAccepted &&
           passwordWasDefined && (
-            <React.Fragment>
+            <form onSubmit={this.onMnemonicAccepted}>
               <Message>
-                Copy the following word list and keep it in a safe place. You
-                will need these to recover your wallet in the future—don’t lose
-                it.
+                {useOwnMnemonic
+                  ? 'Enter a valid 12 word passphrase to recover a previously created wallet.'
+                  : 'Copy the following word list and keep it in a safe place. You will need these to recover your wallet in the future—don’t lose it.'}
               </Message>
 
               <Sp mt={3} mx={-8}>
-                <Mnemonic>{mnemonic}</Mnemonic>
+                {useOwnMnemonic ? (
+                  <TextInput
+                    autoFocus
+                    onChange={this.onInputChanged}
+                    label="Recovery passphrase"
+                    error={errors.userMnemonic}
+                    value={userMnemonic || ''}
+                    rows={2}
+                    id="userMnemonic"
+                  />
+                ) : (
+                  <Mnemonic>{mnemonic}</Mnemonic>
+                )}
               </Sp>
-              <Sp mt={6}>
-                <Btn block onClick={this.onMnemonicAccepted}>
-                  Done
+
+              <Sp mt={5}>
+                <Btn block submit>
+                  {useOwnMnemonic ? 'Recover' : 'Done'}
                 </Btn>
               </Sp>
-            </React.Fragment>
+              <Sp mt={2}>
+                <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
+                  {useOwnMnemonic
+                    ? 'Cancel'
+                    : 'Or recover a wallet from a saved passphrase'}
+                </RecoverBtn>
+              </Sp>
+            </form>
           )}
       </AltLayout>
     )
