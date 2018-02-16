@@ -230,7 +230,7 @@ function syncTransactions ({ number, walletId, webContents }) {
   const web3 = getWeb3()
 
   const indexerApiUrl = settings.get('app.indexerApiUrl')
-  const bestBlock = settings.get('app.bestBlock', -1)
+  const bestBlock = settings.get('app.bestBlock', { number: -1 })
 
   return promiseAllProps({
     addresses: getWalletAddresses(walletId),
