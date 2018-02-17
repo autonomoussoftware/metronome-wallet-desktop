@@ -1,7 +1,4 @@
-const { Menu } = require('electron')
-const { app, shell } = require('electron')
-
-const pkg = require('../package')
+const { app, shell, Menu } = require('electron')
 
 const template = [
   {
@@ -16,7 +13,6 @@ const template = [
       { role: 'selectall' }
     ]
   },
-
   {
     label: 'View',
     submenu: [
