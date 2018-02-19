@@ -117,7 +117,10 @@ export const getAuctionStatus = createSelector(
 
 export const getCurrentAuction = createSelector(
   getAuctionStatus,
-  auctionStatus => auctionStatus.currentAuction
+  auctionStatus =>
+    auctionStatus && auctionStatus.currentAuction
+      ? auctionStatus.currentAuction
+      : '-1'
 )
 
 export const getAuctionPriceUSD = createSelector(
@@ -245,4 +248,16 @@ export const hasEnoughData = createSelector(
     mtnBalance !== null &&
     ethRate !== null &&
     blockHeight !== null
+)
+
+export const isConverterEnabled = createSelector(
+  getCurrentAuction,
+  currentAuction => {
+    const isInDailyAuction = parseInt(currentAuction, 10) > 0
+
+    // TODO remove this when Converter Contract is working fine
+    const isConverterWorking = false
+
+    return isConverterWorking && isInDailyAuction
+  }
 )

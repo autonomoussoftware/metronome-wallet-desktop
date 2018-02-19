@@ -64,6 +64,7 @@ const AvailableAmount = styled.div`
 
 class Converter extends React.Component {
   static propTypes = {
+    isConverterEnabled: PropTypes.bool.isRequired,
     converterPriceUSD: PropTypes.string.isRequired,
     converterStatus: PropTypes.shape({
       availableEth: PropTypes.string.isRequired,
@@ -80,7 +81,11 @@ class Converter extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { converterPriceUSD, converterStatus } = this.props
+    const {
+      isConverterEnabled,
+      converterPriceUSD,
+      converterStatus
+    } = this.props
 
     return (
       <DarkLayout title="Autonomous Converter">
@@ -135,7 +140,11 @@ class Converter extends React.Component {
                 </StatsContainer>
               </Flex.Column>
               <Sp mt={4} ml={2}>
-                <Btn data-modal="convert" onClick={this.onOpenModal} disabled>
+                <Btn
+                  data-modal="convert"
+                  disabled={!isConverterEnabled}
+                  onClick={this.onOpenModal}
+                >
                   Convert
                 </Btn>
               </Sp>
@@ -161,6 +170,7 @@ class Converter extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isConverterEnabled: selectors.isConverterEnabled(state),
   converterPriceUSD: selectors.getConverterPriceUSD(state),
   converterStatus: selectors.getConverterStatus(state)
 })
