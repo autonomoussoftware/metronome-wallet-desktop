@@ -1,6 +1,6 @@
 const promiseAllProps = require('promise-all-props')
 
-const abi = require('./contracts/AutonomousConverter.0a5d422')
+const abi = require('./contracts/AutonomousConverter.75f890c')
 
 function getConverterStatus ({ web3, address }) {
   const converter = new web3.eth.Contract(abi, address)

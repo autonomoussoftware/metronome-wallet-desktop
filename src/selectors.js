@@ -93,7 +93,8 @@ export const getMtnRate = createSelector(
 
 export const getMtnBalanceWei = getActiveWalletMtnBalance
 
-export const getMtnBalanceUSD = state => '0'
+// TODO implement when we have a definition about MTN:USD rate
+export const getMtnBalanceUSD = () => '0'
 
 export const getEthBalanceWei = getActiveWalletEthBalance
 
@@ -167,8 +168,7 @@ export const getTxConfirmations = createSelector(
 export const getActiveWalletTransactions = createSelector(
   getActiveWalletAddresses,
   getActiveWalletData,
-  getBlockHeight,
-  (addresses, activeWallet, blockHeight) => {
+  (addresses, activeWallet) => {
     const txs =
       activeWallet && addresses && addresses.length > 0
         ? activeWallet.addresses[addresses[0]].transactions || []
@@ -187,14 +187,14 @@ export const getActiveWalletTransactions = createSelector(
       const txType = getTxType(meta, tokenData, transaction, myAddress)
 
       const from =
-        txType === 'received' && tokenData
+        txType === 'received' && tokenData && tokenData.from
           ? tokenData.from.toLowerCase()
-          : transaction.from.toLowerCase()
+          : transaction.from ? transaction.from.toLowerCase() : null
 
       const to =
         txType === 'sent' && tokenData && tokenData.to
           ? tokenData.to.toLowerCase()
-          : transaction.to.toLowerCase()
+          : transaction.to ? transaction.to.toLowerCase() : null
 
       const value =
         ['received', 'sent'].includes(txType) && tokenData && tokenData.value
@@ -204,7 +204,9 @@ export const getActiveWalletTransactions = createSelector(
       const ethSpentInAuction = txType === 'auction' ? transaction.value : null
 
       const mtnBoughtInAuction =
-        txType === 'auction' && transaction.blockHash ? tokenData.value : null
+        txType === 'auction' && transaction.blockHash && tokenData
+          ? tokenData.value
+          : null
 
       const symbol = ['received', 'sent'].includes(txType)
         ? tokenData ? 'MTN' : 'ETH'
