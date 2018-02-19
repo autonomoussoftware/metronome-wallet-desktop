@@ -1,3 +1,10 @@
+import CountDownProvider from './providers/CountDownProvider'
+import * as selectors from '../selectors'
+import BuyMTNDrawer from './BuyMTNDrawer'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 import {
   DisplayValue,
   DarkLayout,
@@ -7,13 +14,6 @@ import {
   Btn,
   Sp
 } from './common'
-import CountDownProvider from './providers/CountDownProvider'
-import * as selectors from '../selectors'
-import BuyMTNDrawer from './BuyMTNDrawer'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import React from 'react'
 
 const LoadingContainer = styled.div`
   text-align: center;
@@ -117,6 +117,9 @@ class Auction extends React.Component {
     const initialAuctionNotStarted =
       auctionStatus && auctionStatus.genesisTime * 1000 > Date.now()
 
+    const isInitialAuction =
+      auctionStatus && auctionStatus.currentAuction === '0'
+
     return (
       <DarkLayout title="Metronome Auction">
         {auctionStatus ? (
@@ -124,7 +127,9 @@ class Auction extends React.Component {
             <Text>
               {initialAuctionNotStarted
                 ? 'Initial Auction starts in'
-                : 'Time Remaining'}
+                : isInitialAuction
+                  ? 'Time Remaining in Initial Auction'
+                  : 'Time Remaining in Daily Auction'}
             </Text>
 
             <CountDownProvider
