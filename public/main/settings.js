@@ -1,13 +1,25 @@
-const logger = require('electron-log')
-const merge = require('lodash/merge')
-const settings = require('electron-settings')
 const { app, ipcMain } = require('electron')
+const { merge, unset } = require('lodash')
+const logger = require('electron-log')
+const settings = require('electron-settings')
 
 function presetDefault () {
   logger.verbose('Settings file', settings.file())
 
   const currentSettings = settings.getAll()
   const defaultSettings = require('./defaultSettings')
+
+  // Clear previous settings on settings version change
+  if (currentSettings.settingsVersion !== defaultSettings.settingsVersion) {
+    [
+      'app.bestBlock',
+      'metronome.contracts',
+      'tokens.0xf583c8fe0cbf447727378e3b1e921b1ef81adda8'
+    ].forEach(function (prop) {
+      unset(currentSettings, prop)
+    })
+  }
+
   settings.setAll(merge(defaultSettings, currentSettings))
 
   logger.silly('Current settings', settings.getAll())
