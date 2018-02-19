@@ -1,13 +1,12 @@
-import Web3 from 'web3'
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import styled from 'styled-components'
-
-import * as selectors from '../selectors'
-import { sendToMainProcess, toETH, toUSD } from '../utils'
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
 import { validateEthAmount, validatePassword } from '../validator'
+import { sendToMainProcess, toETH, toUSD } from '../utils'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+import Web3 from 'web3'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -74,8 +73,8 @@ class ConvertETHtoMTNForm extends React.Component {
     }))
   }
 
-  onSubmit = e => {
-    e.preventDefault()
+  onSubmit = ev => {
+    ev.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
@@ -89,10 +88,10 @@ class ConvertETHtoMTNForm extends React.Component {
         from: this.props.from
       })
         .then(this.props.onSuccess)
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -100,15 +99,23 @@ class ConvertETHtoMTNForm extends React.Component {
 
   validate = () => {
     const { password, ethAmount } = this.state
+    const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
-      ...validateEthAmount(ethAmount),
+      ...validateEthAmount(ethAmount, max),
       ...validatePassword(password)
     }
   }
 
   render() {
-    const { password, ethAmount, usdAmount, status, errors, error } = this.state
+    const {
+      ethAmount,
+      usdAmount,
+      password,
+      status: convertStatus,
+      errors,
+      error
+    } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -126,7 +133,7 @@ class ConvertETHtoMTNForm extends React.Component {
                   label="Amount (ETH)"
                   value={ethAmount}
                   error={errors.ethAmount}
-                  disabled={status !== 'init'}
+                  disabled={convertStatus !== 'init'}
                   id="ethAmount"
                 />
               </Flex.Item>
@@ -140,7 +147,7 @@ class ConvertETHtoMTNForm extends React.Component {
                   label="Amount (USD)"
                   value={usdAmount}
                   error={errors.usdAmount}
-                  disabled={status !== 'init'}
+                  disabled={convertStatus !== 'init'}
                   id="usdAmount"
                 />
               </Flex.Item>
@@ -152,15 +159,20 @@ class ConvertETHtoMTNForm extends React.Component {
                 label="Password"
                 value={password}
                 error={errors.password}
-                disabled={status !== 'init'}
+                disabled={convertStatus !== 'init'}
                 id="password"
               />
             </Sp>
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm" disabled={status === 'pending'}>
-            {status === 'pending' ? 'Converting...' : 'Convert'}
+          <Btn
+            disabled={convertStatus === 'pending'}
+            block
+            submit
+            form="convertForm"
+          >
+            {convertStatus === 'pending' ? 'Converting...' : 'Convert'}
           </Btn>
           {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>

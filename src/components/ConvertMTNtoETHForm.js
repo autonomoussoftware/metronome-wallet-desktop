@@ -1,13 +1,12 @@
-import Web3 from 'web3'
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import styled from 'styled-components'
-
-import * as selectors from '../selectors'
-import { sendToMainProcess } from '../utils'
-import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import { validateMtnAmount, validatePassword } from '../validator'
+import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess } from '../utils'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+import Web3 from 'web3'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -60,12 +59,12 @@ class ConvertMTNtoETHForm extends React.Component {
     this.setState(state => ({
       ...state,
       [id]: value,
-      errors: { ...state.errors, [id]: null },
+      errors: { ...state.errors, [id]: null }
     }))
   }
 
-  onSubmit = e => {
-    e.preventDefault()
+  onSubmit = ev => {
+    ev.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
@@ -79,10 +78,10 @@ class ConvertMTNtoETHForm extends React.Component {
         from: this.props.from
       })
         .then(this.props.onSuccess)
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -90,15 +89,22 @@ class ConvertMTNtoETHForm extends React.Component {
 
   validate = () => {
     const { password, mtnAmount } = this.state
+    const max = Web3.utils.fromWei(this.props.availableMTN)
 
     return {
-      ...validateMtnAmount(mtnAmount),
+      ...validateMtnAmount(mtnAmount, max),
       ...validatePassword(password)
     }
   }
 
   render() {
-    const { password, mtnAmount, status, errors, error } = this.state
+    const {
+      mtnAmount,
+      password,
+      status: convertStatus,
+      errors,
+      error
+    } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -112,19 +118,19 @@ class ConvertMTNtoETHForm extends React.Component {
                 placeholder="0.00"
                 autoFocus
                 onChange={this.onInputChange}
+                error={errors.mtnAmount}
                 label="Amount (MNT)"
                 value={mtnAmount}
-                error={errors.mtnAmount}
                 id="mtnAmount"
               />
               <Sp my={3}>
                 <TextInput
-                  type="password"
                   onChange={this.onInputChange}
+                  disabled={convertStatus !== 'init'}
+                  error={errors.password}
                   label="Password"
                   value={password}
-                  error={errors.password}
-                  disabled={status !== 'init'}
+                  type="password"
                   id="password"
                 />
               </Sp>
@@ -132,8 +138,13 @@ class ConvertMTNtoETHForm extends React.Component {
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm" disabled={status === 'pending'}>
-            {status === 'pending' ? 'Converting...' : 'Convert'}
+          <Btn
+            disabled={convertStatus === 'pending'}
+            submit
+            block
+            form="convertForm"
+          >
+            {convertStatus === 'pending' ? 'Converting...' : 'Convert'}
           </Btn>
           {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>
