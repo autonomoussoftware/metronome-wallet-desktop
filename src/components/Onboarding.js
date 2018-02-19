@@ -45,8 +45,10 @@ export default class Onboarding extends React.Component {
   state = {
     passwordWasDefined: false,
     termsWereAccepted: false,
+    mnemonicWasCopied: false,
     useOwnMnemonic: false,
     passwordAgain: null,
+    mnemonicAgain: null,
     userMnemonic: null,
     password: null,
     mnemonic: bip39.generateMnemonic(),
@@ -72,6 +74,18 @@ export default class Onboarding extends React.Component {
       errors: {
         ...state.errors,
         userMnemonic: null
+      }
+    }))
+  }
+
+  onMnemonicWasCopiedToggled = () => {
+    this.setState(state => ({
+      ...state,
+      mnemonicWasCopied: !state.mnemonicWasCopied,
+      mnemonicAgain: null,
+      errors: {
+        ...state.errors,
+        mnemonicAgain: null
       }
     }))
   }
@@ -103,14 +117,29 @@ export default class Onboarding extends React.Component {
     return errors
   }
 
-  onMnemonicAccepted = e => {
-    e.preventDefault()
+  onMnemonicAccepted = ev => {
+    ev.preventDefault()
 
-    const { useOwnMnemonic, userMnemonic, mnemonic, password } = this.state
+    const {
+      useOwnMnemonic,
+      mnemonicAgain,
+      userMnemonic,
+      mnemonic,
+      password
+    } = this.state
 
     if (useOwnMnemonic) {
       const errors = validateMnemonic(userMnemonic, 'userMnemonic')
       if (Object.keys(errors).length > 0) return this.setState({ errors })
+    } else {
+      if (mnemonic !== mnemonicAgain) {
+        return this.setState({
+          errors: {
+            mnemonicAgain:
+              'The text provided does not match your recovery passphrase.'
+          }
+        })
+      }
     }
 
     this.props.onOnboardingCompleted({
@@ -123,8 +152,10 @@ export default class Onboarding extends React.Component {
     const {
       passwordWasDefined,
       termsWereAccepted,
+      mnemonicWasCopied,
       useOwnMnemonic,
       passwordAgain,
+      mnemonicAgain,
       userMnemonic,
       password,
       mnemonic,
@@ -188,22 +219,39 @@ export default class Onboarding extends React.Component {
         {termsWereAccepted &&
           passwordWasDefined && (
             <form onSubmit={this.onMnemonicAccepted}>
-              <Message>
-                {useOwnMnemonic
-                  ? 'Enter a valid 12 word passphrase to recover a previously created wallet.'
-                  : 'Copy the following word list and keep it in a safe place. You will need these to recover your wallet in the future—don’t lose it.'}
-              </Message>
-
+              {useOwnMnemonic ? (
+                <Message>
+                  Enter a valid 12 word passphrase to recover a previously
+                  created wallet.
+                </Message>
+              ) : mnemonicWasCopied ? (
+                <Message>
+                  To verify you have copied the recovery passphrase correctly,
+                  enter the 12 words provided before in the field below.
+                </Message>
+              ) : (
+                <Message>
+                  Copy the following word list and keep it in a safe place. You
+                  will need these to recover your wallet in the future—don’t
+                  lose it.
+                </Message>
+              )}
               <Sp mt={3} mx={-8}>
-                {useOwnMnemonic ? (
+                {useOwnMnemonic || mnemonicWasCopied ? (
                   <TextInput
                     autoFocus
                     onChange={this.onInputChanged}
                     label="Recovery passphrase"
-                    error={errors.userMnemonic}
-                    value={userMnemonic || ''}
+                    error={
+                      useOwnMnemonic
+                        ? errors.userMnemonic
+                        : errors.mnemonicAgain
+                    }
+                    value={
+                      (useOwnMnemonic ? userMnemonic : mnemonicAgain) || ''
+                    }
                     rows={2}
-                    id="userMnemonic"
+                    id={useOwnMnemonic ? 'userMnemonic' : 'mnemonicAgain'}
                   />
                 ) : (
                   <Mnemonic>{mnemonic}</Mnemonic>
@@ -211,16 +259,34 @@ export default class Onboarding extends React.Component {
               </Sp>
 
               <Sp mt={5}>
-                <Btn block submit>
-                  {useOwnMnemonic ? 'Recover' : 'Done'}
-                </Btn>
+                {useOwnMnemonic ? (
+                  <Btn block submit>
+                    Recover
+                  </Btn>
+                ) : mnemonicWasCopied ? (
+                  <Btn block submit key="a">
+                    Done
+                  </Btn>
+                ) : (
+                  <Btn block onClick={this.onMnemonicWasCopiedToggled} key="b">
+                    {"I've copied it"}
+                  </Btn>
+                )}
               </Sp>
               <Sp mt={2}>
-                <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
-                  {useOwnMnemonic
-                    ? 'Cancel'
-                    : 'Or recover a wallet from a saved passphrase'}
-                </RecoverBtn>
+                {useOwnMnemonic ? (
+                  <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
+                    Cancel
+                  </RecoverBtn>
+                ) : mnemonicWasCopied ? (
+                  <RecoverBtn block onClick={this.onMnemonicWasCopiedToggled}>
+                    Go back
+                  </RecoverBtn>
+                ) : (
+                  <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
+                    Or recover a wallet from a saved passphrase
+                  </RecoverBtn>
+                )}
               </Sp>
             </form>
           )}
