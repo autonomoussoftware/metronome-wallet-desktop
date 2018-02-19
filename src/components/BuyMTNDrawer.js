@@ -1,15 +1,23 @@
-import Web3 from 'web3'
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import styled from 'styled-components'
-
-import theme from '../theme'
-import * as utils from '../utils'
-import * as selectors from '../selectors'
-import PurchaseFormProvider from './providers/PurchaseFormProvider'
-import { TextInput, CheckIcon, BaseBtn, Drawer, TxIcon, Flex, Btn, Sp } from './common'
 import { validateEthAmount, validatePassword } from '../validator'
+import PurchaseFormProvider from './providers/PurchaseFormProvider'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import * as utils from '../utils'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import theme from '../theme'
+import React from 'react'
+import Web3 from 'web3'
+import {
+  TextInput,
+  CheckIcon,
+  BaseBtn,
+  Drawer,
+  TxIcon,
+  Flex,
+  Btn,
+  Sp
+} from './common'
 
 const Title = styled.div`
   line-height: 3rem;
@@ -100,15 +108,17 @@ class BuyMTNDrawer extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount: id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
+      usdAmount:
+        id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
+      ethAmount:
+        id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
   }
 
-  onSubmit = e => {
-    e.preventDefault()
+  onSubmit = ev => {
+    ev.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
@@ -125,10 +135,10 @@ class BuyMTNDrawer extends React.Component {
         .then(({ hash: transactionHash }) => {
           this.setState({ status: 'success', transactionHash })
         })
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -136,16 +146,24 @@ class BuyMTNDrawer extends React.Component {
 
   validate = () => {
     const { ethAmount, password } = this.state
+    const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
-      ...validateEthAmount(ethAmount),
+      ...validateEthAmount(ethAmount, max),
       ...validatePassword(password)
     }
   }
 
   render() {
-    const { ethAmount, usdAmount, password, status, errors, error } = this.state
     const { onRequestClose, isOpen, currentPrice } = this.props
+    const {
+      ethAmount,
+      usdAmount,
+      password,
+      status: buyStatus,
+      errors,
+      error
+    } = this.state
 
     return (
       <Drawer
@@ -153,18 +171,13 @@ class BuyMTNDrawer extends React.Component {
         isOpen={isOpen}
         title="Buy Metronome"
       >
-        {status !== 'success' && (
+        {buyStatus !== 'success' && (
           <PurchaseFormProvider
             disclaimerAccepted
             currentPrice={currentPrice}
             amount={ethAmount}
           >
-            {({
-              expectedMTNamount,
-              isValidPurchase,
-              isValidAmount,
-              isPristine
-            }) => (
+            {({ expectedMTNamount, isValidPurchase }) => (
               <form onSubmit={this.onSubmit}>
                 <Sp py={4} px={3}>
                   <Flex.Row justify="space-between">
@@ -176,7 +189,7 @@ class BuyMTNDrawer extends React.Component {
                         placeholder="0.00"
                         autoFocus
                         onChange={this.onInputChange}
-                        disabled={status !== 'init'}
+                        disabled={buyStatus !== 'init'}
                         error={errors.ethAmount}
                         label="Amount (ETH)"
                         value={ethAmount}
@@ -190,7 +203,7 @@ class BuyMTNDrawer extends React.Component {
                       <TextInput
                         placeholder="0.00"
                         onChange={this.onInputChange}
-                        disabled={status !== 'init'}
+                        disabled={buyStatus !== 'init'}
                         error={errors.usdAmount}
                         label="Amount (USD)"
                         value={usdAmount}
@@ -205,7 +218,7 @@ class BuyMTNDrawer extends React.Component {
                         <TextInput
                           type="password"
                           onChange={this.onInputChange}
-                          disabled={status !== 'init'}
+                          disabled={buyStatus !== 'init'}
                           error={errors.password}
                           label="Password"
                           value={password}
@@ -230,18 +243,18 @@ class BuyMTNDrawer extends React.Component {
 
                 <BtnContainer>
                   <Btn
-                    disabled={!isValidPurchase || status === 'pending'}
+                    disabled={!isValidPurchase || buyStatus === 'pending'}
                     submit
                     block
                   >
-                    {status === 'pending' ? 'Buying...' : 'Buy'}
+                    {buyStatus === 'pending' ? 'Buying...' : 'Buy'}
                   </Btn>
                 </BtnContainer>
               </form>
             )}
           </PurchaseFormProvider>
         )}
-        {status === 'success' && (
+        {buyStatus === 'success' && (
           <Sp my={19} mx={12}>
             <Flex.Column align="center">
               <CheckIcon color={theme.colors.success} />
