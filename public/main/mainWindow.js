@@ -7,9 +7,19 @@ const notifier = require('node-notifier')
 let mainWindow
 
 function loadWindow() {
-  const { BrowserWindow } = require('electron')
+  const { app, BrowserWindow } = require('electron')
   const path = require('path')
   const url = require('url')
+
+  // Ensure the app is ready before creating the main window
+  if (!app.isReady()) {
+    logger.warn('Tried to load main window while app not ready. Reloading...')
+
+    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+    app.exit(1)
+
+    return
+  }
 
   if (mainWindow) {
     return
