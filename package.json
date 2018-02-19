@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -93,7 +93,9 @@
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "Utility",
-      "target": ["deb"],
+      "target": [
+        "deb"
+      ],
       "icon": "./assets/icon.png"
     },
     "win": {
