@@ -232,7 +232,7 @@ export default class Onboarding extends React.Component {
               ) : (
                 <Message>
                   Copy the following word list and keep it in a safe place. You
-                  will need these to recover your wallet in the future—don’t
+                  will need these to recover your wallet in the future —don’t
                   lose it.
                 </Message>
               )}
@@ -264,11 +264,15 @@ export default class Onboarding extends React.Component {
                     Recover
                   </Btn>
                 ) : mnemonicWasCopied ? (
-                  <Btn block submit key="a">
+                  <Btn block submit key="sendMnemonic">
                     Done
                   </Btn>
                 ) : (
-                  <Btn block onClick={this.onMnemonicWasCopiedToggled} key="b">
+                  <Btn
+                    onClick={this.onMnemonicWasCopiedToggled}
+                    block
+                    key="confirmMnemonic"
+                  >
                     {"I've copied it"}
                   </Btn>
                 )}
