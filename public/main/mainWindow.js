@@ -1,15 +1,13 @@
-const path = require('path')
-const logger = require('electron-log')
-const isDev = require('electron-is-dev')
 const autoUpdater = require('electron-updater').autoUpdater
+const isDev = require('electron-is-dev')
+const logger = require('electron-log')
 const notifier = require('node-notifier')
+const path = require('path')
 
 let mainWindow
 
-function loadWindow() {
+function loadWindow () {
   const { app, BrowserWindow } = require('electron')
-  const path = require('path')
-  const url = require('url')
 
   // Ensure the app is ready before creating the main window
   if (!app.isReady()) {
@@ -41,15 +39,15 @@ function loadWindow() {
 
   initAutoUpdate()
 
-  mainWindow.webContents.on('crashed', function(event, killed) {
-    logger.error(event, killed)
+  mainWindow.webContents.on('crashed', function (ev, killed) {
+    logger.error(ev, killed)
   })
 
-  mainWindow.on('unresponsive', function() {
-    logger.error(event, killed)
+  mainWindow.on('unresponsive', function (ev) {
+    logger.error(ev)
   })
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null
   })
 
@@ -58,7 +56,7 @@ function loadWindow() {
   })
 }
 
-function initAutoUpdate() {
+function initAutoUpdate () {
   // if (isDev) {
   //   return;
   // }
@@ -72,37 +70,31 @@ function initAutoUpdate() {
   autoUpdater.on('checking-for-update', () => {
     logger.info('Checking for update...')
   })
-  autoUpdater.on('update-available', info => {
+  autoUpdater.on('update-available', () => {
     logger.info('Update available.')
   })
-  autoUpdater.on('update-not-available', info => {
+  autoUpdater.on('update-not-available', () => {
     logger.info('Update not available.')
   })
   autoUpdater.on('error', err => {
     logger.error('Error in auto-updater. ' + err)
   })
   autoUpdater.on('download-progress', progressObj => {
-    let log_message = 'Download speed: ' + progressObj.bytesPerSecond
-    log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
-    log_message =
-      log_message +
-      ' (' +
-      progressObj.transferred +
-      '/' +
-      progressObj.total +
-      ')'
-    logger.info(log_message)
+    let msg = 'Download speed: ' + progressObj.bytesPerSecond
+    msg += ' - Downloaded ' + progressObj.percent + '%'
+    msg += ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+    logger.info(msg)
   })
   autoUpdater.on('update-downloaded', info => {
     showUpdateNotification(info)
   })
 }
 
-function showUpdateNotification(it) {
-  it = it || {}
+function showUpdateNotification (info) {
+  info = info || {}
   const restartNowAction = 'Restart now'
 
-  const versionLabel = it.label ? `Version ${it.version}` : 'The latest version'
+  const versionLabel = info.label ? `Version ${info.version}` : 'The latest version'
 
   notifier.notify(
     {
@@ -113,17 +105,17 @@ function showUpdateNotification(it) {
       closeLabel: 'Ok',
       actions: restartNowAction
     },
-    function(err, response) {
+    function (err) {
       if (err) throw err
       autoUpdater.quitAndInstall()
     }
   )
 }
 
-function createWindow() {
+function createWindow () {
   const { app } = require('electron')
 
-  app.on('fullscreen', function() {
+  app.on('fullscreen', function () {
     mainWindow.isFullScreenable
       ? mainWindow.setFullScreen(true)
       : mainWindow.setFullScreen(false)
