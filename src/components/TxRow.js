@@ -2,6 +2,7 @@ import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import config from '../config'
 import theme from '../theme'
 import React from 'react'
 import {
@@ -179,7 +180,12 @@ class TxRow extends React.Component {
               )}
               {tx.txType === 'sent' && (
                 <div>
-                  {isPending ? 'Pending' : 'Sent'} to <Address>{tx.to}</Address>
+                  {isPending ? 'Pending' : 'Sent'} to{' '}
+                  {tx.to === config.MTN_TOKEN_ADDR ? (
+                    'MTN TOKEN CONTRACT'
+                  ) : (
+                    <Address>{tx.to}</Address>
+                  )}
                 </div>
               )}
               {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
