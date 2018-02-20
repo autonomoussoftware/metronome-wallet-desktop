@@ -32,7 +32,6 @@ if (isDev) {
 }
 
 if (process.env.SENTRY_DSN) {
-  console.log(process.env.SENTRY_DSN)
   Raven.config(process.env.SENTRY_DSN, {
     captureUnhandledRejections: true,
     tags: {
