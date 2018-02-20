@@ -4,12 +4,14 @@ const settings = require('electron-settings')
 const { getWeb3, sendTransaction } = require('../ethWallet')
 
 const { getAuctionStatus } = require('./auctions')
-const { isAddressInWallet, registerTxParser } = require('../ethWallet')
+const { registerTxParser } = require('../ethWallet')
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
   getConverterStatus
 } = require('./converter')
+const { transactionParser } = require('./transactionParser')
+const { getAuctionAddress, getConverterAddress } = require('./settings')
 
 // TODO move all subscription code to a single place in ethWallet
 
@@ -73,7 +75,7 @@ function unsubscribeUpdates (_, webContents) {
 }
 
 function buyMetronome ({ password, from, value }) {
-  const address = settings.get('metronome.contracts.auctions').toLowerCase()
+  const address = getAuctionAddress()
 
   logger.verbose('Buying MTN in auction', { from, value, address })
 
@@ -82,7 +84,7 @@ function buyMetronome ({ password, from, value }) {
 
 function convertEthToMtn ({ password, from, value }) {
   const web3 = getWeb3()
-  const address = settings.get('metronome.contracts.converter').toLowerCase()
+  const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
 
   logger.verbose('Converting MTN to ETH', { from, value, address })
@@ -92,38 +94,12 @@ function convertEthToMtn ({ password, from, value }) {
 
 function convertMtnToEth ({ password, from, value }) {
   const web3 = getWeb3()
-  const address = settings.get('metronome.contracts.converter').toLowerCase()
+  const address = getConverterAddress()
   const data = encodeConvertMtnToEth({ web3, address, value })
 
   logger.verbose('Converting ETH to MTN', { from, value, address })
 
   return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
-}
-
-function transactionParser ({ transaction, walletId }) {
-  const from = transaction.from.toLowerCase()
-  const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
-
-  const metronome = {}
-  const meta = { metronome }
-
-  const outgoing = isAddressInWallet({ walletId, address: from })
-  const toAuction = to === settings.get('metronome.contracts.auctions').toLowerCase()
-  const toConverter = to === settings.get('metronome.contracts.converter').toLowerCase()
-
-  if (outgoing) {
-    if (toAuction) {
-      metronome.auction = true
-    }
-
-    if (toConverter) {
-      metronome.converter = true
-    }
-
-    meta.ours = [true]
-  }
-
-  return meta
 }
 
 function getHooks () {
