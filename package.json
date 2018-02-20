@@ -72,7 +72,7 @@
     },
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "com.bloq.metronome.category.utility",
+      "category": "com.bloq.metronome.category.finance",
       "icon": "./assets/icon.icns"
     },
     "dmg": {
@@ -92,7 +92,7 @@
     },
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "Utility",
+      "category": "Finance",
       "target": ["deb"],
       "icon": "./assets/icon.png"
     },
