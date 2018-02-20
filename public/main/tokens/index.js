@@ -32,6 +32,8 @@ function sendBalances ({ walletId, addresses, webContents }) {
     contracts.forEach(function ({ contractAddresse, contract, symbol }) {
       contract.methods.balanceOf(address).call()
         .then(function (balance) {
+          setTokenBalance({ walletId, address, contractAddresse, balance })
+
           webContents.send('wallet-state-changed', {
             [walletId]: {
               addresses: {
@@ -46,6 +48,33 @@ function sendBalances ({ walletId, addresses, webContents }) {
             }
           })
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
+        })
+        .catch(function (err) {
+          logger.warn('Could not get token balance', symbol, err)
+
+          // TODO retry before notifying
+
+          webContents.send('connectivity-state-changed', {
+            ok: false,
+            reason: 'Call to Ethereum node failed',
+            plugin: 'tokens',
+            err: err.message
+          })
+
+          // Send cached balance
+          webContents.send('wallet-state-changed', {
+            [walletId]: {
+              addresses: {
+                [address]: {
+                  token: {
+                    [contractAddresse]: {
+                      balance: getTokenBalance({ walletId, address, contractAddresse })
+                    }
+                  }
+                }
+              }
+            }
+          })
         })
     })
   })

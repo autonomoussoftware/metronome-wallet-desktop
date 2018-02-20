@@ -15,6 +15,12 @@ function setAddressBalance ({ walletId, address, balance }) {
   logger.debug('ETH balance updated', { address, balance })
 }
 
+function getAddressBalance ({ walletId, address }) {
+  const _address = address.toLowerCase()
+  const addressPath = `user.wallets.${walletId}.addresses.${_address}.balance`
+  return settings.get(addressPath)
+}
+
 function findWalletId (address) {
   const _address = address.toLowerCase()
   const walletIds = Object.keys(settings.get('user.wallets'))
@@ -39,9 +45,10 @@ function isAddressInWallet ({ walletId, address }) {
 
 module.exports = {
   findWalletId,
+  getAddressBalance,
   getWallet,
   getWalletAddresses,
   getWalletAddressIndex,
-  setAddressBalance,
-  isAddressInWallet
+  isAddressInWallet,
+  setAddressBalance
 }
