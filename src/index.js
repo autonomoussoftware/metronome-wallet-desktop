@@ -11,13 +11,11 @@ import App from './components/App'
 import createStore from './createStore'
 
 if (config.SENTRY_DSN) {
-  Raven.config(
-    'https://d99caae5ca1b495584e5aa3187966f30@sentry.io/277183'
-  ).install()
+  Raven.config(config.SENTRY_DSN).install()
 
-  window.addEventListener('unhandledrejection', function(e) {
+  window.addEventListener('unhandledrejection', e =>
     Raven.captureException(e.reason)
-  })
+  )
 }
 
 // We could pass some initial state to createStore()
