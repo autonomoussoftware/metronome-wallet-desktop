@@ -15,7 +15,11 @@ const WalletError = require('../WalletError')
 const { getTransactionAndReceipt } = require('./block')
 const { getWalletBalances } = require('./wallet')
 const { initDatabase, getDatabase } = require('./db')
-const { getWalletAddresses, isAddressInWallet } = require('./settings')
+const {
+  getAddressBalance,
+  getWalletAddresses,
+  isAddressInWallet
+} = require('./settings')
 const { signAndSendTransaction } = require('./send')
 const getWeb3 = require('./web3')
 const { transactionParser } = require('./transactionParser')
@@ -44,6 +48,10 @@ function sendTransaction (args) {
           logger.warn('Transaction send error', err.message)
           deferred.reject(err)
         })
+    })
+    .catch(function (err) {
+      logger.warn('Transaction send error', err.message)
+      deferred.reject(err)
     })
 
   return deferred.promise
@@ -132,6 +140,17 @@ function sendBalances ({ walletId, webContents }) {
         walletId,
         message: 'Could not get balance',
         err
+      })
+
+      // Send cached balances
+      getWalletAddresses(walletId).map(function (address) {
+        sendWalletStateChange({
+          webContents,
+          walletId,
+          address,
+          data: { balance: getAddressBalance({ walletId, address }) },
+          log: 'Balance'
+        })
       })
     })
 }
@@ -291,15 +310,15 @@ function syncTransactions ({ number, walletId, webContents }) {
             webContents.send('eth-block', { number: indexed })
             logger.verbose('New best block', { number: indexed })
           })
-          .catch(function (err) {
-            sendError({
-              webContents,
-              walletId,
-              message: 'Could not sync to the latest block',
-              err
-            })
-          })
       }))
+    })
+    .catch(function (err) {
+      sendError({
+        webContents,
+        walletId,
+        message: 'Could not sync to the latest block',
+        err
+      })
     })
 }
 

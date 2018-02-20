@@ -1,5 +1,5 @@
 const logger = require('electron-log')
-const settings = require('electron-settings')
+const promiseAllProps = require('promise-all-props')
 
 const { getWeb3, sendTransaction } = require('../ethWallet')
 
@@ -18,20 +18,27 @@ const { getAuctionAddress, getConverterAddress } = require('./settings')
 let subscriptions = []
 
 function sendStatus ({ web3, webContents }) {
-  const auctionsAddress = settings.get('metronome.contracts.auctions').toLowerCase()
-  getAuctionStatus({ web3, address: auctionsAddress })
-    .then(function (auctionStatus) {
-      logger.verbose('Auction status', auctionStatus)
+  promiseAllProps({
+    auctionStatus: getAuctionStatus({ web3, address: getAuctionAddress() }),
+    converterStatus: getConverterStatus({ web3, address: getConverterAddress() })
+  })
+    .then(function ({ auctionStatus, converterStatus }) {
+      logger.verbose('Metronome status', auctionStatus, converterStatus)
 
       webContents.send('auction-status-updated', auctionStatus)
+      webContents.send('mtn-converter-status-updated', converterStatus)
     })
+    .catch(function (err) {
+      logger.warn('Could not get metronome status', err)
 
-  const converterAddress = settings.get('metronome.contracts.converter').toLowerCase()
-  getConverterStatus({ web3, address: converterAddress })
-    .then(function (auctionStatus) {
-      logger.verbose('Converter status', auctionStatus)
+      // TODO retry before notifying
 
-      webContents.send('mtn-converter-status-updated', auctionStatus)
+      webContents.send('connectivity-state-changed', {
+        ok: false,
+        reason: 'Call to Ethereum node failed',
+        plugin: 'metronome',
+        err: err.message
+      })
     })
 }
 
