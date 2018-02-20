@@ -58,7 +58,7 @@
   "main": "public/electron.js",
   "copyright": "Copyright © 2018 ${author}",
   "build": {
-    "appId": "com.bloqlabs.metronome",
+    "appId": "com.bloq.metronome.wallet.desktop",
     "productName": "Metronome Wallet",
     "files": [
       "build/**/*",
