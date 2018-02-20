@@ -72,7 +72,7 @@
     },
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "com.bloq.metronome.category.finance",
+      "category": "public.app-category.finance",
       "icon": "./assets/icon.icns"
     },
     "dmg": {
