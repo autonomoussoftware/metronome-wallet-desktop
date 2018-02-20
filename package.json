@@ -93,7 +93,9 @@
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "Finance",
-      "target": ["deb"],
+      "target": [
+        "deb"
+      ],
       "icon": "./assets/icon.png"
     },
     "win": {
