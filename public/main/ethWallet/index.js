@@ -18,6 +18,7 @@ const { initDatabase, getDatabase } = require('./db')
 const { getWalletAddresses, isAddressInWallet } = require('./settings')
 const { signAndSendTransaction } = require('./send')
 const getWeb3 = require('./web3')
+const { transactionParser } = require('./transactionParser')
 
 function sendTransaction (args) {
   const deferred = new Deferred()
@@ -348,8 +349,16 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
+const txParsers = []
+
+function registerTxParser (parser) {
+  txParsers.push(parser)
+}
+
 function getHooks () {
   initDatabase()
+
+  registerTxParser(transactionParser)
 
   return [{
     eventName: 'create-wallet',
@@ -388,33 +397,6 @@ function getHooks () {
     eventName: 'ui-unload',
     handler: unsubscribeUpdates
   }]
-}
-
-function transactionParser ({ transaction, walletId }) {
-  const from = transaction.from.toLowerCase()
-  const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
-
-  const outgoing = isAddressInWallet({ walletId, address: from })
-  const incoming = isAddressInWallet({ walletId, address: to })
-
-  const meta = {
-    ours: [outgoing || incoming]
-  }
-
-  if (meta.ours) {
-    meta.walletIds = [walletId]
-    meta.addresses = outgoing ? [from] : incoming ? [to] : []
-  }
-
-  return meta
-}
-
-const txParsers = [
-  transactionParser
-]
-
-function registerTxParser (parser) {
-  txParsers.push(parser)
 }
 
 module.exports = {
