@@ -43,8 +43,6 @@ if (process.env.SENTRY_DSN) {
       platform_release: os.release()
     }
   }).install()
-
-  throw new Error('Testing error!')
 }
 
 unhandled({ logger: logger.error })
