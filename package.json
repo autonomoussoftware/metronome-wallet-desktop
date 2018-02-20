@@ -72,7 +72,7 @@
     },
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "com.bloqlabs.metronome.category.utility",
+      "category": "com.bloq.metronome.category.utility",
       "icon": "./assets/icon.icns"
     },
     "dmg": {
