@@ -1,4 +1,8 @@
+require('dotenv').config()
+
+const os = require('os')
 const path = require('path')
+const Raven = require('raven')
 const { app } = require('electron')
 const logger = require('electron-log')
 const isDev = require('electron-is-dev')
@@ -27,6 +31,22 @@ if (isDev) {
   })
 }
 
+if (process.env.SENTRY_DSN) {
+  console.log(process.env.SENTRY_DSN)
+  Raven.config(process.env.SENTRY_DSN, {
+    captureUnhandledRejections: true,
+    tags: {
+      process: process.type,
+      electron: process.versions.electron,
+      chrome: process.versions.chrome,
+      platform: os.platform(),
+      platform_release: os.release()
+    }
+  }).install()
+
+  throw new Error('Testing error!')
+}
+
 unhandled({ logger: logger.error })
 
 app.on('window-all-closed', function() {
@@ -42,7 +62,7 @@ createWindow()
 const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 
 app.on('ready', function() {
-  logger.info('App ready, initlilizing...')
+  logger.info('App ready, initializing 🚀')
   initMenu()
   initMainWorker()
 })
