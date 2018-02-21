@@ -215,11 +215,14 @@ export const getActiveWalletTransactions = createSelector(
         ? tokenData ? 'MTN' : 'ETH'
         : null
 
+      const contractCallFailed = meta.contractCallFailed || false
+
       return {
         transaction,
         receipt,
         parsed: {
           mtnBoughtInAuction,
+          contractCallFailed,
           ethSpentInAuction,
           isProcessing,
           txType,
