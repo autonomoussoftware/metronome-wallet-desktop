@@ -141,7 +141,15 @@ class TxRow extends React.Component {
       <Collapsable maxHeight="6.5rem" {...other}>
         <Tx>
           {(tx.txType === 'received' || tx.txType === 'sent') &&
-            !isPending && <TxIcon color={theme.colors.primary} />}
+            !isPending && (
+              <TxIcon
+                color={
+                  tx.contractCallFailed
+                    ? theme.colors.danger
+                    : theme.colors.primary
+                }
+              />
+            )}
 
           {tx.txType === 'converted' &&
             !isPending && <ConverterIcon color={theme.colors.primary} />}
