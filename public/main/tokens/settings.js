@@ -11,17 +11,17 @@ function getTokenSymbol (address) {
   return settings.get(`tokens.${address.toLowerCase()}.symbol`)
 }
 
-function setTokenBalance ({ walletId, address, contractAddresse, balance }) {
+function setTokenBalance ({ walletId, address, contractAddress, balance }) {
   const _address = address.toLowerCase()
-  const token = contractAddresse.toLowerCase()
+  const token = contractAddress.toLowerCase()
   const addressPath = `user.wallets.${walletId}.addresses.${_address}.tokens.${token}.balance`
   settings.set(addressPath, balance)
   logger.debug('Token balance updated', { address, token, balance })
 }
 
-function getTokenBalance ({ walletId, address, contractAddresse }) {
+function getTokenBalance ({ walletId, address, contractAddress }) {
   const _address = address.toLowerCase()
-  const token = contractAddresse.toLowerCase()
+  const token = contractAddress.toLowerCase()
   const addressPath = `user.wallets.${walletId}.addresses.${_address}.tokens.${token}.balance`
   return settings.get(addressPath)
 }

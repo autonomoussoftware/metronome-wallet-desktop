@@ -23,23 +23,23 @@ function sendBalances ({ walletId, addresses, webContents }) {
 
   const web3 = getWeb3()
   const contracts = contractAddresses.map(a => a.toLowerCase()).map(address => ({
-    contractAddresse: address,
+    contractAddress: address,
     contract: new web3.eth.Contract(abi, address),
     symbol: getTokenSymbol(address)
   }))
 
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
-    contracts.forEach(function ({ contractAddresse, contract, symbol }) {
+    contracts.forEach(function ({ contractAddress, contract, symbol }) {
       contract.methods.balanceOf(address).call()
         .then(function (balance) {
-          setTokenBalance({ walletId, address, contractAddresse, balance })
+          setTokenBalance({ walletId, address, contractAddress, balance })
 
           webContents.send('wallet-state-changed', {
             [walletId]: {
               addresses: {
                 [address]: {
                   token: {
-                    [contractAddresse]: {
+                    [contractAddress]: {
                       balance
                     }
                   }
@@ -67,8 +67,8 @@ function sendBalances ({ walletId, addresses, webContents }) {
               addresses: {
                 [address]: {
                   token: {
-                    [contractAddresse]: {
-                      balance: getTokenBalance({ walletId, address, contractAddresse })
+                    [contractAddress]: {
+                      balance: getTokenBalance({ walletId, address, contractAddress })
                     }
                   }
                 }
