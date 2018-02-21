@@ -15,7 +15,7 @@ class DisplayValue extends React.Component {
   static propTypes = {
     maxDecimals: PropTypes.number,
     maxSize: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.string,
     post: PropTypes.string,
     pre: PropTypes.string
   }
