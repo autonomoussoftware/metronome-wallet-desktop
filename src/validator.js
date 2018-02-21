@@ -7,9 +7,10 @@ function validateAmount(amount, propName, max, errors = {}) {
     errors[propName] = 'Amount is required'
   } else if (!isWeiable(amount)) {
     errors[propName] = 'Invalid amount'
-  } else if (max && parseFloat(amount) > parseFloat(max)) {
-    errors[propName] = 'Insufficient funds'
   }
+  // } else if (max && parseFloat(amount) > parseFloat(max)) {
+  //   errors[propName] = 'Insufficient funds'
+  // }
 
   return errors
 }

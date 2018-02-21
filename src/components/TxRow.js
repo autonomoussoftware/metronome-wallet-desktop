@@ -1,10 +1,8 @@
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import config from '../config'
-import theme from '../theme'
 import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+
 import {
   ConverterIcon,
   DisplayValue,
@@ -12,6 +10,9 @@ import {
   AuctionIcon,
   TxIcon
 } from './common'
+import theme from '../theme'
+import config from '../config'
+import * as selectors from '../selectors'
 
 const Tx = styled.div`
   margin-left: 1.6rem;
@@ -95,23 +96,27 @@ class TxRow extends React.Component {
       PropTypes.shape({
         txType: PropTypes.oneOf(['unknown']).isRequired
       }),
+
       PropTypes.shape({
         txType: PropTypes.oneOf(['sent']).isRequired,
         symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
         value: PropTypes.string.isRequired,
         to: PropTypes.string.isRequired
       }),
+
       PropTypes.shape({
         txType: PropTypes.oneOf(['received']).isRequired,
         symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
         value: PropTypes.string.isRequired,
         from: PropTypes.string.isRequired
       }),
+
       PropTypes.shape({
         txType: PropTypes.oneOf(['auction']).isRequired,
         mtnBoughtInAuction: PropTypes.string,
         ethSpentInAuction: PropTypes.string.isRequired
       }),
+
       PropTypes.shape({
         txType: PropTypes.oneOf(['converted']).isRequired,
         convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
@@ -134,7 +139,15 @@ class TxRow extends React.Component {
             !isPending && <ConverterIcon color={theme.colors.primary} />}
 
           {tx.txType === 'auction' &&
-            !isPending && <AuctionIcon color={theme.colors.primary} />}
+            !isPending && (
+              <AuctionIcon
+                color={
+                  tx.mtnBoughtInAuction
+                    ? theme.colors.primary
+                    : theme.colors.danger
+                }
+              />
+            )}
 
           {(tx.txType === 'unknown' || isPending) && (
             <Pending>{confirmations}</Pending>
@@ -148,16 +161,14 @@ class TxRow extends React.Component {
                     value={tx.ethSpentInAuction}
                     post=" ETH"
                   />
-                  {tx.mtnBoughtInAuction && (
-                    <React.Fragment>
-                      <Arrow>&rarr;</Arrow>
-                      <DisplayValue
-                        maxSize="2rem"
-                        value={tx.mtnBoughtInAuction}
-                        post=" MTN"
-                      />
-                    </React.Fragment>
-                  )}
+                  <React.Fragment>
+                    <Arrow>&rarr;</Arrow>
+                    <DisplayValue
+                      maxSize="2rem"
+                      value={tx.mtnBoughtInAuction || '0'}
+                      post=" MTN"
+                    />
+                  </React.Fragment>
                 </React.Fragment>
               ) : tx.txType === 'unknown' || tx.isProcessing ? (
                 <div>New transaction</div>
