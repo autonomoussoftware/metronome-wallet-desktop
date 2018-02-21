@@ -30,6 +30,13 @@ function getTxType(meta, tokenData, transaction, address) {
   return 'unknown'
 }
 
+export const getConnectivity = state => state.connectivity
+
+export const getIsOnline = createSelector(
+  getConnectivity,
+  connectivityStatus => connectivityStatus.isOnline
+)
+
 export const getIsLoggedIn = state => state.session.isLoggedIn
 
 export const isSessionActive = createSelector(getIsLoggedIn, pass => !!pass)
@@ -289,9 +296,21 @@ export const hasEnoughData = createSelector(
     blockHeight !== null
 )
 
+export const isSendEnabled = createSelector(
+  getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
+  getIsOnline,
+  (ethBalance, mtnBalance, isOnline) => {
+    const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
+    return isOnline && (hasFunds(ethBalance) || hasFunds(mtnBalance))
+  }
+)
+
 export const isAuctionEnabled = createSelector(
   getAuctionStatus,
-  auctionStatus =>
+  getIsOnline,
+  (auctionStatus, isOnline) =>
+    isOnline &&
     auctionStatus &&
     auctionStatus.tokenRemaining &&
     Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
@@ -299,12 +318,13 @@ export const isAuctionEnabled = createSelector(
 
 export const isConverterEnabled = createSelector(
   getCurrentAuction,
-  currentAuction => {
+  getIsOnline,
+  (currentAuction, isOnline) => {
     const isInDailyAuction = parseInt(currentAuction, 10) > 0
 
     // TODO remove this when Converter Contract is working fine
     const isConverterWorking = true
 
-    return isConverterWorking && isInDailyAuction
+    return isConverterWorking && isInDailyAuction && isOnline
   }
 )

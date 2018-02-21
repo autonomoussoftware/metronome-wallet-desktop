@@ -205,6 +205,7 @@ class Dashboard extends React.Component {
     mtnBalanceUSD: PropTypes.string.isRequired,
     ethBalanceWei: PropTypes.string.isRequired,
     ethBalanceUSD: PropTypes.string.isRequired,
+    isSendEnabled: PropTypes.bool.isRequired,
     transactions: PropTypes.array.isRequired,
     address: PropTypes.string.isRequired
   }
@@ -233,6 +234,7 @@ class Dashboard extends React.Component {
       mtnBalanceUSD,
       ethBalanceWei,
       ethBalanceUSD,
+      isSendEnabled,
       transactions
     } = this.props
 
@@ -269,7 +271,12 @@ class Dashboard extends React.Component {
           </Left>
 
           <Right>
-            <Btn block data-modal="send" onClick={this.onOpenModal}>
+            <Btn
+              data-modal="send"
+              disabled={!isSendEnabled}
+              onClick={this.onOpenModal}
+              block
+            >
               Send
             </Btn>
 
@@ -303,6 +310,7 @@ const mapStateToProps = state => ({
   mtnBalanceUSD: selectors.getMtnBalanceUSD(state),
   ethBalanceWei: selectors.getEthBalanceWei(state),
   ethBalanceUSD: selectors.getEthBalanceUSD(state),
+  isSendEnabled: selectors.isSendEnabled(state),
   transactions: selectors.getActiveWalletTransactions(state),
   address: selectors.getActiveWalletAddresses(state)[0]
 })
