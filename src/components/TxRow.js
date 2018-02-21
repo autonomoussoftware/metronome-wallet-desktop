@@ -135,6 +135,8 @@ class TxRow extends React.Component {
   render() {
     const { confirmations, isPending, parsed: tx, ...other } = this.props
 
+    console.log(tx)
+
     return (
       <Collapsable maxHeight="6.5rem" {...other}>
         <Tx>
