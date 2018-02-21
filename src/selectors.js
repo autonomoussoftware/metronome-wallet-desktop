@@ -255,7 +255,7 @@ export const isAuctionEnabled = createSelector(
   auctionStatus =>
     auctionStatus &&
     auctionStatus.tokenRemaining &&
-    parseInt(auctionStatus.tokenRemaining, 10) > 0
+    Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
 )
 
 export const isConverterEnabled = createSelector(
