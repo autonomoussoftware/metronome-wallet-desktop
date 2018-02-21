@@ -65,7 +65,7 @@ const Body = styled.div`
   align-items: center;
   flex-direction: column;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1200px) {
     align-items: flex-start;
     margin-top: 4.8rem;
     flex-direction: row;
@@ -78,7 +78,7 @@ const BuyBtn = styled(Btn)`
   margin-bottom: 3.2rem;
   min-width: 300px;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1200px) {
     margin-bottom: 0;
     order: 1;
     min-width: auto;
@@ -92,7 +92,7 @@ const StatsContainer = styled.div`
   width: 100%;
   margin-right: 0;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1200px) {
     margin-right: 1.6rem;
     max-width: 660px;
   }
@@ -155,6 +155,7 @@ const AvailableAmount = styled.div`
 
 class Auction extends React.Component {
   static propTypes = {
+    isAuctionEnabled: PropTypes.bool.isRequired,
     auctionPriceUSD: PropTypes.string.isRequired,
     auctionStatus: PropTypes.shape({
       currentPrice: PropTypes.string.isRequired,
@@ -171,7 +172,7 @@ class Auction extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { auctionPriceUSD, auctionStatus } = this.props
+    const { isAuctionEnabled, auctionPriceUSD, auctionStatus } = this.props
 
     const initialAuctionNotStarted =
       auctionStatus && auctionStatus.genesisTime * 1000 > Date.now()
@@ -220,7 +221,11 @@ class Auction extends React.Component {
 
             {!initialAuctionNotStarted && (
               <Body>
-                <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
+                <BuyBtn
+                  data-modal="buy"
+                  disabled={!isAuctionEnabled}
+                  onClick={this.onOpenModal}
+                >
                   Buy Metronome
                 </BuyBtn>
 
@@ -282,6 +287,7 @@ class Auction extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isAuctionEnabled: selectors.isAuctionEnabled(state),
   auctionPriceUSD: selectors.getAuctionPriceUSD(state),
   auctionStatus: selectors.getAuctionStatus(state)
 })

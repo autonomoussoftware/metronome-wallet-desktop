@@ -250,6 +250,14 @@ export const hasEnoughData = createSelector(
     blockHeight !== null
 )
 
+export const isAuctionEnabled = createSelector(
+  getAuctionStatus,
+  auctionStatus =>
+    auctionStatus &&
+    auctionStatus.tokenRemaining &&
+    parseInt(auctionStatus.tokenRemaining, 10) > 0
+)
+
 export const isConverterEnabled = createSelector(
   getCurrentAuction,
   currentAuction => {
