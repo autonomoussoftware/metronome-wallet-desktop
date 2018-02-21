@@ -38,12 +38,17 @@ const Pending = styled.div`
 
 const Details = styled.div`
   line-height: 1.4rem;
-  font-size: 1.1rem;
-  letter-spacing: 0.4px;
+  font-size: 1rem;
+  letter-spacing: 0px;
   color: ${p => p.theme.colors.copy};
   text-transform: uppercase;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   text-align: right;
+
+  @media (min-width: 800px) {
+    font-size: 1.1rem;
+    letter-spacing: 0.4px;
+  }
 `
 
 const Currency = styled.span`
@@ -55,9 +60,13 @@ const Currency = styled.span`
 const Address = styled.span`
   letter-spacing: normal;
   line-height: 1.6rem;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
   text-transform: initial;
+
+  @media (min-width: 800px) {
+    font-size: 1.3rem;
+  }
 `
 
 const Amount = styled.div`

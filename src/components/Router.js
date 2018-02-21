@@ -12,6 +12,12 @@ import Help from './Help'
 const Container = styled.div`
   display: flex;
   height: 100vh;
+  padding-left: 64px;
+
+  @media (min-width: 800px) {
+    padding-left: 0;
+    left: 200px;
+  }
 `
 
 const Main = styled.div`

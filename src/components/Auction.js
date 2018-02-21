@@ -15,6 +15,13 @@ import {
   Sp
 } from './common'
 
+const Container = styled.div`
+  padding: 3.2rem 2.4rem;
+  @media (min-width: 800px) {
+    padding: 3.2rem 4.8rem;
+  }
+`
+
 const LoadingContainer = styled.div`
   text-align: center;
   max-width: 400px;
@@ -52,16 +59,51 @@ const Cell = styled.div`
   }
 `
 
+const Body = styled.div`
+  display: flex;
+  margin-top: 3.2rem;
+  align-items: center;
+  flex-direction: column;
+
+  @media (min-width: 1100px) {
+    align-items: flex-start;
+    margin-top: 4.8rem;
+    flex-direction: row;
+  }
+`
+
+const BuyBtn = styled(Btn)`
+  order: 0;
+  white-space: nowrap;
+  margin-bottom: 3.2rem;
+  min-width: 300px;
+
+  @media (min-width: 1100px) {
+    margin-bottom: 0;
+    order: 1;
+    min-width: auto;
+  }
+`
+
 const StatsContainer = styled.div`
   border-radius: 4px;
   background-color: ${p => p.theme.colors.lightShade};
+  flex-grow: 1;
+  width: 100%;
+  margin-right: 0;
+
+  @media (min-width: 1100px) {
+    margin-right: 1.6rem;
+    max-width: 660px;
+  }
 `
 
 const Label = styled.div`
   line-height: 4rem;
-  font-size: 3.2rem;
+  font-size: 2.4rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-right: 2em;
+  white-space: nowrap;
 `
 
 const Badge = styled.div`
@@ -69,29 +111,46 @@ const Badge = styled.div`
   line-height: 2.5rem;
   border-radius: 1.4rem;
   background-color: ${p => p.theme.colors.bg.primary};
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
   padding: 0.4rem 0.8rem;
+  margin-right: 0.4rem;
+
+  @media (min-width: 1100px) {
+    font-size: 2rem;
+  }
 `
 const Price = styled.div`
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   line-height: 3rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+
+  @media (min-width: 1100px) {
+    font-size: 2.4rem;
+  }
 `
 
 const USDPrice = styled.div`
   line-height: 2rem;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: right;
+
+  @media (min-width: 1100px) {
+    font-size: 1.6rem;
+  }
 `
 
 const AvailableAmount = styled.div`
-  line-height: 3rem;
+  line-height: 1.6rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+
+  @media (min-width: 1100px) {
+    font-size: 2.4rem;
+  }
 `
 
 class Auction extends React.Component {
@@ -123,7 +182,7 @@ class Auction extends React.Component {
     return (
       <DarkLayout title="Metronome Auction">
         {auctionStatus ? (
-          <Sp py={4} px={6}>
+          <Container>
             <Text>
               {initialAuctionNotStarted
                 ? 'Initial Auction starts in'
@@ -160,57 +219,53 @@ class Auction extends React.Component {
             </CountDownProvider>
 
             {!initialAuctionNotStarted && (
-              <Sp mt={6}>
-                <Flex.Row>
-                  <Flex.Column>
-                    <StatsContainer>
-                      <Sp py={4} px={3}>
-                        <Flex.Row justify="space-between" align="baseline">
-                          <Label>Current Price</Label>
-                          <Flex.Column>
-                            <Flex.Row align="baseline">
-                              <Badge>1 MTN</Badge>
-                              <Price>
-                                <DisplayValue
-                                  maxSize="2.4rem"
-                                  pre=" = "
-                                  value={auctionStatus.currentPrice}
-                                  post=" ETH"
-                                />
-                              </Price>
-                            </Flex.Row>
-                            <USDPrice>${auctionPriceUSD}</USDPrice>
-                          </Flex.Column>
-                        </Flex.Row>
-                      </Sp>
-                      <Sp py={4} px={3}>
-                        <Flex.Row justify="space-between" align="baseline">
-                          <Label>Available</Label>
-                          <AvailableAmount>
+              <Body>
+                <BuyBtn data-modal="buy" onClick={this.onOpenModal}>
+                  Buy Metronome
+                </BuyBtn>
+
+                <StatsContainer>
+                  <Sp p={3}>
+                    <Flex.Row justify="space-between" align="baseline">
+                      <Label>Current Price</Label>
+                      <Flex.Column>
+                        <Flex.Row align="baseline">
+                          <Badge>1 MTN</Badge>
+                          <Price>
                             <DisplayValue
-                              maxSize="2.4rem"
-                              value={auctionStatus.tokenRemaining}
-                              post=" MTN"
+                              maxSize="inherit"
+                              pre=" = "
+                              value={auctionStatus.currentPrice}
+                              post=" ETH"
                             />
-                          </AvailableAmount>
+                          </Price>
                         </Flex.Row>
-                      </Sp>
-                    </StatsContainer>
-                  </Flex.Column>
-                  <Sp mt={4} ml={2}>
-                    <Btn data-modal="buy" onClick={this.onOpenModal}>
-                      Buy Metronome
-                    </Btn>
+                        <USDPrice>${auctionPriceUSD}</USDPrice>
+                      </Flex.Column>
+                    </Flex.Row>
                   </Sp>
-                  <BuyMTNDrawer
-                    onRequestClose={this.onCloseModal}
-                    currentPrice={auctionStatus.currentPrice}
-                    isOpen={this.state.activeModal === 'buy'}
-                  />
-                </Flex.Row>
-              </Sp>
+                  <Sp p={3}>
+                    <Flex.Row justify="space-between" align="baseline">
+                      <Label>Available</Label>
+                      <AvailableAmount>
+                        <DisplayValue
+                          maxSize="inherit"
+                          value={auctionStatus.tokenRemaining}
+                          post=" MTN"
+                        />
+                      </AvailableAmount>
+                    </Flex.Row>
+                  </Sp>
+                </StatsContainer>
+
+                <BuyMTNDrawer
+                  onRequestClose={this.onCloseModal}
+                  currentPrice={auctionStatus.currentPrice}
+                  isOpen={this.state.activeModal === 'buy'}
+                />
+              </Body>
             )}
-          </Sp>
+          </Container>
         ) : (
           <Sp p={6}>
             <LoadingContainer>

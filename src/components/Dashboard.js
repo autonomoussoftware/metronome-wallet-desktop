@@ -1,4 +1,4 @@
-import { DisplayValue, Btn, Sp } from './common'
+import { DisplayValue, Btn } from './common'
 import * as selectors from '../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
 import { connect } from 'react-redux'
@@ -12,19 +12,27 @@ const { clipboard } = window.require('electron')
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
-  padding: 7.2rem 4.8rem;
+  padding: 7.2rem 2.4rem;
   min-height: 100%;
   position: relative;
+
+  @media (min-width: 800px) {
+    padding: 7.2rem 4.8rem;
+  }
 `
 
 const FixedContainer = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
   position: fixed;
-  padding: 0 4.8rem;
-  left: 200px;
+  padding: 0 2.4rem;
+  left: 64px;
   z-index: 1;
   right: 0;
   top: 0;
+  @media (min-width: 800px) {
+    padding: 0 4.8rem;
+    left: 200px;
+  }
 `
 
 const Header = styled.header`
@@ -54,6 +62,11 @@ const Label = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   letter-spacing: 0.5px;
   font-weight: 600;
+  opacity: 0;
+
+  @media (min-width: 800px) {
+    opacity: 1;
+  }
 `
 
 const Bg = styled.div`
@@ -70,6 +83,12 @@ const Address = styled.div`
   font-weight: 600;
   letter-spacing: normal;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 240px;
+  @media (min-width: 960px) {
+    max-width: 100%;
+  }
 `
 
 const CopyBtn = Btn.extend`
@@ -83,14 +102,19 @@ const CopyBtn = Btn.extend`
 
 const Hero = styled.div`
   margin-top: 4.8rem;
-  display: flex;
+  @media (min-width: 1040px) {
+    display: flex;
+  }
 `
 
 const Left = styled.div`
   flex-grow: 1;
   background-color: ${p => p.theme.colors.lightShade};
   border-radius: 4px;
-  padding: 0 2.4rem;
+  padding: 0 1.2rem;
+  @media (min-width: 900px) {
+    padding: 0 2.4rem;
+  }
 `
 
 const Balance = styled.div`
@@ -105,38 +129,68 @@ const Balance = styled.div`
 const CoinSymbol = styled.div`
   border-radius: 14.1px;
   background-color: ${p => p.theme.colors.primary};
-  width: 6.3rem;
+  width: 4.3rem;
   line-height: 3.2rem;
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
-  position: relative;
-  top: 3px;
+  @media (min-width: 900px) {
+    width: 6.3rem;
+    font-size: 2rem;
+  }
 `
 
 const Value = styled.div`
-  line-height: ${p => (p.large ? '6rem' : '4rem')};
-  font-size: ${p => (p.large ? '4.8rem' : '3.2rem')};
+  line-height: ${p => (p.large ? '3rem' : '2rem')};
+  font-size: ${p => (p.large ? '3.2rem' : '2.4rem')};
   letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin: 2.4rem 3rem;
+  margin: 1.6rem 3rem;
   flex-grow: 1;
+  position: relative;
+  top: -3px;
+
+  @media (min-width: 900px) {
+    margin: 2.4rem 3rem;
+    line-height: ${p => (p.large ? '6rem' : '4rem')};
+    font-size: ${p => (p.large ? '4.8rem' : '3.2rem')};
+  }
 `
 
 const USDValue = styled.div`
-  line-height: 3rem;
-  font-size: 2.4rem;
+  line-height: 2.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  white-space: nowrap;
   opacity: ${p => (p.hide ? '0' : '1')};
+
+  @media (min-width: 900px) {
+    line-height: 3rem;
+    font-size: 2.4rem;
+  }
 `
 
 const Right = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  margin-left: 1.6rem;
   min-width: 18rem;
+  margin-top: 3.2rem;
+
+  @media (min-width: 1040px) {
+    margin-top: 0;
+    margin-left: 1.6rem;
+    flex-direction: column;
+  }
+`
+
+const ReceiveBtn = Btn.extend`
+  margin-left: 3.2rem;
+
+  @media (min-width: 1040px) {
+    margin-left: 0;
+    margin-top: 1.6rem;
+  }
 `
 
 const NoTx = styled.div`
@@ -200,15 +254,15 @@ class Dashboard extends React.Component {
           <Left>
             <Balance>
               <CoinSymbol>MTN</CoinSymbol>
-              <Value>
-                <DisplayValue maxSize="4.8rem" value={mtnBalanceWei} />
+              <Value large>
+                <DisplayValue maxSize="inherit" value={mtnBalanceWei} />
               </Value>
               <USDValue hide>${mtnBalanceUSD} (USD)</USDValue>
             </Balance>
             <Balance>
               <CoinSymbol>ETH</CoinSymbol>
               <Value>
-                <DisplayValue maxSize="3.2rem" value={ethBalanceWei} />
+                <DisplayValue maxSize="inherit" value={ethBalanceWei} />
               </Value>
               <USDValue>${ethBalanceUSD} (USD)</USDValue>
             </Balance>
@@ -218,11 +272,10 @@ class Dashboard extends React.Component {
             <Btn block data-modal="send" onClick={this.onOpenModal}>
               Send
             </Btn>
-            <Sp mt={2}>
-              <Btn block data-modal="receive" onClick={this.onOpenModal}>
-                Receive
-              </Btn>
-            </Sp>
+
+            <ReceiveBtn block data-modal="receive" onClick={this.onOpenModal}>
+              Receive
+            </ReceiveBtn>
           </Right>
         </Hero>
 

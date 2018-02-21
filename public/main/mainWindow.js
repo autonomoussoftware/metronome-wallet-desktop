@@ -27,7 +27,9 @@ function loadWindow () {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1140,
-    height: 700
+    height: 700,
+    minWidth: 640,
+    minHeight: 480
   })
 
   const appUrl = isDev
