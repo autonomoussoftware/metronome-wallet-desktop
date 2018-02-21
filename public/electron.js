@@ -60,7 +60,7 @@ createWindow()
 const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 
 app.on('ready', function() {
-  logger.info('App ready, initializing 🚀')
+  logger.info('App ready, initializing...')
   initMenu()
   initMainWorker()
 })
