@@ -1,6 +1,7 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
 import RecoverFromMnemonic from './RecoverFromMnemonic'
+import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
 import Settings from './Settings'
@@ -43,6 +44,7 @@ export default class Router extends Component {
               <Route component={Help} path="/help" />
             </Switch>
           </Main>
+          <OfflineWarning />
         </Container>
       </HashRouter>
     )
