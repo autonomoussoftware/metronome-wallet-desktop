@@ -14,12 +14,12 @@ injectGlobal`
   }
   .ReactModal__Overlay:before {
     content: "";
-    position: absolute;
+    position: fixed;
     top: 0; bottom: 0; left: 0; right: 0;
     display: block;
-    transition: opacity 0.3s;
+    transition: opacity 0.2s;
     will-change: opacity;
-    background-color: rgba(50, 50, 50, 0.8);
+    background-color: rgba(30, 30, 30, 0.8);
     opacity: 0;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
@@ -102,6 +102,7 @@ export default class Drawer extends React.Component {
             zIndex: '2'
           },
           content: {
+            boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
             background: '#323232',
             flexDirection: 'column',
             borderRadius: '0',
