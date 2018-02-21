@@ -58,6 +58,12 @@ const Currency = styled.span`
   font-weight: 600;
 `
 
+const Failed = styled.span`
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  color: ${p => p.theme.colors.danger};
+`
+
 const Address = styled.span`
   letter-spacing: normal;
   line-height: 1.6rem;
@@ -162,12 +168,13 @@ class TxRow extends React.Component {
                     post=" ETH"
                   />
                   <React.Fragment>
-                    <Arrow>&rarr;</Arrow>
-                    <DisplayValue
-                      maxSize="2rem"
-                      value={tx.mtnBoughtInAuction || '0'}
-                      post=" MTN"
-                    />
+                    {tx.mtnBoughtInAuction && <Arrow>&rarr;</Arrow> && (
+                        <DisplayValue
+                          maxSize="2rem"
+                          value={tx.mtnBoughtInAuction}
+                          post=" MTN"
+                        />
+                      )}
                   </React.Fragment>
                 </React.Fragment>
               ) : tx.txType === 'unknown' || tx.isProcessing ? (
@@ -181,34 +188,46 @@ class TxRow extends React.Component {
               )}
             </Amount>
             <Details isPending={isPending}>
-              {tx.txType === 'converted' && (
+              {(tx.txType === 'auction' && !tx.mtnBoughtInAuction) ||
+              tx.contractCallFailed ? (
+                <Failed>
+                  <b>Failed</b> Transasaction
+                </Failed>
+              ) : (
                 <div>
-                  <Currency>MTN</Currency> exchanged for{' '}
-                  <Currency>ETH</Currency>
-                </div>
-              )}
-              {tx.txType === 'received' && (
-                <div>
-                  {isPending ? 'Pending' : 'Received'} from{' '}
-                  <Address>{tx.from}</Address>
-                </div>
-              )}
-              {tx.txType === 'auction' && (
-                <div>
-                  <Currency>MTN</Currency> purchased in auction
-                </div>
-              )}
-              {tx.txType === 'sent' && (
-                <div>
-                  {isPending ? 'Pending' : 'Sent'} to{' '}
-                  {tx.to === config.MTN_TOKEN_ADDR ? (
-                    'MTN TOKEN CONTRACT'
-                  ) : (
-                    <Address>{tx.to}</Address>
+                  {tx.txType === 'converted' && (
+                    <div>
+                      <Currency>MTN</Currency> exchanged for{' '}
+                      <Currency>ETH</Currency>
+                    </div>
                   )}
+
+                  {tx.txType === 'received' && (
+                    <div>
+                      {isPending ? 'Pending' : 'Received'} from{' '}
+                      <Address>{tx.from}</Address>
+                    </div>
+                  )}
+
+                  {tx.txType === 'auction' && (
+                    <div>
+                      <Currency>MTN</Currency> purchased in auction
+                    </div>
+                  )}
+
+                  {tx.txType === 'sent' && (
+                    <div>
+                      {isPending ? 'Pending' : 'Sent'} to{' '}
+                      {tx.to === config.MTN_TOKEN_ADDR ? (
+                        'MTN TOKEN CONTRACT'
+                      ) : (
+                        <Address>{tx.to}</Address>
+                      )}
+                    </div>
+                  )}
+                  {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
                 </div>
               )}
-              {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
             </Details>
           </div>
         </Tx>

@@ -63,7 +63,10 @@ class SendMTNForm extends React.Component {
 
   onInputChange = e => {
     const { id, value } = e.target
-    this.setState({ [id]: value })
+    this.setState(state => ({
+      [id]: value,
+      errors: { ...state.errors, [id]: null }
+    }))
   }
 
   onSubmit = ev => {
