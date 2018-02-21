@@ -344,6 +344,13 @@ function openWallet ({ webContents, walletId }) {
       })
 
       // TODO handle on error
+      blocksSubscription.on('error', function () {
+        logger.warn('Error receiving new block notifications')
+
+        setTimeout(function () {
+          syncTransactions({ walletId, webContents })
+        }, 5000)
+      })
 
       webContents.on('destroyed', function () {
         blocksSubscription.unsubscribe()
