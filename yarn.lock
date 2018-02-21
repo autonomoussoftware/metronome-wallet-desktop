@@ -10,21 +10,9 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/7zip-bin-mac/-/7zip-bin-mac-1.0.1.tgz#3e68778bbf0926adc68159427074505d47555c02"
 
-"7zip-bin-win@~2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/7zip-bin-win/-/7zip-bin-win-2.1.1.tgz#8acfc28bb34e53a9476b46ae85a97418e6035c20"
-
 "7zip-bin-win@~2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/7zip-bin-win/-/7zip-bin-win-2.2.0.tgz#0b81c43e911100f3ece2ebac4f414ca95a572d5b"
-
-"7zip-bin@^2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-2.4.1.tgz#88cf99736d35b104dab1d430c4edd1d51e58aade"
-  optionalDependencies:
-    "7zip-bin-linux" "~1.3.1"
-    "7zip-bin-mac" "~1.0.1"
-    "7zip-bin-win" "~2.1.1"
 
 "7zip-bin@^3.1.0":
   version "3.1.0"
@@ -1423,11 +1411,11 @@ builder-util-runtime@^4.0.4, builder-util-runtime@^4.0.5, builder-util-runtime@~
     fs-extra-p "^4.5.0"
     sax "^1.2.4"
 
-builder-util@4.2.2:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/builder-util/-/builder-util-4.2.2.tgz#366b2bc32324bfe5565a7e4f13f86238fef5e92b"
+builder-util@4.2.4:
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/builder-util/-/builder-util-4.2.4.tgz#ab0b460e6d62d8f24ecfe9435d9335851be3ea1a"
   dependencies:
-    "7zip-bin" "^2.4.1"
+    "7zip-bin" "~3.0.0"
     bluebird-lst "^1.0.5"
     builder-util-runtime "^4.0.4"
     chalk "^2.3.0"
@@ -2529,15 +2517,15 @@ ejs@^2.5.7:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.5.7.tgz#cc872c168880ae3c7189762fd5ffc00896c9518a"
 
-electron-builder-lib@19.56.0:
-  version "19.56.0"
-  resolved "https://registry.yarnpkg.com/electron-builder-lib/-/electron-builder-lib-19.56.0.tgz#26a6754f89c3e732afbd97868f1fc3f666884149"
+electron-builder-lib@19.56.2:
+  version "19.56.2"
+  resolved "https://registry.yarnpkg.com/electron-builder-lib/-/electron-builder-lib-19.56.2.tgz#9e4ef3a1a5fa21d3fd490561261ae639bb263da3"
   dependencies:
-    "7zip-bin" "^2.4.1"
+    "7zip-bin" "~3.0.0"
     asar-integrity "0.2.4"
     async-exit-hook "^2.0.1"
     bluebird-lst "^1.0.5"
-    builder-util "4.2.2"
+    builder-util "4.2.4"
     builder-util-runtime "4.0.4"
     chromium-pickle-js "^0.2.0"
     debug "^3.1.0"
@@ -2560,14 +2548,14 @@ electron-builder-lib@19.56.0:
     temp-file "^3.1.1"
 
 electron-builder@^19.56.0:
-  version "19.56.0"
-  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.56.0.tgz#ad5a64c73ce50b561fc8e2bcf9309de0f6ad4e5e"
+  version "19.56.2"
+  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.56.2.tgz#11c0c4544c4d82f1f1a2837e7f349a67457f1d99"
   dependencies:
     bluebird-lst "^1.0.5"
-    builder-util "4.2.2"
+    builder-util "4.2.4"
     builder-util-runtime "4.0.4"
     chalk "^2.3.0"
-    electron-builder-lib "19.56.0"
+    electron-builder-lib "19.56.2"
     electron-download-tf "4.3.4"
     fs-extra-p "^4.5.0"
     is-ci "^1.1.0"
@@ -2945,7 +2933,7 @@ eslint-plugin-flowtype@2.39.1:
   dependencies:
     lodash "^4.15.0"
 
-eslint-plugin-import@2.8.0:
+eslint-plugin-import@2.8.0, eslint-plugin-import@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.8.0.tgz#fa1b6ef31fcb3c501c09859c1b86f1fc5b986894"
   dependencies:
