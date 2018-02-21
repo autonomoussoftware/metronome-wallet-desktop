@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const os = require('os')
 const path = require('path')
 const Raven = require('raven')
@@ -8,11 +6,14 @@ const logger = require('electron-log')
 const isDev = require('electron-is-dev')
 const unhandled = require('electron-unhandled')
 
+const config = require('./config')
 const initMenu = require('./menu')
 
 logger.transports.file.appName = 'metronome-desktop-wallet'
 
 if (isDev) {
+  require('dotenv').config()
+
   logger.transports.console.level = 'debug'
   logger.transports.file.level = 'debug'
 
@@ -31,8 +32,8 @@ if (isDev) {
   })
 }
 
-if (process.env.SENTRY_DSN) {
-  Raven.config(process.env.SENTRY_DSN, {
+if (config.sentryDsn) {
+  Raven.config(config.sentryDsn, {
     captureUnhandledRejections: true,
     tags: {
       process: process.type,
