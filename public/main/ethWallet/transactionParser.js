@@ -2,7 +2,7 @@ const { isAddressInWallet } = require('./settings')
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-function transactionParser ({ transaction, walletId }) {
+function transactionParser ({ transaction, receipt, walletId }) {
   const from = transaction.from.toLowerCase()
   const to = (transaction.to || NULL_ADDRESS).toLowerCase()
 
@@ -11,6 +11,10 @@ function transactionParser ({ transaction, walletId }) {
 
   const meta = {
     ours: [outgoing || incoming]
+  }
+
+  if (receipt && transaction.gas === receipt.gasUsed && !receipt.logs.length) {
+    meta.contractCallFailed = true
   }
 
   if (meta.ours) {
