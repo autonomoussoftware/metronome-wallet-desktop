@@ -22,3 +22,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# deb building
+ppa/app/debian/debhelper-build-stamp
+ppa/app/debian/files
+ppa/app/debian/metronome-desktop-wallet.debhelper.log
+ppa/app/debian/metronome-desktop-wallet.substvars
+ppa/app/debian/metronome-desktop-wallet/
+ppa/app/opt/
+ppa/app/usr/
+ppa/metronome-desktop-walle*
