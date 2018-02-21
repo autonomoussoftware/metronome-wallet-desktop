@@ -3,6 +3,10 @@ import React from 'react'
 
 const Container = styled.svg`
   overflow: visible;
+  width: 200px;
+  @media (min-height: 600px) {
+    width: 260px;
+  }
 `
 
 export default class Banner extends React.Component {

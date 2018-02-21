@@ -14,14 +14,21 @@ const Container = styled(Flex.Column)`
 const Body = styled.div`
   max-width: 30rem;
   width: 100%;
+  margin-top: 4rem;
+  @media (min-height: 600px) {
+    margin-top: 8rem;
+  }
 `
 
 const Title = styled.div`
   line-height: 3rem;
-  font-size: 2.4rem;
+  font-size: 1.8rem;
   font-weight: bold;
   text-align: center;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  @media (min-height: 600px) {
+    font-size: 2.4rem;
+  }
 `
 
 export default class AltLayout extends React.Component {
@@ -35,9 +42,7 @@ export default class AltLayout extends React.Component {
 
     return (
       <Container align="center">
-        <Sp mb={10}>
-          <Banner />
-        </Sp>
+        <Banner />
         <Body>
           {title && <Title>{title}</Title>}
           <Sp mt={2}>{children}</Sp>

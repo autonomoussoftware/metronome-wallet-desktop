@@ -8,7 +8,8 @@ import React from 'react'
 const Container = styled(ReactModal)`
   &.ReactModal__Content {
     opacity: 0;
-    transition: 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
+    will-change: transform, opacity;
     transform: translate3d(-50%, 10%, 0);
   }
   &.ReactModal__Content--after-open {
@@ -66,9 +67,14 @@ export default class Modal extends React.Component {
         contentLabel="Modal"
         isOpen={isOpen}
         style={{
+          overlay: {
+            backgroundColor: 'transparent',
+            zIndex: '2'
+          },
           content: {
             background: theme.colors.bg.white,
             flexDirection: 'column',
+            marginBottom: '1.6rem',
             borderRadius: '0',
             boxShadow: `0 0 16px 0 ${theme.colors.darkShade}`,
             overflowY: 'auto',
