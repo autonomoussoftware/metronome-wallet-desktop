@@ -433,6 +433,16 @@ function getHooks () {
   }, {
     eventName: 'ui-unload',
     handler: unsubscribeUpdates
+  },
+  {
+    eventName: 'get-gas-price',
+    handler: function () {
+      const web3 = getWeb3()
+      return web3.eth.getGasPrice()
+        .then(gasPrice => {
+          return {gasPrice}
+        })
+    }
   }]
 }
 

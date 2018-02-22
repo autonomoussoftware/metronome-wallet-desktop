@@ -50,15 +50,29 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
+    gasPrice: '0',
+    gasLimit: '0',
+    showGasFields: false,
     password: null,
     status: 'init',
     errors: {},
     error: null
   }
 
+  componentDidMount() {
+    sendToMainProcess('get-gas-price', {}).then(({gasPrice}) => {
+      console.log(gasPrice)
+      this.setState({ gasPrice })
+    })
+  }
+
   onMaxClick = () => {
     const mtnAmount = Web3.utils.fromWei(this.props.availableMTN)
     this.setState({ mtnAmount })
+  }
+
+  onGasClick = () => {
+    this.setState({ showGasFields: !this.state.showGasFields })
   }
 
   onInputChange = e => {
@@ -114,7 +128,10 @@ class SendMTNForm extends React.Component {
       password,
       errors,
       status: sendStatus,
-      error
+      error,
+      gasPrice,
+      gasLimit,
+      showGasFields
     } = this.state
 
     return (
@@ -143,7 +160,8 @@ class SendMTNForm extends React.Component {
                 id="mtnAmount"
               />
             </Sp>
-            <Sp my={2}>
+
+            <Sp mt={3}>
               <Flex.Item grow="1" basis="0">
                 <TextInput
                   onChange={this.onInputChange}
@@ -154,6 +172,41 @@ class SendMTNForm extends React.Component {
                   id="password"
                 />
               </Flex.Item>
+            </Sp>
+
+            <Sp my={2}>
+              <Flex.Row justify="space-between">
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields && (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasLimit}
+                      label="Gas Limt"
+                      value={gasLimit}
+                      id="gasLimit"
+                    />
+                  )}
+                </Flex.Item>
+
+                <Sp mt={6} mx={1} />
+
+                <Flex.Item grow="1" basis="0">
+                  <MaxBtn onClick={this.onGasClick} tabIndex="-1">
+                    {showGasFields ? 'HIDE' : 'SHOW'} GAS
+                  </MaxBtn>
+                  {showGasFields && (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasPrice}
+                      label="Gas Price"
+                      value={gasPrice}
+                      id="gasPrice"
+                    />
+                  )}
+                </Flex.Item>
+              </Flex.Row>
             </Sp>
           </form>
         </Sp>
