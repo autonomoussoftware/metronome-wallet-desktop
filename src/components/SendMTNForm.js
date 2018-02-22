@@ -50,8 +50,8 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
-    gasPrice: 0,
-    gasLimit: 21000,
+    gasPrice: '0',
+    gasLimit: '21000',
     showGasFields: false,
     password: null,
     status: 'init',
@@ -61,7 +61,7 @@ class SendMTNForm extends React.Component {
 
   componentDidMount() {
     sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
-      this.setState({ gasPrice: gasPrice / 1000000000 })
+      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
     })
   }
 
@@ -83,15 +83,21 @@ class SendMTNForm extends React.Component {
     }))
   }
 
-  onToAddressBlur = e => {
-    console.log('Blur...')
-    const { value } = e.target
-    console.log(value, Web3.utils.isAddress(value))
+  onInputBlur = e => {
+    const { mtnAmount, toAddress } = this.state
 
-    if (Web3.utils.isAddress(value)) {
-      sendToMainProcess('get-gas-limit', { to: value }).then(({ gasLimit }) => {
-        console.log(gasLimit)
-        this.setState({ gasLimit })
+    if (!mtnAmount || !toAddress) {
+      return
+    }
+
+    if (Web3.utils.isAddress(toAddress)) {
+      sendToMainProcess('tokens-get-gas-limit', {
+        to: toAddress,
+        from: this.props.from,
+        value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
+        token: config.MTN_TOKEN_ADDR
+      }).then(({ gasLimit }) => {
+        this.setState({ gasLimit: gasLimit.toString() })
       })
     }
   }
@@ -155,8 +161,7 @@ class SendMTNForm extends React.Component {
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
               onChange={this.onInputChange}
-              onBlur={this.onToAddressBlur}
-              onFocus={this.onToAddressBlur}
+              onBlur={this.onInputBlur}
               error={errors.toAddress}
               label="Send to Address"
               value={toAddress}
@@ -169,6 +174,7 @@ class SendMTNForm extends React.Component {
               <TextInput
                 placeholder="0.00"
                 onChange={this.onInputChange}
+                onBlur={this.onInputBlur}
                 error={errors.mtnAmount}
                 label="Amount (MET)"
                 value={mtnAmount}
