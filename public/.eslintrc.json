@@ -3,9 +3,7 @@
     "node": true,
     "mocha": false
   },
-  "extends": [
-    "standard"
-  ],
+  "extends": ["standard", "prettier"],
   "root": true,
   "rules": {
     "no-shadow": ["error", { "builtinGlobals": true }],
