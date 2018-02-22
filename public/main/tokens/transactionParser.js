@@ -12,7 +12,7 @@ const erc20Events = [{
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const topicToAddress = topic => `0x${topic.substr(-40)}`
+const topicToAddress = topic => `0x${topic.substr(-40)}`.toLowerCase()
 
 function transactionParser ({ transaction, receipt, walletId }) {
   const addresses = getTokenContractAddresses()

@@ -72,11 +72,11 @@ class ConvertMTNtoETHForm extends React.Component {
     const { password, mtnAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('mtn-convert-eth', {
+      sendToMainProcess('mtn-convert-mtn', {
         password,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         from: this.props.from
-      })
+      }, 60000) // timeout to 1 minute
         .then(this.props.onSuccess)
         .catch(err =>
           this.setState({
