@@ -425,7 +425,7 @@ function getHooks () {
   }, {
     eventName: 'send-eth',
     auth: true,
-    handler: sendTransaction
+    handler: args => sendTransaction(args)
   }, {
     eventName: 'ui-unload',
     handler: unsubscribeUpdates
