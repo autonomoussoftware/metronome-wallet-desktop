@@ -50,8 +50,8 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
-    gasPrice: '0',
-    gasLimit: '0',
+    gasPrice: 0,
+    gasLimit: 21000,
     showGasFields: false,
     password: null,
     status: 'init',
@@ -76,10 +76,24 @@ class SendMTNForm extends React.Component {
 
   onInputChange = e => {
     const { id, value } = e.target
+
     this.setState(state => ({
       [id]: value,
       errors: { ...state.errors, [id]: null }
     }))
+  }
+
+  onToAddressBlur = e => {
+    console.log('Blur...')
+    const { value } = e.target
+    console.log(value, Web3.utils.isAddress(value))
+
+    if (Web3.utils.isAddress(value)) {
+      sendToMainProcess('get-gas-limit', { to: value }).then(({ gasLimit }) => {
+        console.log(gasLimit)
+        this.setState({ gasLimit })
+      })
+    }
   }
 
   onSubmit = ev => {
@@ -141,6 +155,8 @@ class SendMTNForm extends React.Component {
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
               onChange={this.onInputChange}
+              onBlur={this.onToAddressBlur}
+              onFocus={this.onToAddressBlur}
               error={errors.toAddress}
               label="Send to Address"
               value={toAddress}

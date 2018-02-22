@@ -448,13 +448,19 @@ function openWallets(data, webContents) {
 
       handler: sendTransaction
 function getGasPrice() {
-  const web3 = getWeb3()
-  return web3.eth.getGasPrice().then(gasPrice => ({ gasPrice }))
+  return getWeb3()
+    .eth.getGasPrice()
+    .then(gasPrice => ({ gasPrice }))
+}
+
+function getGasLimit(to) {
+  return getWeb3()
+    .eth.estimateGas({ to })
+    .then(gasLimit => ({ gasLimit }))
 }
 
 function getHooks() {
   initDatabase()
-
   registerTxParser(transactionParser)
 
   return [
@@ -462,7 +468,8 @@ function getHooks() {
     { eventName: 'open-wallets', auth: true, handler: openWallets },
     { eventName: 'send-eth', auth: true, handler: args => sendTransaction(args) },
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
-    { eventName: 'get-gas-price', handler: getGasPrice }
+    { eventName: 'get-gas-price', handler: getGasPrice },
+    { eventName: 'get-gas-limit', handler: getGasLimit }
   ]
 }
 
