@@ -172,7 +172,7 @@ function getHooks () {
   return [{
     eventName: 'send-token',
     auth: true,
-    handler: sendToken
+    handler: args => sendToken(args)
   }, {
     eventName: 'ui-unload',
     handler: unsubscribeUpdates
