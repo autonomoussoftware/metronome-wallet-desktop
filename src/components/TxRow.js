@@ -177,15 +177,17 @@ class TxRow extends React.Component {
                     value={tx.ethSpentInAuction}
                     post=" ETH"
                   />
-                  <React.Fragment>
-                    {tx.mtnBoughtInAuction && <Arrow>&rarr;</Arrow> && (
-                        <DisplayValue
-                          maxSize="2rem"
-                          value={tx.mtnBoughtInAuction}
-                          post=" MTN"
-                        />
-                      )}
-                  </React.Fragment>
+
+                  {tx.mtnBoughtInAuction && (
+                    <React.Fragment>
+                      <Arrow>&rarr;</Arrow>
+                      <DisplayValue
+                        maxSize="2rem"
+                        value={tx.mtnBoughtInAuction}
+                        post=" MTN"
+                      />
+                    </React.Fragment>
+                  )}
                 </React.Fragment>
               ) : tx.txType === 'unknown' || tx.isProcessing ? (
                 <div>New transaction</div>
@@ -197,14 +199,15 @@ class TxRow extends React.Component {
                 />
               )}
             </Amount>
+
             <Details isPending={isPending}>
               {(tx.txType === 'auction' && !tx.mtnBoughtInAuction) ||
               tx.contractCallFailed ? (
                 <Failed>
-                  <b>Failed</b> Transasaction
+                  <b>Failed</b> Transaction
                 </Failed>
               ) : (
-                <div>
+                <React.Fragment>
                   {tx.txType === 'converted' && (
                     <div>
                       <Currency>MTN</Currency> exchanged for{' '}
@@ -236,7 +239,7 @@ class TxRow extends React.Component {
                     </div>
                   )}
                   {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
-                </div>
+                </React.Fragment>
               )}
             </Details>
           </div>
