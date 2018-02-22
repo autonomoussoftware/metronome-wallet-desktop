@@ -24,7 +24,7 @@ const { signAndSendTransaction } = require('./send')
 const getWeb3 = require('./web3')
 const { transactionParser } = require('./transactionParser')
 
-function sendTransaction (args) {
+function sendTransaction (args, resolveToReceipt) {
   const deferred = new Deferred()
 
   signAndSendTransaction(args)
@@ -32,7 +32,10 @@ function sendTransaction (args) {
       txEmitter
         .once('transactionHash', function (hash) {
           logger.verbose('Transaction sent', hash)
-          deferred.resolve({ hash })
+
+          if (!resolveToReceipt) {
+            deferred.resolve({ hash })
+          }
 
           const web3 = getWeb3()
           web3.eth.getTransaction(hash).then(function (transaction) {
@@ -41,6 +44,10 @@ function sendTransaction (args) {
         })
         .once('receipt', function (receipt) {
           logger.verbose('Transaction receipt received', receipt)
+
+          if (resolveToReceipt) {
+            deferred.resolve(receipt)
+          }
 
           moduleEmitter.emit('tx-receipt', receipt)
         })

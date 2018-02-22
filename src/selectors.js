@@ -267,7 +267,7 @@ export const isConverterEnabled = createSelector(
     const isInDailyAuction = parseInt(currentAuction, 10) > 0
 
     // TODO remove this when Converter Contract is working fine
-    const isConverterWorking = false
+    const isConverterWorking = true
 
     return isConverterWorking && isInDailyAuction
   }

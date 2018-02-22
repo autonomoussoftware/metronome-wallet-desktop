@@ -1,17 +1,21 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const { getWeb3, sendTransaction } = require('../ethWallet')
+const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
+const { approveToken } = require('../tokens')
 
 const { getAuctionStatus } = require('./auctions')
-const { registerTxParser } = require('../ethWallet')
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
   getConverterStatus
 } = require('./converter')
 const { transactionParser } = require('./transactionParser')
-const { getAuctionAddress, getConverterAddress } = require('./settings')
+const {
+  getAuctionAddress,
+  getConverterAddress,
+  getTokenAddress
+} = require('./settings')
 
 // TODO move all subscription code to a single place in ethWallet
 
@@ -94,19 +98,24 @@ function convertEthToMtn ({ password, from, value }) {
   const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
 
-  logger.verbose('Converting MTN to ETH', { from, value, address })
+  logger.verbose('Converting ETH to MTN', { from, value, address })
 
   return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
 }
 
 function convertMtnToEth ({ password, from, value }) {
-  const web3 = getWeb3()
+  const token = getTokenAddress()
   const address = getConverterAddress()
-  const data = encodeConvertMtnToEth({ web3, address, value })
 
-  logger.verbose('Converting ETH to MTN', { from, value, address })
+  return approveToken({ password, token, from, to: address, value }, true)
+    .then(function () {
+      const web3 = getWeb3()
+      const data = encodeConvertMtnToEth({ web3, address, value })
 
-  return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
+      logger.verbose('Converting MTN to ETH', { from, value, address })
+
+      return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+    })
 }
 
 function getHooks () {

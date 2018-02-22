@@ -74,4 +74,4 @@ function transactionParser ({ transaction, receipt, walletId }) {
   return meta
 }
 
-module.exports = { transactionParser }
+module.exports = { transactionParser, topicToAddress, erc20Events }
