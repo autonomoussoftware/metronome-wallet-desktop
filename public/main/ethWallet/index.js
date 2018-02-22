@@ -74,7 +74,7 @@ function getEvents() {
   return moduleEmitter
 }
 
-function createWallet(mnemonic, password) {
+function generateNewWallet(mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
     const error = new WalletError('Invalid mnemonic')
     return { error }
@@ -421,59 +421,48 @@ function registerTxParser(parser) {
   txParsers.push(parser)
 }
 
+function createWallet(data, webContents) {
+  const { password, mnemonic } = data
+
+  const result = generateNewWallet(mnemonic, password)
+
+  if (result.error) {
+    return result
+  }
+
+  openWallet({ webContents, walletId: result.walletId })
+
+  return result
+}
+
+function openWallets(data, webContents) {
+  const activeWallet = settings.get('user.activeWallet')
+  const walletIds = Object.keys(settings.get('user.wallets'))
+
+  walletIds.forEach(function(walletId) {
+    openWallet({ webContents, walletId })
+  })
+
+  return { walletIds, activeWallet }
+}
+
+      handler: sendTransaction
+function getGasPrice() {
+  const web3 = getWeb3()
+  return web3.eth.getGasPrice().then(gasPrice => ({ gasPrice }))
+}
+
 function getHooks() {
   initDatabase()
 
   registerTxParser(transactionParser)
 
   return [
-    {
-      eventName: 'create-wallet',
-      auth: true,
-      handler: function(data, webContents) {
-        const { password, mnemonic } = data
-
-        const result = createWallet(mnemonic, password)
-
-        if (result.error) {
-          return result
-        }
-
-        openWallet({ webContents, walletId: result.walletId })
-
-        return result
-      }
-    },
-    {
-      eventName: 'open-wallets',
-      auth: true,
-      handler: function(data, webContents) {
-        const activeWallet = settings.get('user.activeWallet')
-        const walletIds = Object.keys(settings.get('user.wallets'))
-
-        walletIds.forEach(function(walletId) {
-          openWallet({ webContents, walletId })
-        })
-
-        return { walletIds, activeWallet }
-      }
-    },
-    {
-      eventName: 'send-eth',
-      auth: true,
-    handler: args => sendTransaction(args)
-    },
-    {
-      eventName: 'ui-unload',
-      handler: unsubscribeUpdates
-    },
-    {
-      eventName: 'get-gas-price',
-      handler: function() {
-        const web3 = getWeb3()
-        return web3.eth.getGasPrice().then(gasPrice => ({ gasPrice }))
-      }
-    }
+    { eventName: 'create-wallet', auth: true, handler: createWallet },
+    { eventName: 'open-wallets', auth: true, handler: openWallets },
+    { eventName: 'send-eth', auth: true, handler: args => sendTransaction(args) },
+    { eventName: 'ui-unload', handler: unsubscribeUpdates },
+    { eventName: 'get-gas-price', handler: getGasPrice }
   ]
 }
 
