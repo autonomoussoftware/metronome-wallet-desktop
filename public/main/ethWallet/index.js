@@ -53,6 +53,9 @@ function sendTransaction (args, resolveToReceipt) {
         })
         .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
+
+          // TODO Notify the UI about the error
+
           deferred.reject(err)
         })
     })
