@@ -2,7 +2,7 @@ const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
 const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
-const { approveToken } = require('../tokens')
+const { approveToken, getAllowance } = require('../tokens')
 
 const { getAuctionStatus } = require('./auctions')
 const {
@@ -107,14 +107,36 @@ function convertMtnToEth ({ password, from, value }) {
   const token = getTokenAddress()
   const address = getConverterAddress()
 
-  return approveToken({ password, token, from, to: address, value }, true)
-    .then(function () {
+  return getAllowance({ token, from, to: address })
+    .then(function (allowance) {
+      logger.debug('Current allowance', allowance)
       const web3 = getWeb3()
-      const data = encodeConvertMtnToEth({ web3, address, value })
+      if (web3.utils.toBN(allowance).gtn(0)) {
+        return approveToken({ password, token, from, to: address, value: 0 }, true)
+      }
+    })
+    .then(function () {
+      logger.debug('Setting new allowance')
+      return approveToken({ password, token, from, to: address, value }, true)
+        .then(function () {
+          const web3 = getWeb3()
+          const data = encodeConvertMtnToEth({ web3, address, value })
 
-      logger.verbose('Converting MTN to ETH', { from, value, address })
+          logger.verbose('Converting MTN to ETH', { from, value, address })
 
-      return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+          return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+        })
+        .catch(function (err) {
+          logger.warn('Conversion failed - removing approval')
+          return approveToken({ password, token, from, to: address, value: 0 })
+            .then(function () {
+              logger.info('Approval removed')
+              throw err
+            })
+        })
+    })
+    .catch(function (err) {
+      throw err
     })
 }
 

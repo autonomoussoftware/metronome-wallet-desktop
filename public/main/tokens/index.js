@@ -142,7 +142,7 @@ function callTokenMethod (method, args, waitForReceipt) {
       const signature = erc20Events.find(e => e.name === eventName).signature
       const success = (result.status === 0 ||
         result.logs.find(log =>
-          log.address === token &&
+          log.address.toLowerCase() === token &&
           log.topics[0] === signature &&
           topicToAddress(log.topics[1]) === from.toLowerCase() &&
           topicToAddress(log.topics[2]) === to.toLowerCase()
@@ -166,6 +166,12 @@ function approveToken (args, waitForReceipt) {
   return callTokenMethod('approve', args, waitForReceipt)
 }
 
+function getAllowance ({ token, from, to }) {
+  const web3 = getWeb3()
+  const contract = new web3.eth.Contract(abi, token)
+  return contract.methods.allowance(from, to).call()
+}
+
 function getHooks () {
   registerTxParser(transactionParser)
 
@@ -179,4 +185,4 @@ function getHooks () {
   }]
 }
 
-module.exports = { getHooks, approveToken }
+module.exports = { getHooks, approveToken, getAllowance }
