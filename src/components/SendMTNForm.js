@@ -108,7 +108,7 @@ class SendMTNForm extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { password, toAddress, mtnAmount } = this.state
+    const { password, toAddress, mtnAmount, gasLimit, gasPrice } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-token', {
@@ -116,7 +116,9 @@ class SendMTNForm extends React.Component {
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         token: config.MTN_TOKEN_ADDR,
         from: this.props.from,
-        to: toAddress
+        to: toAddress,
+        gasLimit,
+        gasPrice
       })
         .then(this.props.onSuccess)
         .catch(err =>

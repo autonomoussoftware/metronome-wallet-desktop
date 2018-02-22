@@ -128,29 +128,40 @@ function unsubscribeUpdates(_, webContents) {
 }
 
 function callTokenMethod(method, args, waitForReceipt) {
-  const { password, token, from, to, value } = args
+  const { password, token, from, to, value, gasPrice, gasLimit } = args
 
-  logger.verbose(`Calling ${method} of ERC20 token`, { from, to, value, token })
+  logger.verbose(`Calling ${method} of ERC20 token`, {
+    from,
+    to,
+    value,
+    token,
+    gasLimit,
+    gasPrice
+  })
 
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   const call = contract.methods[method](to, value)
   const data = call.encodeABI()
 
-  return sendTransaction({ password, from, to: token, data, gasMult: 2 }, waitForReceipt)
-    .then(function (result) {
-      if (!waitForReceipt) {
-        return result
-      }
+  return sendTransaction(
+    { password, from, to: token, data, gasLimit, gasPrice },
+    waitForReceipt
+  ).then(function(result) {
+    if (!waitForReceipt) {
+      return result
+    }
 
-      const eventName = {
-        transfer: 'Transfer',
-        approve: 'Approval'
-      }[method]
-      const signature = erc20Events.find(e => e.name === eventName).signature
-      const success = (result.status === 0 ||
-        result.logs.find(log =>
-          log.address.toLowerCase() === token &&
+    const eventName = {
+      transfer: 'Transfer',
+      approve: 'Approval'
+    }[method]
+    const signature = erc20Events.find(e => e.name === eventName).signature
+    const success =
+      result.status === 0 ||
+      result.logs.find(
+        log =>
+          log.address === token &&
           log.topics[0] === signature &&
           topicToAddress(log.topics[1]) === from.toLowerCase() &&
           topicToAddress(log.topics[2]) === to.toLowerCase()
@@ -194,19 +205,9 @@ function getHooks() {
   registerTxParser(transactionParser)
 
   return [
-    {
     { eventName: 'send-token', auth: true, handler: sendToken },
-      auth: true,
-      handler: sendToken
-    },
-    {
-      eventName: 'ui-unload',
-      handler: unsubscribeUpdates
-    },
-    {
-      eventName: 'tokens-get-gas-limit',
-      handler: getGasLimit
-    }
+    { eventName: 'ui-unload', handler: unsubscribeUpdates },
+    { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
   ]
 }
 
