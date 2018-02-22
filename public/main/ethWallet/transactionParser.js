@@ -3,8 +3,7 @@ const { isAddressInWallet } = require('./settings')
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 function transactionParser ({ transaction, receipt, walletId }) {
-  const from = transaction.from.toLowerCase()
-  const to = (transaction.to || NULL_ADDRESS).toLowerCase()
+  const { from, to = NULL_ADDRESS, input, gas } = transaction
 
   const outgoing = isAddressInWallet({ walletId, address: from })
   const incoming = isAddressInWallet({ walletId, address: to })
@@ -13,9 +12,9 @@ function transactionParser ({ transaction, receipt, walletId }) {
     ours: [outgoing || incoming]
   }
 
-  if (receipt && transaction.gas === receipt.gasUsed && !receipt.logs.length) {
-    meta.contractCallFailed = true
-  }
+  meta.contractCallFailed = receipt &&
+    (receipt.status === 0 || // byzantium fork
+    (input !== '0x' && gas === receipt.gasUsed && !receipt.logs.length))
 
   if (meta.ours) {
     meta.walletIds = [walletId]
