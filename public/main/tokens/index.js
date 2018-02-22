@@ -1,7 +1,6 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
-const WalletError = require('../WalletError')
 const {
   getWeb3,
   sendTransaction,
@@ -15,28 +14,28 @@ const {
   getTokenSymbol,
   setTokenBalance
 } = require('./settings')
-const {
-  erc20Events,
-  topicToAddress,
-  transactionParser
-} = require('./transactionParser')
+const { transactionParser } = require('./transactionParser')
 
 const ethEvents = getEvents()
 
-function sendBalances ({ walletId, addresses, webContents }) {
+function sendBalances({ walletId, addresses, webContents }) {
   const contractAddresses = getTokenContractAddresses()
 
   const web3 = getWeb3()
-  const contracts = contractAddresses.map(a => a.toLowerCase()).map(address => ({
-    contractAddress: address,
-    contract: new web3.eth.Contract(abi, address),
-    symbol: getTokenSymbol(address)
-  }))
+  const contracts = contractAddresses
+    .map(a => a.toLowerCase())
+    .map(address => ({
+      contractAddress: address,
+      contract: new web3.eth.Contract(abi, address),
+      symbol: getTokenSymbol(address)
+    }))
 
-  addresses.map(a => a.toLowerCase()).forEach(function (address) {
-    contracts.forEach(function ({ contractAddress, contract, symbol }) {
-      contract.methods.balanceOf(address).call()
-        .then(function (balance) {
+  addresses.map(a => a.toLowerCase()).forEach(function(address) {
+    contracts.forEach(function({ contractAddress, contract, symbol }) {
+      contract.methods
+        .balanceOf(address)
+        .call()
+        .then(function(balance) {
           setTokenBalance({ walletId, address, contractAddress, balance })
 
           webContents.send('wallet-state-changed', {
@@ -54,7 +53,7 @@ function sendBalances ({ walletId, addresses, webContents }) {
           })
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
-        .catch(function (err) {
+        .catch(function(err) {
           logger.warn('Could not get token balance', symbol, err)
 
           // TODO retry before notifying
@@ -73,7 +72,11 @@ function sendBalances ({ walletId, addresses, webContents }) {
                 [address]: {
                   token: {
                     [contractAddress]: {
-                      balance: getTokenBalance({ walletId, address, contractAddress })
+                      balance: getTokenBalance({
+                        walletId,
+                        address,
+                        contractAddress
+                      })
                     }
                   }
                 }
@@ -90,28 +93,28 @@ function sendBalances ({ walletId, addresses, webContents }) {
 
 let subscriptions = []
 
-ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+ethEvents.on('wallet-opened', function({ walletId, addresses, webContents }) {
   sendBalances({ walletId, addresses, webContents })
 
   const web3 = getWeb3()
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
 
   // TODO listen for new txs of wallets instead of all blocks
-  blocksSubscription.on('data', function () {
+  blocksSubscription.on('data', function() {
     sendBalances({ walletId, addresses, webContents })
   })
 
-  webContents.on('destroyed', function () {
+  webContents.on('destroyed', function() {
     blocksSubscription.unsubscribe()
   })
 
   subscriptions.push({ webContents, blocksSubscription })
 })
 
-function unsubscribeUpdates (_, webContents) {
+function unsubscribeUpdates(_, webContents) {
   const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
 
-  toUnsubscribe.forEach(function (s) {
+  toUnsubscribe.forEach(function(s) {
     logger.verbose('Unsubscribing token balance update')
     s.blocksSubscription.unsubscribe()
   })
@@ -119,10 +122,10 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function callTokenMethod (method, args, waitForReceipt) {
-  const { password, token, from, to, value } = args
+function sendToken({ password, token: address, from, to, value }) {
+  const symbol = getTokenSymbol(address)
 
-  logger.verbose(`Calling ${method} of ERC20 token`, { from, to, value, token })
+  logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
 
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, token)
@@ -166,23 +169,32 @@ function approveToken (args, waitForReceipt) {
   return callTokenMethod('approve', args, waitForReceipt)
 }
 
+function getGasLimit({ token, to, from, value }) {
+  const symbol = getTokenSymbol(token)
+
+  logger.verbose('Getting token gas limit', { to, value, symbol })
+
+  const web3 = getWeb3()
+  const contract = new web3.eth.Contract(abi, token)
+  const transfer = contract.methods.transfer(to, value)
+  return transfer.estimateGas({ from }).then(gasLimit => ({ gasLimit }))
+}
+
 function getAllowance ({ token, from, to }) {
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   return contract.methods.allowance(from, to).call()
 }
 
-function getHooks () {
+function getHooks() {
   registerTxParser(transactionParser)
 
-  return [{
-    eventName: 'send-token',
-    auth: true,
-    handler: args => sendToken(args)
-  }, {
-    eventName: 'ui-unload',
-    handler: unsubscribeUpdates
-  }]
+  return [
+    { eventName: 'send-token', auth: true, handler: args => sendTransaction(args) },
+
+    { eventName: 'ui-unload', handler: unsubscribeUpdates },
+    { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
+  ]
 }
 
-module.exports = { getHooks, approveToken, getAllowance }
+module.exports = { getHooks, approveToken }

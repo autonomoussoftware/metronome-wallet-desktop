@@ -448,12 +448,16 @@ function openWallets(data, webContents) {
 
       handler: sendTransaction
 function getGasPrice() {
+  logger.verbose('Getting gas price for')
+
   return getWeb3()
     .eth.getGasPrice()
     .then(gasPrice => ({ gasPrice }))
 }
 
-function getGasLimit(to) {
+function getGasLimit({ to }) {
+  logger.verbose('Getting limit gas for address: ', to)
+
   return getWeb3()
     .eth.estimateGas({ to })
     .then(gasLimit => ({ gasLimit }))

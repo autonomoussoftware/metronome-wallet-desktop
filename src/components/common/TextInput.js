@@ -78,18 +78,7 @@ export default class TextInput extends React.Component {
   }
 
   render() {
-    const {
-      placeholder,
-      autoFocus,
-      onChange,
-      error,
-      label,
-      value,
-      type,
-      rows,
-      cols,
-      id
-    } = this.props
+    const { label, value, type, id, error, ...other } = this.props
 
     const { isPristine } = this.state
 
@@ -101,16 +90,11 @@ export default class TextInput extends React.Component {
           {label}
         </Label>
         <this.InputControl
-          placeholder={placeholder}
           isPristine={isPristine}
-          onChange={onChange}
-          hasErrors={hasErrors}
-          autoFocus={autoFocus}
           value={value || ''}
           type={type || 'text'}
-          rows={rows}
-          cols={cols}
           id={id}
+          {...other}
         />
         {hasErrors && (
           <ErrorMsg>
