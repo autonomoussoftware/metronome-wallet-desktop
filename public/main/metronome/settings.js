@@ -6,4 +6,7 @@ const getAuctionAddress = () =>
 const getConverterAddress = () =>
   settings.get('metronome.contracts.converter').toLowerCase()
 
-module.exports = { getAuctionAddress, getConverterAddress }
+const getTokenAddress = () =>
+  settings.get('metronome.contracts.token').toLowerCase()
+
+module.exports = { getAuctionAddress, getConverterAddress, getTokenAddress }

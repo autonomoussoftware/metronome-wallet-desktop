@@ -1,6 +1,7 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
+const WalletError = require('../WalletError')
 const {
   getWeb3,
   sendTransaction,
@@ -14,7 +15,11 @@ const {
   getTokenSymbol,
   setTokenBalance
 } = require('./settings')
-const { transactionParser } = require('./transactionParser')
+const {
+  erc20Events,
+  topicToAddress,
+  transactionParser
+} = require('./transactionParser')
 
 const ethEvents = getEvents()
 
@@ -114,17 +119,51 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function sendToken ({ password, token: address, from, to, value }) {
-  const symbol = getTokenSymbol(address)
+function callTokenMethod (method, args, waitForReceipt) {
+  const { password, token, from, to, value } = args
 
-  logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
+  logger.verbose(`Calling ${method} of ERC20 token`, { from, to, value, token })
 
   const web3 = getWeb3()
-  const contract = new web3.eth.Contract(abi, address)
-  const transfer = contract.methods.transfer(to, value)
-  const data = transfer.encodeABI()
+  const contract = new web3.eth.Contract(abi, token)
+  const call = contract.methods[method](to, value)
+  const data = call.encodeABI()
 
-  return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+  return sendTransaction({ password, from, to: token, data, gasMult: 2 }, waitForReceipt)
+    .then(function (result) {
+      if (!waitForReceipt) {
+        return result
+      }
+
+      const eventName = {
+        transfer: 'Transfer',
+        approve: 'Approval'
+      }[method]
+      const signature = erc20Events.find(e => e.name === eventName).signature
+      const success = (result.status === 0 ||
+        result.logs.find(log =>
+          log.address === token &&
+          log.topics[0] === signature &&
+          topicToAddress(log.topics[1]) === from &&
+          topicToAddress(log.topics[2]) === to
+          // TODO validate data === value
+        )
+      )
+
+      if (!success) {
+        throw new WalletError(`Token call ${method} failed`)
+      }
+
+      return result
+    })
+}
+
+function sendToken (args, waitForReceipt) {
+  return callTokenMethod('transfer', args, waitForReceipt)
+}
+
+function approveToken (args, waitForReceipt) {
+  return callTokenMethod('approve', args, waitForReceipt)
 }
 
 function getHooks () {
@@ -140,4 +179,4 @@ function getHooks () {
   }]
 }
 
-module.exports = { getHooks }
+module.exports = { getHooks, approveToken }
