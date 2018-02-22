@@ -60,9 +60,8 @@ class SendMTNForm extends React.Component {
   }
 
   componentDidMount() {
-    sendToMainProcess('get-gas-price', {}).then(({gasPrice}) => {
-      console.log(gasPrice)
-      this.setState({ gasPrice })
+    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
+      this.setState({ gasPrice: gasPrice / 1000000000 })
     })
   }
 
@@ -182,7 +181,7 @@ class SendMTNForm extends React.Component {
                       type="number"
                       onChange={this.onInputChange}
                       error={errors.gasLimit}
-                      label="Gas Limt"
+                      label="Gas Limt (UNITS)"
                       value={gasLimit}
                       id="gasLimit"
                     />
@@ -200,7 +199,7 @@ class SendMTNForm extends React.Component {
                       type="number"
                       onChange={this.onInputChange}
                       error={errors.gasPrice}
-                      label="Gas Price"
+                      label="Gas Price (GWEI)"
                       value={gasPrice}
                       id="gasPrice"
                     />
