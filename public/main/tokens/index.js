@@ -144,8 +144,8 @@ function callTokenMethod (method, args, waitForReceipt) {
         result.logs.find(log =>
           log.address === token &&
           log.topics[0] === signature &&
-          topicToAddress(log.topics[1]) === from &&
-          topicToAddress(log.topics[2]) === to
+          topicToAddress(log.topics[1]) === from.toLowerCase() &&
+          topicToAddress(log.topics[2]) === to.toLowerCase()
           // TODO validate data === value
         )
       )

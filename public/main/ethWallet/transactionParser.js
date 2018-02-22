@@ -3,7 +3,10 @@ const { isAddressInWallet } = require('./settings')
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 function transactionParser ({ transaction, receipt, walletId }) {
-  const { from, to = NULL_ADDRESS, input, gas } = transaction
+  const from = transaction.from.toLowerCase()
+  const to = (transaction.to || NULL_ADDRESS).toLowerCase()
+
+  const { input, gas } = transaction
 
   const outgoing = isAddressInWallet({ walletId, address: from })
   const incoming = isAddressInWallet({ walletId, address: to })

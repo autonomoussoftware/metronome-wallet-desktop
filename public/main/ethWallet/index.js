@@ -31,7 +31,7 @@ function sendTransaction (args, resolveToReceipt) {
     .then(function ({ emitter: txEmitter }) {
       txEmitter
         .once('transactionHash', function (hash) {
-          logger.verbose('Transaction sent', hash)
+          logger.verbose('Transaction hash sent', hash)
 
           if (!resolveToReceipt) {
             deferred.resolve({ hash })
