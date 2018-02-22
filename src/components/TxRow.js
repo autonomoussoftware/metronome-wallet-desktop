@@ -60,7 +60,6 @@ const Currency = styled.span`
 
 const Failed = styled.span`
   line-height: 1.6rem;
-  font-size: 1.3rem;
   color: ${p => p.theme.colors.danger};
 `
 
@@ -80,7 +79,10 @@ const Amount = styled.div`
   line-height: 2.5rem;
   text-align: right;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
-  color: ${p => (p.isPending ? p.theme.colors.copy : p.theme.colors.primary)};
+  color: ${p =>
+    p.isPending
+      ? p.theme.colors.copy
+      : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
 `
@@ -97,7 +99,7 @@ const Arrow = styled.span`
 class TxRow extends React.Component {
   static propTypes = {
     confirmations: PropTypes.number.isRequired,
-    isPending: PropTypes.bool.isRequired,
+    in: PropTypes.bool.isRequired,
     parsed: PropTypes.oneOfType([
       PropTypes.shape({
         txType: PropTypes.oneOf(['unknown']).isRequired
@@ -126,16 +128,26 @@ class TxRow extends React.Component {
       PropTypes.shape({
         txType: PropTypes.oneOf(['converted']).isRequired,
         convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
-        fromValue: PropTypes.string.isRequired,
-        toValue: PropTypes.string.isRequired
+        fromValue: PropTypes.string,
+        toValue: PropTypes.string
       })
     ]).isRequired
   }
 
-  render() {
-    const { confirmations, isPending, parsed: tx, ...other } = this.props
+  // Prevent superfluous re-renders to improve performance.
+  // Only update while waiting for confirmations or transitioning.
+  shouldComponentUpdate({ confirmations, in: transitioningIn }) {
+    return confirmations <= 6 || transitioningIn !== this.props.in
+  }
 
-    console.log(tx)
+  render() {
+    const { confirmations, parsed: tx, ...other } = this.props
+    const isPending = confirmations < 6
+    const isFailed =
+      (tx.txType === 'auction' &&
+        !tx.mtnBoughtInAuction &&
+        confirmations > 0) ||
+      tx.contractCallFailed
 
     return (
       <Collapsable maxHeight="6.5rem" {...other}>
@@ -152,13 +164,21 @@ class TxRow extends React.Component {
             )}
 
           {tx.txType === 'converted' &&
-            !isPending && <ConverterIcon color={theme.colors.primary} />}
+            !isPending && (
+              <ConverterIcon
+                color={
+                  tx.contractCallFailed
+                    ? theme.colors.danger
+                    : theme.colors.primary
+                }
+              />
+            )}
 
           {tx.txType === 'auction' &&
             !isPending && (
               <AuctionIcon
                 color={
-                  tx.mtnBoughtInAuction
+                  tx.mtnBoughtInAuction && !tx.contractCallFailed
                     ? theme.colors.primary
                     : theme.colors.danger
                 }
@@ -169,7 +189,7 @@ class TxRow extends React.Component {
             <Pending>{confirmations}</Pending>
           )}
           <div>
-            <Amount isPending={isPending}>
+            <Amount isPending={isPending} isFailed={isFailed}>
               {tx.txType === 'auction' ? (
                 <React.Fragment>
                   <DisplayValue
@@ -189,6 +209,29 @@ class TxRow extends React.Component {
                     </React.Fragment>
                   )}
                 </React.Fragment>
+              ) : tx.txType === 'converted' ? (
+                <React.Fragment>
+                  {tx.fromValue ? (
+                    <DisplayValue
+                      maxSize="2rem"
+                      value={tx.fromValue}
+                      post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MTN'}
+                    />
+                  ) : (
+                    <div>New transaction</div>
+                  )}
+
+                  {tx.toValue && (
+                    <React.Fragment>
+                      <Arrow>&rarr;</Arrow>
+                      <DisplayValue
+                        maxSize="2rem"
+                        value={tx.toValue}
+                        post={tx.convertedFrom === 'ETH' ? ' MTN' : ' ETH'}
+                      />
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
               ) : tx.txType === 'unknown' || tx.isProcessing ? (
                 <div>New transaction</div>
               ) : (
@@ -203,15 +246,15 @@ class TxRow extends React.Component {
             <Details isPending={isPending}>
               {(tx.txType === 'auction' && !tx.mtnBoughtInAuction) ||
               tx.contractCallFailed ? (
-                <Failed>
-                  <b>Failed</b> Transaction
-                </Failed>
+                <Failed>Failed Transaction</Failed>
               ) : (
                 <React.Fragment>
                   {tx.txType === 'converted' && (
                     <div>
-                      <Currency>MTN</Currency> exchanged for{' '}
-                      <Currency>ETH</Currency>
+                      <Currency>{tx.convertedFrom}</Currency> exchanged for{' '}
+                      <Currency>
+                        {tx.convertedFrom === 'ETH' ? 'MTN' : 'ETH'}
+                      </Currency>
                     </div>
                   )}
 
@@ -249,13 +292,8 @@ class TxRow extends React.Component {
   }
 }
 
-const mapStateToProps = (state, props) => {
-  const confirmations = selectors.getTxConfirmations(state, props)
-
-  return {
-    confirmations,
-    isPending: confirmations < 6
-  }
-}
+const mapStateToProps = (state, props) => ({
+  confirmations: selectors.getTxConfirmations(state, props)
+})
 
 export default connect(mapStateToProps)(TxRow)

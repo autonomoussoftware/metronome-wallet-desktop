@@ -39,7 +39,6 @@ class ConvertETHtoMTNForm extends React.Component {
     availableETH: PropTypes.string.isRequired,
     onSuccess: PropTypes.func.isRequired,
     ETHprice: PropTypes.number.isRequired,
-    password: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired
   }
 

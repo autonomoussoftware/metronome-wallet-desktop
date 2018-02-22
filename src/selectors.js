@@ -217,6 +217,25 @@ export const getActiveWalletTransactions = createSelector(
 
       const contractCallFailed = meta.contractCallFailed || false
 
+      const convertedFrom =
+        txType === 'converted'
+          ? Web3.utils.toBN(transaction.value).isZero() ? 'MTN' : 'ETH'
+          : null
+
+      const fromValue = convertedFrom
+        ? convertedFrom === 'ETH'
+          ? transaction.value
+          : tokenData ? tokenData.value : null
+        : null
+
+      // TODO surely this need to be changed...
+      // when converting MTN -> ETH resulting ETH value is transaction.value?
+      const toValue = convertedFrom
+        ? convertedFrom === 'ETH'
+          ? tokenData ? tokenData.value : null
+          : transaction.value
+        : null
+
       return {
         transaction,
         receipt,
@@ -224,7 +243,10 @@ export const getActiveWalletTransactions = createSelector(
           mtnBoughtInAuction,
           contractCallFailed,
           ethSpentInAuction,
+          convertedFrom,
           isProcessing,
+          fromValue,
+          toValue,
           txType,
           symbol,
           value,
