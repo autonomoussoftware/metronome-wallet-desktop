@@ -25,7 +25,7 @@ const { signAndSendTransaction } = require('./send')
 const getWeb3 = require('./web3')
 const { transactionParser } = require('./transactionParser')
 
-function sendTransaction (args, resolveToReceipt) {
+function sendTransaction(args, resolveToReceipt) {
   const deferred = new Deferred()
 
   signAndSendTransaction(args)
@@ -74,7 +74,7 @@ function getEvents() {
   return moduleEmitter
 }
 
-function generateNewWallet(mnemonic, password) {
+function generateWallet(mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
     const error = new WalletError('Invalid mnemonic')
     return { error }
@@ -415,24 +415,12 @@ function unsubscribeUpdates(_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-const txParsers = []
+function getGasPrice() {
+  logger.verbose('Getting gas price for')
 
-function registerTxParser(parser) {
-  txParsers.push(parser)
-}
-
-function createWallet(data, webContents) {
-  const { password, mnemonic } = data
-
-  const result = generateNewWallet(mnemonic, password)
-
-  if (result.error) {
-    return result
-  }
-
-  openWallet({ webContents, walletId: result.walletId })
-
-  return result
+  return getWeb3()
+    .eth.getGasPrice()
+    .then(gasPrice => ({ gasPrice }))
 }
 
 function openWallets(data, webContents) {
@@ -446,13 +434,17 @@ function openWallets(data, webContents) {
   return { walletIds, activeWallet }
 }
 
-      handler: sendTransaction
-function getGasPrice() {
-  logger.verbose('Getting gas price for')
+function createWallet(data, webContents) {
 
-  return getWeb3()
-    .eth.getGasPrice()
-    .then(gasPrice => ({ gasPrice }))
+  const result = generateWallet(mnemonic, password)
+
+  if (result.error) {
+    return result
+  }
+
+  openWallet({ webContents, walletId: result.walletId })
+
+  return result
 }
 
 function getGasLimit({ to }) {
@@ -463,8 +455,15 @@ function getGasLimit({ to }) {
     .then(gasLimit => ({ gasLimit }))
 }
 
+const txParsers = []
+
+function registerTxParser(parser) {
+  txParsers.push(parser)
+}
+
 function getHooks() {
   initDatabase()
+
   registerTxParser(transactionParser)
 
   return [
@@ -485,4 +484,3 @@ module.exports = {
   registerTxParser,
   isAddressInWallet
 }
-

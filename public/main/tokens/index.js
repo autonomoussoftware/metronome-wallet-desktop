@@ -1,6 +1,7 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
+const WalletError = require('../WalletError')
 const {
   getWeb3,
   sendTransaction,
@@ -14,7 +15,11 @@ const {
   getTokenSymbol,
   setTokenBalance
 } = require('./settings')
-const { transactionParser } = require('./transactionParser')
+const {
+  erc20Events,
+  topicToAddress,
+  transactionParser
+} = require('./transactionParser')
 
 const ethEvents = getEvents()
 
@@ -122,10 +127,10 @@ function unsubscribeUpdates(_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function sendToken({ password, token: address, from, to, value }) {
-  const symbol = getTokenSymbol(address)
+function callTokenMethod(method, args, waitForReceipt) {
+  const { password, token, from, to, value } = args
 
-  logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
+  logger.verbose(`Calling ${method} of ERC20 token`, { from, to, value, token })
 
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, token)
@@ -149,7 +154,6 @@ function sendToken({ password, token: address, from, to, value }) {
           log.topics[0] === signature &&
           topicToAddress(log.topics[1]) === from.toLowerCase() &&
           topicToAddress(log.topics[2]) === to.toLowerCase()
-          // TODO validate data === value
         )
       )
 
@@ -177,23 +181,32 @@ function getGasLimit({ token, to, from, value }) {
   const web3 = getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   const transfer = contract.methods.transfer(to, value)
+
   return transfer.estimateGas({ from }).then(gasLimit => ({ gasLimit }))
 }
 
-function getAllowance ({ token, from, to }) {
+  return callTokenMethod('transfer', args, waitForReceipt)
+}
   const web3 = getWeb3()
-  const contract = new web3.eth.Contract(abi, token)
-  return contract.methods.allowance(from, to).call()
 }
 
 function getHooks() {
   registerTxParser(transactionParser)
 
   return [
-    { eventName: 'send-token', auth: true, handler: args => sendTransaction(args) },
-
-    { eventName: 'ui-unload', handler: unsubscribeUpdates },
-    { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
+    {
+    { eventName: 'send-token', auth: true, handler: sendToken },
+      auth: true,
+      handler: sendToken
+    },
+    {
+      eventName: 'ui-unload',
+      handler: unsubscribeUpdates
+    },
+    {
+      eventName: 'tokens-get-gas-limit',
+      handler: getGasLimit
+    }
   ]
 }
 
