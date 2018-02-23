@@ -61,7 +61,7 @@ class DisplayValue extends React.Component {
     return (
       <div style={{ fontSize: maxSize }}>
         {pre}
-        {formattedValue || '--'}
+        {formattedValue || '?'}
         {post}
       </div>
     )

@@ -1,8 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as selectors from '../selectors'
 import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
+import config from '../config'
+import React from 'react'
+import theme from '../theme'
 import {
   ConverterIcon,
   DisplayValue,
@@ -10,9 +12,6 @@ import {
   AuctionIcon,
   TxIcon
 } from './common'
-import theme from '../theme'
-import config from '../config'
-import * as selectors from '../selectors'
 
 const Tx = styled.div`
   margin-left: 1.6rem;
@@ -80,7 +79,7 @@ const Amount = styled.div`
   text-align: right;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   color: ${p =>
-    p.isPending
+    p.isPending || p.isCancelApproval
       ? p.theme.colors.copy
       : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
   display: flex;
@@ -109,6 +108,9 @@ class TxRow extends React.Component {
         txType: PropTypes.oneOf(['sent']).isRequired,
         symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
         value: PropTypes.string.isRequired,
+        isCancelApproval: PropTypes.bool.isRequired,
+        approvedValue: PropTypes.string,
+        isApproval: PropTypes.bool.isRequired,
         to: PropTypes.string.isRequired
       }),
 
@@ -136,8 +138,8 @@ class TxRow extends React.Component {
 
   // Prevent superfluous re-renders to improve performance.
   // Only update while waiting for confirmations or transitioning.
-  shouldComponentUpdate({ confirmations, in: transitioningIn }) {
-    return confirmations <= 6 || transitioningIn !== this.props.in
+  shouldComponentUpdate({ in: transitioningIn }) {
+    return this.props.confirmations < 6 || transitioningIn !== this.props.in
   }
 
   render() {
@@ -189,7 +191,11 @@ class TxRow extends React.Component {
             <Pending>{confirmations}</Pending>
           )}
           <div>
-            <Amount isPending={isPending} isFailed={isFailed}>
+            <Amount
+              isCancelApproval={tx.isCancelApproval}
+              isPending={isPending}
+              isFailed={isFailed}
+            >
               {tx.txType === 'auction' ? (
                 <React.Fragment>
                   <DisplayValue
@@ -221,16 +227,17 @@ class TxRow extends React.Component {
                     <div>New transaction</div>
                   )}
 
-                  {tx.toValue && (
-                    <React.Fragment>
-                      <Arrow>&rarr;</Arrow>
-                      <DisplayValue
-                        maxSize="2rem"
-                        value={tx.toValue}
-                        post={tx.convertedFrom === 'ETH' ? ' MTN' : ' ETH'}
-                      />
-                    </React.Fragment>
-                  )}
+                  {tx.fromValue &&
+                    tx.toValue && (
+                      <React.Fragment>
+                        <Arrow>&rarr;</Arrow>
+                        <DisplayValue
+                          maxSize="2rem"
+                          value={tx.toValue}
+                          post={tx.convertedFrom === 'ETH' ? ' MTN' : ' ETH'}
+                        />
+                      </React.Fragment>
+                    )}
                 </React.Fragment>
               ) : tx.txType === 'unknown' || tx.isProcessing ? (
                 <div>New transaction</div>
@@ -251,7 +258,9 @@ class TxRow extends React.Component {
                 <React.Fragment>
                   {tx.txType === 'converted' && (
                     <div>
-                      <Currency>{tx.convertedFrom}</Currency> exchanged for{' '}
+                      {isPending && 'Pending conversion from '}
+                      <Currency>{tx.convertedFrom}</Currency>
+                      {isPending ? ' to ' : ' converted to '}
                       <Currency>
                         {tx.convertedFrom === 'ETH' ? 'MTN' : 'ETH'}
                       </Currency>
@@ -273,9 +282,21 @@ class TxRow extends React.Component {
 
                   {tx.txType === 'sent' && (
                     <div>
-                      {isPending ? 'Pending' : 'Sent'} to{' '}
+                      {isPending
+                        ? tx.isApproval
+                          ? 'Pending allowance for'
+                          : tx.isCancelApproval
+                            ? 'Pending cancel allowance for'
+                            : 'Pending to'
+                        : tx.isApproval
+                          ? 'Allowance set for'
+                          : tx.isCancelApproval
+                            ? 'Allowance cancelled for'
+                            : 'Sent to'}{' '}
                       {tx.to === config.MTN_TOKEN_ADDR ? (
                         'MTN TOKEN CONTRACT'
+                      ) : tx.to === config.CONVERTER_ADDR ? (
+                        'CONVERTER CONTRACT'
                       ) : (
                         <Address>{tx.to}</Address>
                       )}

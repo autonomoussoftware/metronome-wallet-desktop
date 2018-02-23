@@ -189,7 +189,11 @@ class ReceiptModal extends React.Component {
 
           <Row first={tx.parsed.txType === 'unknown'}>
             <Label>Type</Label>
-            <Type>{tx.parsed.txType}</Type>
+            <Type>
+              {tx.parsed.isCancelApproval
+                ? 'Allowance canceled'
+                : tx.parsed.isApproval ? 'Allowance set' : tx.parsed.txType}
+            </Type>
           </Row>
 
           {tx.parsed.txType === 'received' && (
