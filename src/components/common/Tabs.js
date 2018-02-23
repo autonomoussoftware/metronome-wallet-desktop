@@ -13,22 +13,27 @@ const Tab = styled.button`
   flex-grow: 1;
   border: none;
   border-bottom: 2px solid;
-  border-bottom-color: ${p =>
-    p.isActive ? p.theme.colors.primary : p.theme.colors.darkShade};
+  border-bottom-color: ${p => p.theme.colors.darkShade};
   transition: 0.5s;
   padding: 2.5rem;
   color: ${p => p.theme.colors.light};
   border-radius: 0;
-  opacity: ${p => (p.isActive ? '1' : '0.5')};
-  background: ${p =>
-    p.isActive
-      ? 'linear-gradient(253deg, rgba(66, 53, 119, 0.4), rgba(126, 97, 248, 0.1))'
-      : 'transparent'};
+  opacity: 1;
+  background: transparent;
   line-height: 2rem;
   font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: 1.6px;
   text-align: center;
+  &[disabled] {
+    background: linear-gradient(
+      253deg,
+      rgba(66, 53, 119, 0.4),
+      rgba(126, 97, 248, 0.1)
+    );
+    opacity: 0.5;
+    border-bottom-color: ${p => p.theme.colors.primary};
+  }
   &:focus {
     outline: none;
   }
@@ -56,7 +61,7 @@ export default class Tabs extends React.Component {
       <Container>
         {items.map(({ label, id }) => (
           <Tab
-            isActive={active === id}
+            disabled={active === id}
             data-tab={id}
             onClick={this.onClick}
             key={id}

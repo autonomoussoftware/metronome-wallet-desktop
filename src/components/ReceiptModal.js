@@ -156,6 +156,26 @@ class ReceiptModal extends React.Component {
                       </React.Fragment>
                     )}
                   </React.Fragment>
+                ) : tx.parsed.txType === 'converted' ? (
+                  <React.Fragment>
+                    <DisplayValue
+                      maxSize="1.6rem"
+                      value={tx.parsed.fromValue}
+                      post={tx.parsed.convertedFrom === 'ETH' ? ' ETH' : ' MTN'}
+                    />
+                    {tx.parsed.toValue && (
+                      <React.Fragment>
+                        <Arrow>&darr;</Arrow>
+                        <DisplayValue
+                          maxSize="1.6rem"
+                          value={tx.parsed.toValue}
+                          post={
+                            tx.parsed.convertedFrom === 'ETH' ? ' MTN' : ' ETH'
+                          }
+                        />
+                      </React.Fragment>
+                    )}
+                  </React.Fragment>
                 ) : (
                   <DisplayValue
                     maxSize="2rem"
@@ -169,7 +189,11 @@ class ReceiptModal extends React.Component {
 
           <Row first={tx.parsed.txType === 'unknown'}>
             <Label>Type</Label>
-            <Type>{tx.parsed.txType}</Type>
+            <Type>
+              {tx.parsed.isCancelApproval
+                ? 'Allowance canceled'
+                : tx.parsed.isApproval ? 'Allowance set' : tx.parsed.txType}
+            </Type>
           </Row>
 
           {tx.parsed.txType === 'received' && (

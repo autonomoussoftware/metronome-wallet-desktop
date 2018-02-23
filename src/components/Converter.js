@@ -14,6 +14,29 @@ import {
   Sp
 } from './common'
 
+const Container = styled.div`
+  padding: 3.2rem 2.4rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  @media (min-width: 1100px) {
+    padding: 3.2rem 4.8rem;
+    align-items: flex-start;
+    flex-direction: row;
+  }
+`
+
+const ConvertBtn = styled(Btn)`
+  margin-top: 3.2rem;
+  min-width: 260px;
+
+  @media (min-width: 1100px) {
+    min-width: 200px;
+    margin-top: 0;
+  }
+`
+
 const LoadingContainer = styled.div`
   text-align: center;
   max-width: 400px;
@@ -23,13 +46,22 @@ const LoadingContainer = styled.div`
 const StatsContainer = styled.div`
   border-radius: 4px;
   background-color: ${p => p.theme.colors.lightShade};
+  flex-grow: 1;
+  margin-right: 0;
+  width: 100%;
+
+  @media (min-width: 1100px) {
+    margin-right: 1.6rem;
+    max-width: 660px;
+  }
 `
 
 const Label = styled.div`
   line-height: 4rem;
-  font-size: 3.2rem;
+  font-size: 2.4rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-right: 2em;
+  white-space: nowrap;
 `
 
 const Badge = styled.div`
@@ -37,33 +69,51 @@ const Badge = styled.div`
   line-height: 2.5rem;
   border-radius: 1.4rem;
   background-color: ${p => p.theme.colors.bg.primary};
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
   padding: 0.4rem 0.8rem;
+  margin-right: 0.4rem;
+
+  @media (min-width: 800px) {
+    font-size: 2rem;
+  }
 `
 const Price = styled.div`
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   line-height: 3rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+
+  @media (min-width: 800px) {
+    font-size: 2.4rem;
+  }
 `
 
 const USDPrice = styled.div`
   line-height: 2rem;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: right;
+
+  @media (min-width: 800px) {
+    font-size: 1.6rem;
+  }
 `
 
 const AvailableAmount = styled.div`
-  line-height: 3rem;
+  line-height: 1.6rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+
+  @media (min-width: 800px) {
+    font-size: 2.4rem;
+  }
 `
 
 class Converter extends React.Component {
   static propTypes = {
+    isConverterEnabled: PropTypes.bool.isRequired,
     converterPriceUSD: PropTypes.string.isRequired,
     converterStatus: PropTypes.shape({
       availableEth: PropTypes.string.isRequired,
@@ -80,71 +130,75 @@ class Converter extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { converterPriceUSD, converterStatus } = this.props
+    const {
+      isConverterEnabled,
+      converterPriceUSD,
+      converterStatus
+    } = this.props
 
     return (
       <DarkLayout title="Autonomous Converter">
         {converterStatus ? (
-          <Sp py={4} px={6}>
-            <Flex.Row>
-              <Flex.Column>
-                <StatsContainer>
-                  <Sp py={4} px={3}>
-                    <Flex.Row justify="space-between" align="baseline">
-                      <Label>Current Price</Label>
-                      <Flex.Column>
-                        <Flex.Row align="baseline">
-                          <Badge>1 MTN</Badge>
-                          <Price>
-                            <DisplayValue
-                              maxSize="2.4rem"
-                              pre=" = "
-                              value={converterStatus.currentPrice}
-                              post=" ETH"
-                            />
-                          </Price>
-                        </Flex.Row>
-                        <USDPrice>${converterPriceUSD}</USDPrice>
-                      </Flex.Column>
-                    </Flex.Row>
-                  </Sp>
-                  <Sp py={4} px={3}>
-                    <Flex.Row justify="space-between" align="baseline">
-                      <Label>Available MTN</Label>
-                      <AvailableAmount>
+          <Container>
+            <StatsContainer>
+              <Sp p={2}>
+                <Flex.Row justify="space-between" align="baseline">
+                  <Label>Current Price</Label>
+                  <Flex.Column>
+                    <Flex.Row align="baseline">
+                      <Badge>1 MTN</Badge>
+                      <Price>
                         <DisplayValue
-                          maxSize="2.4rem"
-                          value={converterStatus.availableMtn}
-                          post=" MTN"
-                        />
-                      </AvailableAmount>
-                    </Flex.Row>
-                  </Sp>
-                  <Sp py={4} px={3}>
-                    <Flex.Row justify="space-between" align="baseline">
-                      <Label>Available ETH</Label>
-                      <AvailableAmount>
-                        <DisplayValue
-                          maxSize="2.4rem"
-                          value={converterStatus.availableEth}
+                          maxSize="inherit"
+                          pre=" = "
+                          value={converterStatus.currentPrice}
                           post=" ETH"
                         />
-                      </AvailableAmount>
+                      </Price>
                     </Flex.Row>
-                  </Sp>
-                </StatsContainer>
-              </Flex.Column>
-              <Sp mt={4} ml={2}>
-                <Btn data-modal="convert" onClick={this.onOpenModal} disabled>
-                  Convert
-                </Btn>
+                    <USDPrice>${converterPriceUSD}</USDPrice>
+                  </Flex.Column>
+                </Flex.Row>
               </Sp>
-              <ConvertDrawer
-                onRequestClose={this.onCloseModal}
-                isOpen={this.state.activeModal === 'convert'}
-              />
-            </Flex.Row>
-          </Sp>
+              <Sp p={2}>
+                <Flex.Row justify="space-between" align="baseline">
+                  <Label>Available MTN</Label>
+                  <AvailableAmount>
+                    <DisplayValue
+                      maxSize="inherit"
+                      value={converterStatus.availableMtn}
+                      post=" MTN"
+                    />
+                  </AvailableAmount>
+                </Flex.Row>
+              </Sp>
+              <Sp p={2}>
+                <Flex.Row justify="space-between" align="baseline">
+                  <Label>Available ETH</Label>
+                  <AvailableAmount>
+                    <DisplayValue
+                      maxSize="inherit"
+                      value={converterStatus.availableEth}
+                      post=" ETH"
+                    />
+                  </AvailableAmount>
+                </Flex.Row>
+              </Sp>
+            </StatsContainer>
+
+            <ConvertBtn
+              data-modal="convert"
+              disabled={!isConverterEnabled}
+              onClick={this.onOpenModal}
+            >
+              Convert
+            </ConvertBtn>
+
+            <ConvertDrawer
+              onRequestClose={this.onCloseModal}
+              isOpen={this.state.activeModal === 'convert'}
+            />
+          </Container>
         ) : (
           <Sp p={6}>
             <LoadingContainer>
@@ -161,6 +215,7 @@ class Converter extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isConverterEnabled: selectors.isConverterEnabled(state),
   converterPriceUSD: selectors.getConverterPriceUSD(state),
   converterStatus: selectors.getConverterStatus(state)
 })

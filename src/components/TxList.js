@@ -7,16 +7,20 @@ import TxRow from './TxRow'
 import React from 'react'
 
 const ListHeader = styled.div`
-  display: flex;
-  align-items: baseline;
   position: sticky;
   background: ${p => p.theme.colors.bg.primary};
-  top: 7.2rem;
+  top: 4.8rem;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: 0;
   margin: 0 -4.8rem;
   padding: 0 4.8rem;
+
+  @media (min-width: 960px) {
+    top: 7.2rem;
+    display: flex;
+    align-items: baseline;
+  }
 `
 
 const ListTitle = styled.div`
@@ -29,19 +33,20 @@ const ListTitle = styled.div`
 
 const TabsContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 `
 
 const Tab = styled.button`
   font: inherit;
   line-height: 1.8rem;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 1.4px;
   text-align: center;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   opacity: ${p => (p.isActive ? '1' : '0.5')};
   text-transform: uppercase;
-  padding: 1.6rem;
+  padding: 1.6rem 0.8rem;
   background: transparent;
   border: none;
   color: white;
@@ -52,6 +57,11 @@ const Tab = styled.button`
   &:focus {
     outline: none;
   }
+
+  @media (min-width: 760px) {
+    font-size: 1.4rem;
+    padding: 1.6rem;
+  }
 `
 
 const List = styled.div`
@@ -61,7 +71,7 @@ const List = styled.div`
 `
 
 const FooterLogo = styled.div`
-  padding: 4.8rem;
+  padding: 4.8rem 0;
   width: 3.2rem;
   margin: 0 auto;
 `

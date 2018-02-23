@@ -15,7 +15,7 @@ class DisplayValue extends React.Component {
   static propTypes = {
     maxDecimals: PropTypes.number,
     maxSize: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.string,
     post: PropTypes.string,
     pre: PropTypes.string
   }
@@ -47,18 +47,8 @@ class DisplayValue extends React.Component {
     return String(Number.parseFloat(n.toFixed(Math.ceil(decimals)), 10))
   }
 
-  /**
-   * Returns a valid font-size value that is based
-   * on component width and content length
-   */
-  getFontSize(formattedValue) {
-    const fontSize = this.props.maxSize
-
-    return fontSize
-  }
-
   render() {
-    const { value, post, pre } = this.props
+    const { value, post, pre, maxSize } = this.props
 
     let formattedValue
 
@@ -67,12 +57,11 @@ class DisplayValue extends React.Component {
     } catch (e) {
       formattedValue = null
     }
-    const fontSize = this.getFontSize(formattedValue)
 
     return (
-      <div style={{ fontSize }}>
+      <div style={{ fontSize: maxSize }}>
         {pre}
-        {formattedValue || '--'}
+        {formattedValue || '?'}
         {post}
       </div>
     )

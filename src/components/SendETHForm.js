@@ -1,13 +1,16 @@
+import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, toETH, toUSD } from '../utils'
+import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
-
-import * as selectors from '../selectors'
-import { sendToMainProcess, toETH, toUSD } from '../utils'
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { validateEthAmount, validatePassword, validateToAddress } from '../validator'
+import {
+  validateEthAmount,
+  validatePassword,
+  validateToAddress
+} from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -75,8 +78,8 @@ class SendETHForm extends React.Component {
     }))
   }
 
-  onSubmit = e => {
-    e.preventDefault()
+  onSubmit = ev => {
+    ev.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
@@ -91,10 +94,10 @@ class SendETHForm extends React.Component {
         to: toAddress
       })
         .then(this.props.onSuccess)
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -102,16 +105,25 @@ class SendETHForm extends React.Component {
 
   validate = () => {
     const { ethAmount, toAddress, password } = this.state
+    const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
       ...validateToAddress(toAddress),
-      ...validateEthAmount(ethAmount),
+      ...validateEthAmount(ethAmount, max),
       ...validatePassword(password)
     }
   }
 
   render() {
-    const { password, toAddress, ethAmount, usdAmount, status, errors, error } = this.state
+    const {
+      toAddress,
+      ethAmount,
+      usdAmount,
+      password,
+      status: sendStatus,
+      errors,
+      error
+    } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -171,8 +183,8 @@ class SendETHForm extends React.Component {
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm" disabled={status === 'pending'}>
-            {status === 'pending' ? 'Sending...' : 'Send'}
+          <Btn block submit form="sendForm" disabled={sendStatus === 'pending'}>
+            {sendStatus === 'pending' ? 'Sending...' : 'Send'}
           </Btn>
           {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>

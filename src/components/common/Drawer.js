@@ -12,18 +12,25 @@ injectGlobal`
   body.ReactModal__Body--open {
     overflow: hidden;
   }
-  .ReactModal__Overlay {
-    background-color: rgba(50, 50, 50, 0) !important;
-    // transition: background-color 0.3s;
-    will-change: background-color;
-    z-index: 1;
+  .ReactModal__Overlay:before {
+    content: "";
+    position: fixed;
+    top: 0; bottom: 0; left: 0; right: 0;
+    display: block;
+    transition: opacity 0.2s;
+    will-change: opacity;
+    background-color: rgba(30, 30, 30, 0.8);
+    opacity: 0;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
-    background-color: rgba(50, 50, 50, 0.8) !important;
+    overflow-y: auto;
   }
-  .ReactModal__Overlay.ReactModal__Overlay--before-close {
-    background-color: rgba(50, 50, 50, 0) !important;
-    // transition: background-color 0.6s;
+  .ReactModal__Overlay.ReactModal__Overlay--after-open:before {
+    opacity: 1;
+  }
+  .ReactModal__Overlay.ReactModal__Overlay--before-close:before {
+    opacity: 0;
+    transition: opacity 0.6s;
   }
 `
 
@@ -90,11 +97,15 @@ export default class Drawer extends React.Component {
         contentLabel="Modal"
         isOpen={isOpen}
         style={{
+          overlay: {
+            backgroundColor: 'transparent',
+            zIndex: '2'
+          },
           content: {
+            boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
             background: '#323232',
             flexDirection: 'column',
             borderRadius: '0',
-            boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
             overflowX: 'hidden',
             overflowY: 'auto',
             position: 'absolute',

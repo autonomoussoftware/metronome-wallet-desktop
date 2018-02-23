@@ -21,6 +21,7 @@
     "cross-env": "^5.1.3",
     "cuid": "^2.0.2",
     "debug": "^3.1.0",
+    "dotenv": "^5.0.0",
     "electron-debug": "^1.5.0",
     "electron-log": "^2.2.14",
     "electron-settings": "^3.1.4",
@@ -37,6 +38,8 @@
     "node-notifier": "^5.2.1",
     "promise-all-props": "^1.0.1",
     "qrcode.react": "^0.7.2",
+    "raven": "^2.4.1",
+    "raven-js": "^3.22.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-modal": "^3.1.11",
@@ -52,18 +55,15 @@
     "safe-buffer": "^5.1.1",
     "socket.io-client": "^2.0.4",
     "styled-components": "^3.0.2",
-    "web3": "^1.0.0-beta.29"
+    "web3": "^1.0.0-beta.30"
   },
   "homepage": "./",
   "main": "public/electron.js",
   "copyright": "Copyright © 2018 ${author}",
   "build": {
-    "appId": "com.bloqlabs.metronome",
+    "appId": "com.bloq.metronome.wallet.desktop",
     "productName": "Metronome Wallet",
-    "files": [
-      "build/**/*",
-      "node_modules/**/*"
-    ],
+    "files": ["build/**/*", "node_modules/**/*"],
     "publish": {
       "provider": "github"
     },
@@ -72,7 +72,7 @@
     },
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "com.bloqlabs.metronome.category.utility",
+      "category": "public.app-category.finance",
       "icon": "./assets/icon.icns"
     },
     "dmg": {
@@ -92,7 +92,7 @@
     },
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "Utility",
+      "category": "Finance",
       "target": [
         "deb"
       ],
@@ -114,10 +114,13 @@
     "eject": "react-scripts eject",
     "prettier": "prettier --write ./**/*.js",
     "pack": "react-scripts build && builder --dir",
-    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dev":
+      "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "debug":
+      "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
-    "release": "react-scripts build && build --em.main=build/electron.js --publish always",
+    "release":
+      "react-scripts build && build --em.main=build/electron.js --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
@@ -130,6 +133,7 @@
     "eslint": "^4.17.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",

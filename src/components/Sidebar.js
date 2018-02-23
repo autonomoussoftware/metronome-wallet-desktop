@@ -6,11 +6,45 @@ import Logo from './Logo'
 
 const Container = styled.div`
   background: ${p => p.theme.colors.bg.darkGradient};
-  width: 200px;
+  width: 64px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
+  transition: width 0.3s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  &:hover {
+    width: 200px;
+    box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
+  }
+  @media (min-width: 800px) {
+    position: static;
+    width: 200px;
+    &:hover {
+      box-shadow: none;
+    }
+  }
+`
+
+const LogoLargeContainer = styled.div`
+  padding: 3.2rem 3.2rem 5.6rem;
+  height: 125px;
+  display: none;
+  @media (min-width: 800px) {
+    display: block;
+  }
+`
+const LogoSmallContainer = styled.div`
+  padding: 2.3rem 1.6rem;
+  height: 125px;
+  display: block;
+  @media (min-width: 800px) {
+    display: none;
+  }
 `
 
 const MainMenu = styled.nav`
@@ -46,14 +80,31 @@ const Button = styled(NavLink)`
   }
 `
 
+const IconWrapper = styled.div`
+  margin-right: 1.6rem;
+  margin-left: 0.3rem;
+  @media (min-width: 800px) {
+    margin-left: 0;
+  }
+`
+
+const BtnText = styled.span`
+  opacity: 0;
+  ${Container}:hover & {
+    opacity: 1;
+  }
+  @media (min-width: 800px) {
+    opacity: 1;
+  }
+`
+
 const SecondaryBtn = styled(NavLink)`
   display: block;
   text-decoration: none;
   color: ${p => p.theme.colors.light};
   padding: 0.8rem 1.6rem;
   line-height: 2rem;
-  transition: 0.5s;
-  opacity: 0.5;
+  opacity: 0;
   transition: 0.6s;
   position: relative;
   &[disabled] {
@@ -63,7 +114,6 @@ const SecondaryBtn = styled(NavLink)`
     outline: none;
   }
   &.active {
-    opacity: 1;
     padding-left: 3.2rem;
   }
   &:before {
@@ -84,34 +134,62 @@ const SecondaryBtn = styled(NavLink)`
     width: 8px;
     height: 8px;
   }
+
+  ${Container}:hover & {
+    opacity: 0.5;
+
+    &.active {
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 800px) {
+    opacity: 0.5;
+    &.active {
+      opacity: 1;
+    }
+  }
 `
 
-const LogoSmallContainer = styled.div`
-  padding: 4.8rem 0 2.4rem 1.6rem;
+const Footer = styled.div`
+  padding: 4.8rem 1.6rem 2.4rem;
+  height: 104px;
+  transition: opacity 0.3s;
+  opacity: 0;
+  @media (min-width: 800px) {
+    opacity: 1;
+  }
 `
 
-class App extends Component {
+class Sidebar extends Component {
   render() {
     return (
       <Container>
-        <Sp pt={4} px={4} pb={7}>
+        <LogoLargeContainer>
           <Logo />
-        </Sp>
+        </LogoLargeContainer>
+        <LogoSmallContainer>
+          <LogoIcon negative />
+        </LogoSmallContainer>
+
         <MainMenu>
           <Button activeClassName="active" to="/wallets">
-            <Sp mr={2}>
+            <IconWrapper>
               <WalletIcon />
-            </Sp>Wallets
+            </IconWrapper>
+            <BtnText>Wallets</BtnText>
           </Button>
           <Button activeClassName="active" to="/auction">
-            <Sp mr={2}>
+            <IconWrapper>
               <AuctionIcon />
-            </Sp>Auction
+            </IconWrapper>
+            <BtnText>Auction</BtnText>
           </Button>
           <Button activeClassName="active" to="/converter">
-            <Sp mr={2}>
+            <IconWrapper>
               <ConverterIcon />
-            </Sp>Converter
+            </IconWrapper>
+            <BtnText>Converter</BtnText>
           </Button>
         </MainMenu>
         <Sp mt={2}>
@@ -121,16 +199,16 @@ class App extends Component {
           <SecondaryBtn activeClassName="active" to="/settings">
             Settings
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/help" disabled>
+          <SecondaryBtn activeClassName="active" disabled to="/help">
             Help
           </SecondaryBtn>
         </Sp>
-        <LogoSmallContainer>
+        <Footer>
           <LogoIcon negative />
-        </LogoSmallContainer>
+        </Footer>
       </Container>
     )
   }
 }
 
-export default App
+export default Sidebar

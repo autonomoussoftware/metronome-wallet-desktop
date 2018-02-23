@@ -9,9 +9,13 @@ const Container = styled.div`
 `
 
 const Header = styled.header`
-  padding: 2.4rem 4.8rem;
+  padding: 2.4rem;
   background-color: ${p => p.theme.colors.bg.dark};
   box-shadow: 0 2px 2px 0 ${p => p.theme.colors.lightShade};
+
+  @media (min-width: 800px) {
+    padding: 2.4rem 4.8rem;
+  }
 `
 
 const Title = styled.h1`

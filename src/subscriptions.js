@@ -8,6 +8,7 @@ export const subscribeToMainProcessMessages = store => {
    */
   subscribeTo([
     'mtn-converter-status-updated',
+    'connectivity-state-changed',
     'auction-status-updated',
     'wallet-state-changed',
     'eth-price-updated',

@@ -26,8 +26,22 @@ class App extends Component {
       })
       .catch(console.warn)
 
-    window.addEventListener('beforeunload', function(event) {
+    window.addEventListener('beforeunload', function() {
       sendToMainProcess('ui-unload')
+    })
+
+    window.addEventListener('online', () => {
+      this.props.dispatch({
+        type: 'connectivity-state-changed',
+        payload: { ok: true }
+      })
+    })
+
+    window.addEventListener('offline', () => {
+      this.props.dispatch({
+        type: 'connectivity-state-changed',
+        payload: { ok: false }
+      })
     })
   }
 
@@ -38,8 +52,7 @@ class App extends Component {
     })
   }
 
-  onPasswordAccepted = () =>
-    this.props.dispatch({ type: 'session-started' })
+  onPasswordAccepted = () => this.props.dispatch({ type: 'session-started' })
 
   render() {
     const { isSessionActive, hasEnoughData } = this.props

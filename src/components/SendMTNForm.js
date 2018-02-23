@@ -1,14 +1,17 @@
-import Web3 from 'web3'
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import styled from 'styled-components'
-
-import config from '../config'
-import * as selectors from '../selectors'
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess } from '../utils'
-import { validateMtnAmount, validatePassword, validateToAddress } from '../validator'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import config from '../config'
+import React from 'react'
+import Web3 from 'web3'
+import {
+  validateMtnAmount,
+  validatePassword,
+  validateToAddress
+} from '../validator'
 
 const MaxBtn = BaseBtn.extend`
   float: right;
@@ -60,11 +63,14 @@ class SendMTNForm extends React.Component {
 
   onInputChange = e => {
     const { id, value } = e.target
-    this.setState({ [id]: value })
+    this.setState(state => ({
+      [id]: value,
+      errors: { ...state.errors, [id]: null }
+    }))
   }
 
-  onSubmit = e => {
-    e.preventDefault()
+  onSubmit = ev => {
+    ev.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
@@ -80,10 +86,10 @@ class SendMTNForm extends React.Component {
         to: toAddress
       })
         .then(this.props.onSuccess)
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )
@@ -92,16 +98,24 @@ class SendMTNForm extends React.Component {
   // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
     const { password, toAddress, mtnAmount } = this.state
+    const max = Web3.utils.fromWei(this.props.availableMTN)
 
     return {
       ...validateToAddress(toAddress),
-      ...validateMtnAmount(mtnAmount),
+      ...validateMtnAmount(mtnAmount, max),
       ...validatePassword(password)
     }
   }
 
   render() {
-    const { password, toAddress, mtnAmount, errors, status, error } = this.state
+    const {
+      toAddress,
+      mtnAmount,
+      password,
+      errors,
+      status: sendStatus,
+      error
+    } = this.state
 
     return (
       <Flex.Column grow="1">
@@ -123,20 +137,20 @@ class SendMTNForm extends React.Component {
               <TextInput
                 placeholder="0.00"
                 onChange={this.onInputChange}
-                label="Amount (MNT)"
-                value={mtnAmount}
                 error={errors.mtnAmount}
+                label="Amount (MTN)"
+                value={mtnAmount}
                 id="mtnAmount"
               />
             </Sp>
             <Sp my={2}>
               <Flex.Item grow="1" basis="0">
                 <TextInput
-                  type="password"
                   onChange={this.onInputChange}
+                  error={errors.password}
                   label="Password"
                   value={password}
-                  error={errors.password}
+                  type="password"
                   id="password"
                 />
               </Flex.Item>
@@ -144,8 +158,8 @@ class SendMTNForm extends React.Component {
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm" disabled={status === 'pending'}>
-            {status === 'pending' ? 'Sending...' : 'Send'}
+          <Btn block submit form="sendForm" disabled={sendStatus === 'pending'}>
+            {sendStatus === 'pending' ? 'Sending...' : 'Send'}
           </Btn>
           {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>

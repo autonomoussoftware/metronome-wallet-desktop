@@ -1,15 +1,25 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
+const WalletError = require('../WalletError')
 const {
   getWeb3,
   sendTransaction,
   getEvents,
-  registerTxParser,
-  isAddressInWallet
+  registerTxParser
 } = require('../ethWallet')
 
-const { getTokenContractAddresses, getTokenSymbol } = require('./settings')
+const {
+  getTokenBalance,
+  getTokenContractAddresses,
+  getTokenSymbol,
+  setTokenBalance
+} = require('./settings')
+const {
+  erc20Events,
+  topicToAddress,
+  transactionParser
+} = require('./transactionParser')
 
 const ethEvents = getEvents()
 
@@ -18,21 +28,23 @@ function sendBalances ({ walletId, addresses, webContents }) {
 
   const web3 = getWeb3()
   const contracts = contractAddresses.map(a => a.toLowerCase()).map(address => ({
-    contractAddresse: address,
+    contractAddress: address,
     contract: new web3.eth.Contract(abi, address),
     symbol: getTokenSymbol(address)
   }))
 
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
-    contracts.forEach(function ({ contractAddresse, contract, symbol }) {
+    contracts.forEach(function ({ contractAddress, contract, symbol }) {
       contract.methods.balanceOf(address).call()
         .then(function (balance) {
+          setTokenBalance({ walletId, address, contractAddress, balance })
+
           webContents.send('wallet-state-changed', {
             [walletId]: {
               addresses: {
                 [address]: {
                   token: {
-                    [contractAddresse]: {
+                    [contractAddress]: {
                       balance
                     }
                   }
@@ -41,6 +53,33 @@ function sendBalances ({ walletId, addresses, webContents }) {
             }
           })
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
+        })
+        .catch(function (err) {
+          logger.warn('Could not get token balance', symbol, err)
+
+          // TODO retry before notifying
+
+          webContents.send('connectivity-state-changed', {
+            ok: false,
+            reason: 'Call to Ethereum node failed',
+            plugin: 'tokens',
+            err: err.message
+          })
+
+          // Send cached balance
+          webContents.send('wallet-state-changed', {
+            [walletId]: {
+              addresses: {
+                [address]: {
+                  token: {
+                    [contractAddress]: {
+                      balance: getTokenBalance({ walletId, address, contractAddress })
+                    }
+                  }
+                }
+              }
+            }
+          })
         })
     })
   })
@@ -80,82 +119,57 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function sendToken ({ password, token: address, from, to, value }) {
-  const symbol = getTokenSymbol(address)
+function callTokenMethod (method, args, waitForReceipt) {
+  const { password, token, from, to, value } = args
 
-  logger.verbose('Sending ERC20 tokens', { from, to, value, token: symbol })
+  logger.verbose(`Calling ${method} of ERC20 token`, { from, to, value, token })
 
   const web3 = getWeb3()
-  const contract = new web3.eth.Contract(abi, address)
-  const transfer = contract.methods.transfer(to, value)
-  const data = transfer.encodeABI()
+  const contract = new web3.eth.Contract(abi, token)
+  const call = contract.methods[method](to, value)
+  const data = call.encodeABI()
 
-  return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+  return sendTransaction({ password, from, to: token, data, gasMult: 2 }, waitForReceipt)
+    .then(function (result) {
+      if (!waitForReceipt) {
+        return result
+      }
+
+      const eventName = {
+        transfer: 'Transfer',
+        approve: 'Approval'
+      }[method]
+      const signature = erc20Events.find(e => e.name === eventName).signature
+      const success = (result.status === 0 ||
+        result.logs.find(log =>
+          log.address.toLowerCase() === token &&
+          log.topics[0] === signature &&
+          topicToAddress(log.topics[1]) === from.toLowerCase() &&
+          topicToAddress(log.topics[2]) === to.toLowerCase()
+          // TODO validate data === value
+        )
+      )
+
+      if (!success) {
+        throw new WalletError(`Token call ${method} failed`)
+      }
+
+      return result
+    })
 }
 
-const ERC20_TRANSFER_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-const ERC20_APPROVAL_SIGNATURE = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
+function sendToken (args, waitForReceipt) {
+  return callTokenMethod('transfer', args, waitForReceipt)
+}
 
-function transactionParser ({ transaction, receipt, walletId }) {
-  // TODO analyze the tx, tx receipt and return promise data to be merged with meta
-  // Transfer
-  // Approval
+function approveToken (args, waitForReceipt) {
+  return callTokenMethod('approve', args, waitForReceipt)
+}
 
-  const addresses = getTokenContractAddresses()
-
-  const meta = {}
-  const tokens = {}
-
-  if (!receipt) {
-    const to = (transaction.to || '0x0000000000000000000000000000000000000000').toLowerCase()
-
-    const related = addresses.filter(a => a === to)
-
-    related.forEach(function (address) {
-      tokens[address] = {
-        processing: true
-      }
-
-      meta.tokens = tokens
-    })
-
-    return meta
-  }
-
-  addresses.forEach(function (address) {
-    const events = receipt.logs.filter(l => l.address.toLowerCase() === address)
-
-    events.forEach(function (log) {
-      const signature = log.topics[0]
-      if ([ERC20_TRANSFER_SIGNATURE, ERC20_APPROVAL_SIGNATURE].includes(signature)) {
-        const from = `0x${log.topics[1].substr(-40)}`
-        const to = `0x${log.topics[2].substr(-40)}`
-
-        const web3 = getWeb3()
-        const value = web3.utils.toBN(log.data).toString()
-
-        const outgoing = isAddressInWallet({ walletId, address: from })
-        const incoming = isAddressInWallet({ walletId, address: to })
-
-        if (outgoing || incoming) {
-          tokens[address] = {
-            event: signature === ERC20_TRANSFER_SIGNATURE ? 'Transfer' : 'Approval',
-            from,
-            to,
-            value,
-            processing: false
-          }
-
-          meta.tokens = tokens
-          meta.walletId = [walletId]
-          meta.addresses = [outgoing ? from : to]
-          meta.ours = [true]
-        }
-      }
-    })
-  })
-
-  return meta
+function getAllowance ({ token, from, to }) {
+  const web3 = getWeb3()
+  const contract = new web3.eth.Contract(abi, token)
+  return contract.methods.allowance(from, to).call()
 }
 
 function getHooks () {
@@ -164,11 +178,11 @@ function getHooks () {
   return [{
     eventName: 'send-token',
     auth: true,
-    handler: sendToken
+    handler: args => sendToken(args)
   }, {
     eventName: 'ui-unload',
     handler: unsubscribeUpdates
   }]
 }
 
-module.exports = { getHooks }
+module.exports = { getHooks, approveToken, getAllowance }

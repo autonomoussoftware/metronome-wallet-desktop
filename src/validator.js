@@ -1,23 +1,25 @@
-import Web3 from 'web3'
-import bip39 from 'bip39'
 import { isWeiable } from './utils'
+import bip39 from 'bip39'
+import Web3 from 'web3'
 
-function validateAmout(amount, propName, errors = {}) {
+function validateAmount(amount, propName, max, errors = {}) {
   if (!amount) {
     errors[propName] = 'Amount is required'
   } else if (!isWeiable(amount)) {
     errors[propName] = 'Invalid amount'
+  } else if (max && parseFloat(amount) > parseFloat(max)) {
+    errors[propName] = 'Insufficient funds'
   }
 
   return errors
 }
 
-export function validateEthAmount(ethAmount, errors = {}) {
-  return validateAmout(ethAmount, 'ethAmount', errors)
+export function validateEthAmount(ethAmount, max, errors = {}) {
+  return validateAmount(ethAmount, 'ethAmount', max, errors)
 }
 
-export function validateMtnAmount(mtnAmount, errors = {}) {
-  return validateAmout(mtnAmount, 'mtnAmount', errors)
+export function validateMtnAmount(mtnAmount, max, errors = {}) {
+  return validateAmount(mtnAmount, 'mtnAmount', max, errors)
 }
 
 export function validateToAddress(toAddress, errors = {}) {

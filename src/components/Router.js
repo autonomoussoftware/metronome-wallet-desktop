@@ -1,6 +1,7 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
 import RecoverFromMnemonic from './RecoverFromMnemonic'
+import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
 import Settings from './Settings'
@@ -12,6 +13,12 @@ import Help from './Help'
 const Container = styled.div`
   display: flex;
   height: 100vh;
+  padding-left: 64px;
+
+  @media (min-width: 800px) {
+    padding-left: 0;
+    left: 200px;
+  }
 `
 
 const Main = styled.div`
@@ -37,6 +44,7 @@ export default class Router extends Component {
               <Route component={Help} path="/help" />
             </Switch>
           </Main>
+          <OfflineWarning />
         </Container>
       </HashRouter>
     )

@@ -30,6 +30,13 @@ function getTxType(meta, tokenData, transaction, address) {
   return 'unknown'
 }
 
+export const getConnectivity = state => state.connectivity
+
+export const getIsOnline = createSelector(
+  getConnectivity,
+  connectivityStatus => connectivityStatus.isOnline
+)
+
 export const getIsLoggedIn = state => state.session.isLoggedIn
 
 export const isSessionActive = createSelector(getIsLoggedIn, pass => !!pass)
@@ -117,7 +124,10 @@ export const getAuctionStatus = createSelector(
 
 export const getCurrentAuction = createSelector(
   getAuctionStatus,
-  auctionStatus => auctionStatus.currentAuction
+  auctionStatus =>
+    auctionStatus && auctionStatus.currentAuction
+      ? auctionStatus.currentAuction
+      : '-1'
 )
 
 export const getAuctionPriceUSD = createSelector(
@@ -212,13 +222,52 @@ export const getActiveWalletTransactions = createSelector(
         ? tokenData ? 'MTN' : 'ETH'
         : null
 
+      const contractCallFailed = meta.contractCallFailed || false
+
+      const convertedFrom =
+        txType === 'converted'
+          ? Web3.utils.toBN(transaction.value).isZero() ? 'MTN' : 'ETH'
+          : null
+
+      const fromValue = convertedFrom
+        ? convertedFrom === 'ETH'
+          ? transaction.value
+          : tokenData ? tokenData.value : null
+        : null
+
+      const toValue =
+        convertedFrom && tokenData && meta
+          ? convertedFrom === 'ETH' ? tokenData.value : meta.returnedValue
+          : null
+
+      const isApproval =
+        !!tokenData &&
+        tokenData.event === 'Approval' &&
+        !Web3.utils.toBN(tokenData.value).isZero()
+
+      const isCancelApproval =
+        !!tokenData &&
+        tokenData.event === 'Approval' &&
+        Web3.utils.toBN(tokenData.value).isZero()
+
+      const approvedValue =
+        tokenData && tokenData.event === 'Approval' ? tokenData.value : null
+
       return {
         transaction,
         receipt,
+        meta,
         parsed: {
           mtnBoughtInAuction,
+          contractCallFailed,
           ethSpentInAuction,
+          isCancelApproval,
+          convertedFrom,
+          approvedValue,
           isProcessing,
+          isApproval,
+          fromValue,
+          toValue,
           txType,
           symbol,
           value,
@@ -245,4 +294,37 @@ export const hasEnoughData = createSelector(
     mtnBalance !== null &&
     ethRate !== null &&
     blockHeight !== null
+)
+
+export const isSendEnabled = createSelector(
+  getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
+  getIsOnline,
+  (ethBalance, mtnBalance, isOnline) => {
+    const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
+    return isOnline && (hasFunds(ethBalance) || hasFunds(mtnBalance))
+  }
+)
+
+export const isAuctionEnabled = createSelector(
+  getAuctionStatus,
+  getIsOnline,
+  (auctionStatus, isOnline) =>
+    isOnline &&
+    auctionStatus &&
+    auctionStatus.tokenRemaining &&
+    Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
+)
+
+export const isConverterEnabled = createSelector(
+  getCurrentAuction,
+  getIsOnline,
+  (currentAuction, isOnline) => {
+    const isInDailyAuction = parseInt(currentAuction, 10) > 0
+
+    // TODO remove this when Converter Contract is working fine
+    const isConverterWorking = true
+
+    return isConverterWorking && isInDailyAuction && isOnline
+  }
 )

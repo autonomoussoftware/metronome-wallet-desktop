@@ -14,9 +14,9 @@ function getConverterStatus ({ web3, address }) {
   return promiseAllProps(calls)
 }
 
-function encodeConvertEthToMtn ({ web3, address, value }) {
+function encodeConvertEthToMtn ({ web3, address, minReturn = 1 }) {
   const contract = new web3.eth.Contract(abi, address)
-  const convert = contract.methods.convertEthToMtn(value)
+  const convert = contract.methods.convertEthToMtn(minReturn)
   const data = convert.encodeABI()
 
   return data

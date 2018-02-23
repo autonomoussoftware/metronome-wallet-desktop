@@ -1,14 +1,19 @@
+const os = require('os')
 const path = require('path')
+const Raven = require('raven')
 const { app } = require('electron')
 const logger = require('electron-log')
 const isDev = require('electron-is-dev')
 const unhandled = require('electron-unhandled')
 
+const config = require('./config')
 const initMenu = require('./menu')
 
 logger.transports.file.appName = 'metronome-desktop-wallet'
 
 if (isDev) {
+  require('dotenv').config()
+
   logger.transports.console.level = 'debug'
   logger.transports.file.level = 'debug'
 
@@ -27,6 +32,19 @@ if (isDev) {
   })
 }
 
+if (config.sentryDsn) {
+  Raven.config(config.sentryDsn, {
+    captureUnhandledRejections: true,
+    tags: {
+      process: process.type,
+      electron: process.versions.electron,
+      chrome: process.versions.chrome,
+      platform: os.platform(),
+      platform_release: os.release()
+    }
+  }).install()
+}
+
 unhandled({ logger: logger.error })
 
 app.on('window-all-closed', function() {
@@ -42,7 +60,7 @@ createWindow()
 const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 
 app.on('ready', function() {
-  logger.info('App ready, initlilizing...')
+  logger.info('App ready, initializing...')
   initMenu()
   initMainWorker()
 })
