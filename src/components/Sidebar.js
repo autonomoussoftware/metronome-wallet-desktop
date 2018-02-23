@@ -24,6 +24,9 @@ const Container = styled.div`
   @media (min-width: 800px) {
     position: static;
     width: 200px;
+    &:hover {
+      box-shadow: none;
+    }
   }
 `
 
@@ -158,7 +161,7 @@ const Footer = styled.div`
   }
 `
 
-class App extends Component {
+class Sidebar extends Component {
   render() {
     return (
       <Container>
@@ -208,4 +211,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default Sidebar

@@ -228,23 +228,37 @@ export const getActiveWalletTransactions = createSelector(
           : tokenData ? tokenData.value : null
         : null
 
-      // TODO surely this need to be changed...
-      // when converting MTN -> ETH resulting ETH value is transaction.value?
-      const toValue = convertedFrom
-        ? convertedFrom === 'ETH'
-          ? tokenData ? tokenData.value : null
-          : transaction.value
-        : null
+      const toValue =
+        convertedFrom && tokenData && meta
+          ? convertedFrom === 'ETH' ? tokenData.value : meta.returnedValue
+          : null
+
+      const isApproval =
+        !!tokenData &&
+        tokenData.event === 'Approval' &&
+        !Web3.utils.toBN(tokenData.value).isZero()
+
+      const isCancelApproval =
+        !!tokenData &&
+        tokenData.event === 'Approval' &&
+        Web3.utils.toBN(tokenData.value).isZero()
+
+      const approvedValue =
+        tokenData && tokenData.event === 'Approval' ? tokenData.value : null
 
       return {
         transaction,
         receipt,
+        meta,
         parsed: {
           mtnBoughtInAuction,
           contractCallFailed,
           ethSpentInAuction,
+          isCancelApproval,
           convertedFrom,
+          approvedValue,
           isProcessing,
+          isApproval,
           fromValue,
           toValue,
           txType,
