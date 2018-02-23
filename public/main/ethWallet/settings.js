@@ -43,9 +43,14 @@ function isAddressInWallet ({ walletId, address }) {
   return addresses.includes(address.toLowerCase())
 }
 
+function getTracerApiUrl () {
+  return settings.get('app.tracerApiUrl')
+}
+
 module.exports = {
   findWalletId,
   getAddressBalance,
+  getTracerApiUrl,
   getWallet,
   getWalletAddresses,
   getWalletAddressIndex,
