@@ -10,10 +10,12 @@ import Web3 from 'web3'
 import {
   validateMtnAmount,
   validatePassword,
-  validateToAddress
+  validateToAddress,
+  validateGasLimit,
+  validateGasPrice
 } from '../validator'
 
-const MaxBtn = BaseBtn.extend`
+const FloatBtn = BaseBtn.extend`
   float: right;
   line-height: 1.8rem;
   opacity: 0.5;
@@ -22,10 +24,17 @@ const MaxBtn = BaseBtn.extend`
   letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-top: 0.4rem;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`
+
+const GasLabel = styled.span`
+  opacity: 0.5;
+  font-size: 1.3rem;
+  white-space: nowrap;
 `
 
 const ErrorMsg = styled.div`
@@ -106,7 +115,9 @@ class SendMTNForm extends React.Component {
     ev.preventDefault()
 
     const errors = this.validate()
-    if (Object.keys(errors).length > 0) return this.setState({ errors })
+    if (Object.keys(errors).length > 0) {
+      return this.setState({ errors })
+    }
 
     const { password, toAddress, mtnAmount, gasLimit, gasPrice } = this.state
 
@@ -118,7 +129,7 @@ class SendMTNForm extends React.Component {
         from: this.props.from,
         to: toAddress,
         gasLimit,
-        gasPrice
+        gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
       })
         .then(this.props.onSuccess)
         .catch(err =>
@@ -130,15 +141,16 @@ class SendMTNForm extends React.Component {
     )
   }
 
-  // Perform validations and return an object of type { fieldId: [String] }
   validate = () => {
-    const { password, toAddress, mtnAmount } = this.state
+    const { password, toAddress, mtnAmount, gasLimit, gasPrice } = this.state
     const max = Web3.utils.fromWei(this.props.availableMTN)
 
     return {
       ...validateToAddress(toAddress),
       ...validateMtnAmount(mtnAmount, max),
-      ...validatePassword(password)
+      ...validatePassword(password),
+      ...validateGasPrice(gasPrice),
+      ...validateGasLimit(gasLimit)
     }
   }
 
@@ -158,7 +170,7 @@ class SendMTNForm extends React.Component {
     return (
       <Flex.Column grow="1">
         <Sp pt={4} pb={3} px={3}>
-          <form onSubmit={this.onSubmit} id="sendForm">
+          <form onSubmit={this.onSubmit} id="sendForm" novalidate>
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
@@ -170,9 +182,9 @@ class SendMTNForm extends React.Component {
               id="toAddress"
             />
             <Sp mt={3}>
-              <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+              <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
                 MAX
-              </MaxBtn>
+              </FloatBtn>
               <TextInput
                 placeholder="0.00"
                 onChange={this.onInputChange}
@@ -197,10 +209,10 @@ class SendMTNForm extends React.Component {
               </Flex.Item>
             </Sp>
 
-            <Sp my={2}>
+            <Sp mt={4} mb={2}>
               <Flex.Row justify="space-between">
                 <Flex.Item grow="1" basis="0">
-                  {showGasFields && (
+                  {showGasFields ? (
                     <TextInput
                       type="number"
                       onChange={this.onInputChange}
@@ -209,16 +221,15 @@ class SendMTNForm extends React.Component {
                       value={gasLimit}
                       id="gasLimit"
                     />
+                  ) : (
+                    <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
                   )}
                 </Flex.Item>
 
-                <Sp mt={6} mx={1} />
+                {showGasFields && <Sp mt={6} mx={1} />}
 
                 <Flex.Item grow="1" basis="0">
-                  <MaxBtn onClick={this.onGasClick} tabIndex="-1">
-                    {showGasFields ? 'HIDE' : 'SHOW'} GAS
-                  </MaxBtn>
-                  {showGasFields && (
+                  {showGasFields ? (
                     <TextInput
                       type="number"
                       onChange={this.onInputChange}
@@ -227,8 +238,18 @@ class SendMTNForm extends React.Component {
                       value={gasPrice}
                       id="gasPrice"
                     />
+                  ) : (
+                    <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
                   )}
                 </Flex.Item>
+
+                {!showGasFields && (
+                  <Flex.Item basis="0">
+                    <FloatBtn onClick={this.onGasClick} tabIndex="-1">
+                      EDIT GAS
+                    </FloatBtn>
+                  </Flex.Item>
+                )}
               </Flex.Row>
             </Sp>
           </form>

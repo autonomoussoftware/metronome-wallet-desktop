@@ -23,18 +23,21 @@ const {
 
 let subscriptions = []
 
-function sendStatus ({ web3, webContents }) {
+function sendStatus({ web3, webContents }) {
   promiseAllProps({
     auctionStatus: getAuctionStatus({ web3, address: getAuctionAddress() }),
-    converterStatus: getConverterStatus({ web3, address: getConverterAddress() })
+    converterStatus: getConverterStatus({
+      web3,
+      address: getConverterAddress()
+    })
   })
-    .then(function ({ auctionStatus, converterStatus }) {
+    .then(function({ auctionStatus, converterStatus }) {
       logger.verbose('Metronome status', auctionStatus, converterStatus)
 
       webContents.send('auction-status-updated', auctionStatus)
       webContents.send('mtn-converter-status-updated', converterStatus)
     })
-    .catch(function (err) {
+    .catch(function(err) {
       logger.warn('Could not get metronome status', err)
 
       // TODO retry before notifying
@@ -48,38 +51,37 @@ function sendStatus ({ web3, webContents }) {
     })
 }
 
-function listenForBlocks (_, webContents) {
+function listenForBlocks(_, webContents) {
   const web3 = getWeb3()
 
   sendStatus({ web3, webContents })
 
   const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
 
-  blocksSubscription.on('data', function (header) {
+  blocksSubscription.on('data', function(header) {
     logger.verbose('New block header', header.number)
 
     // TODO throttle this to 30'
-
     sendStatus({ web3, webContents })
   })
 
-  blocksSubscription.on('error', function (err) {
+  blocksSubscription.on('error', function(err) {
     logger.error('Subscription error', err.message)
 
     // TODO notify error
   })
 
-  webContents.on('destroyed', function () {
+  webContents.on('destroyed', function() {
     blocksSubscription.unsubscribe()
   })
 
   subscriptions.push({ webContents, blocksSubscription })
 }
 
-function unsubscribeUpdates (_, webContents) {
+function unsubscribeUpdates(_, webContents) {
   const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
 
-  toUnsubscribe.forEach(function (s) {
+  toUnsubscribe.forEach(function(s) {
     logger.verbose('Unsubscribing auction status update')
     s.blocksSubscription.unsubscribe()
   })
@@ -87,25 +89,32 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function buyMetronome ({ password, from, value }) {
+function buyMetronome({ password, from, value }) {
   const address = getAuctionAddress()
 
   logger.verbose('Buying MET in auction', { from, value, address })
 
-  return sendTransaction({ password, from, to: address, value, gasMult: 2 })
+  return sendTransaction({ password, from, to: address, value })
 }
 
-function convertEthToMtn ({ password, from, value }) {
+function convertEthToMtn({ password, from, value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
 
   logger.verbose('Converting ETH to MET', { from, value, address })
 
-  return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
+  return sendTransaction({
+    password,
+    from,
+    to: address,
+    value,
+    data,
+    gasMult: 2
+  })
 }
 
-function convertMtnToEth ({ password, from, value }) {
+function convertMtnToEth({ password, from, value }) {
   const token = getTokenAddress()
   const address = getConverterAddress()
 
@@ -119,8 +128,8 @@ function convertMtnToEth ({ password, from, value }) {
     })
     .then(function () {
       logger.debug('Setting new allowance')
-      return approveToken({ password, token, from, to: address, value }, true)
-        .then(function () {
+  return approveToken({ password, token, from, to: address, value }, true).then(
+    function() {
           const web3 = getWeb3()
           const data = encodeConvertMtnToEth({ web3, address, value })
 
@@ -139,7 +148,8 @@ function convertMtnToEth ({ password, from, value }) {
     })
     .catch(function (err) {
       throw err
-    })
+    }
+  )
 }
 
 function estimateEthToMet ({ value }) {
@@ -156,34 +166,40 @@ function estimateMetToEth ({ value }) {
   return getEthForMtnResult({ web3, address, value }).then(result => ({ result }))
 }
 
-function getHooks () {
+function getHooks() {
   registerTxParser(transactionParser)
 
-  return [{
-    eventName: 'ui-ready',
-    handler: listenForBlocks
-  }, {
-    eventName: 'ui-unload',
-    handler: unsubscribeUpdates
-  }, {
-    eventName: 'mtn-buy',
-    auth: true,
-    handler: buyMetronome
-  }, {
-    eventName: 'mtn-convert-eth',
-    auth: true,
-    handler: convertEthToMtn
-  }, {
-    eventName: 'mtn-convert-mtn',
-    auth: true,
-    handler: convertMtnToEth
+  return [
+    {
+      eventName: 'ui-ready',
+      handler: listenForBlocks
+    },
+    {
+      eventName: 'ui-unload',
+      handler: unsubscribeUpdates
+    },
+    {
+      eventName: 'mtn-buy',
+      auth: true,
+      handler: buyMetronome
+    },
+    {
+      eventName: 'mtn-convert-eth',
+      auth: true,
+      handler: convertEthToMtn
+    },
+    {
+      eventName: 'mtn-convert-mtn',
+      auth: true,
+        handler: convertMtnToEth
   }, {
     eventName: 'metronome-estimate-eth-to-met',
     handler: estimateEthToMet
   }, {
     eventName: 'metronome-estimate-met-to-eth',
     handler: estimateMetToEth
-  }]
+    }
+  ]
 }
 
 module.exports = { getHooks }

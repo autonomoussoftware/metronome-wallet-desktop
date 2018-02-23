@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+const web3 = require('web3')
 const { decrypt: decryptOld } = require('../crypto/aes256cbc')
 const { encrypt, decrypt } = require('../crypto/aes256cbcIv')
 
@@ -14,7 +16,7 @@ const {
 } = require('./settings')
 const { getPrivateKey } = require('./key')
 
-function getAddressPrivateKey ({ walletId, address, password }) {
+function getAddressPrivateKey({ walletId, address, password }) {
   const { encryptedSeed, derivationPath } = getWallet(walletId)
 
   // TODO remove this check for an old encyption before production release
@@ -33,22 +35,53 @@ function getAddressPrivateKey ({ walletId, address, password }) {
   return getPrivateKey({ seed, derivationPath, index })
 }
 
-function signAndSendTransaction (args) {
+function signAndSendTransaction(args) {
   const { password } = args
-  const { from, to, value, data, gas, gasMult } = args
-  const params = { from, to, value, data, gas }
-  const options = { gasMult }
-  return completedTransactionParams(params, options)
-    .then(function (allParams) {
-      const walletId = findWalletId(from)
-      if (!walletId) {
-        return Promise.reject(new Error('Origin address not found'))
-      }
+  const { from, to, value, data, gasLimit, gasPrice } = args
 
-      const privateKey = getAddressPrivateKey({ walletId, address: from, password })
-      const transaction = getSignedTransaction({ params: allParams, privateKey })
-      return sendSignedTransaction(transaction)
+  const params = {
+    from,
+    to,
+    value,
+    data,
+    gasLimit: web3.utils.toHex(gasLimit),
+    gasPrice: web3.utils.toHex(gasPrice)
+  }
+
+  console.log(
+    '\n\nsignAndSendTransaction-->',
+    chalk.cyan(JSON.stringify(args)),
+    '\n\n'
+  )
+
+  return completedTransactionParams(params).then(function(allParams) {
+    const walletId = findWalletId(from)
+    if (!walletId) {
+      return Promise.reject(new Error('Origin address not found'))
+    }
+
+    const privateKey = getAddressPrivateKey({
+      walletId,
+      address: from,
+      password
     })
+
+    console.log(
+      '\n\ncompletedTransactionParams-->',
+      chalk.cyan(JSON.stringify(allParams)),
+      '\n\n'
+    )
+
+    const transaction = getSignedTransaction({ params: allParams, privateKey })
+
+    console.log(
+      '\n\ncompletedTransactionParams-->',
+      chalk.cyan(JSON.stringify(transaction)),
+      '\n\n'
+    )
+
+    return sendSignedTransaction(transaction)
+  })
 }
 
 module.exports = { signAndSendTransaction }
