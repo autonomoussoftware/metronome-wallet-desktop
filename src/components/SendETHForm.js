@@ -9,10 +9,12 @@ import Web3 from 'web3'
 import {
   validateEthAmount,
   validatePassword,
-  validateToAddress
+  validateToAddress,
+  validateGasPrice,
+  validateGasLimit
 } from '../validator'
 
-const MaxBtn = BaseBtn.extend`
+const FloatBtn = BaseBtn.extend`
   float: right;
   line-height: 1.8rem;
   opacity: 0.5;
@@ -21,10 +23,17 @@ const MaxBtn = BaseBtn.extend`
   letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-top: 0.4rem;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`
+
+const GasLabel = styled.span`
+  opacity: 0.5;
+  font-size: 1.3rem;
+  white-space: nowrap;
 `
 
 const ErrorMsg = styled.div`
@@ -52,9 +61,19 @@ class SendETHForm extends React.Component {
     ethAmount: null,
     usdAmount: null,
     password: null,
+    showGasFields: false,
+    gasPrice: '1',
+    gasLimit: '21000',
+    showGasFields: false,
     status: 'init',
     errors: {},
     error: null
+  }
+
+  componentDidMount() {
+    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
+      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
+    })
   }
 
   onMaxClick = () => {
@@ -63,6 +82,10 @@ class SendETHForm extends React.Component {
       usdAmount: toUSD(ethAmount, this.props.ETHprice),
       ethAmount
     })
+  }
+
+  onGasClick = () => {
+    this.setState({ showGasFields: !this.state.showGasFields })
   }
 
   onInputChange = e => {
@@ -78,20 +101,22 @@ class SendETHForm extends React.Component {
     }))
   }
 
-  onSubmit = ev => {
-    ev.preventDefault()
+  onSubmit = e => {
+    e.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { toAddress, ethAmount, password } = this.state
+    const { toAddress, ethAmount, password, gasLimit, gasPrice } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('send-eth', {
         password,
         value: Web3.utils.toWei(ethAmount.replace(',', '.')),
         from: this.props.from,
-        to: toAddress
+        to: toAddress,
+        gasLimit,
+        gasPrice: Web3.utils.toWei('0.1', 'gwei')
       })
         .then(this.props.onSuccess)
         .catch(err =>
@@ -104,13 +129,15 @@ class SendETHForm extends React.Component {
   }
 
   validate = () => {
-    const { ethAmount, toAddress, password } = this.state
+    const { ethAmount, toAddress, password, gasPrice, gasLimit } = this.state
     const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
       ...validateToAddress(toAddress),
       ...validateEthAmount(ethAmount, max),
-      ...validatePassword(password)
+      ...validatePassword(password),
+      ...validateGasPrice(gasPrice),
+      ...validateGasLimit(gasLimit)
     }
   }
 
@@ -122,7 +149,10 @@ class SendETHForm extends React.Component {
       password,
       status: sendStatus,
       errors,
-      error
+      error,
+      gasPrice,
+      gasLimit,
+      showGasFields
     } = this.state
 
     return (
@@ -141,9 +171,9 @@ class SendETHForm extends React.Component {
             <Sp mt={3}>
               <Flex.Row justify="space-between">
                 <Flex.Item grow="1" basis="0">
-                  <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                  <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
                     MAX
-                  </MaxBtn>
+                  </FloatBtn>
                   <TextInput
                     placeholder="0.00"
                     onChange={this.onInputChange}
@@ -179,6 +209,49 @@ class SendETHForm extends React.Component {
                   id="password"
                 />
               </Flex.Item>
+            </Sp>
+            <Sp mt={4} mb={2}>
+              <Flex.Row justify="space-between">
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasLimit}
+                      label="Gas Limt (UNITS)"
+                      value={gasLimit}
+                      id="gasLimit"
+                    />
+                  ) : (
+                    <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {showGasFields && <Sp mt={6} mx={1} />}
+
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasPrice}
+                      label="Gas Price (GWEI)"
+                      value={gasPrice}
+                      id="gasPrice"
+                    />
+                  ) : (
+                    <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {!showGasFields && (
+                  <Flex.Item basis="0">
+                    <FloatBtn onClick={this.onGasClick} tabIndex="-1">
+                      EDIT GAS
+                    </FloatBtn>
+                  </Flex.Item>
+                )}
+              </Flex.Row>
             </Sp>
           </form>
         </Sp>

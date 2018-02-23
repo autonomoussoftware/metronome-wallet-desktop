@@ -14,17 +14,18 @@ const Deferred = require('../lib/Deferred')
 const sha256 = require('../crypto/sha256')
 const WalletError = require('../WalletError')
 
+const getWeb3 = require('./web3')
+const { transactionParser } = require('./transactionParser')
+const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
 const { getWalletBalances } = require('./wallet')
 const { initDatabase, getDatabase } = require('./db')
+
 const {
   getAddressBalance,
   getWalletAddresses,
   isAddressInWallet
 } = require('./settings')
-const { signAndSendTransaction } = require('./send')
-const getWeb3 = require('./web3')
-const { transactionParser } = require('./transactionParser')
 
 function sendTransaction(args, resolveToReceipt) {
   const deferred = new Deferred()
