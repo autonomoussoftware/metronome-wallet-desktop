@@ -59,7 +59,7 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
-    gasPrice: '0',
+    gasPrice: '1',
     gasLimit: '21000',
     showGasFields: false,
     password: null,
@@ -111,8 +111,8 @@ class SendMTNForm extends React.Component {
     }
   }
 
-  onSubmit = ev => {
-    ev.preventDefault()
+  onSubmit = e => {
+    e.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) {
@@ -125,11 +125,11 @@ class SendMTNForm extends React.Component {
       sendToMainProcess('send-token', {
         password,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
-        token: config.MTN_TOKEN_ADDR,
         from: this.props.from,
         to: toAddress,
         gasLimit,
-        gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
+        gasPrice: Web3.utils.toWei(gasPrice, 'gwei'),
+        token: config.MTN_TOKEN_ADDR
       })
         .then(this.props.onSuccess)
         .catch(err =>
