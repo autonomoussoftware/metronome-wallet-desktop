@@ -1,4 +1,5 @@
 // TODO hdkey uses deprecated coinstring and shall use bs58check
+const chalk = require('chalk')
 const { mergeWith, isArray } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
@@ -40,6 +41,12 @@ function sendTransaction(args, resolveToReceipt) {
 
           const web3 = getWeb3()
           web3.eth.getTransaction(hash).then(function(transaction) {
+            console.log(
+              '\n\ntransactionHash-->',
+              chalk.cyan(JSON.stringify(transaction)),
+              '\n\n'
+            )
+
             moduleEmitter.emit('unconfirmed-tx', transaction)
           })
         })
@@ -435,7 +442,7 @@ function openWallets(data, webContents) {
 }
 
 function createWallet(data, webContents) {
-
+  const { password, mnemonic } = data
   const result = generateWallet(mnemonic, password)
 
   if (result.error) {
@@ -469,7 +476,11 @@ function getHooks() {
   return [
     { eventName: 'create-wallet', auth: true, handler: createWallet },
     { eventName: 'open-wallets', auth: true, handler: openWallets },
-    { eventName: 'send-eth', auth: true, handler: args => sendTransaction(args) },
+    {
+      eventName: 'send-eth',
+      auth: true,
+      handler: args => sendTransaction(args)
+    },
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
     { eventName: 'get-gas-price', handler: getGasPrice },
     { eventName: 'get-gas-limit', handler: getGasLimit }

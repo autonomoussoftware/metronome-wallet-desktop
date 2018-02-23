@@ -193,7 +193,11 @@ function getGasLimit({ token, to, from, value }) {
   const contract = new web3.eth.Contract(abi, token)
   const transfer = contract.methods.transfer(to, value)
 
-  return transfer.estimateGas({ from }).then(gasLimit => ({ gasLimit }))
+  return transfer.estimateGas({ from }).then(gasLimit => {
+    logger.verbose('Token gas limit retrieved', gasLimit)
+
+    return { gasLimit }
+  })
 }
 
   return callTokenMethod('transfer', args, waitForReceipt)
@@ -205,7 +209,7 @@ function getHooks() {
   registerTxParser(transactionParser)
 
   return [
-    { eventName: 'send-token', auth: true, handler: sendToken },
+    { eventName: 'send-token', auth: true, handler: args => sendToken(args) },
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
     { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
   ]

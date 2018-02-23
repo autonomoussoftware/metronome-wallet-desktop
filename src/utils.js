@@ -54,6 +54,17 @@ export function isWeiable(amount) {
   return isValid
 }
 
+export function isHexable(amount) {
+  let isValid
+  try {
+    Web3.utils.toHex(amount)
+    isValid = true
+  } catch (e) {
+    isValid = false
+  }
+  return isValid
+}
+
 export function isGreaterThanZero(amount) {
   const weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
   return weiAmount.gt(new BigNumber(0))

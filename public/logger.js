@@ -27,10 +27,21 @@ function getColorLevel(level = '') {
   }
 }
 
-logger.transports.console = function(msg) {
-  const color = getColorLevel(msg.level)
+logger.transports.console = function(log) {
+  const color = getColorLevel(log.level)
+  const msg = log.data[0]
+  let info = ''
+
+  if (log.data[1]) {
+    info += ' => '
+    info +=
+      typeof log.data[1] === 'object'
+        ? JSON.stringify(log.data[1])
+        : log.data[1]
+  }
+
   console.log(
-    `${msg.date.toISOString()} - ${chalk[color](msg.level)}:\t ${msg.data[0]}`
+    `${log.date.toISOString()} - ${chalk[color](log.level)}:\t ${msg}\t ${info}`
   )
 }
 
