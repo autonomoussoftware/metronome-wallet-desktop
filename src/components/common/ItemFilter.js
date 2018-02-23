@@ -29,8 +29,10 @@ export default class ItemFilter extends React.Component {
   }
 
   onFilterChange = filterValue => {
-    const filteredItems = this.filterItems(filterValue, this.props.items)
-    this.setState({ filteredItems, activeFilter: filterValue })
+    if (typeof filterValue !== 'undefined') {
+      const filteredItems = this.filterItems(filterValue, this.props.items)
+      this.setState({ filteredItems, activeFilter: filterValue })
+    }
   }
 
   componentWillReceiveProps(newProps) {
