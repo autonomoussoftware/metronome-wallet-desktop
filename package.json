@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "private": true,
   "author": {
     "name": "Bloq Labs",
@@ -63,7 +63,10 @@
   "build": {
     "appId": "com.bloq.metronome.wallet.desktop",
     "productName": "Metronome Wallet",
-    "files": ["build/**/*", "node_modules/**/*"],
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
     "publish": {
       "provider": "github"
     },
@@ -114,13 +117,10 @@
     "eject": "react-scripts eject",
     "prettier": "prettier --write ./**/*.js",
     "pack": "react-scripts build && builder --dir",
-    "dev":
-      "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "debug":
-      "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
-    "release":
-      "react-scripts build && build --em.main=build/electron.js --publish always",
+    "release": "react-scripts build && build --em.main=build/electron.js --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
