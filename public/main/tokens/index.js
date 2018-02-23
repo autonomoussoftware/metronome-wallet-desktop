@@ -15,6 +15,7 @@ const {
   getTokenSymbol,
   setTokenBalance
 } = require('./settings')
+
 const {
   erc20Events,
   topicToAddress,
@@ -62,7 +63,6 @@ function sendBalances({ walletId, addresses, webContents }) {
           logger.warn('Could not get token balance', symbol, err)
 
           // TODO retry before notifying
-
           webContents.send('connectivity-state-changed', {
             ok: false,
             reason: 'Call to Ethereum node failed',
@@ -95,7 +95,6 @@ function sendBalances({ walletId, addresses, webContents }) {
 
 // TODO move all subscription code to a single place in ethWallet
 // TODO and into getHooks()
-
 let subscriptions = []
 
 ethEvents.on('wallet-opened', function({ walletId, addresses, webContents }) {
@@ -144,27 +143,25 @@ function callTokenMethod(method, args, waitForReceipt) {
   const call = contract.methods[method](to, value)
   const data = call.encodeABI()
 
-  return sendTransaction(
-    { password, from, to: token, data, gasLimit, gasPrice },
-    waitForReceipt
-  ).then(function(result) {
-    if (!waitForReceipt) {
-      return result
-    }
+  return sendTransaction({ password, from, to: token, data, gasPrice, gasLimit }, waitForReceipt)
+    .then(function (result) {
+      if (!waitForReceipt) {
+        return result
+      }
 
-    const eventName = {
-      transfer: 'Transfer',
-      approve: 'Approval'
-    }[method]
-    const signature = erc20Events.find(e => e.name === eventName).signature
-    const success =
-      result.status === 0 ||
-      result.logs.find(
-        log =>
-          log.address === token &&
+      const eventName = {
+        transfer: 'Transfer',
+        approve: 'Approval'
+      }[method]
+
+      const signature = erc20Events.find(e => e.name === eventName).signature
+      const success = (result.status === 0 ||
+        result.logs.find(log =>
+          log.address.toLowerCase() === token &&
           log.topics[0] === signature &&
           topicToAddress(log.topics[1]) === from.toLowerCase() &&
           topicToAddress(log.topics[2]) === to.toLowerCase()
+          // TODO validate data === value
         )
       )
 
@@ -184,6 +181,12 @@ function approveToken (args, waitForReceipt) {
   return callTokenMethod('approve', args, waitForReceipt)
 }
 
+function getAllowance ({ token, from, to }) {
+  const web3 = getWeb3()
+  const contract = new web3.eth.Contract(abi, token)
+  return contract.methods.allowance(from, to).call()
+}
+
 function getGasLimit({ token, to, from, value }) {
   const symbol = getTokenSymbol(token)
 
@@ -200,11 +203,6 @@ function getGasLimit({ token, to, from, value }) {
   })
 }
 
-  return callTokenMethod('transfer', args, waitForReceipt)
-}
-  const web3 = getWeb3()
-}
-
 function getHooks() {
   registerTxParser(transactionParser)
 
@@ -215,4 +213,4 @@ function getHooks() {
   ]
 }
 
-module.exports = { getHooks, approveToken }
+module.exports = { getHooks, approveToken, getAllowance }
