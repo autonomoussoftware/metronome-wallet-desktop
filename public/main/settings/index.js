@@ -2,7 +2,7 @@ const { merge, unset } = require('lodash')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-const { restart } = require('./lib/electron-restart')
+const { restart } = require('../lib/electron-restart')
 
 const settableSettings = [
   'app.node.websocketApiUrl'
@@ -19,8 +19,8 @@ function getKey (key) {
 }
 
 function setKey (key, value) {
+  settings.set(key, value)
   logger.verbose('Settings changed', key)
-  return settings.set(key, value)
 }
 
 function presetDefaults () {
