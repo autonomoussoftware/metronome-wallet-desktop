@@ -43,8 +43,8 @@ function createRendererEventsRouter () {
   const allHooks = []
 
   return {
-    use: function (module) {
-      const hooks = module.getHooks()
+    use: function (plugin) {
+      const hooks = plugin.getHooks()
 
       hooks.forEach(function (hook) {
         const existingHook = allHooks.find(h => h.eventName === hook.eventName)
