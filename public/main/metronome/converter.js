@@ -30,8 +30,22 @@ function encodeConvertMtnToEth ({ web3, address, value, minReturn = 1 }) {
   return data
 }
 
+function getMtnForEthResult ({ web3, address, value }) {
+  const contract = new web3.eth.Contract(abi, address)
+
+  return contract.methods.getMtnForEthResult(value).call()
+}
+
+function getEthForMtnResult ({ web3, address, value }) {
+  const contract = new web3.eth.Contract(abi, address)
+
+  return contract.methods.getEthForMtnResult(value).call()
+}
+
 module.exports = {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
-  getConverterStatus
+  getConverterStatus,
+  getMtnForEthResult,
+  getEthForMtnResult
 }
