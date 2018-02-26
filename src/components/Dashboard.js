@@ -43,11 +43,14 @@ const Hero = styled.div`
 `
 
 const Left = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   flex-grow: 1;
   background-color: ${p => p.theme.colors.lightShade};
   border-radius: 4px;
   padding: 0 1.2rem;
-  @media (min-width: 900px) {
+  @media (min-width: 1040px) {
     padding: 0 2.4rem;
   }
 `

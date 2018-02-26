@@ -5,57 +5,76 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
+const relSize = ratio => `calc((100vw - var(--extraWidth)) / ${ratio})`
+
 const Balance = styled.div`
+  --extraWidth: 11.2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0.75em 0;
   & + & {
     border-top: 1px solid ${p => p.theme.colors.darkShade};
+  }
+  @media (min-width: 800px) {
+    --extraWidth: 29.6rem;
+  }
+  @media (min-width: 1040px) {
+    --extraWidth: 49.2rem;
+    padding: 0.95em 0;
   }
 `
 
 const CoinSymbol = styled.div`
   border-radius: 14.1px;
   background-color: ${p => p.theme.colors.primary};
-  width: 4.3rem;
-  line-height: 3.2rem;
+  width: 4rem;
+  line-height: 2.5rem;
   font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
-  @media (min-width: 900px) {
+  @media (min-width: 1040px) {
+    line-height: 3.2rem;
     width: 6.3rem;
     font-size: 2rem;
   }
 `
 
 const Value = styled.div`
-  line-height: ${p => (p.large ? '3rem' : '2rem')};
-  font-size: ${p => (p.large ? '3.2rem' : '2.4rem')};
-  letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin: 1.6rem 3rem;
-  flex-grow: 1;
-  position: relative;
-  top: -3px;
+  ${Balance} & {
+    line-height: 1.5;
+    letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
+    text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+    margin: 0 1.6rem;
+    flex-grow: 1;
+    position: relative;
+    top: ${relSize(-300)};
+    font-size: ${relSize(35)};
 
-  @media (min-width: 900px) {
-    margin: 2.4rem 3rem;
-    line-height: ${p => (p.large ? '6rem' : '4rem')};
-    font-size: ${p => (p.large ? '4.8rem' : '3.2rem')};
+    @media (min-width: 900px) {
+      font-size: ${relSize(32)};
+    }
+
+    @media (min-width: 1040px) {
+      font-size: ${({ large }) => relSize(large ? 20 : 27)};
+    }
   }
 `
 
 const USDValue = styled.div`
-  line-height: 2.4rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  white-space: nowrap;
-  opacity: ${p => (p.hide ? '0' : '1')};
+  ${Balance} & {
+    line-height: 1.5;
+    font-weight: 600;
+    text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+    white-space: nowrap;
+    opacity: ${p => (p.hide ? '0' : '1')};
+    position: relative;
+    top: ${relSize(-400)};
+    font-size: ${relSize(42)};
 
-  @media (min-width: 900px) {
-    line-height: 3rem;
-    font-size: 2.4rem;
+    @media (min-width: 900px) {
+      font-size: ${relSize(40)};
+    }
   }
 `
 
