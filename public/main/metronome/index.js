@@ -8,7 +8,9 @@ const { getAuctionStatus } = require('./auctions')
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
-  getConverterStatus
+  getConverterStatus,
+  getMtnForEthResult,
+  getEthForMtnResult
 } = require('./converter')
 const { transactionParser } = require('./transactionParser')
 const {
@@ -140,6 +142,20 @@ function convertMtnToEth ({ password, from, value }) {
     })
 }
 
+function estimateEthToMet ({ value }) {
+  const web3 = getWeb3()
+  const address = getConverterAddress()
+
+  return getMtnForEthResult({ web3, address, value })
+}
+
+function estimateMetToEth ({ value }) {
+  const web3 = getWeb3()
+  const address = getConverterAddress()
+
+  return getEthForMtnResult({ web3, address, value })
+}
+
 function getHooks () {
   registerTxParser(transactionParser)
 
@@ -161,6 +177,12 @@ function getHooks () {
     eventName: 'mtn-convert-mtn',
     auth: true,
     handler: convertMtnToEth
+  }, {
+    eventName: 'metronome-estimate-eth',
+    handler: estimateEthToMet
+  }, {
+    eventName: 'metronome-estimate-met',
+    handler: estimateMetToEth
   }]
 }
 
