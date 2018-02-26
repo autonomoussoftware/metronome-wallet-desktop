@@ -1,7 +1,7 @@
-const settings = require('electron-settings')
+const { getPasswordHash } = require('./settings')
 
 function onboardingStatus () {
-  const onboardingComplete = !!settings.get('user.passwordHash')
+  const onboardingComplete = !!getPasswordHash()
   return { onboardingComplete }
 }
 
