@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
 
-const { isValidPassword } = require('./user')
+const { isValidPassword } = require('./password')
 const settings = require('./settings')
 const WalletError = require('./WalletError')
 
@@ -68,13 +68,14 @@ function createRendererEventsRouter () {
         const { eventName, handlers, auth } = hook
 
         onRendererEvent(eventName, function (data, webContents) {
-          if (auth && !isValidPassword(data.password)) {
-            return { error: new WalletError('Invalid password') }
-          }
+          return (auth ? isValidPassword(data.password) : Promise.resolve(true))
+            .then(function (success) {
+              if (!success) {
+                return { error: new WalletError('Invalid password') }
+              }
 
-          return Promise.all(handlers.map(fn => fn(data, webContents)))
-            .then(function (results) {
-              return Object.assign({}, ...results)
+              return Promise.all(handlers.map(fn => fn(data, webContents)))
+                .then(results => Object.assign({}, ...results))
             })
         })
       })
