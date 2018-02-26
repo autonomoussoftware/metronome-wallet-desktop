@@ -35,9 +35,11 @@ export function validateToAddress(toAddress, errors = {}) {
 export function validateGasLimit(gasLimit, min, errors = {}) {
   if (!gasLimit) {
     errors.gasLimit = 'Gas limit is required'
-  } else if (!isHexable(gasLimit.replace(',', '.'))) {
-    errors.gasLimit = 'Invalid gas limit'
-  } else if (gasLimit <= 0) {
+  }
+  // } else if (!isHexable(gasLimit.replace(',', '.'))) {
+  //   errors.gasLimit = 'Invalid gas limit'
+  // }
+  else if (gasLimit <= 0) {
     errors.gasLimit = 'Gas limit must be greater than 0'
   }
 
@@ -47,9 +49,11 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
 export function validateGasPrice(gasPrice, errors = {}) {
   if (!gasPrice) {
     errors.gasPrice = 'Gas price is required'
-  } else if (!isHexable(gasPrice.replace(',', '.'))) {
-    errors.gasPrice = 'Invalid gas price'
-  } else if (gasPrice <= 0) {
+  }
+  // else if (!isHexable(gasPrice.replace(',', '.'))) {
+  //   errors.gasPrice = 'Invalid gas price'
+  // }
+  else if (gasPrice <= 0) {
     errors.gasPrice = 'Gas price must be greater than 0'
   }
 
