@@ -1,6 +1,7 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
 import { validateEthAmount, validatePassword } from '../validator'
 import { sendToMainProcess, toETH, toUSD } from '../utils'
+import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -162,6 +163,7 @@ class ConvertETHtoMTNForm extends React.Component {
                 id="password"
               />
             </Sp>
+            <ConverterEstimates amount={ethAmount} convertTo="MTN" />
           </form>
         </Sp>
         <Footer>

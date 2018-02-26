@@ -146,14 +146,14 @@ function estimateEthToMet ({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getMtnForEthResult({ web3, address, value })
+  return getMtnForEthResult({ web3, address, value }).then(result => ({ result }))
 }
 
 function estimateMetToEth ({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getEthForMtnResult({ web3, address, value })
+  return getEthForMtnResult({ web3, address, value }).then(result => ({ result }))
 }
 
 function getHooks () {

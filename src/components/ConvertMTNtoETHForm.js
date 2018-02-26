@@ -1,6 +1,7 @@
 import { validateMtnAmount, validatePassword } from '../validator'
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess } from '../utils'
+import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -72,11 +73,15 @@ class ConvertMTNtoETHForm extends React.Component {
     const { password, mtnAmount } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('mtn-convert-mtn', {
-        password,
-        value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
-        from: this.props.from
-      }, 600000) // timeout to 10 minute
+      sendToMainProcess(
+        'mtn-convert-mtn',
+        {
+          password,
+          value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
+          from: this.props.from
+        },
+        600000
+      ) // timeout to 10 minute
         .then(this.props.onSuccess)
         .catch(err =>
           this.setState({
@@ -134,6 +139,7 @@ class ConvertMTNtoETHForm extends React.Component {
                   id="password"
                 />
               </Sp>
+              <ConverterEstimates amount={mtnAmount} convertTo="ETH" />
             </div>
           </form>
         </Sp>
