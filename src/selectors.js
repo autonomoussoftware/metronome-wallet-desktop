@@ -148,6 +148,11 @@ export const getConverterStatus = createSelector(
   converter => converter.status
 )
 
+export const getConverterPrice = createSelector(
+  getConverterStatus,
+  converterStatus => _.get(converterStatus, 'currentPrice', null)
+)
+
 export const getConverterPriceUSD = createSelector(
   getConverterStatus,
   getEthRate,
