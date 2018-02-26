@@ -2,7 +2,7 @@ const { ipcMain } = require('electron')
 const logger = require('electron-log')
 
 const { isValidPassword } = require('./user')
-const { presetDefault: presetDefaultSettings } = require('./settings')
+const settings = require('./settings')
 const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
@@ -83,7 +83,8 @@ function createRendererEventsRouter () {
 }
 
 function initMainWorker () {
-  presetDefaultSettings()
+  settings.presetDefaults()
+  settings.attachSync(ipcMain)
 
   ipcMain.on('log.error', function (event, args) {
     logger.error(args)
