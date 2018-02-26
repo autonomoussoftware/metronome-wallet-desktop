@@ -13,12 +13,11 @@ function getAddressBalance(address) {
   return web3.eth.getBalance(address)
 }
 
-function completedTransactionParams(params, options) {
-  const { from, gasLimit, gasPrice } = params
+function completedTransactionParams(params) {
+  const { from } = params
 
 
   const web3 = getWeb3()
-
 
   const promises = {
     chainId: web3.eth.net.getId(),
@@ -45,17 +44,7 @@ function sendSignedTransaction(signedTransaction) {
   const hash = signedTransaction.hash()
   const string = bufferToHexString(signedTransaction.serialize())
 
-  console.log(
-    '\n\nsendSignedTransaction-->',
-    chalk.magenta(hash),
-    '\n\n'
-  )
 
-  console.log(
-    '\n\nsendSignedTransaction-->',
-    chalk.magenta(string),
-    '\n\n'
-  )
 
   const emitter = web3.eth.sendSignedTransaction(string)
 

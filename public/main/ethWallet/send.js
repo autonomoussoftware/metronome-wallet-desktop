@@ -54,8 +54,7 @@ function signAndSendTransaction(args) {
     '\n\n'
   )
 
-  return completedTransactionParams(params, { gasMult: 2 })
-    .then(function(allParams) {
+  return completedTransactionParams(params).then(function(allParams) {
     const walletId = findWalletId(from)
     if (!walletId) {
       return Promise.reject(new Error('Origin address not found'))

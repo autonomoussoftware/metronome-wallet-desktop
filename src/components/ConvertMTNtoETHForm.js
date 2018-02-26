@@ -1,4 +1,3 @@
-import { validateMtnAmount, validatePassword } from '../validator'
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess } from '../utils'
 import ConverterEstimates from './ConverterEstimates'
@@ -9,7 +8,14 @@ import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
 
-const MaxBtn = BaseBtn.extend`
+import {
+  validateMtnAmount,
+  validatePassword,
+  validateGasPrice,
+  validateGasLimit
+} from '../validator'
+
+const FloatBtn = BaseBtn.extend`
   float: right;
   line-height: 1.8rem;
   opacity: 0.5;
@@ -18,10 +24,16 @@ const MaxBtn = BaseBtn.extend`
   letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-top: 0.4rem;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`
+const GasLabel = styled.span`
+  opacity: 0.5;
+  font-size: 1.3rem;
+  white-space: nowrap;
 `
 
 const ErrorMsg = styled.p`
@@ -46,8 +58,21 @@ class ConvertMTNtoETHForm extends React.Component {
     mtnAmount: null,
     password: null,
     status: 'init',
+    showGasFields: false,
+    gasPrice: '1',
+    gasLimit: '21000',
     errors: {},
     error: null
+  }
+
+  componentDidMount() {
+    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
+      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
+    })
+  }
+
+  onGasClick = () => {
+    this.setState({ showGasFields: !this.state.showGasFields })
   }
 
   onMaxClick = () => {
@@ -64,13 +89,30 @@ class ConvertMTNtoETHForm extends React.Component {
     }))
   }
 
-  onSubmit = ev => {
-    ev.preventDefault()
+  onInputBlur = e => {
+    const { mtnAmount } = this.state
+
+    if (!mtnAmount) {
+      return
+    }
+
+    console.log('Input Blur')
+    sendToMainProcess('mtn-convert-mtn-gas-price', {
+      from: this.props.from,
+      value: Web3.utils.toWei(mtnAmount.replace(',', '.'))
+    }).then(({ gasLimit }) => {
+      console.log('Input Blur 2')
+      this.setState({ gasLimit: gasLimit.toString() })
+    })
+  }
+
+  onSubmit = e => {
+    e.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { password, mtnAmount } = this.state
+    const { password, mtnAmount, gasPrice, gasLimit } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess(
@@ -78,7 +120,9 @@ class ConvertMTNtoETHForm extends React.Component {
         {
           password,
           value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
-          from: this.props.from
+          from: this.props.from,
+          gasLimit,
+          gasPrice
         },
         600000
       ) // timeout to 10 minute
@@ -93,12 +137,14 @@ class ConvertMTNtoETHForm extends React.Component {
   }
 
   validate = () => {
-    const { password, mtnAmount } = this.state
+    const { password, mtnAmount, gasPrice, gasLimit } = this.state
     const max = Web3.utils.fromWei(this.props.availableMTN)
 
     return {
       ...validateMtnAmount(mtnAmount, max),
-      ...validatePassword(password)
+      ...validatePassword(password),
+      ...validateGasPrice(gasPrice),
+      ...validateGasLimit(gasLimit)
     }
   }
 
@@ -108,7 +154,10 @@ class ConvertMTNtoETHForm extends React.Component {
       password,
       status: convertStatus,
       errors,
-      error
+      error,
+      gasPrice,
+      gasLimit,
+      showGasFields
     } = this.state
 
     return (
@@ -116,13 +165,14 @@ class ConvertMTNtoETHForm extends React.Component {
         <Sp pt={4} pb={3} px={3}>
           <form onSubmit={this.onSubmit} id="convertForm">
             <div>
-              <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+              <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
                 MAX
-              </MaxBtn>
+              </FloatBtn>
               <TextInput
                 placeholder="0.00"
                 autoFocus
                 onChange={this.onInputChange}
+                onBlur={this.onInputBlur}
                 error={errors.mtnAmount}
                 label="Amount (MET)"
                 value={mtnAmount}
@@ -138,6 +188,49 @@ class ConvertMTNtoETHForm extends React.Component {
                   type="password"
                   id="password"
                 />
+              </Sp>
+              <Sp mt={4} mb={2}>
+                <Flex.Row justify="space-between">
+                  <Flex.Item grow="1" basis="0">
+                    {showGasFields ? (
+                      <TextInput
+                        type="number"
+                        onChange={this.onInputChange}
+                        error={errors.gasLimit}
+                        label="Gas Limt (UNITS)"
+                        value={gasLimit}
+                        id="gasLimit"
+                      />
+                    ) : (
+                      <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
+                    )}
+                  </Flex.Item>
+
+                  {showGasFields && <Sp mt={6} mx={1} />}
+
+                  <Flex.Item grow="1" basis="0">
+                    {showGasFields ? (
+                      <TextInput
+                        type="number"
+                        onChange={this.onInputChange}
+                        error={errors.gasPrice}
+                        label="Gas Price (GWEI)"
+                        value={gasPrice}
+                        id="gasPrice"
+                      />
+                    ) : (
+                      <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
+                    )}
+                  </Flex.Item>
+
+                  {!showGasFields && (
+                    <Flex.Item basis="0">
+                      <FloatBtn onClick={this.onGasClick} tabIndex="-1">
+                        EDIT GAS
+                      </FloatBtn>
+                    </Flex.Item>
+                  )}
+                </Flex.Row>
               </Sp>
               <ConverterEstimates amount={mtnAmount} convertTo="ETH" />
             </div>

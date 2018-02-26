@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+
 import {
   validateEthAmount,
   validatePassword,
@@ -64,7 +65,6 @@ class SendETHForm extends React.Component {
     showGasFields: false,
     gasPrice: '1',
     gasLimit: '21000',
-    showGasFields: false,
     status: 'init',
     errors: {},
     error: null
@@ -105,7 +105,7 @@ class SendETHForm extends React.Component {
     e.preventDefault()
 
     const errors = this.validate()
-    if (Object.keys(errors).length > 0) return this.setState({ errors })
+    if (Object.keys(errors).length > 0) { return this.setState({ errors }) }
 
     const { toAddress, ethAmount, password, gasLimit, gasPrice } = this.state
 
@@ -116,7 +116,7 @@ class SendETHForm extends React.Component {
         from: this.props.from,
         to: toAddress,
         gasLimit,
-        gasPrice: Web3.utils.toWei('0.1', 'gwei')
+        gasPrice
       })
         .then(this.props.onSuccess)
         .catch(err =>
