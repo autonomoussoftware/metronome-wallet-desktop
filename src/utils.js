@@ -55,14 +55,12 @@ export function isWeiable(amount) {
 }
 
 export function isHexable(amount) {
-  let isValid
   try {
     Web3.utils.toHex(amount)
-    isValid = true
+    return true
   } catch (e) {
-    isValid = false
+    return false
   }
-  return isValid
 }
 
 export function isGreaterThanZero(amount) {

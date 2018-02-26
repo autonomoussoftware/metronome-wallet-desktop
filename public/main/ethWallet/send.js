@@ -42,8 +42,8 @@ function signAndSendTransaction(args) {
   const params = {
     from,
     to,
-    value,
     data,
+    value: web3.utils.toHex(value),
     gasLimit: web3.utils.toHex(gasLimit),
     gasPrice: web3.utils.toHex(gasPrice)
   }
@@ -54,7 +54,8 @@ function signAndSendTransaction(args) {
     '\n\n'
   )
 
-  return completedTransactionParams(params).then(function(allParams) {
+  return completedTransactionParams(params, { gasMult: 2 })
+    .then(function(allParams) {
     const walletId = findWalletId(from)
     if (!walletId) {
       return Promise.reject(new Error('Origin address not found'))
@@ -67,7 +68,7 @@ function signAndSendTransaction(args) {
     })
 
     console.log(
-      '\n\ncompletedTransactionParams-->',
+      '\n\n 2.completedTransactionParams-->',
       chalk.cyan(JSON.stringify(allParams)),
       '\n\n'
     )
@@ -75,7 +76,7 @@ function signAndSendTransaction(args) {
     const transaction = getSignedTransaction({ params: allParams, privateKey })
 
     console.log(
-      '\n\ncompletedTransactionParams-->',
+      '\n\n 3.completedTransactionParams-->',
       chalk.cyan(JSON.stringify(transaction)),
       '\n\n'
     )
