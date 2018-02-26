@@ -1,6 +1,8 @@
-import { ItemFilter, LogoIcon, Sp } from './common'
+import { Collapsable, ItemFilter, LogoIcon, Sp } from './common'
 import { TransitionGroup } from 'react-transition-group'
+import * as selectors from '../selectors'
 import ReceiptModal from './ReceiptModal'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import TxRow from './TxRow'
@@ -76,7 +78,7 @@ const FooterLogo = styled.div`
   margin: 0 auto;
 `
 
-export default class TxList extends React.Component {
+class TxList extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -92,11 +94,23 @@ export default class TxList extends React.Component {
     selectedTx: null
   }
 
-  onTxClicked = selectedTx => {
-    this.setState({ activeModal: 'receipt', selectedTx })
+  onTxClicked = ({ target }) => {
+    this.setState({ activeModal: 'receipt', selectedTx: target.dataset.hash })
   }
 
   onCloseModal = () => this.setState({ activeModal: null })
+
+  renderRow = tx => {
+    return (
+      <Collapsable key={tx.transaction.hash} height="6.5rem" {...tx}>
+        <TxRow
+          data-hash={tx.transaction.hash}
+          onClick={this.onTxClicked}
+          {...tx}
+        />
+      </Collapsable>
+    )
+  }
 
   render() {
     const { items } = this.props
@@ -144,13 +158,7 @@ export default class TxList extends React.Component {
 
               <List>
                 <TransitionGroup>
-                  {filteredItems.map(tx => (
-                    <TxRow
-                      onClick={() => this.onTxClicked(tx.transaction.hash)}
-                      key={tx.transaction.hash}
-                      {...tx}
-                    />
-                  ))}
+                  {filteredItems.map(this.renderRow)}
                 </TransitionGroup>
                 <FooterLogo>
                   <LogoIcon />
@@ -168,3 +176,9 @@ export default class TxList extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  items: selectors.getActiveWalletTransactions(state)
+})
+
+export default connect(mapStateToProps)(TxList)

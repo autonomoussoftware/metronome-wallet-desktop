@@ -16,7 +16,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 3;
   &:hover {
     width: 200px;
     box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.2);
