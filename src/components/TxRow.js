@@ -14,9 +14,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 -1px 0 0 ${p => p.theme.colors.lightShade} inset;
-  &:hover {
-    cursor: pointer;
-  }
+  cursor: pointer;
 `
 
 const Pending = styled.div`
@@ -31,7 +29,7 @@ const Pending = styled.div`
 `
 
 const Details = styled.div`
-  line-height: 1.4rem;
+  line-height: 1.6rem;
   font-size: 1rem;
   letter-spacing: 0px;
   color: ${p => p.theme.colors.copy};

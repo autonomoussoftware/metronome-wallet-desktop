@@ -15,13 +15,13 @@ const Container = styled.div`
 
   &.collapse-enter.collapse-enter-active,
   &.collapse-exit {
-    height: ${({ height }) => height};
+    height: ${({ maxHeight }) => maxHeight};
   }
 `
 
 const Collapsable = ({ height, children, timeout = 200, ...other }) => (
   <CSSTransition timeout={timeout} classNames="collapse" {...other}>
-    <Container timeout={timeout} height={height}>
+    <Container timeout={timeout} maxHeight={height}>
       {children}
     </Container>
   </CSSTransition>
