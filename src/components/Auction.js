@@ -235,7 +235,7 @@ class Auction extends React.Component {
                       <Label>Current Price</Label>
                       <Flex.Column>
                         <Flex.Row align="baseline">
-                          <Badge>1 MTN</Badge>
+                          <Badge>1 MET</Badge>
                           <Price>
                             <DisplayValue
                               maxSize="inherit"
@@ -256,7 +256,7 @@ class Auction extends React.Component {
                         <DisplayValue
                           maxSize="inherit"
                           value={auctionStatus.tokenRemaining}
-                          post=" MTN"
+                          post=" MET"
                         />
                       </AvailableAmount>
                     </Flex.Row>

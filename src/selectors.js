@@ -224,14 +224,14 @@ export const getActiveWalletTransactions = createSelector(
           : null
 
       const symbol = ['received', 'sent'].includes(txType)
-        ? tokenData ? 'MTN' : 'ETH'
+        ? tokenData ? 'MET' : 'ETH'
         : null
 
       const contractCallFailed = meta.contractCallFailed || false
 
       const convertedFrom =
         txType === 'converted'
-          ? Web3.utils.toBN(transaction.value).isZero() ? 'MTN' : 'ETH'
+          ? Web3.utils.toBN(transaction.value).isZero() ? 'MET' : 'ETH'
           : null
 
       const fromValue = convertedFrom

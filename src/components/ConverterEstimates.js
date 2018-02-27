@@ -24,7 +24,7 @@ const ErrorMsg = styled.div`
 class ConverterEstimates extends React.Component {
   static propTypes = {
     converterPrice: PropTypes.string.isRequired,
-    convertTo: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+    convertTo: PropTypes.oneOf(['ETH', 'MET']).isRequired,
     amount: PropTypes.string
   }
 
@@ -39,7 +39,7 @@ class ConverterEstimates extends React.Component {
       return this.setState({ estimate: null })
     }
     sendToMainProcess(
-      convertTo === 'MTN' ? 'metronome-estimate-met' : 'metronome-estimate-eth',
+      convertTo === 'MET' ? 'metronome-estimate-met' : 'metronome-estimate-eth',
       {
         value: Web3.utils.toWei(amount.replace(',', '.'))
       }

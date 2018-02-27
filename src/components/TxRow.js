@@ -99,7 +99,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['sent']).isRequired,
-        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         value: PropTypes.string.isRequired,
         isCancelApproval: PropTypes.bool.isRequired,
         approvedValue: PropTypes.string,
@@ -109,7 +109,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['received']).isRequired,
-        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         value: PropTypes.string.isRequired,
         from: PropTypes.string.isRequired
       }),
@@ -122,7 +122,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['converted']).isRequired,
-        convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        convertedFrom: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         fromValue: PropTypes.string,
         toValue: PropTypes.string
       })
@@ -202,7 +202,7 @@ class TxRow extends React.Component {
                     <DisplayValue
                       maxSize="2rem"
                       value={tx.mtnBoughtInAuction}
-                      post=" MTN"
+                      post=" MET"
                     />
                   </React.Fragment>
                 )}
@@ -213,7 +213,7 @@ class TxRow extends React.Component {
                   <DisplayValue
                     maxSize="2rem"
                     value={tx.fromValue}
-                    post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MTN'}
+                    post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
                   />
                 ) : (
                   <div>New transaction</div>
@@ -226,7 +226,7 @@ class TxRow extends React.Component {
                       <DisplayValue
                         maxSize="2rem"
                         value={tx.toValue}
-                        post={tx.convertedFrom === 'ETH' ? ' MTN' : ' ETH'}
+                        post={tx.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
                       />
                     </React.Fragment>
                   )}
@@ -254,7 +254,7 @@ class TxRow extends React.Component {
                     <Currency>{tx.convertedFrom}</Currency>
                     {isPending ? ' to ' : ' converted to '}
                     <Currency>
-                      {tx.convertedFrom === 'ETH' ? 'MTN' : 'ETH'}
+                      {tx.convertedFrom === 'ETH' ? 'MET' : 'ETH'}
                     </Currency>
                   </div>
                 )}
@@ -268,7 +268,7 @@ class TxRow extends React.Component {
 
                 {tx.txType === 'auction' && (
                   <div>
-                    <Currency>MTN</Currency> purchased in auction
+                    <Currency>MET</Currency> purchased in auction
                   </div>
                 )}
 
@@ -286,7 +286,7 @@ class TxRow extends React.Component {
                           ? 'Allowance cancelled for'
                           : 'Sent to'}{' '}
                     {tx.to === config.MTN_TOKEN_ADDR ? (
-                      'MTN TOKEN CONTRACT'
+                      'MET TOKEN CONTRACT'
                     ) : tx.to === config.CONVERTER_ADDR ? (
                       'CONVERTER CONTRACT'
                     ) : (

@@ -93,13 +93,13 @@ class ReceiptModal extends React.Component {
         }),
         PropTypes.shape({
           txType: PropTypes.oneOf(['sent']).isRequired,
-          symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
           value: PropTypes.string.isRequired,
           to: PropTypes.string.isRequired
         }),
         PropTypes.shape({
           txType: PropTypes.oneOf(['received']).isRequired,
-          symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
           value: PropTypes.string.isRequired,
           from: PropTypes.string.isRequired
         }),
@@ -110,7 +110,7 @@ class ReceiptModal extends React.Component {
         }),
         PropTypes.shape({
           txType: PropTypes.oneOf(['converted']).isRequired,
-          convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+          convertedFrom: PropTypes.oneOf(['ETH', 'MET']).isRequired,
           fromValue: PropTypes.string.isRequired,
           toValue: PropTypes.string.isRequired
         })
@@ -151,7 +151,7 @@ class ReceiptModal extends React.Component {
                         <DisplayValue
                           maxSize="1.6rem"
                           value={tx.parsed.mtnBoughtInAuction}
-                          post=" MTN"
+                          post=" MET"
                         />
                       </React.Fragment>
                     )}
@@ -161,7 +161,7 @@ class ReceiptModal extends React.Component {
                     <DisplayValue
                       maxSize="1.6rem"
                       value={tx.parsed.fromValue}
-                      post={tx.parsed.convertedFrom === 'ETH' ? ' ETH' : ' MTN'}
+                      post={tx.parsed.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
                     />
                     {tx.parsed.toValue && (
                       <React.Fragment>
@@ -170,7 +170,7 @@ class ReceiptModal extends React.Component {
                           maxSize="1.6rem"
                           value={tx.parsed.toValue}
                           post={
-                            tx.parsed.convertedFrom === 'ETH' ? ' MTN' : ' ETH'
+                            tx.parsed.convertedFrom === 'ETH' ? ' MET' : ' ETH'
                           }
                         />
                       </React.Fragment>

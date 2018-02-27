@@ -163,7 +163,7 @@ class ConvertETHtoMTNForm extends React.Component {
                 id="password"
               />
             </Sp>
-            <ConverterEstimates amount={ethAmount} convertTo="MTN" />
+            <ConverterEstimates amount={ethAmount} convertTo="MET" />
           </form>
         </Sp>
         <Footer>
