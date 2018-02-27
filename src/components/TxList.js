@@ -94,8 +94,11 @@ class TxList extends React.Component {
     selectedTx: null
   }
 
-  onTxClicked = ({ target }) => {
-    this.setState({ activeModal: 'receipt', selectedTx: target.dataset.hash })
+  onTxClicked = ({ currentTarget }) => {
+    this.setState({
+      activeModal: 'receipt',
+      selectedTx: currentTarget.dataset.hash
+    })
   }
 
   onCloseModal = () => this.setState({ activeModal: null })
