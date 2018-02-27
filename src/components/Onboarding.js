@@ -178,7 +178,7 @@ export default class Onboarding extends React.Component {
             </Message>
 
             <Sp mt={6}>
-              <Btn block onClick={this.onTermsAccepted}>
+              <Btn block onClick={this.onTermsAccepted} autoFocus>
                 Accept
               </Btn>
             </Sp>
@@ -269,6 +269,7 @@ export default class Onboarding extends React.Component {
                   </Btn>
                 ) : (
                   <Btn
+                    autoFocus
                     onClick={this.onMnemonicWasCopiedToggled}
                     block
                     key="confirmMnemonic"
