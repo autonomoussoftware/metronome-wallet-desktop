@@ -8,11 +8,13 @@ const settableSettings = [
   'app.node.websocketApiUrl'
 ]
 
-const overwritableSettings = [
-  'app.bestBlock',
-  'metronome.contracts',
-  'tokens.0xf583c8fe0cbf447727378e3b1e921b1ef81adda8'
-]
+const overwritableSettings = {
+  0: [
+    'app.bestBlock',
+    'metronome.contracts',
+    'tokens.0xf583c8fe0cbf447727378e3b1e921b1ef81adda8'
+  ]
+}
 
 function getKey (key) {
   return settings.get(key)
@@ -30,9 +32,11 @@ function presetDefaults () {
   const defaultSettings = require('./defaultSettings')
 
   // Clear previous settings if settings file version changed
-  if (currentSettings.settingsVersion !== defaultSettings.settingsVersion) {
+  const currentSettingsVersion = currentSettings.settingsVersion || 0
+  const settingsToOverwrite = overwritableSettings[currentSettingsVersion] || []
+  if (settingsToOverwrite.length) {
     logger.verbose('Updating default settings')
-    overwritableSettings.forEach(function (prop) {
+    settingsToOverwrite.concat(['settingsVersion']).forEach(function (prop) {
       unset(currentSettings, prop)
     })
   }
