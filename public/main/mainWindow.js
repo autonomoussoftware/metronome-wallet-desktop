@@ -1,21 +1,19 @@
+const { app, BrowserWindow } = require('electron')
 const autoUpdater = require('electron-updater').autoUpdater
 const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const notifier = require('node-notifier')
 const path = require('path')
 
+const { restart } = require('./lib/electron-restart')
+
 let mainWindow
 
 function loadWindow () {
-  const { app, BrowserWindow } = require('electron')
-
-  // Ensure the app is ready before creating the main window
+  // ensure the app is ready before creating the main window
   if (!app.isReady()) {
     logger.warn('Tried to load main window while app not ready. Reloading...')
-
-    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
-    app.exit(1)
-
+    restart(1)
     return
   }
 
@@ -23,7 +21,7 @@ function loadWindow () {
     return
   }
 
-  // TODO this should be comming from config
+  // TODO this should be read from config
   mainWindow = new BrowserWindow({
     show: false,
     width: 1140,
@@ -115,8 +113,6 @@ function showUpdateNotification (info) {
 }
 
 function createWindow () {
-  const { app } = require('electron')
-
   app.on('fullscreen', function () {
     mainWindow.isFullScreenable
       ? mainWindow.setFullScreen(true)
