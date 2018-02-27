@@ -90,7 +90,7 @@ function unsubscribeUpdates (_, webContents) {
 function buyMetronome ({ password, from, value }) {
   const address = getAuctionAddress()
 
-  logger.verbose('Buying MTN in auction', { from, value, address })
+  logger.verbose('Buying MET in auction', { from, value, address })
 
   return sendTransaction({ password, from, to: address, value, gasMult: 2 })
 }
@@ -100,7 +100,7 @@ function convertEthToMtn ({ password, from, value }) {
   const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
 
-  logger.verbose('Converting ETH to MTN', { from, value, address })
+  logger.verbose('Converting ETH to MET', { from, value, address })
 
   return sendTransaction({ password, from, to: address, value, data, gasMult: 2 })
 }
@@ -124,7 +124,7 @@ function convertMtnToEth ({ password, from, value }) {
           const web3 = getWeb3()
           const data = encodeConvertMtnToEth({ web3, address, value })
 
-          logger.verbose('Converting MTN to ETH', { from, value, address })
+          logger.verbose('Converting MET to ETH', { from, value, address })
 
           return sendTransaction({ password, from, to: address, data, gasMult: 2 })
         })

@@ -233,7 +233,7 @@ class BuyMTNDrawer extends React.Component {
                       <ExpectedMsg>
                         You would get
                         <br />
-                        {expectedMTNamount} MTN
+                        {expectedMTNamount} MET
                       </ExpectedMsg>
                     </Sp>
                   )}

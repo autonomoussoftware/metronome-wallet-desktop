@@ -78,7 +78,7 @@ class SendDrawer extends React.Component {
                     onClick={onFilterChange}
                     active={activeFilter}
                     items={[
-                      { id: 'mtn', label: 'MTN' },
+                      { id: 'mtn', label: 'MET' },
                       { id: 'eth', label: 'ETH' }
                     ]}
                   />

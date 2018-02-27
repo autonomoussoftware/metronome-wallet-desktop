@@ -81,7 +81,7 @@ export default class ConvertDrawer extends React.Component {
                       id: 'ethToMtn',
                       label: (
                         <React.Fragment>
-                          ETH<Arrow>&rarr;</Arrow>MTN
+                          ETH<Arrow>&rarr;</Arrow>MET
                         </React.Fragment>
                       )
                     },
@@ -89,7 +89,7 @@ export default class ConvertDrawer extends React.Component {
                       id: 'mtnToEth',
                       label: (
                         <React.Fragment>
-                          MTN<Arrow>&rarr;</Arrow>ETH
+                          MET<Arrow>&rarr;</Arrow>ETH
                         </React.Fragment>
                       )
                     }

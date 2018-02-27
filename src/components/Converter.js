@@ -146,7 +146,7 @@ class Converter extends React.Component {
                   <Label>Current Price</Label>
                   <Flex.Column>
                     <Flex.Row align="baseline">
-                      <Badge>1 MTN</Badge>
+                      <Badge>1 MET</Badge>
                       <Price>
                         <DisplayValue
                           maxSize="inherit"
@@ -162,12 +162,12 @@ class Converter extends React.Component {
               </Sp>
               <Sp p={2}>
                 <Flex.Row justify="space-between" align="baseline">
-                  <Label>Available MTN</Label>
+                  <Label>Available MET</Label>
                   <AvailableAmount>
                     <DisplayValue
                       maxSize="inherit"
                       value={converterStatus.availableMtn}
-                      post=" MTN"
+                      post=" MET"
                     />
                   </AvailableAmount>
                 </Flex.Row>

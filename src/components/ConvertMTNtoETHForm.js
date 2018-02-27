@@ -124,7 +124,7 @@ class ConvertMTNtoETHForm extends React.Component {
                 autoFocus
                 onChange={this.onInputChange}
                 error={errors.mtnAmount}
-                label="Amount (MTN)"
+                label="Amount (MET)"
                 value={mtnAmount}
                 id="mtnAmount"
               />

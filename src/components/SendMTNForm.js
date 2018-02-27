@@ -138,7 +138,7 @@ class SendMTNForm extends React.Component {
                 placeholder="0.00"
                 onChange={this.onInputChange}
                 error={errors.mtnAmount}
-                label="Amount (MTN)"
+                label="Amount (MET)"
                 value={mtnAmount}
                 id="mtnAmount"
               />

@@ -97,7 +97,7 @@ class BalanceBlock extends React.Component {
     return (
       <React.Fragment>
         <Balance>
-          <CoinSymbol>MTN</CoinSymbol>
+          <CoinSymbol>MET</CoinSymbol>
           <Value large>
             <DisplayValue maxSize="inherit" value={mtnBalanceWei} />
           </Value>
