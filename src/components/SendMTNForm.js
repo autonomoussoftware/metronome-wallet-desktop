@@ -1,5 +1,5 @@
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -95,7 +95,7 @@ class SendMTNForm extends React.Component {
   onInputBlur = e => {
     const { mtnAmount, toAddress } = this.state
 
-    if (!mtnAmount || !toAddress) {
+    if (!mtnAmount || !isWeiable(mtnAmount) || !toAddress) {
       return
     }
 

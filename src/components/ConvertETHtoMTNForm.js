@@ -1,5 +1,5 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { validateEthAmount, validatePassword } from '../validator'
+
 import { sendToMainProcess, toETH, toUSD } from '../utils'
 import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
@@ -9,7 +9,14 @@ import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
 
-const MaxBtn = BaseBtn.extend`
+import {
+  validateEthAmount,
+  validatePassword,
+  validateGasPrice,
+  validateGasLimit
+} from '../validator'
+
+const FloatBtn = BaseBtn.extend`
   float: right;
   line-height: 1.8rem;
   opacity: 0.5;
@@ -18,10 +25,17 @@ const MaxBtn = BaseBtn.extend`
   letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-top: 0.4rem;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`
+
+const GasLabel = styled.span`
+  opacity: 0.5;
+  font-size: 1.3rem;
+  white-space: nowrap;
 `
 
 const ErrorMsg = styled.p`
@@ -48,8 +62,21 @@ class ConvertETHtoMTNForm extends React.Component {
     usdAmount: null,
     password: null,
     status: 'init',
+    showGasFields: false,
+    gasPrice: '1',
+    gasLimit: '21000',
     errors: {},
     error: null
+  }
+
+  componentDidMount() {
+    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
+      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
+    })
+  }
+
+  onGasClick = () => {
+    this.setState({ showGasFields: !this.state.showGasFields })
   }
 
   onMaxClick = () => {
@@ -57,6 +84,21 @@ class ConvertETHtoMTNForm extends React.Component {
     this.setState({
       usdAmount: toUSD(ethAmount, this.props.ETHprice),
       ethAmount
+    })
+  }
+
+  onInputBlur = e => {
+    const { ethAmount } = this.state
+
+    if (!ethAmount || !isWeiable(ethAmount)) {
+      return
+    }
+
+    sendToMainProcess('mtn-convert-eth-gas-price', {
+      from: this.props.from,
+      value: Web3.utils.toWei(ethAmount.replace(',', '.'))
+    }).then(({ gasLimit }) => {
+      this.setState({ gasLimit: gasLimit.toString() })
     })
   }
 
@@ -73,19 +115,21 @@ class ConvertETHtoMTNForm extends React.Component {
     }))
   }
 
-  onSubmit = ev => {
-    ev.preventDefault()
+  onSubmit = e => {
+    e.preventDefault()
 
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    const { password, ethAmount } = this.state
+    const { password, ethAmount, gasPrice, gasLimit } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
       sendToMainProcess('mtn-convert-eth', {
         password,
         value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-        from: this.props.from
+        from: this.props.from,
+        gasLimit,
+        gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
       })
         .then(this.props.onSuccess)
         .catch(err =>
@@ -98,12 +142,14 @@ class ConvertETHtoMTNForm extends React.Component {
   }
 
   validate = () => {
-    const { password, ethAmount } = this.state
+    const { password, ethAmount, gasPrice, gasLimit } = this.state
     const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
       ...validateEthAmount(ethAmount, max),
-      ...validatePassword(password)
+      ...validatePassword(password),
+      ...validateGasPrice(gasPrice),
+      ...validateGasLimit(gasLimit)
     }
   }
 
@@ -114,7 +160,10 @@ class ConvertETHtoMTNForm extends React.Component {
       password,
       status: convertStatus,
       errors,
-      error
+      error,
+      gasPrice,
+      gasLimit,
+      showGasFields
     } = this.state
 
     return (
@@ -123,13 +172,14 @@ class ConvertETHtoMTNForm extends React.Component {
           <form onSubmit={this.onSubmit} id="convertForm">
             <Flex.Row justify="space-between">
               <Flex.Item grow="1" basis="0">
-                <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+                <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
                   MAX
-                </MaxBtn>
+                </FloatBtn>
                 <TextInput
                   placeholder="0.00"
                   autoFocus
                   onChange={this.onInputChange}
+                  onBlur={this.onInputBlur}
                   label="Amount (ETH)"
                   value={ethAmount}
                   error={errors.ethAmount}
@@ -162,6 +212,50 @@ class ConvertETHtoMTNForm extends React.Component {
                 disabled={convertStatus !== 'init'}
                 id="password"
               />
+            </Sp>
+
+            <Sp mt={4} mb={2}>
+              <Flex.Row justify="space-between">
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasLimit}
+                      label="Gas Limt (UNITS)"
+                      value={gasLimit}
+                      id="gasLimit"
+                    />
+                  ) : (
+                    <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {showGasFields && <Sp mt={6} mx={1} />}
+
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      error={errors.gasPrice}
+                      label="Gas Price (GWEI)"
+                      value={gasPrice}
+                      id="gasPrice"
+                    />
+                  ) : (
+                    <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {!showGasFields && (
+                  <Flex.Item basis="0">
+                    <FloatBtn onClick={this.onGasClick} tabIndex="-1">
+                      EDIT GAS
+                    </FloatBtn>
+                  </Flex.Item>
+                )}
+              </Flex.Row>
             </Sp>
             <ConverterEstimates amount={ethAmount} convertTo="MET" />
           </form>
