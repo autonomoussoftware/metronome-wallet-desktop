@@ -1,18 +1,20 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
-const { approveToken, getAllowance } = require('../tokens')
-
 const { getAuctionStatus } = require('./auctions')
+const { approveToken, getAllowance } = require('../tokens')
+const { transactionParser } = require('./transactionParser')
+const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
+
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
   getConverterStatus,
   getMtnForEthResult,
-  getEthForMtnResult
+  getEthForMtnResult,
+  getGasLimit
 } = require('./converter')
-const { transactionParser } = require('./transactionParser')
+
 const {
   getAuctionAddress,
   getConverterAddress,
@@ -20,7 +22,6 @@ const {
 } = require('./settings')
 
 // TODO move all subscription code to a single place in ethWallet
-
 let subscriptions = []
 
 function sendStatus({ web3, webContents }) {
@@ -97,7 +98,7 @@ function buyMetronome({ password, from, value }) {
   return sendTransaction({ password, from, to: address, value })
 }
 
-function convertEthToMtn({ password, from, value }) {
+function convertEthToMtn({ password, from, value, gasLimit, gasPrice }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
@@ -110,95 +111,113 @@ function convertEthToMtn({ password, from, value }) {
     to: address,
     value,
     data,
-    gasMult: 2
+    gasLimit,
+    gasPrice
   })
 }
 
-function convertMtnToEth({ password, from, value }) {
+function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
   const token = getTokenAddress()
   const address = getConverterAddress()
 
   return getAllowance({ token, from, to: address })
-    .then(function (allowance) {
+    .then(function(allowance) {
       logger.debug('Current allowance', allowance)
       const web3 = getWeb3()
       if (web3.utils.toBN(allowance).gtn(0)) {
-        return approveToken({ password, token, from, to: address, value: 0 }, true)
+        return approveToken(
+          { password, token, from, to: address, value: 0, gasPrice, gasLimit },
+          true
+        )
       }
     })
-    .then(function () {
+    .then(function() {
       logger.debug('Setting new allowance')
-  return approveToken({ password, token, from, to: address, value }, true).then(
-    function() {
+      return approveToken(
+        { password, token, from, to: address, value, gasPrice, gasLimit },
+        true
+      )
+        .then(function() {
           const web3 = getWeb3()
           const data = encodeConvertMtnToEth({ web3, address, value })
 
           logger.verbose('Converting MET to ETH', { from, value, address })
 
-          return sendTransaction({ password, from, to: address, data, gasMult: 2 })
+          return sendTransaction({
+            password,
+            from,
+            to: address,
+            data,
+            gasPrice,
+            gasLimit
+          })
         })
-        .catch(function (err) {
+        .catch(function(err) {
           logger.warn('Conversion failed - removing approval')
-          return approveToken({ password, token, from, to: address, value: 0 })
-            .then(function () {
-              logger.info('Approval removed')
-              throw err
-            })
+          return approveToken({
+            password,
+            token,
+            from,
+            to: address,
+            value: 0,
+            gasLimit,
+            gasPrice
+          }).then(function() {
+            logger.info('Approval removed')
+            throw err
+          })
         })
     })
-    .catch(function (err) {
+    .catch(function(err) {
       throw err
-    }
-  )
+    })
 }
 
-function estimateEthToMet ({ value }) {
+function estimateEthToMet({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getMtnForEthResult({ web3, address, value }).then(result => ({ result }))
+  return getMtnForEthResult({ web3, address, value }).then(result => ({
+    result
+  }))
 }
 
-function estimateMetToEth ({ value }) {
+function estimateMetToEth({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getEthForMtnResult({ web3, address, value }).then(result => ({ result }))
+  return getEthForMtnResult({ web3, address, value }).then(result => ({
+    result
+  }))
+}
+
+function getEthGasLimit({ from, value }) {
+  const web3 = getWeb3()
+  const address = getConverterAddress()
+
+  return getGasLimit({ web3, from, address, value, type: 'eth' })
+}
+
+function getMetGasLimit({ from, value }) {
+  const web3 = getWeb3()
+  const address = getConverterAddress()
+
+  return getGasLimit({ web3, from, address, value, type: 'met' })
 }
 
 function getHooks() {
   registerTxParser(transactionParser)
 
   return [
-    {
-      eventName: 'ui-ready',
-      handler: listenForBlocks
-    },
-    {
-      eventName: 'ui-unload',
-      handler: unsubscribeUpdates
-    },
-    {
-      eventName: 'mtn-buy',
-      auth: true,
-      handler: buyMetronome
-    },
-    {
-      eventName: 'mtn-convert-eth',
-      auth: true,
-      handler: convertEthToMtn
-    },
-    {
-      eventName: 'mtn-convert-mtn',
-      auth: true,
-        handler: convertMtnToEth
-  }, {
-    eventName: 'metronome-estimate-eth-to-met',
-    handler: estimateEthToMet
-  }, {
-    eventName: 'metronome-estimate-met-to-eth',
-    handler: estimateMetToEth
-    }
+    { eventName: 'ui-ready', handler: listenForBlocks },
+    { eventName: 'ui-unload', handler: unsubscribeUpdates },
+    { eventName: 'mtn-buy', auth: true, handler: buyMetronome },
+    { eventName: 'mtn-convert-eth', auth: true, handler: convertEthToMtn },
+    { eventName: 'mtn-convert-mtn', auth: true, handler: convertMtnToEth },
+    { eventName: 'metronome-estimate-eth-to-met', handler: estimateEthToMet },
+    { eventName: 'metronome-estimate-met-to-eth', handler: estimateMetToEth },
+    { eventName: 'metronome-convert-eth-gas-limit', handler: getEthGasLimit },
+    { eventName: 'metronome-convert-met-gas-limit', handler: getMetGasLimit }
   ]
 }
 
