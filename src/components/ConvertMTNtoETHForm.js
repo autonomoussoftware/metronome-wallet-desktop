@@ -96,7 +96,7 @@ class ConvertMTNtoETHForm extends React.Component {
       return
     }
 
-    sendToMainProcess('mtn-convert-mtn-gas-price', {
+    sendToMainProcess('metronome-convert-met-gas-limit', {
       from: this.props.from,
       value: Web3.utils.toWei(mtnAmount.replace(',', '.'))
     }).then(({ gasLimit }) => {

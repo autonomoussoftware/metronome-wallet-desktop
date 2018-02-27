@@ -1,6 +1,5 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-
-import { sendToMainProcess, toETH, toUSD } from '../utils'
+import { sendToMainProcess, toETH, toUSD, isWeiable } from '../utils'
 import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
@@ -94,7 +93,7 @@ class ConvertETHtoMTNForm extends React.Component {
       return
     }
 
-    sendToMainProcess('mtn-convert-eth-gas-price', {
+    sendToMainProcess('metronome-convert-eth-gas-limit', {
       from: this.props.from,
       value: Web3.utils.toWei(ethAmount.replace(',', '.'))
     }).then(({ gasLimit }) => {

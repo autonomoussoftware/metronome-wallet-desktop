@@ -170,7 +170,7 @@ class SendMTNForm extends React.Component {
     return (
       <Flex.Column grow="1">
         <Sp pt={4} pb={3} px={3}>
-          <form onSubmit={this.onSubmit} id="sendForm" novalidate>
+          <form onSubmit={this.onSubmit} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
