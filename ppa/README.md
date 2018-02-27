@@ -23,18 +23,19 @@ cd ppa/
 tar -xzf $TARFILE
 cd app
 debuild -us -uc
+debsign
 cd ..
 dput ppa:metronome/metronome-desktop-wallet metronome-desktop-wallet_$VER-1xenial_source.changes
 cd app
 dch -ir artful
 debuild -us -uc
-debuild -S -sa
+debsign
 cd ..
 dput ppa:metronome/metronome-desktop-wallet metronome-desktop-wallet_$VER-1artful_source.changes
 cd app
 dch -ir bionic
 debuild -us -uc
-debuild -S -sa
+debsign
 cd ..
 dput ppa:metronome/metronome-desktop-wallet metronome-desktop-wallet_$VER-1bionic_source.changes
 ```
