@@ -1,9 +1,7 @@
 const logger = require('electron-log')
 
 const { getPasswordHash, setPasswordHash } = require('../settings')
-const { sha256 } = require('../cryptoUtils')
-
-const { hash, verify } = require('./pbkdf2')
+const { pbkdf2: { hash, verify }, sha256 } = require('../crypto')
 
 function isValidPassword (password) {
   const passwordHash = getPasswordHash()
@@ -35,7 +33,7 @@ function isValidPassword (password) {
       logger.warn('Could not verify password', err)
 
       // TODO remove this check for an old hash before production release
-      if (sha256(password) === passwordHash) {
+      if (sha256.hash(password) === passwordHash) {
         logger.debug('Upgrading password encryption')
 
         return hash(password)
