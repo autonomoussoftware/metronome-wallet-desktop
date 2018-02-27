@@ -29,7 +29,7 @@ function completedTransactionParams (params, options) {
         return 200000
       }),
     gasPrice: web3.eth.getGasPrice().then(price => web3.utils.toHex(price)),
-    nonce: web3.eth.getTransactionCount(from)
+    nonce: web3.eth.getTransactionCount(from, 'pending')
   }
   return promiseAllProps(promises)
     .then(function (values) {
