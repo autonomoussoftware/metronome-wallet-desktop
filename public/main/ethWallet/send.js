@@ -1,12 +1,34 @@
-const { decrypt } = require('../cryptoUtils')
+const { decrypt: decryptOld } = require('../crypto/aes256cbc')
+const { encrypt, decrypt } = require('../crypto/aes256cbcIv')
 
-const { completedTransactionParams, getSignedTransaction, sendSignedTransaction } = require('./eth')
-const { findWalletId, getWallet, getWalletAddressIndex } = require('./settings')
+const {
+  completedTransactionParams,
+  getSignedTransaction,
+  sendSignedTransaction
+} = require('./eth')
+const {
+  findWalletId,
+  getWallet,
+  getWalletAddressIndex,
+  setWalletEncryptedSeed
+} = require('./settings')
 const { getPrivateKey } = require('./key')
 
 function getAddressPrivateKey ({ walletId, address, password }) {
   const { encryptedSeed, derivationPath } = getWallet(walletId)
-  const seed = decrypt(password, encryptedSeed)
+
+  // TODO remove this check for an old encyption before production release
+  let seed
+  if (encryptedSeed.length === 288) {
+    // old encoding
+    seed = decryptOld(password, encryptedSeed)
+    setWalletEncryptedSeed({ walletId, encryptedSeed: encrypt(password, seed) })
+  } else {
+    // new encoding
+    seed = decrypt(password, encryptedSeed)
+  }
+  // end
+
   const index = getWalletAddressIndex({ walletId, address })
   return getPrivateKey({ seed, derivationPath, index })
 }

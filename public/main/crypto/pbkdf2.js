@@ -10,7 +10,9 @@ const config = {
   keylen: 128
 }
 
-module.exports = {
-  hash: password => credential.hash(password, config),
-  verify: (hash, password) => credential.verify(hash, password)
-}
+const hash = password => credential.hash(password, config)
+
+// eslint-disable-next-line no-shadow
+const verify = (hash, password) => credential.verify(hash, password)
+
+module.exports = { hash, verify }

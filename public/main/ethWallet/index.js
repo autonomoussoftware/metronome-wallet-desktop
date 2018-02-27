@@ -8,8 +8,9 @@ const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
-const { encrypt, sha256 } = require('../cryptoUtils')
+const { encrypt } = require('../crypto/aes256cbcIv')
 const Deferred = require('../lib/Deferred')
+const sha256 = require('../crypto/sha256')
 const WalletError = require('../WalletError')
 
 const { getTransactionAndReceipt } = require('./block')
@@ -80,7 +81,7 @@ function createWallet (mnemonic, password) {
   }
 
   const seed = bip39.mnemonicToSeedHex(mnemonic)
-  const walletId = sha256(seed)
+  const walletId = sha256.hash(seed)
 
   const derivationPath = settings.get('app.defaultDerivationPath')
   const index = 0

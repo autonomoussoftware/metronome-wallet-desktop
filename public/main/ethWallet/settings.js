@@ -47,6 +47,11 @@ function getTracerApiUrl () {
   return settings.get('app.tracerApiUrl')
 }
 
+function setWalletEncryptedSeed ({ walletId, encryptedSeed }) {
+  settings.set(`user.wallets.${walletId}.encryptedSeed`, encryptedSeed)
+  logger.debug('Updated wallet seed', { walletId })
+}
+
 module.exports = {
   findWalletId,
   getAddressBalance,
@@ -55,5 +60,6 @@ module.exports = {
   getWalletAddresses,
   getWalletAddressIndex,
   isAddressInWallet,
-  setAddressBalance
+  setAddressBalance,
+  setWalletEncryptedSeed
 }
