@@ -1,5 +1,5 @@
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
@@ -92,16 +92,14 @@ class ConvertMTNtoETHForm extends React.Component {
   onInputBlur = e => {
     const { mtnAmount } = this.state
 
-    if (!mtnAmount) {
+    if (!mtnAmount || !isWeiable(mtnAmount)) {
       return
     }
 
-    console.log('Input Blur')
     sendToMainProcess('mtn-convert-mtn-gas-price', {
       from: this.props.from,
       value: Web3.utils.toWei(mtnAmount.replace(',', '.'))
     }).then(({ gasLimit }) => {
-      console.log('Input Blur 2')
       this.setState({ gasLimit: gasLimit.toString() })
     })
   }
@@ -122,7 +120,7 @@ class ConvertMTNtoETHForm extends React.Component {
           value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
           from: this.props.from,
           gasLimit,
-          gasPrice
+          gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
         },
         600000
       ) // timeout to 10 minute
