@@ -39,7 +39,9 @@ class ConverterEstimates extends React.Component {
       return this.setState({ estimate: null })
     }
     sendToMainProcess(
-      convertTo === 'MET' ? 'metronome-estimate-met' : 'metronome-estimate-eth',
+      convertTo === 'MET'
+        ? 'metronome-estimate-eth-to-met'
+        : 'metronome-estimate-met-to-eth',
       {
         value: Web3.utils.toWei(amount.replace(',', '.'))
       }

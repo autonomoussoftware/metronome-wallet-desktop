@@ -178,10 +178,10 @@ function getHooks () {
     auth: true,
     handler: convertMtnToEth
   }, {
-    eventName: 'metronome-estimate-eth',
+    eventName: 'metronome-estimate-eth-to-met',
     handler: estimateEthToMet
   }, {
-    eventName: 'metronome-estimate-met',
+    eventName: 'metronome-estimate-met-to-eth',
     handler: estimateMetToEth
   }]
 }
