@@ -153,7 +153,7 @@ class ConvertETHtoMTNForm extends React.Component {
     return (
       <Flex.Column grow="1">
         <Sp pt={4} pb={3} px={3}>
-          <form onSubmit={this.onSubmit} id="convertForm">
+          <form onSubmit={this.onSubmit} id="convertForm" noValidate>
             <Flex.Row justify="space-between">
               <Flex.Item grow="1" basis="0">
                 <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
@@ -206,6 +206,7 @@ class ConvertETHtoMTNForm extends React.Component {
                     <TextInput
                       type="number"
                       onChange={this.onInputChange}
+                      min="1"
                       error={errors.gasLimit}
                       label="Gas Limt (UNITS)"
                       value={gasLimit}
@@ -222,6 +223,7 @@ class ConvertETHtoMTNForm extends React.Component {
                   {showGasFields ? (
                     <TextInput
                       type="number"
+                      min="1"
                       onChange={this.onInputChange}
                       error={errors.gasPrice}
                       label="Gas Price (GWEI)"
