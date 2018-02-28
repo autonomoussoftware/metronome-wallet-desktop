@@ -44,7 +44,8 @@ class DisplayValue extends React.Component {
     } else if (decimals >= 18) {
       decimals = 18
     }
-    return String(Number.parseFloat(n.toFixed(Math.ceil(decimals)), 10))
+    // round extra decimals and remove trailing zeroes
+    return new BigNumber(n.toFixed(Math.ceil(decimals))).toString(10)
   }
 
   render() {
