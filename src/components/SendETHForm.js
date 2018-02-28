@@ -1,11 +1,10 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
+import { FloatBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
 import { sendToMainProcess, toETH, toUSD, weiToGwei } from '../utils'
 import config from '../config'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import BigNumber from 'bignumber.js'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -17,21 +16,6 @@ import {
   validateGasLimit
 } from '../validator'
 
-const FloatBtn = BaseBtn.extend`
-  float: right;
-  line-height: 1.8rem;
-  opacity: 0.5;
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
-  white-space: nowrap;
-
-  &:hover {
-    opacity: 1;
-  }
-`
 
 const GasLabel = styled.span`
   opacity: 0.5;
