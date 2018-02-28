@@ -99,7 +99,7 @@
     },
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
-      "category": "Finance",
+      "category": "Office;Finance",
       "target": [
         "deb"
       ],
