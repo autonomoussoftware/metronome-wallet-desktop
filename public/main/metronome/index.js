@@ -12,7 +12,7 @@ const {
   getConverterStatus,
   getMtnForEthResult,
   getEthForMtnResult,
-  getGasLimit
+  getConverterGasLimit
 } = require('./converter')
 
 const {
@@ -143,14 +143,7 @@ function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
 
           logger.verbose('Converting MET to ETH', { from, value, address })
 
-          return sendTransaction({
-            password,
-            from,
-            to: address,
-            data,
-            gasPrice,
-            gasLimit
-          })
+          return sendTransaction({ password, from, to: address, data, gasPrice, gasLimit })
         })
         .catch(function(err) {
           logger.warn('Conversion failed - removing approval')
@@ -195,14 +188,14 @@ function getEthGasLimit({ from, value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getGasLimit({ web3, from, address, value, type: 'eth' })
+  return getConverterGasLimit({ web3, from, address, value, type: 'eth' })
 }
 
 function getMetGasLimit({ from, value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
-  return getGasLimit({ web3, from, address, value, type: 'met' })
+  return getConverterGasLimit({ web3, from, address, value, type: 'met' })
 }
 
 function getHooks() {

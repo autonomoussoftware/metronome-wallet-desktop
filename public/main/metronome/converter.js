@@ -43,37 +43,25 @@ function getEthForMtnResult({ web3, address, value }) {
   return contract.methods.getEthForMtnResult(value).call()
 }
 
-function getGasLimit({
-  web3,
-  from,
-  address,
-  value,
-  minReturn = '1',
-  type = 'met'
-}) {
-  logger.verbose(`Getting ${type} converter gas limit`, {
-    address,
-    value,
-    from,
-    minReturn
-  })
+function getConverterGasLimit({ web3, from, address, value, minReturn = '1', type = 'met' }) {
+  logger.verbose(`Getting ${type} converter gas limit`, { address, value, from, minReturn })
 
   const contract = new web3.eth.Contract(abi, address)
-  const method =
-    type === 'met'
+  const convert = type === 'met'
       ? contract.methods.convertMtnToEth(value, minReturn)
       : contract.methods.convertEthToMtn(minReturn)
+  const data = convert.encodeABI()
 
-  return method
-    .estimateGas({ from })
+  value = type === 'met' ? "0" : value
+
+  return web3.eth.estimateGas({ data, from, to: address, value })
     .then(gasLimit => {
-      logger.verbose('Converter gas limit retrieved', gasLimit)
-
+      logger.verbose(`Converter ${type} gas limit retrieved`, gasLimit)
       return { gasLimit }
     })
-    .catch(err => {
-      logger.error(err)
-      throw err
+    .catch(function (err) {
+      logger.warn(`Could not estimate converter ${type} gas`, err.message)
+      return { gasLimit: 200000 }
     })
 }
 
@@ -83,5 +71,5 @@ module.exports = {
   getConverterStatus,
   getMtnForEthResult,
   getEthForMtnResult,
-  getGasLimit
+  getConverterGasLimit
 }
