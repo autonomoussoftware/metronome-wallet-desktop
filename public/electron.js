@@ -37,7 +37,6 @@ if (isDev) {
         platform_release: os.release()
       }
     }).install()
-
   }
 }
 
