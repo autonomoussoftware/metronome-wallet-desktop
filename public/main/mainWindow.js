@@ -57,13 +57,8 @@ function loadWindow () {
 }
 
 function initAutoUpdate () {
-  // if (isDev) {
-  //   return;
-  // }
-
-  if (process.platform === 'linux') {
-    return
-  }
+  if (isDev) { return }
+  if (process.platform === 'linux') { return }
 
   autoUpdater.checkForUpdates()
 
