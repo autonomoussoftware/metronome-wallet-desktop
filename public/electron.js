@@ -8,6 +8,7 @@ const unhandled = require('electron-unhandled')
 
 const config = require('./config')
 const initMenu = require('./menu')
+const initContextMenu = require('./contextMenu')
 
 logger.transports.file.appName = 'metronome-desktop-wallet'
 
@@ -62,5 +63,6 @@ const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 app.on('ready', function() {
   logger.info('App ready, initializing...')
   initMenu()
+  initContextMenu()
   initMainWorker()
 })
