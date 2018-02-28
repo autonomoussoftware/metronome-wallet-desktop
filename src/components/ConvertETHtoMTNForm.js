@@ -1,5 +1,6 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, toETH, toUSD, isWeiable } from '../utils'
+import { sendToMainProcess, toETH, toUSD, isWeiable, weiToGwei } from '../utils'
+import config from '../config'
 import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
@@ -62,16 +63,16 @@ class ConvertETHtoMTNForm extends React.Component {
     password: null,
     status: 'init',
     showGasFields: false,
-    gasPrice: '1',
-    gasLimit: '21000',
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {},
     error: null
   }
 
   componentDidMount() {
-    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
-      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
-    })
+    sendToMainProcess('get-gas-price', {})
+      .then(({ gasPrice }) => this.setState({ gasPrice: weiToGwei(gasPrice) }))
+      .catch(err => console.warn('Gas price falied', err))
   }
 
   onGasClick = () => {
@@ -96,9 +97,9 @@ class ConvertETHtoMTNForm extends React.Component {
     sendToMainProcess('metronome-convert-eth-gas-limit', {
       from: this.props.from,
       value: Web3.utils.toWei(ethAmount.replace(',', '.'))
-    }).then(({ gasLimit }) => {
-      this.setState({ gasLimit: gasLimit.toString() })
     })
+      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
+      .catch(err => console.warn('Gas estimation failed', err))
   }
 
   onInputChange = e => {

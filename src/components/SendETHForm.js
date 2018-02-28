@@ -1,9 +1,11 @@
 import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, toETH, toUSD } from '../utils'
+import { sendToMainProcess, toETH, toUSD, weiToGwei } from '../utils'
+import config from '../config'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import BigNumber from 'bignumber.js'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -63,17 +65,17 @@ class SendETHForm extends React.Component {
     usdAmount: null,
     password: null,
     showGasFields: false,
-    gasPrice: '1',
-    gasLimit: '21000',
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
     status: 'init',
     errors: {},
     error: null
   }
 
   componentDidMount() {
-    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
-      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
-    })
+    sendToMainProcess('get-gas-price', {})
+      .then(({ gasPrice }) => this.setState({ gasPrice: weiToGwei(gasPrice) }))
+      .catch(err => console.warn('Gas price falied', err))
   }
 
   onMaxClick = () => {

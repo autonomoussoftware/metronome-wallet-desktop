@@ -50,8 +50,8 @@ function getConverterGasLimit({ web3, from, address, value, minReturn = '1', typ
   const convert = type === 'met'
       ? contract.methods.convertMtnToEth(value, minReturn)
       : contract.methods.convertEthToMtn(minReturn)
-  const data = convert.encodeABI()
 
+  const data = convert.encodeABI()
   value = type === 'met' ? "0" : value
 
   return web3.eth.estimateGas({ data, from, to: address, value })
@@ -59,9 +59,9 @@ function getConverterGasLimit({ web3, from, address, value, minReturn = '1', typ
       logger.verbose(`Converter ${type} gas limit retrieved`, gasLimit)
       return { gasLimit }
     })
-    .catch(function (err) {
+    .catch(err => {
       logger.warn(`Could not estimate converter ${type} gas`, err.message)
-      return { gasLimit: 200000 }
+      throw err
     })
 }
 

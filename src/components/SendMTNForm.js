@@ -1,9 +1,10 @@
 import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable } from '../utils'
+import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import BigNumber from 'bignumber.js'
 import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
@@ -59,8 +60,8 @@ class SendMTNForm extends React.Component {
   state = {
     mtnAmount: null,
     toAddress: null,
-    gasPrice: '1',
-    gasLimit: '21000',
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     showGasFields: false,
     password: null,
     status: 'init',
@@ -69,9 +70,9 @@ class SendMTNForm extends React.Component {
   }
 
   componentDidMount() {
-    sendToMainProcess('get-gas-price', {}).then(({ gasPrice }) => {
-      this.setState({ gasPrice: (gasPrice / 1000000000).toString() })
-    })
+    sendToMainProcess('get-gas-price', {})
+      .then(({ gasPrice }) => this.setState({ gasPrice: weiToGwei(gasPrice) }))
+      .catch(err => console.warn('Gas price falied', err))
   }
 
   onMaxClick = () => {
@@ -105,9 +106,9 @@ class SendMTNForm extends React.Component {
         from: this.props.from,
         value: Web3.utils.toWei(mtnAmount.replace(',', '.')),
         token: config.MTN_TOKEN_ADDR
-      }).then(({ gasLimit }) => {
-        this.setState({ gasLimit: gasLimit.toString() })
       })
+        .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
+        .catch(err => console.warn('Gas estimation failed', err))
     }
   }
 
