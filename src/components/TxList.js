@@ -19,7 +19,7 @@ const ListHeader = styled.div`
   padding: 0 4.8rem;
 
   @media (min-width: 960px) {
-    top: 7.2rem;
+    top: 7.1rem;
     display: flex;
     align-items: baseline;
   }

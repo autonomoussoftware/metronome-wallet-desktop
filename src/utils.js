@@ -70,7 +70,7 @@ export function toUSD(amount, rate, errorValue = 'Invalid amount') {
     isValidAmount = false
   }
 
-  const expectedUSDamount = isValidAmount ? usdAmount.toString() : errorValue
+  const expectedUSDamount = isValidAmount ? usdAmount.toString(10) : errorValue
 
   return expectedUSDamount
 }
@@ -89,7 +89,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
     ? weiAmount
         .dividedBy(new BigNumber(Web3.utils.toWei(String(rate))))
         .decimalPlaces(18)
-        .toString()
+        .toString(10)
     : errorValue
 
   return expectedETHamount

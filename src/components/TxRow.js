@@ -76,13 +76,22 @@ const Amount = styled.div`
       : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
+  font-size: 2.3vw;
+
+  @media (min-width: 800px) {
+    font-size: 1.8vw;
+  }
+
+  @media (min-width: 1040px) {
+    font-size: 1.5vw;
+  }
 `
 
 const Arrow = styled.span`
   color: ${p => p.theme.colors.primary};
   position: relative;
-  top: -6px;
-  margin: 0 8px;
+  top: -0.4em;
+  margin: 0 0.5em;
   transform: scale3d(1.5, 2, 1);
   display: inline-block;
 `
@@ -189,7 +198,7 @@ class TxRow extends React.Component {
             {tx.txType === 'auction' ? (
               <React.Fragment>
                 <DisplayValue
-                  maxSize="2rem"
+                  maxSize="inherit"
                   value={tx.ethSpentInAuction}
                   post=" ETH"
                 />
@@ -198,7 +207,7 @@ class TxRow extends React.Component {
                   <React.Fragment>
                     <Arrow>&rarr;</Arrow>
                     <DisplayValue
-                      maxSize="2rem"
+                      maxSize="inherit"
                       value={tx.mtnBoughtInAuction}
                       post=" MET"
                     />
@@ -209,7 +218,7 @@ class TxRow extends React.Component {
               <React.Fragment>
                 {tx.fromValue ? (
                   <DisplayValue
-                    maxSize="2rem"
+                    maxSize="inherit"
                     value={tx.fromValue}
                     post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
                   />
@@ -222,7 +231,7 @@ class TxRow extends React.Component {
                     <React.Fragment>
                       <Arrow>&rarr;</Arrow>
                       <DisplayValue
-                        maxSize="2rem"
+                        maxSize="inherit"
                         value={tx.toValue}
                         post={tx.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
                       />
@@ -233,7 +242,7 @@ class TxRow extends React.Component {
               <div>New transaction</div>
             ) : (
               <DisplayValue
-                maxSize="2rem"
+                maxSize="inherit"
                 value={tx.value}
                 post={` ${tx.symbol}`}
               />
