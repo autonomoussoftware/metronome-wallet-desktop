@@ -1,5 +1,5 @@
-import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
+import { FloatBtn, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, weiToGwei } from '../utils'
 import config from '../config'
 import ConverterEstimates from './ConverterEstimates'
 import * as selectors from '../selectors'
@@ -16,21 +16,6 @@ import {
   validateGasLimit
 } from '../validator'
 
-const FloatBtn = BaseBtn.extend`
-  float: right;
-  line-height: 1.8rem;
-  opacity: 0.5;
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
-  white-space: nowrap;
-
-  &:hover {
-    opacity: 1;
-  }
-`
 const GasLabel = styled.span`
   opacity: 0.5;
   font-size: 1.3rem;

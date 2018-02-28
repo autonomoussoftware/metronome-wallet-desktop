@@ -48,3 +48,19 @@ export const Btn = BaseBtn.extend`
     box-shadow: 0 2px 8px 0 ${p => p.theme.colors.darkShade};
   }
 `
+
+export const FloatBtn = BaseBtn.extend`
+  float: right;
+  line-height: 1.8rem;
+  opacity: 0.5;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  margin-top: 0.4rem;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 1;
+  }
+`

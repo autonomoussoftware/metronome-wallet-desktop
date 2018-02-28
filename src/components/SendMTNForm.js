@@ -1,10 +1,9 @@
-import { BaseBtn, TextInput, Flex, Btn, Sp } from './common'
+import { FloatBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import BigNumber from 'bignumber.js'
 import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
@@ -16,21 +15,6 @@ import {
   validateGasPrice
 } from '../validator'
 
-const FloatBtn = BaseBtn.extend`
-  float: right;
-  line-height: 1.8rem;
-  opacity: 0.5;
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
-  white-space: nowrap;
-
-  &:hover {
-    opacity: 1;
-  }
-`
 
 const GasLabel = styled.span`
   opacity: 0.5;
