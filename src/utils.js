@@ -15,8 +15,10 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   const id = cuid()
 
   const deferred = new Deferred()
+  let timeoutId
 
-  function listener(event, { id: _id, data: _data }) {
+  function listener(ev, { id: _id, data: _data }) {
+    if (timeoutId) window.clearTimeout(timeoutId)
     if (_id !== id) return
 
     if (_data.error) {
@@ -32,10 +34,9 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   ipcRenderer.send(eventName, { id, data })
 
   if (timeout) {
-    setTimeout(() => {
-      deferred.reject(
-        new Error(`Event "${eventName}" timed out after ${timeout}ms.`)
-      )
+    timeoutId = setTimeout(() => {
+      console.warn(`Event "${eventName}" timed out after ${timeout}ms.`)
+      deferred.reject(new Error('Operation timed out. Please try again later.'))
       ipcRenderer.removeListener(eventName, listener)
     }, timeout)
   }
