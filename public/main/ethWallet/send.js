@@ -1,4 +1,3 @@
-const chalk = require('chalk')
 const web3 = require('web3')
 const { decrypt: decryptOld } = require('../crypto/aes256cbc')
 const { encrypt, decrypt } = require('../crypto/aes256cbcIv')
@@ -48,12 +47,6 @@ function signAndSendTransaction(args) {
     gasPrice: web3.utils.toHex(gasPrice)
   }
 
-  console.log(
-    '\n\nsignAndSendTransaction-->',
-    chalk.cyan(JSON.stringify(args)),
-    '\n\n'
-  )
-
   return completedTransactionParams(params).then(function(allParams) {
     const walletId = findWalletId(from)
     if (!walletId) {
@@ -66,20 +59,7 @@ function signAndSendTransaction(args) {
       password
     })
 
-    console.log(
-      '\n\n 2.completedTransactionParams-->',
-      chalk.cyan(JSON.stringify(allParams)),
-      '\n\n'
-    )
-
     const transaction = getSignedTransaction({ params: allParams, privateKey })
-
-    console.log(
-      '\n\n 3.completedTransactionParams-->',
-      chalk.cyan(JSON.stringify(transaction)),
-      '\n\n'
-    )
-
     return sendSignedTransaction(transaction)
   })
 }

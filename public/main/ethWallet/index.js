@@ -1,5 +1,4 @@
 // TODO hdkey uses deprecated coinstring and shall use bs58check
-const chalk = require('chalk')
 const { mergeWith, isArray } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
@@ -42,12 +41,6 @@ function sendTransaction(args, resolveToReceipt) {
 
           const web3 = getWeb3()
           web3.eth.getTransaction(hash).then(function(transaction) {
-            console.log(
-              '\n\ntransactionHash-->',
-              chalk.cyan(JSON.stringify(transaction)),
-              '\n\n'
-            )
-
             moduleEmitter.emit('unconfirmed-tx', transaction)
           })
         })

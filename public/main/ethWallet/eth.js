@@ -1,4 +1,3 @@
-
 const { merge } = require('lodash')
 const EthereumTx = require('ethereumjs-tx')
 const logger = require('electron-log')
@@ -15,8 +14,6 @@ function getAddressBalance(address) {
 
 function completedTransactionParams(params) {
   const { from } = params
-
-
   const web3 = getWeb3()
 
   const promises = {
@@ -33,7 +30,6 @@ function completedTransactionParams(params) {
 
 function getSignedTransaction({ params, privateKey }) {
  
-
   const tx = new EthereumTx(params)
   tx.sign(privateKey)
   return tx
@@ -43,9 +39,6 @@ function sendSignedTransaction(signedTransaction) {
   const web3 = getWeb3()
   const hash = signedTransaction.hash()
   const string = bufferToHexString(signedTransaction.serialize())
-
-
-
   const emitter = web3.eth.sendSignedTransaction(string)
 
   logger.verbose('Ethereum transaction sent', { hash: bufferToHexString(hash) })
