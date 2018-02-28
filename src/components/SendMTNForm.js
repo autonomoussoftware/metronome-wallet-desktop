@@ -155,7 +155,7 @@ class SendMTNForm extends React.Component {
     return (
       <Flex.Column grow="1">
         <Sp pt={4} pb={3} px={3}>
-          <form onSubmit={this.onSubmit} id="sendForm">
+          <form onSubmit={this.onSubmit} id="sendForm" noValidate>
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
@@ -200,6 +200,7 @@ class SendMTNForm extends React.Component {
                   {showGasFields ? (
                     <TextInput
                       type="number"
+                      min="1"
                       onChange={this.onInputChange}
                       error={errors.gasLimit}
                       label="Gas Limt (UNITS)"
@@ -217,6 +218,7 @@ class SendMTNForm extends React.Component {
                   {showGasFields ? (
                     <TextInput
                       type="number"
+                      min="1"
                       onChange={this.onInputChange}
                       error={errors.gasPrice}
                       label="Gas Price (GWEI)"
