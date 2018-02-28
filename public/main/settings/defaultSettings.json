@@ -1,7 +1,7 @@
 {
   "app": {
     "node": {
-      "websocketApiUrl": "ws://localhost:8546"
+      "websocketApiUrl": "ws://parity.bloqrock.net:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
     "indexerApiUrl": "http://api.indexer.bloqrock.net",
