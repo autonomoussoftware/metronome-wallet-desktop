@@ -17,6 +17,7 @@ DEBFILE=metronome-desktop-wallet_v$VER.deb
 mkdir -p dist/app
 dpkg -x dist/$DEBFILE ./dist/app/
 rm -r dist/app/opt/Metronome\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm*
+perl -pi -e 's/opt/usr\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop
 tar -czf ppa/$TARFILE -C dist/ app/
 rm -r dist/app/
 cd ppa/
