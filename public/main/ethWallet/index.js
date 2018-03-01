@@ -2,23 +2,23 @@
 const { mergeWith, isArray } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
-const EventEmitter = require('events')
-const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
-const promiseAllProps = require('promise-all-props')
+const EventEmitter = require('events')
 const settings = require('electron-settings')
-const { restart } = require('../lib/electron-restart')
+const hdkey = require('ethereumjs-wallet/hdkey')
+const promiseAllProps = require('promise-all-props')
 
-const { encrypt } = require('../crypto/aes256cbcIv')
-const Deferred = require('../lib/Deferred')
 const sha256 = require('../crypto/sha256')
+const Deferred = require('../lib/Deferred')
 const WalletError = require('../WalletError')
+const { restart } = require('../lib/electron-restart')
+const { encrypt } = require('../crypto/aes256cbcIv')
 
 const getWeb3 = require('./web3')
-const { transactionParser } = require('./transactionParser')
+const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
-const { getWalletBalances } = require('./wallet')
+const { transactionParser } = require('./transactionParser')
 const { initDatabase, getDatabase, clearDatabase } = require('./db')
 
 const {
@@ -116,7 +116,6 @@ function generateWallet(mnemonic, password) {
 
 // TODO updateWalletInfo, subscribeToWalletChanges
 // TODO activateWallet
-
 function sendWalletStateChange({ webContents, walletId, address, data, log }) {
   webContents.send('wallet-state-changed', {
     [walletId]: {
@@ -243,7 +242,7 @@ function sendCachedTransactions({ walletId, webContents }) {
     db
       .find(query)
       .sort({ 'transaction.blockNumber': -1 })
-      .limit(25)
+      .limit()
       .exec(function(err, transactions) {
         // TODO handle error
         if (err) {
@@ -465,11 +464,15 @@ function registerTxParser(parser) {
 }
 
 function clearCache () {
+  logger.verbose('Clear cache started')
+
   return clearDatabase()
     .then(() => {
       clearBestBlock()
+      logger.verbose('Clear cache success')
       restart(1)
     })
+    .catch(err => logger.error('Clear cache failed: ', err))
 }
 
 function getHooks() {
@@ -487,7 +490,7 @@ function getHooks() {
     },
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
     { eventName: 'get-gas-price', handler: getGasPrice },
-    { eventName: 'get-gas-limit', handler: getGasLimit }
+    { eventName: 'get-gas-limit', handler: getGasLimit },
     { eventName: 'cache-clear', handler: clearCache }
   ]
 }

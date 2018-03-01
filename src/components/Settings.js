@@ -68,13 +68,13 @@ export default class Settings extends React.Component {
 
           </form>
         </Sp>
-        <hr />
+
         <Sp py={4} px={6}>
           <form onSubmit={this.onClearCacheSubmit}>
 
             <Sp mt={4}>
               <Btn submit>
-                Clear Cache
+                Rescan Transactions
               </Btn>
             </Sp>
 

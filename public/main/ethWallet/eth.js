@@ -29,7 +29,6 @@ function completedTransactionParams(params) {
 }
 
 function getSignedTransaction({ params, privateKey }) {
- 
   const tx = new EthereumTx(params)
   tx.sign(privateKey)
   return tx
