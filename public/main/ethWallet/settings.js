@@ -52,11 +52,17 @@ function setWalletEncryptedSeed ({ walletId, encryptedSeed }) {
   logger.debug('Updated wallet seed', { walletId })
 }
 
+function clearBestBlock () {
+  settings.set(`app.bestBlock.number`, -1)
+  logger.debug('Update app.bestBlockl.number to -1')
+}
+
 module.exports = {
   findWalletId,
   getAddressBalance,
   getTracerApiUrl,
   getWallet,
+  clearBestBlock,
   getWalletAddresses,
   getWalletAddressIndex,
   isAddressInWallet,

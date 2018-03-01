@@ -52,7 +52,10 @@ function attachSync (ipcMain) {
   })
 
   ipcMain.on('settings-set', function (event, { key, value }) {
+    logger.verbose(`Set setting ${key} with value ${value}`)
+
     if (!settableSettings.includes(key)) {
+      logger.warn(`Setting ${key} does not exist`)
       event.returnValue = false
       return
     }

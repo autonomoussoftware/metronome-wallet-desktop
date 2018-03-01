@@ -1,4 +1,5 @@
 import React from 'react'
+import { sendToMainProcess } from '../utils'
 import { DarkLayout, Btn, Sp, TextInput } from './common'
 
 const { ipcRenderer } = window.require('electron')
@@ -33,6 +34,14 @@ export default class Settings extends React.Component {
     })
   }
 
+  onClearCacheSubmit = e => {
+    e.preventDefault()
+
+    sendToMainProcess('cache-clear')
+      .then(console.log)
+      .catch(console.warn)
+  }
+
   render() {
     const { ethereumNetworkUrl, errors } = this.state
 
@@ -43,6 +52,7 @@ export default class Settings extends React.Component {
 
             <TextInput
               autoFocus
+              type="url"
               onChange={this.onInputChanged}
               label="Ethereum Network URL"
               error={errors.ethereumNetworkUrl}
@@ -53,6 +63,18 @@ export default class Settings extends React.Component {
             <Sp mt={4}>
               <Btn submit>
                 Save & Restart
+              </Btn>
+            </Sp>
+
+          </form>
+        </Sp>
+        <hr />
+        <Sp py={4} px={6}>
+          <form onSubmit={this.onClearCacheSubmit}>
+
+            <Sp mt={4}>
+              <Btn submit>
+                Clear Cache
               </Btn>
             </Sp>
 
