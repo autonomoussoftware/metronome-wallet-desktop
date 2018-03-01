@@ -18,7 +18,7 @@ function completedTransactionParams(params) {
 
   const promises = {
     chainId: web3.eth.net.getId(),
-    nonce: web3.eth.getTransactionCount(from),
+    nonce: web3.eth.getTransactionCount(from, 'pending'),
   }
 
   return promiseAllProps(promises).then(function(values) {
