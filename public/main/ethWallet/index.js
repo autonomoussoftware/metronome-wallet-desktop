@@ -7,6 +7,7 @@ const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
+const { restart } = require('../lib/electron-restart')
 
 const { encrypt } = require('../crypto/aes256cbcIv')
 const Deferred = require('../lib/Deferred')
@@ -18,12 +19,13 @@ const { transactionParser } = require('./transactionParser')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
 const { getWalletBalances } = require('./wallet')
-const { initDatabase, getDatabase } = require('./db')
+const { initDatabase, getDatabase, clearDatabase } = require('./db')
 
 const {
   getAddressBalance,
   getWalletAddresses,
-  isAddressInWallet
+  isAddressInWallet,
+  clearBestBlock
 } = require('./settings')
 
 function sendTransaction(args, resolveToReceipt) {
@@ -462,6 +464,14 @@ function registerTxParser(parser) {
   txParsers.push(parser)
 }
 
+function clearCache () {
+  return clearDatabase()
+    .then(() => {
+      clearBestBlock()
+      restart(1)
+    })
+}
+
 function getHooks() {
   initDatabase()
 
@@ -478,6 +488,7 @@ function getHooks() {
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
     { eventName: 'get-gas-price', handler: getGasPrice },
     { eventName: 'get-gas-limit', handler: getGasLimit }
+    { eventName: 'cache-clear', handler: clearCache }
   ]
 }
 
