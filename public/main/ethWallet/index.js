@@ -1,5 +1,5 @@
 // TODO hdkey uses deprecated coinstring and shall use bs58check
-const { mergeWith, isArray } = require('lodash')
+const { groupBy, isArray, mergeWith, throttle } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
 const logger = require('electron-log')
@@ -116,14 +116,36 @@ function generateWallet(mnemonic, password) {
 
 // TODO updateWalletInfo, subscribeToWalletChanges
 // TODO activateWallet
+
+let pendingWalletStateChanges = []
+
+function mergeAndSendPendingWalletStateChanges () {
+  const byWebContent = groupBy(pendingWalletStateChanges, 'webContents.id')
+  Object.values(byWebContent).forEach(function (group) {
+    const merged = mergeWith({}, ...group, concatArrays)
+    merged.webContents.send('wallet-state-changed', merged.data)
+  })
+  pendingWalletStateChanges = []
+}
+
+const sendPendingWalletStateChanges = throttle(
+  mergeAndSendPendingWalletStateChanges,
+  250,
+  { leading: true, trailing: false }
+)
+
 function sendWalletStateChange({ webContents, walletId, address, data, log }) {
-  webContents.send('wallet-state-changed', {
-    [walletId]: {
-      addresses: {
-        [address]: data
+  pendingWalletStateChanges.push({
+    webContents,
+    data: {
+      [walletId]: {
+        addresses: {
+          [address]: data
+        }
       }
     }
   })
+  sendPendingWalletStateChanges()
   logger.verbose(`<-- ${log} ${address}`, data)
 }
 
@@ -206,16 +228,9 @@ function parseTransaction({ transaction, receipt, walletId, webContents }) {
       db.update(query, update, { upsert: true })
       // TODO handle db error
 
-      webContents.send('wallet-state-changed', {
-        [walletId]: {
-          addresses: {
-            [address]: {
-              transactions: [parsedTransaction]
-            }
-          }
-        }
-      })
-      logger.verbose(`<-- Transaction ${address} ${transaction.hash}`, meta)
+      sendWalletStateChange({ webContents, walletId, address, data: {
+        transactions: [parsedTransaction]
+      }, log: 'Transaction' })
     }
 
     return parsedTransaction
@@ -242,7 +257,6 @@ function sendCachedTransactions({ walletId, webContents }) {
     db
       .find(query)
       .sort({ 'transaction.blockNumber': -1 })
-      .limit()
       .exec(function(err, transactions) {
         // TODO handle error
         if (err) {
@@ -252,16 +266,9 @@ function sendCachedTransactions({ walletId, webContents }) {
 
         logger.verbose(transactions.map(t => t.transaction.hash))
 
-        webContents.send('wallet-state-changed', {
-          [walletId]: {
-            addresses: {
-              [address]: {
-                transactions
-              }
-            }
-          }
-        })
-        logger.verbose(`<-- Transactions ${address} ${transactions.length}`)
+        sendWalletStateChange({ webContents, walletId, address, data: {
+          transactions
+        }, log: 'Transactions' })
       })
   })
 }
