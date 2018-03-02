@@ -1,7 +1,7 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const { getAuctionStatus } = require('./auctions')
+const { getAuctionStatus, getAuctionGasLimit } = require('./auctions')
 const { approveToken, getAllowance } = require('../tokens')
 const { transactionParser } = require('./transactionParser')
 const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
@@ -90,12 +90,12 @@ function unsubscribeUpdates(_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function buyMetronome({ password, from, value }) {
+function buyMetronome({ password, from, value, gasLimit, gasPrice }) {
   const address = getAuctionAddress()
 
-  logger.verbose('Buying MET in auction', { from, value, address })
+  logger.verbose('Buying MET in auction', { from, value, address, gasLimit, gasPrice })
 
-  return sendTransaction({ password, from, to: address, value })
+  return sendTransaction({ password, from, to: address, value, gasLimit, gasPrice })
 }
 
 function convertEthToMtn({ password, from, value, gasLimit, gasPrice }) {
@@ -198,19 +198,27 @@ function getMetGasLimit({ from, value }) {
   return getConverterGasLimit({ web3, from, address, value, type: 'met' })
 }
 
+function getAuctionMetGasLimit ({ from, value }) {
+  const web3 = getWeb3()
+  const to = getAuctionAddress()
+
+  return getAuctionGasLimit({ web3, to, from, value })
+}
+
 function getHooks() {
   registerTxParser(transactionParser)
 
   return [
     { eventName: 'ui-ready', handler: listenForBlocks },
     { eventName: 'ui-unload', handler: unsubscribeUpdates },
-    { eventName: 'mtn-buy', auth: true, handler: buyMetronome },
+    { eventName: 'metronome-buy', auth: true, handler: buyMetronome },
     { eventName: 'mtn-convert-eth', auth: true, handler: convertEthToMtn },
     { eventName: 'mtn-convert-mtn', auth: true, handler: convertMtnToEth },
     { eventName: 'metronome-estimate-eth-to-met', handler: estimateEthToMet },
     { eventName: 'metronome-estimate-met-to-eth', handler: estimateMetToEth },
     { eventName: 'metronome-convert-eth-gas-limit', handler: getEthGasLimit },
-    { eventName: 'metronome-convert-met-gas-limit', handler: getMetGasLimit }
+    { eventName: 'metronome-convert-met-gas-limit', handler: getMetGasLimit },
+    { eventName: 'metronome-auction-gas-limit', handler: getAuctionMetGasLimit }
   ]
 }
 
