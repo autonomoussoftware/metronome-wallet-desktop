@@ -1,4 +1,4 @@
-
+{
   "app": {
     "node": {
       "websocketApiUrl": "ws://parity.bloqrock.net:8546"
