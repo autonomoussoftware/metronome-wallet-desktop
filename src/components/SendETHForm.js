@@ -102,7 +102,7 @@ class SendETHForm extends React.Component {
         from: this.props.from,
         to: toAddress,
         gasLimit,
-        gasPrice
+        gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
       })
         .then(this.props.onSuccess)
         .catch(err =>
