@@ -1,10 +1,10 @@
 export default {
   MTN_TOKEN_ADDR:
     process.env.REACT_APP_MTN_TOKEN_ADDR ||
-    '0x4c00f8ec2d4fc3d9cbe4d7bd04d80780d5cae77f',
+    '0xcd68235a0fa4c0d308041db793120f6bb8c944b3',
   CONVERTER_ADDR:
     process.env.REACT_APP_CONVERTER_ADDR ||
-    '0x94f1b0296ecbf02a8e4cf4ceab2fb6234b88c9fb',
+    '0x313d67f1d654e4c531cea79cf9dca27ff8277861',
   MTN_EXPLORER_URL:
     process.env.REACT_APP_MTN_EXPLORER_URL ||
     'http://explorer.mtn.bloqrock.net',

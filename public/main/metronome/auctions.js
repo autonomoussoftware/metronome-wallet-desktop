@@ -1,7 +1,7 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const auctionsAbi = require('./contracts/Auctions.75f890c')
+const auctionsAbi = require('./contracts/Auctions.753841b')
 
 function getAuctionStatus({ web3, address }) {
   const auctions = new web3.eth.Contract(auctionsAbi, address)
