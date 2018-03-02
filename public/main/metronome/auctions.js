@@ -31,7 +31,7 @@ function getAuctionGasLimit({ web3, from, to, value }) {
   // TODO: temp fix to avoid underestimation
   return web3
     .eth.estimateGas({ from, to, value })
-    .then(gasLimit => ({ gasLimit: gasLimit * 1.5 }))
+    .then(gasLimit => ({ gasLimit: gasLimit * 1.1 }))
 }
 
 module.exports = { getAuctionStatus, getAuctionGasLimit }
