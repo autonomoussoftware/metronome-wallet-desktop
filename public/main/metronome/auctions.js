@@ -1,3 +1,4 @@
+const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
 const auctionsAbi = require('./contracts/Auctions.75f890c')
@@ -24,4 +25,13 @@ function getAuctionStatus({ web3, address }) {
   return promiseAllProps(calls)
 }
 
-module.exports = { getAuctionStatus }
+function getAuctionGasLimit({ web3, from, to, value }) {
+  logger.verbose('Getting auction limit gas for address: ', { from, to, value })
+
+  // TODO: temp fix to avoid underestimation
+  return web3
+    .eth.estimateGas({ from, to, value })
+    .then(gasLimit => ({ gasLimit: gasLimit * 1.5 }))
+}
+
+module.exports = { getAuctionStatus, getAuctionGasLimit }

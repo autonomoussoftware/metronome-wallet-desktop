@@ -1,14 +1,16 @@
-import { validateEthAmount, validatePassword } from '../validator'
 import PurchaseFormProvider from './providers/PurchaseFormProvider'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
-import * as utils from '../utils'
+import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable} from '../utils'
+import config from '../config'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
 import React from 'react'
 import Web3 from 'web3'
+
 import {
+  FloatBtn,
   TextInput,
   CheckIcon,
   BaseBtn,
@@ -18,6 +20,19 @@ import {
   Btn,
   Sp
 } from './common'
+
+import {
+  validateEthAmount,
+  validatePassword,
+  validateGasPrice,
+  validateGasLimit
+} from '../validator'
+
+const GasLabel = styled.span`
+  opacity: 0.5;
+  font-size: 1.3rem;
+  white-space: nowrap;
+`
 
 const Title = styled.div`
   line-height: 3rem;
@@ -81,6 +96,9 @@ class BuyMTNDrawer extends React.Component {
     ethAmount: null,
     usdAmount: null,
     password: null,
+    showGasFields: false,
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {},
     status: 'init',
     error: null
@@ -88,10 +106,20 @@ class BuyMTNDrawer extends React.Component {
 
   state = BuyMTNDrawer.initialState
 
+  componentDidMount() {
+    sendToMainProcess('get-gas-price', {})
+      .then(({ gasPrice }) => this.setState({ gasPrice: weiToGwei(gasPrice) }))
+      .catch(err => console.warn('Gas price falied', err))
+  }
+
+  onGasClick = () => {
+    this.setState({ showGasFields: !this.state.showGasFields })
+  }
+
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.setState({
-      usdAmount: utils.toUSD(ethAmount, this.props.ETHprice),
+      usdAmount: toUSD(ethAmount, this.props.ETHprice),
       ethAmount
     })
   }
@@ -102,6 +130,21 @@ class BuyMTNDrawer extends React.Component {
     }
   }
 
+  onInputBlur = e => {
+    const { ethAmount } = this.state
+
+    if (!ethAmount || !isWeiable(ethAmount)) {
+      return
+    }
+
+    sendToMainProcess('metronome-auction-gas-limit', {
+      from: this.props.from,
+      value: Web3.utils.toWei(ethAmount.replace(',', '.'))
+    })
+      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
+      .catch(err => console.warn('Gas estimation failed', err))
+  }
+
   onInputChange = e => {
     const { id, value } = e.target
     const { ETHprice } = this.props
@@ -109,9 +152,9 @@ class BuyMTNDrawer extends React.Component {
     this.setState(state => ({
       ...state,
       usdAmount:
-        id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
+        id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
       ethAmount:
-        id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
+        id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
@@ -121,36 +164,41 @@ class BuyMTNDrawer extends React.Component {
     ev.preventDefault()
 
     const errors = this.validate()
-    if (Object.keys(errors).length > 0) return this.setState({ errors })
+    if (Object.keys(errors).length > 0) {
+      return this.setState({ errors })
+    }
 
-    const { ethAmount, password } = this.state
+    const { ethAmount, password, gasPrice, gasLimit } = this.state
 
     this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      utils
-        .sendToMainProcess('mtn-buy', {
-          password,
-          value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-          from: this.props.from
+      sendToMainProcess('metronome-buy', {
+        password,
+        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+        from: this.props.from,
+        gasLimit,
+        gasPrice: Web3.utils.toWei(gasPrice, 'gwei')
+      })
+      .then(({ hash: transactionHash }) => {
+        this.setState({ status: 'success', transactionHash })
+      })
+      .catch(err =>
+        this.setState({
+          status: 'failure',
+          error: err.message || 'Unknown error'
         })
-        .then(({ hash: transactionHash }) => {
-          this.setState({ status: 'success', transactionHash })
-        })
-        .catch(err =>
-          this.setState({
-            status: 'failure',
-            error: err.message || 'Unknown error'
-          })
-        )
+      )
     )
   }
 
   validate = () => {
-    const { ethAmount, password } = this.state
+    const { password, ethAmount, gasPrice, gasLimit } = this.state
     const max = Web3.utils.fromWei(this.props.availableETH)
 
     return {
       ...validateEthAmount(ethAmount, max),
-      ...validatePassword(password)
+      ...validatePassword(password),
+      ...validateGasPrice(gasPrice),
+      ...validateGasLimit(gasLimit)
     }
   }
 
@@ -162,7 +210,10 @@ class BuyMTNDrawer extends React.Component {
       password,
       status: buyStatus,
       errors,
-      error
+      error,
+      gasPrice,
+      gasLimit,
+      showGasFields
     } = this.state
 
     return (
@@ -189,6 +240,7 @@ class BuyMTNDrawer extends React.Component {
                         placeholder="0.00"
                         autoFocus
                         onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
                         disabled={buyStatus !== 'init'}
                         error={errors.ethAmount}
                         label="Amount (ETH)"
@@ -203,6 +255,7 @@ class BuyMTNDrawer extends React.Component {
                       <TextInput
                         placeholder="0.00"
                         onChange={this.onInputChange}
+                        onBlur={this.onInputBlur}
                         disabled={buyStatus !== 'init'}
                         error={errors.usdAmount}
                         label="Amount (USD)"
@@ -227,6 +280,52 @@ class BuyMTNDrawer extends React.Component {
                       </Sp>
                     </Flex.Item>
                   </Flex.Row>
+
+                  <Sp mt={4} mb={2}>
+              <Flex.Row justify="space-between">
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      onChange={this.onInputChange}
+                      min="1"
+                      error={errors.gasLimit}
+                      label="Gas Limt (UNITS)"
+                      value={gasLimit}
+                      id="gasLimit"
+                    />
+                  ) : (
+                    <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {showGasFields && <Sp mt={6} mx={1} />}
+
+                <Flex.Item grow="1" basis="0">
+                  {showGasFields ? (
+                    <TextInput
+                      type="number"
+                      min="1"
+                      onChange={this.onInputChange}
+                      error={errors.gasPrice}
+                      label="Gas Price (GWEI)"
+                      value={gasPrice}
+                      id="gasPrice"
+                    />
+                  ) : (
+                    <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
+                  )}
+                </Flex.Item>
+
+                {!showGasFields && (
+                  <Flex.Item basis="0">
+                    <FloatBtn onClick={this.onGasClick} tabIndex="-1">
+                      EDIT GAS
+                    </FloatBtn>
+                  </Flex.Item>
+                )}
+              </Flex.Row>
+            </Sp>
 
                   {expectedMTNamount && (
                     <Sp mt={2}>
