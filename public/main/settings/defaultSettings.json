@@ -1,4 +1,4 @@
-{
+
   "app": {
     "node": {
       "websocketApiUrl": "ws://parity.bloqrock.net:8546"
@@ -12,9 +12,9 @@
   },
   "metronome": {
     "contracts": {
-      "auctions": "0x7fc50f0391f630e484ed298a8329a391e460e1f9",
-      "converter": "0xeb6b27bb3836ff65591f1bf6121fcec6eed7f501",
-      "token": "0xd7772db72ad0a289957d954854cd2564aa631659"
+      "auctions": "0x468fb7a019d569b9ec926fc0fa409d43b626ceb4",
+      "converter": "0x94f1b0296ecbf02a8e4cf4ceab2fb6234b88c9fb",
+      "token": "0x4c00f8ec2d4fc3d9cbe4d7bd04d80780d5cae77f"
     }
   },
   "tokens": {
@@ -24,5 +24,5 @@
       "symbol": "MET"
     }
   },
-  "settingsVersion": 0
+  "settingsVersion": 1
 }
