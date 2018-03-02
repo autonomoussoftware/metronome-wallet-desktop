@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 import bip39 from 'bip39'
-import { isWeiable, isHexable } from './utils'
+import { isWeiable, isHexable, gweiToWei } from './utils'
 
 function validateAmount(amount, propName, max, errors = {}) {
   if (!amount) {
@@ -46,9 +46,12 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
 }
 
 export function validateGasPrice(gasPrice, errors = {}) {
+  gasPrice = gweiToWei(gasPrice)
+
   if (!gasPrice) {
     errors.gasPrice = 'Gas price is required'
-  } else if (!isHexable(gasPrice.replace(',', '.'))) {
+  }
+  else if (!isHexable(gasPrice.replace(',', '.'))) {
     errors.gasPrice = 'Invalid gas price'
   }
   else if (gasPrice <= 0) {

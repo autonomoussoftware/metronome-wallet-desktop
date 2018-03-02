@@ -106,5 +106,9 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
 }
 
 export function weiToGwei(amount) {
-  return (new BigNumber(amount) / new BigNumber(1000000000)).toString()
+  return new BigNumber((new BigNumber(amount) / new BigNumber(1000000000))).toString(10)
+}
+
+export function gweiToWei(amount) {
+  return new BigNumber((new BigNumber(amount) * new BigNumber(1000000000))).toString(10)
 }
