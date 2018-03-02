@@ -1,7 +1,7 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const abi = require('./contracts/AutonomousConverter.75f890c')
+const abi = require('./contracts/AutonomousConverter.753841b')
 
 function getConverterStatus({ web3, address }) {
   const converter = new web3.eth.Contract(abi, address)

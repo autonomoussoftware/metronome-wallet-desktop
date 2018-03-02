@@ -13,6 +13,10 @@ const overwritableSettings = {
     'app.bestBlock',
     'metronome.contracts',
     'tokens.0xf583c8fe0cbf447727378e3b1e921b1ef81adda8'
+  ],
+  1: [
+    'metronome.contracts',
+    'tokens.0x4c00f8ec2d4fc3d9cbe4d7bd04d80780d5cae77f'
   ]
 }
 
