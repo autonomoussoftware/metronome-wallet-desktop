@@ -250,7 +250,7 @@ class TxRow extends React.Component {
           </Amount>
 
           <Details isPending={isPending}>
-            {(tx.txType === 'auction' && !tx.mtnBoughtInAuction) ||
+            {(tx.txType === 'auction' && !isPending && !tx.mtnBoughtInAuction) ||
             tx.contractCallFailed ? (
               <Failed>Failed Transaction</Failed>
             ) : (
