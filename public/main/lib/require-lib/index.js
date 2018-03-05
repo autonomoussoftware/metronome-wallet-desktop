@@ -8,9 +8,11 @@ const requireLib = function (request) {
     return require(request)
   }
 
-  const result = paths.find(function (p) {
+  const result = paths.map(p => path.join(p, request)).find(function (p) {
     try {
-      return require(path.join(p, request))
+      require(p)
+
+      return true
     } catch (err) {
       return false
     }
@@ -20,7 +22,7 @@ const requireLib = function (request) {
     throw new Error(`Cannot find library '${request}'`)
   }
 
-  return result
+  return require(result)
 }
 
 requireLib.add = function (p) {
