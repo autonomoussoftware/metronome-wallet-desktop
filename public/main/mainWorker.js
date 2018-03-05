@@ -92,11 +92,11 @@ function initMainWorker () {
   })
 
   createRendererEventsRouter()
-    .use(require('./onboarding'))
-    .use(require('./coincap'))
-    .use(require('./ethWallet'))
-    .use(require('./tokens'))
-    .use(require('./metronome'))
+    .use(require('./plugins/onboarding'))
+    .use(require('./plugins/coincap'))
+    .use(require('./plugins/ethWallet'))
+    .use(require('./plugins/tokens'))
+    .use(require('./plugins/metronome'))
     .attach()
 }
 
