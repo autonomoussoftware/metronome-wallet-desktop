@@ -9,6 +9,8 @@ const config = require('./config')
 const initMenu = require('./menu')
 const initContextMenu = require('./contextMenu')
 
+require('./main/lib/require-lib').add(path.join(__dirname, './main/lib'))
+
 if (isDev) {
   require('dotenv').config()
 
