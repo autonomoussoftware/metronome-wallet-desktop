@@ -1,4 +1,4 @@
-const { getPasswordHash } = require('./settings')
+const { getPasswordHash } = require('../../settings')
 
 function onboardingStatus () {
   const onboardingComplete = !!getPasswordHash()

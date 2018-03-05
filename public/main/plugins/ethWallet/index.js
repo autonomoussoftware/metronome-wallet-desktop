@@ -8,11 +8,12 @@ const settings = require('electron-settings')
 const hdkey = require('ethereumjs-wallet/hdkey')
 const promiseAllProps = require('promise-all-props')
 
-const sha256 = require('../crypto/sha256')
 const Deferred = requireLib('Deferred')
-const WalletError = require('../WalletError')
 const { restart } = requireLib('electron-restart')
-const { encrypt } = require('../crypto/aes256cbcIv')
+
+const sha256 = require('../../crypto/sha256')
+const WalletError = require('../../WalletError')
+const { encrypt } = require('../../crypto/aes256cbcIv')
 
 const getWeb3 = require('./web3')
 const { getWalletBalances } = require('./wallet')

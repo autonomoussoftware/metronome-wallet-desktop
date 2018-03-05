@@ -1,7 +1,7 @@
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
-const WalletError = require('../WalletError')
+const WalletError = require('../../WalletError')
 const {
   getWeb3,
   sendTransaction,
