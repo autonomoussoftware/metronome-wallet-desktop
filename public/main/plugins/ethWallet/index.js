@@ -10,6 +10,7 @@ const promiseAllProps = require('promise-all-props')
 
 const Deferred = requireLib('Deferred')
 const { restart } = requireLib('electron-restart')
+const { subscribe } = requireLib('web3-block-subscribe')
 
 const sha256 = require('../../crypto/sha256')
 const WalletError = require('../../WalletError')
@@ -23,11 +24,24 @@ const { transactionParser } = require('./transactionParser')
 const { initDatabase, getDatabase, clearDatabase } = require('./db')
 
 const {
+  clearBestBlock,
   getAddressBalance,
   getWalletAddresses,
-  isAddressInWallet,
-  clearBestBlock
+  getWebsocketApiUrl,
+  isAddressInWallet
 } = require('./settings')
+
+function concatArrays(objValue, srcValue) {
+  if (isArray(objValue)) {
+    return objValue.concat(srcValue)
+  }
+}
+
+const moduleEmitter = new EventEmitter()
+
+function getEvents() {
+  return moduleEmitter
+}
 
 function sendTransaction(args, resolveToReceipt) {
   const deferred = new Deferred()
@@ -70,12 +84,6 @@ function sendTransaction(args, resolveToReceipt) {
     })
 
   return deferred.promise
-}
-
-const moduleEmitter = new EventEmitter()
-
-function getEvents() {
-  return moduleEmitter
 }
 
 function generateWallet(mnemonic, password) {
@@ -121,7 +129,13 @@ function generateWallet(mnemonic, password) {
 let pendingWalletStateChanges = []
 
 function mergeAndSendPendingWalletStateChanges () {
-  const byWebContent = groupBy(pendingWalletStateChanges, 'webContents.id')
+  const byWebContent = groupBy(pendingWalletStateChanges.filter(function ({ webContents }) {
+    try {
+      return webContents.id || true
+    } catch (err) {
+      return false
+    }
+  }), 'webContents.id')
   Object.values(byWebContent).forEach(function (group) {
     const merged = mergeWith({}, ...group, concatArrays)
     merged.webContents.send('wallet-state-changed', merged.data)
@@ -203,10 +217,10 @@ function sendWalletOpen(webContents, walletId) {
 
 const any = array => array.reduce((acc, element) => acc || element, false)
 
-function concatArrays(objValue, srcValue) {
-  if (isArray(objValue)) {
-    return objValue.concat(srcValue)
-  }
+const txParsers = []
+
+function registerTxParser(parser) {
+  txParsers.push(parser)
 }
 
 function parseTransaction({ transaction, receipt, walletId, webContents }) {
@@ -387,30 +401,33 @@ function openWallet({ webContents, walletId }) {
   sendCachedTransactions({ walletId, webContents })
 
   syncTransactions({ walletId, webContents }).then(function() {
-    const web3 = getWeb3()
-    const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-    blocksSubscription.on('data', function({ number }) {
-      syncTransactions({ number, walletId, webContents })
-    })
-
-    // TODO handle on error
-    blocksSubscription.on('error', function() {
-      logger.warn('Error receiving new block notifications')
-
-      setTimeout(function() {
-        syncTransactions({ walletId, webContents })
-      }, 5000)
-    })
-
-    webContents.on('destroyed', function() {
-      blocksSubscription.unsubscribe()
+    const blocksSubscription = subscribe({
+      url: getWebsocketApiUrl(),
+      onData: function(header) {
+        moduleEmitter.emit('new-block', header)
+      },
+      onError: function (err) {
+        logger.warn('New block subscription failed', err)
+      }
     })
 
     subscriptions.push({ webContents, blocksSubscription })
   })
 
   moduleEmitter.on('unconfirmed-tx', function(transaction) {
-    parseTransaction({ transaction, walletId, webContents })
+    try {
+      if (webContents.id) {
+        parseTransaction({ transaction, walletId, webContents })
+      }
+    } catch (err) {}
+  })
+
+  moduleEmitter.on('new-block', function({ number }) {
+    try {
+      if (webContents.id) {
+        syncTransactions({ number, walletId, webContents })
+      }
+    } catch (err) {}
   })
 }
 
@@ -419,7 +436,15 @@ function unsubscribeUpdates(_, webContents) {
 
   toUnsubscribe.forEach(function(s) {
     logger.verbose('Unsubscribing wallet balance update ')
-    s.blocksSubscription.unsubscribe()
+
+    s.blocksSubscription.unsubscribe(function (err) {
+      if (err) {
+        logger.warn('Could not unsubscribe', err.message)
+        return
+      }
+
+      logger.verbose('New block subscription canceled')
+    })
   })
 
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
@@ -463,12 +488,6 @@ function getGasLimit({ to }) {
   return getWeb3()
     .eth.estimateGas({ to })
     .then(gasLimit => ({ gasLimit }))
-}
-
-const txParsers = []
-
-function registerTxParser(parser) {
-  txParsers.push(parser)
 }
 
 function clearCache () {
