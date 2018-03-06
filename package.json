@@ -125,7 +125,7 @@
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --em.main=build/electron.js",
-	"ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE",
+    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE",
     "release": "react-scripts build && build --em.main=build/electron.js --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
