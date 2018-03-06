@@ -1,9 +1,8 @@
-import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable } from '../utils'
-import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
+import { DisplayValue, FloatBtn, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
-import AmountFields from './AmountFields'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
@@ -30,10 +29,9 @@ const Footer = styled.div`
   height: 100%;
 `
 
-class SendETHForm extends React.Component {
+class SendMETForm extends React.Component {
   static propTypes = {
-    availableETH: PropTypes.string.isRequired,
-    ETHprice: PropTypes.number.isRequired,
+    availableMET: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired,
     tabs: PropTypes.node
   }
@@ -41,48 +39,51 @@ class SendETHForm extends React.Component {
   state = {
     useCustomGas: false,
     toAddress: null,
-    ethAmount: null,
-    usdAmount: null,
+    metAmount: null,
     gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
+    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
+  }
+
+  onMaxClick = () => {
+    const metAmount = Web3.utils.fromWei(this.props.availableMET)
+    this.setState({ metAmount })
   }
 
   onInputChange = e => {
     const { id, value } = e.target
-    const { ETHprice } = this.props
 
     this.setState(state => ({
       ...state,
-      usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
-      errors: { ...state.errors, [id]: null },
-      [id]: value
+      [id]: value,
+      errors: { ...state.errors, [id]: null }
     }))
 
     // Estimate gas limit again if parameters changed
-    if (['ethAmount'].includes(id)) this.getGasEstimate()
+    if (['toAddress', 'metAmount'].includes(id)) this.getGasEstimate()
   }
 
   getGasEstimate = debounce(() => {
-    const { ethAmount } = this.state
+    const { metAmount, toAddress } = this.state
 
-    if (!isWeiable(ethAmount)) return
+    if (!isWeiable(metAmount) || !Web3.utils.isAddress(toAddress)) return
 
-    sendToMainProcess('get-gas-limit', {
-      value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-      from: this.props.from
+    sendToMainProcess('tokens-get-gas-limit', {
+      value: Web3.utils.toWei(metAmount.replace(',', '.')),
+      token: config.MTN_TOKEN_ADDR,
+      from: this.props.from,
+      to: toAddress
     })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
       .catch(err => console.warn('Gas estimation failed', err))
   }, 500)
 
   validate = () => {
-    const { ethAmount, toAddress, gasPrice, gasLimit } = this.state
-    const max = Web3.utils.fromWei(this.props.availableETH)
+    const { toAddress, metAmount, gasLimit, gasPrice } = this.state
+    const max = Web3.utils.fromWei(this.props.availableMET)
     const errors = {
       ...validators.validateToAddress(toAddress),
-      ...validators.validateEthAmount(ethAmount, max),
+      ...validators.validateMetAmount(metAmount, max),
       ...validators.validateGasPrice(gasPrice),
       ...validators.validateGasLimit(gasLimit)
     }
@@ -91,26 +92,27 @@ class SendETHForm extends React.Component {
     return !hasErrors
   }
 
-  onWizardSubmit = password => {
-    return sendToMainProcess('send-eth', {
-      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
-      gasLimit: this.state.gasLimit,
-      password,
-      value: Web3.utils.toWei(this.state.ethAmount.replace(',', '.')),
-      from: this.props.from,
-      to: this.state.toAddress
-    })
-  }
-
   renderConfirmation = () => {
-    const { ethAmount, usdAmount, toAddress } = this.state
+    const { metAmount, toAddress } = this.state
     return (
       <ConfirmationContainer>
         You will send{' '}
-        <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
-        (${usdAmount}) to the address {toAddress}.
+        <DisplayValue value={Web3.utils.toWei(metAmount)} post=" MET" inline />{' '}
+        to the address {toAddress}.
       </ConfirmationContainer>
     )
+  }
+
+  onWizardSubmit = password => {
+    return sendToMainProcess('send-token', {
+      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+      gasLimit: this.state.gasLimit,
+      password,
+      token: config.MTN_TOKEN_ADDR,
+      value: Web3.utils.toWei(this.state.metAmount.replace(',', '.')),
+      from: this.props.from,
+      to: this.state.toAddress
+    })
   }
 
   renderForm = goToReview => {
@@ -118,7 +120,7 @@ class SendETHForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form noValidate onSubmit={goToReview} id="sendForm">
+          <form onSubmit={goToReview} id="sendForm" noValidate>
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
@@ -129,14 +131,19 @@ class SendETHForm extends React.Component {
               id="toAddress"
             />
             <Sp mt={3}>
-              <AmountFields
-                availableETH={this.props.availableETH}
-                ethAmount={this.state.ethAmount}
-                usdAmount={this.state.usdAmount}
+              <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
+                MAX
+              </FloatBtn>
+              <TextInput
+                placeholder="0.00"
                 onChange={this.onInputChange}
-                errors={this.state.errors}
+                error={this.state.errors.metAmount}
+                label="Amount (MET)"
+                value={this.state.metAmount}
+                id="metAmount"
               />
             </Sp>
+
             <Sp mt={3}>
               <GasEditor
                 useCustomGas={this.state.useCustomGas}
@@ -170,9 +177,8 @@ class SendETHForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  availableETH: selectors.getEthBalanceWei(state),
-  ETHprice: selectors.getEthRate(state),
+  availableMET: selectors.getMtnBalanceWei(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
 
-export default connect(mapStateToProps)(SendETHForm)
+export default connect(mapStateToProps)(SendMETForm)

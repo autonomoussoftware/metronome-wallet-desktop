@@ -99,7 +99,7 @@ export default class Drawer extends React.Component {
         style={{
           overlay: {
             backgroundColor: 'transparent',
-            zIndex: '2'
+            zIndex: '3'
           },
           content: {
             boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',

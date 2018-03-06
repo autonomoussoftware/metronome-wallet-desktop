@@ -69,7 +69,7 @@ export default class Modal extends React.Component {
         style={{
           overlay: {
             backgroundColor: 'transparent',
-            zIndex: '2'
+            zIndex: '3'
           },
           content: {
             background: theme.colors.bg.white,
