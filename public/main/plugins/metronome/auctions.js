@@ -1,5 +1,6 @@
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
+const { get } = require('lodash/fp')
 
 const auctionsAbi = require('./contracts/Auctions.753841b')
 
@@ -12,7 +13,8 @@ function getAuctionStatus({ web3, address }) {
       .call()
       .then(t => Number.parseInt(t, 10)),
     currentPrice: auctions.methods.currentPrice().call(),
-    tokenRemaining: auctions.methods.mintable().call(),
+    tokenRemaining: auctions.methods.heartbeat().call()
+      .then(get('[4]')),
     nextAuctionStartTime: auctions.methods
       .nextAuction()
       .call()
