@@ -144,12 +144,12 @@ class TxRow extends React.Component {
 
   render() {
     const { confirmations, parsed: tx, ...other } = this.props
-    const isPending = confirmations < 6
     const isFailed =
       (tx.txType === 'auction' &&
         !tx.mtnBoughtInAuction &&
         confirmations > 0) ||
       tx.contractCallFailed
+    const isPending = !isFailed && confirmations < 6
 
     return (
       <Container {...other}>
@@ -250,7 +250,9 @@ class TxRow extends React.Component {
           </Amount>
 
           <Details isPending={isPending}>
-            {(tx.txType === 'auction' && !isPending && !tx.mtnBoughtInAuction) ||
+            {(tx.txType === 'auction' &&
+              !isPending &&
+              !tx.mtnBoughtInAuction) ||
             tx.contractCallFailed ? (
               <Failed>Failed Transaction</Failed>
             ) : (
