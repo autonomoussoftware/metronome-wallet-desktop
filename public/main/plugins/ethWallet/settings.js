@@ -57,14 +57,19 @@ function clearBestBlock () {
   logger.debug('Update app.bestBlockl.number to -1')
 }
 
+function getWebsocketApiUrl () {
+  return settings.get('app.node.websocketApiUrl')
+}
+
 module.exports = {
+  clearBestBlock,
   findWalletId,
   getAddressBalance,
   getTracerApiUrl,
   getWallet,
-  clearBestBlock,
   getWalletAddresses,
   getWalletAddressIndex,
+  getWebsocketApiUrl,
   isAddressInWallet,
   setAddressBalance,
   setWalletEncryptedSeed
