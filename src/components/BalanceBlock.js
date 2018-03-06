@@ -5,10 +5,9 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-const relSize = ratio => `calc((100vw - var(--extraWidth)) / ${ratio})`
+const relSize = ratio => `calc(100vw / ${ratio})`
 
 const Balance = styled.div`
-  --extraWidth: 11.2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,11 +15,7 @@ const Balance = styled.div`
   & + & {
     border-top: 1px solid ${p => p.theme.colors.darkShade};
   }
-  @media (min-width: 800px) {
-    --extraWidth: 29.6rem;
-  }
   @media (min-width: 1040px) {
-    --extraWidth: 49.2rem;
     padding: 0.95em 0;
   }
 `
@@ -41,40 +36,44 @@ const CoinSymbol = styled.div`
 `
 
 const Value = styled.div`
-  ${Balance} & {
-    line-height: 1.5;
-    letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
-    text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-    margin: 0 1.6rem;
-    flex-grow: 1;
-    position: relative;
-    top: ${relSize(-300)};
-    font-size: ${relSize(35)};
+  line-height: 1.5;
+  letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  margin: 0 1.6rem;
+  flex-grow: 1;
+  position: relative;
+  top: ${relSize(-400)};
+  font-size: ${relSize(40)};
 
-    @media (min-width: 900px) {
-      font-size: ${relSize(32)};
-    }
+  @media (min-width: 800px) {
+    font-size: ${relSize(44)};
+  }
 
-    @media (min-width: 1040px) {
-      font-size: ${({ large }) => relSize(large ? 20 : 27)};
-    }
+  @media (min-width: 1040px) {
+    font-size: ${({ large }) => relSize(large ? 40 : 52)};
+  }
+
+  @media (min-width: 1440px) {
+    font-size: ${({ large }) => (large ? '3.6rem' : '2.8rem')};
   }
 `
 
 const USDValue = styled.div`
-  ${Balance} & {
-    line-height: 1.5;
-    font-weight: 600;
-    text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-    white-space: nowrap;
-    opacity: ${p => (p.hide ? '0' : '1')};
-    position: relative;
-    top: ${relSize(-400)};
-    font-size: ${relSize(42)};
+  line-height: 1.5;
+  font-weight: 600;
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  white-space: nowrap;
+  opacity: ${p => (p.hide ? '0' : '1')};
+  position: relative;
+  top: ${relSize(-400)};
+  font-size: ${relSize(40)};
 
-    @media (min-width: 900px) {
-      font-size: ${relSize(40)};
-    }
+  @media (min-width: 800px) {
+    font-size: ${relSize(68)};
+  }
+
+  @media (min-width: 1440px) {
+    font-size: 2.2rem;
   }
 `
 

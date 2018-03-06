@@ -1,6 +1,7 @@
-import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable } from '../utils'
-import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, toETH, toUSD, isWeiable, weiToGwei } from '../utils'
+import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
+import ConverterEstimates from './ConverterEstimates'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
 import AmountFields from './AmountFields'
@@ -30,7 +31,7 @@ const Footer = styled.div`
   height: 100%;
 `
 
-class SendETHForm extends React.Component {
+class ConvertETHtoMETForm extends React.Component {
   static propTypes = {
     availableETH: PropTypes.string.isRequired,
     ETHprice: PropTypes.number.isRequired,
@@ -40,11 +41,11 @@ class SendETHForm extends React.Component {
 
   state = {
     useCustomGas: false,
-    toAddress: null,
     ethAmount: null,
     usdAmount: null,
+    estimate: null,
     gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
+    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -69,7 +70,7 @@ class SendETHForm extends React.Component {
 
     if (!isWeiable(ethAmount)) return
 
-    sendToMainProcess('get-gas-limit', {
+    sendToMainProcess('metronome-convert-eth-gas-limit', {
       value: Web3.utils.toWei(ethAmount.replace(',', '.')),
       from: this.props.from
     })
@@ -78,10 +79,9 @@ class SendETHForm extends React.Component {
   }, 500)
 
   validate = () => {
-    const { ethAmount, toAddress, gasPrice, gasLimit } = this.state
+    const { ethAmount, gasPrice, gasLimit } = this.state
     const max = Web3.utils.fromWei(this.props.availableETH)
     const errors = {
-      ...validators.validateToAddress(toAddress),
       ...validators.validateEthAmount(ethAmount, max),
       ...validators.validateGasPrice(gasPrice),
       ...validators.validateGasLimit(gasLimit)
@@ -92,23 +92,23 @@ class SendETHForm extends React.Component {
   }
 
   onWizardSubmit = password => {
-    return sendToMainProcess('send-eth', {
+    return sendToMainProcess('mtn-convert-eth', {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
       value: Web3.utils.toWei(this.state.ethAmount.replace(',', '.')),
-      from: this.props.from,
-      to: this.state.toAddress
+      from: this.props.from
     })
   }
 
   renderConfirmation = () => {
-    const { ethAmount, usdAmount, toAddress } = this.state
+    const { ethAmount, usdAmount, estimate } = this.state
     return (
       <ConfirmationContainer>
-        You will send{' '}
+        You will convert{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
-        (${usdAmount}) to the address {toAddress}.
+        (${usdAmount}) and get approximately{' '}
+        <DisplayValue value={estimate} post=" MTN" inline />.
       </ConfirmationContainer>
     )
   }
@@ -118,25 +118,15 @@ class SendETHForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form noValidate onSubmit={goToReview} id="sendForm">
-            <TextInput
-              placeholder="e.g. 0x2345678998765434567"
+          <form onSubmit={goToReview} id="convertForm" noValidate>
+            <AmountFields
+              availableETH={this.props.availableETH}
+              ethAmount={this.state.ethAmount}
+              usdAmount={this.state.usdAmount}
               autoFocus
               onChange={this.onInputChange}
-              error={this.state.errors.toAddress}
-              label="Send to Address"
-              value={this.state.toAddress}
-              id="toAddress"
+              errors={this.state.errors}
             />
-            <Sp mt={3}>
-              <AmountFields
-                availableETH={this.props.availableETH}
-                ethAmount={this.state.ethAmount}
-                usdAmount={this.state.usdAmount}
-                onChange={this.onInputChange}
-                errors={this.state.errors}
-              />
-            </Sp>
             <Sp mt={3}>
               <GasEditor
                 useCustomGas={this.state.useCustomGas}
@@ -146,11 +136,17 @@ class SendETHForm extends React.Component {
                 errors={this.state.errors}
               />
             </Sp>
+            <ConverterEstimates
+              convertTo="MET"
+              estimate={this.state.estimate}
+              onChange={this.onInputChange}
+              amount={this.state.ethAmount}
+            />
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm">
-            Review Send
+          <Btn block submit form="convertForm">
+            Review Convert
           </Btn>
         </Footer>
       </Flex.Column>
@@ -162,7 +158,9 @@ class SendETHForm extends React.Component {
       <ConfirmationWizard
         renderConfirmation={this.renderConfirmation}
         onWizardSubmit={this.onWizardSubmit}
+        pendingTitle="Converting ETH..."
         renderForm={this.renderForm}
+        editLabel="Edit this conversion"
         validate={this.validate}
       />
     )
@@ -175,4 +173,4 @@ const mapStateToProps = state => ({
   from: selectors.getActiveWalletAddresses(state)[0]
 })
 
-export default connect(mapStateToProps)(SendETHForm)
+export default connect(mapStateToProps)(ConvertETHtoMETForm)

@@ -18,8 +18,8 @@ export function validateEthAmount(ethAmount, max, errors = {}) {
   return validateAmount(ethAmount, 'ethAmount', max, errors)
 }
 
-export function validateMtnAmount(mtnAmount, max, errors = {}) {
-  return validateAmount(mtnAmount, 'mtnAmount', max, errors)
+export function validateMetAmount(mtnAmount, max, errors = {}) {
+  return validateAmount(mtnAmount, 'metAmount', max, errors)
 }
 
 export function validateToAddress(toAddress, errors = {}) {
@@ -37,8 +37,7 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
     errors.gasLimit = 'Gas limit is required'
   } else if (!isHexable(gasLimit.replace(',', '.'))) {
     errors.gasLimit = 'Invalid gas limit'
-  }
-  else if (gasLimit <= 0) {
+  } else if (gasLimit <= 0) {
     errors.gasLimit = 'Gas limit must be greater than 0'
   }
 
@@ -50,11 +49,9 @@ export function validateGasPrice(gasPrice, errors = {}) {
 
   if (!gasPrice) {
     errors.gasPrice = 'Gas price is required'
-  }
-  else if (!isHexable(gasPrice.replace(',', '.'))) {
+  } else if (!isHexable(gasPrice.replace(',', '.'))) {
     errors.gasPrice = 'Invalid gas price'
-  }
-  else if (gasPrice <= 0) {
+  } else if (gasPrice <= 0) {
     errors.gasPrice = 'Gas price must be greater than 0'
   }
 

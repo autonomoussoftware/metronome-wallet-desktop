@@ -1,6 +1,6 @@
 import CountDownProvider from './providers/CountDownProvider'
 import * as selectors from '../selectors'
-import BuyMTNDrawer from './BuyMTNDrawer'
+import BuyMETDrawer from './BuyMETDrawer'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -263,7 +263,7 @@ class Auction extends React.Component {
                   </Sp>
                 </StatsContainer>
 
-                <BuyMTNDrawer
+                <BuyMETDrawer
                   onRequestClose={this.onCloseModal}
                   currentPrice={auctionStatus.currentPrice}
                   isOpen={this.state.activeModal === 'buy'}

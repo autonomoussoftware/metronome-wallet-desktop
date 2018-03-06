@@ -25,7 +25,7 @@ export default class PasswordRequest extends React.Component {
   }
 
   onInputChanged = e =>
-    this.setState({ [e.target.id]: e.target.value, errors: {} })
+    this.setState({ [e.target.id]: e.target.value, errors: {}, error: null })
 
   onPasswordSubmitted = e => {
     e.preventDefault()
@@ -38,10 +38,10 @@ export default class PasswordRequest extends React.Component {
         .then(() =>
           this.props.onPasswordAccepted({ password: this.state.password })
         )
-        .catch(e =>
+        .catch(err =>
           this.setState({
             status: 'failure',
-            error: e.message || 'Unknown error'
+            error: err.message || 'Unknown error'
           })
         )
     )

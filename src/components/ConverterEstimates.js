@@ -9,12 +9,11 @@ import React from 'react'
 import Web3 from 'web3'
 
 const Container = styled.div`
+  margin-top: 1.6rem;
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: -0.8rem;
-  margin-bottom: -0.8rem;
 `
 
 const ErrorMsg = styled.div`
@@ -25,18 +24,17 @@ class ConverterEstimates extends React.Component {
   static propTypes = {
     converterPrice: PropTypes.string.isRequired,
     convertTo: PropTypes.oneOf(['ETH', 'MET']).isRequired,
+    onChange: PropTypes.func.isRequired,
+    estimate: PropTypes.string,
     amount: PropTypes.string
   }
 
-  state = {
-    estimate: null,
-    error: null
-  }
+  state = { error: null }
 
   getEstimate = debounce(() => {
     const { convertTo, amount } = this.props
     if (!isWeiable(amount) || !isGreaterThanZero(amount)) {
-      return this.setState({ estimate: null })
+      return this.props.onChange({ target: { id: 'estimate', value: null } })
     }
     sendToMainProcess(
       convertTo === 'MET'
@@ -46,8 +44,14 @@ class ConverterEstimates extends React.Component {
         value: Web3.utils.toWei(amount.replace(',', '.'))
       }
     )
-      .then(({ result }) => this.setState({ estimate: result, error: null }))
-      .catch(err => this.setState({ estimate: null, error: err.message }))
+      .then(({ result }) => {
+        this.setState({ error: null })
+        this.props.onChange({ target: { id: 'estimate', value: result } })
+      })
+      .catch(err => {
+        this.setState({ error: err.message })
+        this.props.onChange({ target: { id: 'estimate', value: null } })
+      })
   }, 500)
 
   componentWillUpdate({ converterPrice, amount }) {
@@ -61,8 +65,8 @@ class ConverterEstimates extends React.Component {
   }
 
   render() {
-    const { estimate, error } = this.state
-    const { convertTo } = this.props
+    const { estimate, convertTo } = this.props
+    const { error } = this.state
 
     if (estimate) {
       return (
@@ -70,8 +74,8 @@ class ConverterEstimates extends React.Component {
           <DisplayValue
             maxSize="inherit"
             value={estimate}
-            pre="You would get "
-            post={` ${convertTo}`}
+            pre="You would get approximately "
+            post={` ${convertTo}.`}
           />
         </Container>
       )

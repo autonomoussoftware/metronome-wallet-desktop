@@ -105,10 +105,36 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
   return expectedETHamount
 }
 
+export function toMET(amount, rate, errorValue = 'Invalid amount') {
+  let isValidAmount
+  let weiAmount
+  try {
+    weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+    isValidAmount = weiAmount.gte(new BigNumber(0))
+  } catch (e) {
+    isValidAmount = false
+  }
+
+  const expectedMETamount = isValidAmount
+    ? Web3.utils.toWei(
+        weiAmount
+          .dividedBy(new BigNumber(rate))
+          .decimalPlaces(18)
+          .toString(10)
+      )
+    : errorValue
+
+  return expectedMETamount
+}
+
 export function weiToGwei(amount) {
-  return new BigNumber((new BigNumber(amount) / new BigNumber(1000000000))).toString(10)
+  return new BigNumber(
+    new BigNumber(amount) / new BigNumber(1000000000)
+  ).toString(10)
 }
 
 export function gweiToWei(amount) {
-  return new BigNumber((new BigNumber(amount) * new BigNumber(1000000000))).toString(10)
+  return new BigNumber(
+    new BigNumber(amount) * new BigNumber(1000000000)
+  ).toString(10)
 }

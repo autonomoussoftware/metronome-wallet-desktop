@@ -85,6 +85,10 @@ const Amount = styled.div`
   @media (min-width: 1040px) {
     font-size: 1.5vw;
   }
+
+  @media (min-width: 1440px) {
+    font-size: 2.2rem;
+  }
 `
 
 const Arrow = styled.span`

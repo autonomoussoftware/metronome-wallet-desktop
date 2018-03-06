@@ -14,14 +14,16 @@ BigNumber.config({ FORMAT: format })
 class DisplayValue extends React.Component {
   static propTypes = {
     maxDecimals: PropTypes.number,
-    maxSize: PropTypes.string.isRequired,
+    maxSize: PropTypes.string,
+    inline: PropTypes.bool,
     value: PropTypes.string,
     post: PropTypes.string,
     pre: PropTypes.string
   }
 
   static defaultProps = {
-    maxDecimals: 18
+    maxDecimals: 18,
+    maxSize: 'inherit'
   }
 
   altRound(value) {
@@ -49,7 +51,7 @@ class DisplayValue extends React.Component {
   }
 
   render() {
-    const { value, post, pre, maxSize } = this.props
+    const { value, post, pre, maxSize, inline } = this.props
 
     let formattedValue
 
@@ -60,7 +62,7 @@ class DisplayValue extends React.Component {
     }
 
     return (
-      <div style={{ fontSize: maxSize }}>
+      <div style={{ fontSize: maxSize, display: inline ? 'inline' : 'block' }}>
         {pre}
         {formattedValue || '?'}
         {post}

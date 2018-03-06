@@ -91,6 +91,7 @@ export default class TextInput extends React.Component {
         </Label>
         <this.InputControl
           isPristine={isPristine}
+          hasErrors={hasErrors}
           value={value || ''}
           type={type || 'text'}
           id={id}
