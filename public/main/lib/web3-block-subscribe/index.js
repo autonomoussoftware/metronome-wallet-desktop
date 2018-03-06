@@ -90,7 +90,11 @@ function subscribe ({ url, onData, onError, timeout = 60000, retry = 10000 }) {
     handleError(subscription, new Error('Subscription timeout'))
   })
 
-  return { unsubscribe: () => tryToUnsubscribe(subscription) }
+  return {
+    unsubscribe: function (callback) {
+      tryToUnsubscribe(subscription, callback)
+    }
+  }
 }
 
 module.exports = { subscribe }
