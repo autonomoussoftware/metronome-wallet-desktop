@@ -61,10 +61,15 @@ function getWebsocketApiUrl () {
   return settings.get('app.node.websocketApiUrl')
 }
 
+function getJsonRpcApiUrl () {
+  return settings.get('app.node.jsonRpcApiUrl')
+}
+
 module.exports = {
   clearBestBlock,
   findWalletId,
   getAddressBalance,
+  getJsonRpcApiUrl,
   getTracerApiUrl,
   getWallet,
   getWalletAddresses,

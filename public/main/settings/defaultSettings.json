@@ -1,6 +1,7 @@
 {
   "app": {
     "node": {
+      "jsonRpcApiUrl": "http://parity.bloqrock.net:8545",
       "websocketApiUrl": "ws://parity.bloqrock.net:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
