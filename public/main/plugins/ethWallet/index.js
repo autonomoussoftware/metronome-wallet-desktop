@@ -168,7 +168,7 @@ function sendError({ webContents, walletId, message, err }) {
   webContents.send('error', {
     error: new WalletError(message, err)
   })
-  logger.warn(`<-- Error: ${message}`, { walletId })
+  logger.warn(`<-- Error: ${message}`, { walletId, err })
 }
 
 function sendBalances({ walletId, webContents }) {
@@ -387,9 +387,9 @@ function syncTransactions({ number, walletId, webContents }) {
     })
 }
 
-// TODO move all subscription code to a single place that other modules can reuse
-
 let subscriptions = []
+
+let blocksSubscription = null
 
 function openWallet({ webContents, walletId }) {
   sendWalletOpen(webContents, walletId)
@@ -401,43 +401,27 @@ function openWallet({ webContents, walletId }) {
   sendCachedTransactions({ walletId, webContents })
 
   syncTransactions({ walletId, webContents }).then(function() {
-    const blocksSubscription = subscribe({
-      url: getWebsocketApiUrl(),
-      onData: function(header) {
-        moduleEmitter.emit('new-block', header)
-      },
-      onError: function (err) {
-        logger.warn('New block subscription failed', err)
-      }
-    })
+    subscriptions = subscriptions.concat({ walletId, webContents })
 
-    subscriptions.push({ webContents, blocksSubscription })
-  })
-
-  moduleEmitter.on('unconfirmed-tx', function(transaction) {
-    try {
-      if (webContents.id) {
-        parseTransaction({ transaction, walletId, webContents })
-      }
-    } catch (err) {}
-  })
-
-  moduleEmitter.on('new-block', function({ number }) {
-    try {
-      if (webContents.id) {
-        syncTransactions({ number, walletId, webContents })
-      }
-    } catch (err) {}
+    if (subscriptions.length === 1) {
+      blocksSubscription = subscribe({
+        url: getWebsocketApiUrl(),
+        onData: function(header) {
+          moduleEmitter.emit('new-block-header', header)
+        },
+        onError: function (err) {
+          logger.warn('New block subscription failed', err)
+        }
+      })
+    }
   })
 }
 
 function unsubscribeUpdates(_, webContents) {
-  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
+  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 
-  toUnsubscribe.forEach(function(s) {
-    logger.verbose('Unsubscribing wallet balance update ')
-
-    s.blocksSubscription.unsubscribe(function (err) {
+  if (!subscriptions.length && blocksSubscription) {
+    blocksSubscription.unsubscribe(function (err) {
       if (err) {
         logger.warn('Could not unsubscribe', err.message)
         return
@@ -445,10 +429,22 @@ function unsubscribeUpdates(_, webContents) {
 
       logger.verbose('New block subscription canceled')
     })
-  })
 
-  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
+    blocksSubscription = null
+  }
 }
+
+moduleEmitter.on('unconfirmed-tx', function (transaction) {
+  subscriptions.forEach(function (s) {
+    parseTransaction(Object.assign({ transaction }, s))
+  })
+})
+
+moduleEmitter.on('new-block-header', function ({ number }) {
+  subscriptions.forEach(function (s) {
+    syncTransactions(Object.assign({ number }, s))
+  })
+})
 
 function getGasPrice() {
   logger.verbose('Getting gas price for')
