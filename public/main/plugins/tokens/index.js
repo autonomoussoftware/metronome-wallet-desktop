@@ -22,8 +22,6 @@ const {
   transactionParser
 } = require('./transactionParser')
 
-const ethEvents = getEvents()
-
 function sendBalances({ walletId, addresses, webContents }) {
   const contractAddresses = getTokenContractAddresses()
 
@@ -93,38 +91,27 @@ function sendBalances({ walletId, addresses, webContents }) {
   })
 }
 
-// TODO move all subscription code to a single place in ethWallet
-// TODO and into getHooks()
 let subscriptions = []
 
-ethEvents.on('wallet-opened', function({ walletId, addresses, webContents }) {
-  sendBalances({ walletId, addresses, webContents })
-
-  const web3 = getWeb3()
-  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-
-  // TODO listen for new txs of wallets instead of all blocks
-  blocksSubscription.on('data', function() {
-    sendBalances({ walletId, addresses, webContents })
-  })
-
-  webContents.on('destroyed', function() {
-    blocksSubscription.unsubscribe()
-  })
-
-  subscriptions.push({ webContents, blocksSubscription })
-})
-
 function unsubscribeUpdates(_, webContents) {
-  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
-
-  toUnsubscribe.forEach(function(s) {
-    logger.verbose('Unsubscribing token balance update')
-    s.blocksSubscription.unsubscribe()
-  })
-
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
+
+const ethEvents = getEvents()
+
+ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+  sendBalances({ walletId, addresses, webContents })
+
+  webContents.on('destroyed', function () {
+    unsubscribeUpdates(null, webContents)
+  })
+
+  subscriptions = subscriptions.concat({ walletId, addresses, webContents })
+})
+
+ethEvents.on('new-block-header', function () {
+  subscriptions.forEach(sendBalances)
+})
 
 function callTokenMethod(method, args, waitForReceipt) {
   const { password, token, from, to, value, gasPrice, gasLimit } = args

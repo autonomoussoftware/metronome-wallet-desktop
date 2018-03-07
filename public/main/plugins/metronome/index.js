@@ -4,7 +4,12 @@ const promiseAllProps = require('promise-all-props')
 const { getAuctionStatus, getAuctionGasLimit } = require('./auctions')
 const { approveToken, getAllowance } = require('../tokens')
 const { transactionParser } = require('./transactionParser')
-const { getWeb3, registerTxParser, sendTransaction } = require('../ethWallet')
+const {
+  getEvents,
+  getWeb3,
+  registerTxParser,
+  sendTransaction
+} = require('../ethWallet')
 
 const {
   encodeConvertEthToMtn,
@@ -20,9 +25,6 @@ const {
   getConverterAddress,
   getTokenAddress
 } = require('./settings')
-
-// TODO move all subscription code to a single place in ethWallet
-let subscriptions = []
 
 function sendStatus({ web3, webContents }) {
   promiseAllProps({
@@ -52,43 +54,29 @@ function sendStatus({ web3, webContents }) {
     })
 }
 
+let subscriptions = []
+
+function unsubscribeUpdates(_, webContents) {
+  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
+}
+
 function listenForBlocks(_, webContents) {
   const web3 = getWeb3()
 
   sendStatus({ web3, webContents })
 
-  const blocksSubscription = web3.eth.subscribe('newBlockHeaders')
-
-  blocksSubscription.on('data', function(header) {
-    logger.verbose('New block header', header.number)
-
-    // TODO throttle this to 30'
-    sendStatus({ web3, webContents })
-  })
-
-  blocksSubscription.on('error', function(err) {
-    logger.error('Subscription error', err.message)
-
-    // TODO notify error
-  })
-
   webContents.on('destroyed', function() {
-    blocksSubscription.unsubscribe()
+    unsubscribeUpdates(null, webContents)
   })
 
-  subscriptions.push({ webContents, blocksSubscription })
+  subscriptions = subscriptions.concat({ web3, webContents })
 }
 
-function unsubscribeUpdates(_, webContents) {
-  const toUnsubscribe = subscriptions.filter(s => s.webContents === webContents)
+const ethEvents = getEvents()
 
-  toUnsubscribe.forEach(function(s) {
-    logger.verbose('Unsubscribing auction status update')
-    s.blocksSubscription.unsubscribe()
-  })
-
-  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
-}
+ethEvents.on('new-block-header', function () {
+  subscriptions.forEach(sendStatus)
+})
 
 function buyMetronome({ password, from, value, gasLimit, gasPrice }) {
   const address = getAuctionAddress()
