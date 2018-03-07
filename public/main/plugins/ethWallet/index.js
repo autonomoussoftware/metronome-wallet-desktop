@@ -1,3 +1,5 @@
+'use strict'
+
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const { groupBy, isArray, mergeWith, throttle } = require('lodash')
 const axios = require('axios')
@@ -31,7 +33,7 @@ const {
   isAddressInWallet
 } = require('./settings')
 
-function concatArrays(objValue, srcValue) {
+function concatArrays (objValue, srcValue) {
   if (isArray(objValue)) {
     return objValue.concat(srcValue)
   }
@@ -39,17 +41,17 @@ function concatArrays(objValue, srcValue) {
 
 const moduleEmitter = new EventEmitter()
 
-function getEvents() {
+function getEvents () {
   return moduleEmitter
 }
 
-function sendTransaction(args, resolveToReceipt) {
+function sendTransaction (args, resolveToReceipt) {
   const deferred = new Deferred()
 
   signAndSendTransaction(args)
-    .then(function({ emitter: txEmitter }) {
+    .then(function ({ emitter: txEmitter }) {
       txEmitter
-        .once('transactionHash', function(hash) {
+        .once('transactionHash', function (hash) {
           logger.verbose('Transaction hash sent', hash)
 
           if (!resolveToReceipt) {
@@ -57,11 +59,11 @@ function sendTransaction(args, resolveToReceipt) {
           }
 
           const web3 = getWeb3()
-          web3.eth.getTransaction(hash).then(function(transaction) {
+          web3.eth.getTransaction(hash).then(function (transaction) {
             moduleEmitter.emit('unconfirmed-tx', transaction)
           })
         })
-        .once('receipt', function(receipt) {
+        .once('receipt', function (receipt) {
           logger.verbose('Transaction receipt received', receipt)
 
           if (resolveToReceipt) {
@@ -70,7 +72,7 @@ function sendTransaction(args, resolveToReceipt) {
 
           moduleEmitter.emit('tx-receipt', receipt)
         })
-        .once('error', function(err) {
+        .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
 
           // TODO Notify the UI about the error
@@ -78,7 +80,7 @@ function sendTransaction(args, resolveToReceipt) {
           deferred.reject(err)
         })
     })
-    .catch(function(err) {
+    .catch(function (err) {
       logger.warn('Transaction send error', err.message)
       deferred.reject(err)
     })
@@ -86,7 +88,7 @@ function sendTransaction(args, resolveToReceipt) {
   return deferred.promise
 }
 
-function generateWallet(mnemonic, password) {
+function generateWallet (mnemonic, password) {
   if (!bip39.validateMnemonic(mnemonic)) {
     const error = new WalletError('Invalid mnemonic')
     return { error }
@@ -149,7 +151,7 @@ const sendPendingWalletStateChanges = throttle(
   { leading: true, trailing: false }
 )
 
-function sendWalletStateChange({ webContents, walletId, address, data, log }) {
+function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
   pendingWalletStateChanges.push({
     webContents,
     data: {
@@ -164,17 +166,17 @@ function sendWalletStateChange({ webContents, walletId, address, data, log }) {
   logger.verbose(`<-- ${log} ${address}`, data)
 }
 
-function sendError({ webContents, walletId, message, err }) {
+function sendError ({ webContents, walletId, message, err }) {
   webContents.send('error', {
     error: new WalletError(message, err)
   })
   logger.warn(`<-- Error: ${message}`, { walletId })
 }
 
-function sendBalances({ walletId, webContents }) {
+function sendBalances ({ walletId, webContents }) {
   getWalletBalances(walletId)
-    .then(function(balances) {
-      balances.forEach(function({ address, balance }) {
+    .then(function (balances) {
+      balances.forEach(function ({ address, balance }) {
         sendWalletStateChange({
           webContents,
           walletId,
@@ -184,7 +186,7 @@ function sendBalances({ walletId, webContents }) {
         })
       })
     })
-    .catch(function(err) {
+    .catch(function (err) {
       sendError({
         webContents,
         walletId,
@@ -193,7 +195,7 @@ function sendBalances({ walletId, webContents }) {
       })
 
       // Send cached balances
-      getWalletAddresses(walletId).map(function(address) {
+      getWalletAddresses(walletId).map(function (address) {
         sendWalletStateChange({
           webContents,
           walletId,
@@ -205,7 +207,7 @@ function sendBalances({ walletId, webContents }) {
     })
 }
 
-function sendWalletOpen(webContents, walletId) {
+function sendWalletOpen (webContents, walletId) {
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
   moduleEmitter.emit('wallet-opened', {
@@ -219,14 +221,14 @@ const any = array => array.reduce((acc, element) => acc || element, false)
 
 const txParsers = []
 
-function registerTxParser(parser) {
+function registerTxParser (parser) {
   txParsers.push(parser)
 }
 
-function parseTransaction({ transaction, receipt, walletId, webContents }) {
+function parseTransaction ({ transaction, receipt, walletId, webContents }) {
   return Promise.all(
     txParsers.map(txParser => txParser({ transaction, receipt, walletId }))
-  ).then(function(metas) {
+  ).then(function (metas) {
     const meta = mergeWith({}, ...metas, concatArrays)
     const parsedTransaction = { transaction, receipt, meta }
 
@@ -243,36 +245,40 @@ function parseTransaction({ transaction, receipt, walletId, webContents }) {
       db.update(query, update, { upsert: true })
       // TODO handle db error
 
-      sendWalletStateChange({ webContents, walletId, address, data: {
-        transactions: [parsedTransaction]
-      }, log: 'Transaction' })
+      sendWalletStateChange({ webContents,
+        walletId,
+        address,
+        data: {
+          transactions: [parsedTransaction]
+        },
+        log: 'Transaction' })
     }
 
     return parsedTransaction
   })
 }
 
-function sendBestBlock({ webContents }) {
+function sendBestBlock ({ webContents }) {
   const bestBlock = settings.get('app.bestBlock') || { number: 0 }
   webContents.send('eth-block', bestBlock)
   logger.verbose('Current best block', bestBlock)
 }
 
-function sendCachedTransactions({ walletId, webContents }) {
+function sendCachedTransactions ({ walletId, webContents }) {
   const db = getDatabase()
 
   const addresses = Object.keys(
     settings.get(`user.wallets.${walletId}.addresses`)
   )
 
-  addresses.map(a => a.toLowerCase()).forEach(function(address) {
+  addresses.map(a => a.toLowerCase()).forEach(function (address) {
     const query = { walletId, address }
     // TODO unhardcode limit
     // TODO null first
     db
       .find(query)
       .sort({ 'transaction.blockNumber': -1 })
-      .exec(function(err, transactions) {
+      .exec(function (err, transactions) {
         // TODO handle error
         if (err) {
           logger.error('Error getting data from db', err.message, err)
@@ -281,14 +287,18 @@ function sendCachedTransactions({ walletId, webContents }) {
 
         logger.verbose(transactions.map(t => t.transaction.hash))
 
-        sendWalletStateChange({ webContents, walletId, address, data: {
-          transactions
-        }, log: 'Transactions' })
+        sendWalletStateChange({ webContents,
+          walletId,
+          address,
+          data: {
+            transactions
+          },
+          log: 'Transactions' })
       })
   })
 }
 
-function syncTransactions({ number, walletId, webContents }) {
+function syncTransactions ({ number, walletId, webContents }) {
   const web3 = getWeb3()
 
   const indexerApiUrl = settings.get('app.indexerApiUrl')
@@ -303,7 +313,7 @@ function syncTransactions({ number, walletId, webContents }) {
       .then(data => data.number)
       .then(n => Number.parseInt(n, 10))
   })
-    .then(function({ addresses, latest, indexed }) {
+    .then(function ({ addresses, latest, indexed }) {
       if (indexed < latest) {
         logger.warn('Tried to sync ahead of indexer', { indexed, latest })
       }
@@ -314,7 +324,7 @@ function syncTransactions({ number, walletId, webContents }) {
 
       logger.debug('Syncing', addresses, indexed)
       return Promise.all(
-        addresses.map(function(address) {
+        addresses.map(function (address) {
           const qs = `from=${bestBlock.number + 1}&to=${indexed}`
           return promiseAllProps({
             eth: axios
@@ -326,7 +336,7 @@ function syncTransactions({ number, walletId, webContents }) {
               )
               .then(res => res.data)
           })
-            .then(function({ eth, tok }) {
+            .then(function ({ eth, tok }) {
               const txCount = eth.length + Object.keys(tok).length
               logger.debug('Got own txs', txCount)
 
@@ -336,10 +346,10 @@ function syncTransactions({ number, walletId, webContents }) {
 
               return Promise.all([
                 Promise.all(
-                  eth.map(function(hash) {
+                  eth.map(function (hash) {
                     logger.debug('Parsing ETH tx', hash)
                     return getTransactionAndReceipt({ web3, hash }).then(
-                      function({ transaction, receipt }) {
+                      function ({ transaction, receipt }) {
                         return parseTransaction({
                           transaction,
                           receipt,
@@ -351,11 +361,11 @@ function syncTransactions({ number, walletId, webContents }) {
                   })
                 ),
                 Promise.all(
-                  Object.keys(tok).map(function(tokenAddress) {
-                    return tok[tokenAddress].map(function(hash) {
+                  Object.keys(tok).map(function (tokenAddress) {
+                    return tok[tokenAddress].map(function (hash) {
                       logger.debug('Parsing token tx', hash)
                       return getTransactionAndReceipt({ web3, hash }).then(
-                        function({ transaction, receipt }) {
+                        function ({ transaction, receipt }) {
                           return parseTransaction({
                             transaction,
                             receipt,
@@ -369,7 +379,7 @@ function syncTransactions({ number, walletId, webContents }) {
                 )
               ])
             })
-            .then(function() {
+            .then(function () {
               settings.set('app.bestBlock', { number: indexed })
               webContents.send('eth-block', { number: indexed })
               logger.verbose('New best block', { number: indexed })
@@ -377,7 +387,7 @@ function syncTransactions({ number, walletId, webContents }) {
         })
       )
     })
-    .catch(function(err) {
+    .catch(function (err) {
       sendError({
         webContents,
         walletId,
@@ -391,7 +401,7 @@ let subscriptions = []
 
 let blocksSubscription = null
 
-function openWallet({ webContents, walletId }) {
+function openWallet ({ webContents, walletId }) {
   sendWalletOpen(webContents, walletId)
 
   sendBalances({ walletId, webContents })
@@ -400,13 +410,13 @@ function openWallet({ webContents, walletId }) {
 
   sendCachedTransactions({ walletId, webContents })
 
-  syncTransactions({ walletId, webContents }).then(function() {
+  syncTransactions({ walletId, webContents }).then(function () {
     subscriptions = subscriptions.concat({ walletId, webContents })
 
     if (subscriptions.length === 1) {
       blocksSubscription = subscribe({
         url: getWebsocketApiUrl(),
-        onData: function(header) {
+        onData: function (header) {
           moduleEmitter.emit('new-block-header', header)
         },
         onError: function (err) {
@@ -417,7 +427,7 @@ function openWallet({ webContents, walletId }) {
   })
 }
 
-function unsubscribeUpdates(_, webContents) {
+function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 
   if (!subscriptions.length && blocksSubscription) {
@@ -446,7 +456,7 @@ moduleEmitter.on('new-block-header', function ({ number }) {
   })
 })
 
-function getGasPrice() {
+function getGasPrice () {
   logger.verbose('Getting gas price for')
 
   return getWeb3()
@@ -454,18 +464,18 @@ function getGasPrice() {
     .then(gasPrice => ({ gasPrice }))
 }
 
-function openWallets(data, webContents) {
+function openWallets (data, webContents) {
   const activeWallet = settings.get('user.activeWallet')
   const walletIds = Object.keys(settings.get('user.wallets'))
 
-  walletIds.forEach(function(walletId) {
+  walletIds.forEach(function (walletId) {
     openWallet({ webContents, walletId })
   })
 
   return { walletIds, activeWallet }
 }
 
-function createWallet(data, webContents) {
+function createWallet (data, webContents) {
   const { password, mnemonic } = data
   const result = generateWallet(mnemonic, password)
 
@@ -478,7 +488,7 @@ function createWallet(data, webContents) {
   return result
 }
 
-function getGasLimit({ to }) {
+function getGasLimit ({ to }) {
   logger.verbose('Getting limit gas for address: ', to)
 
   return getWeb3()
@@ -498,7 +508,7 @@ function clearCache () {
     .catch(err => logger.error('Clear cache failed: ', err))
 }
 
-function getHooks() {
+function getHooks () {
   initDatabase()
 
   registerTxParser(transactionParser)

@@ -1,3 +1,5 @@
+'use strict'
+
 const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
@@ -22,7 +24,7 @@ const {
   transactionParser
 } = require('./transactionParser')
 
-function sendBalances({ walletId, addresses, webContents }) {
+function sendBalances ({ walletId, addresses, webContents }) {
   const contractAddresses = getTokenContractAddresses()
 
   const web3 = getWeb3()
@@ -34,12 +36,12 @@ function sendBalances({ walletId, addresses, webContents }) {
       symbol: getTokenSymbol(address)
     }))
 
-  addresses.map(a => a.toLowerCase()).forEach(function(address) {
-    contracts.forEach(function({ contractAddress, contract, symbol }) {
+  addresses.map(a => a.toLowerCase()).forEach(function (address) {
+    contracts.forEach(function ({ contractAddress, contract, symbol }) {
       contract.methods
         .balanceOf(address)
         .call()
-        .then(function(balance) {
+        .then(function (balance) {
           setTokenBalance({ walletId, address, contractAddress, balance })
 
           webContents.send('wallet-state-changed', {
@@ -57,7 +59,7 @@ function sendBalances({ walletId, addresses, webContents }) {
           })
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
-        .catch(function(err) {
+        .catch(function (err) {
           logger.warn('Could not get token balance', symbol, err)
 
           // TODO retry before notifying
@@ -93,7 +95,7 @@ function sendBalances({ walletId, addresses, webContents }) {
 
 let subscriptions = []
 
-function unsubscribeUpdates(_, webContents) {
+function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
@@ -113,7 +115,7 @@ ethEvents.on('new-block-header', function () {
   subscriptions.forEach(sendBalances)
 })
 
-function callTokenMethod(method, args, waitForReceipt) {
+function callTokenMethod (method, args, waitForReceipt) {
   const { password, token, from, to, value, gasPrice, gasLimit } = args
 
   logger.verbose(`Calling ${method} of ERC20 token`, {
@@ -174,7 +176,7 @@ function getAllowance ({ token, from, to }) {
   return contract.methods.allowance(from, to).call()
 }
 
-function getGasLimit({ token, to, from, value }) {
+function getGasLimit ({ token, to, from, value }) {
   const symbol = getTokenSymbol(token)
 
   logger.verbose('Getting token gas limit', { to, value, symbol })
@@ -190,7 +192,7 @@ function getGasLimit({ token, to, from, value }) {
   })
 }
 
-function getHooks() {
+function getHooks () {
   registerTxParser(transactionParser)
 
   return [
