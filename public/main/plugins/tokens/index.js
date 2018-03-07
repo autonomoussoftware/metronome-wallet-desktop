@@ -50,6 +50,7 @@ function sendBalances ({ walletId, addresses, webContents }) {
                 [address]: {
                   token: {
                     [contractAddress]: {
+                      symbol,
                       balance
                     }
                   }
@@ -77,6 +78,7 @@ function sendBalances ({ walletId, addresses, webContents }) {
                 [address]: {
                   token: {
                     [contractAddress]: {
+                      symbol,
                       balance: getTokenBalance({
                         walletId,
                         address,
