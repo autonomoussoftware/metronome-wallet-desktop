@@ -1,10 +1,12 @@
+'use strict'
+
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 const { get } = require('lodash/fp')
 
-const auctionsAbi = require('./contracts/Auctions.753841b')
+const auctionsAbi = require('./contracts/Auctions')
 
-function getAuctionStatus({ web3, address }) {
+function getAuctionStatus ({ web3, address }) {
   const auctions = new web3.eth.Contract(auctionsAbi, address)
 
   const calls = {
@@ -27,7 +29,7 @@ function getAuctionStatus({ web3, address }) {
   return promiseAllProps(calls)
 }
 
-function getAuctionGasLimit({ web3, from, to, value }) {
+function getAuctionGasLimit ({ web3, from, to, value }) {
   logger.verbose('Getting auction limit gas for address: ', { from, to, value })
 
   // TODO: temp fix to avoid underestimation
