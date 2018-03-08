@@ -1,15 +1,16 @@
 'use strict'
 
-// TODO hdkey uses deprecated coinstring and shall use bs58check
+const { defaultTo, get } = require('lodash/fp')
 const { groupBy, isArray, mergeWith, throttle } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
-const logger = require('electron-log')
 const EventEmitter = require('events')
-const settings = require('electron-settings')
+// TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
+const logger = require('electron-log')
 const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
+const settings = require('electron-settings')
 
 const Deferred = requireLib('Deferred')
 const { restart } = requireLib('electron-restart')
@@ -24,10 +25,9 @@ const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
 const { transactionParser } = require('./transactionParser')
-const { initDatabase, getDatabase, clearDatabase } = require('./db')
+const { getDatabase, clearDatabase } = require('./db')
 
 const {
-  clearBestBlock,
   getAddressBalance,
   getWalletAddresses,
   getWebsocketApiUrl,
@@ -245,12 +245,8 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
       // TODO should not assume there will be only one address...
       const address = addresses[0]
 
-      const db = getDatabase()
-
       const query = { 'transaction.hash': transaction.hash }
       const update = Object.assign({ walletId, address }, parsedTransaction)
-      db.update(query, update, { upsert: true })
-      // TODO handle db error
 
       sendWalletStateChange({ webContents,
         walletId,
@@ -258,22 +254,40 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
         data: {
           transactions: [parsedTransaction]
         },
-        log: 'Transaction' })
+        log: 'Transaction'
+      })
+
+      return getDatabase().transactions
+        .updateAsync(query, update, { upsert: true })
     }
 
     return parsedTransaction
   })
 }
 
+function setBestBlock (data) {
+  return getDatabase().state.updateAsync({ type: 'eth-best-block' }, { data })
+}
+
+function getBestBlock () {
+  return getDatabase().state.findOneAsync({ type: 'eth-best-block' })
+    .then(defaultTo({ data: { number: -1 } }))
+    .then(get('data'))
+}
+
 function sendBestBlock ({ webContents }) {
-  const bestBlock = settings.get('app.bestBlock') || { number: 0 }
-  webContents.send('eth-block', bestBlock)
-  logger.verbose('Current best block', bestBlock)
+  getBestBlock()
+    .then(function (bestBlock) {
+      logger.verbose('Current best block', bestBlock)
+
+      webContents.send('eth-block', bestBlock)
+    })
+    .catch(function (err) {
+      logger.warn('Could not read best block from db', err.message)
+    })
 }
 
 function sendCachedTransactions ({ walletId, webContents }) {
-  const db = getDatabase()
-
   const addresses = Object.keys(
     settings.get(`user.wallets.${walletId}.addresses`)
   )
@@ -282,7 +296,7 @@ function sendCachedTransactions ({ walletId, webContents }) {
     const query = { walletId, address }
     // TODO unhardcode limit
     // TODO null first
-    db
+    getDatabase().transactions
       .find(query)
       .sort({ 'transaction.blockNumber': -1 })
       .exec(function (err, transactions) {
@@ -309,10 +323,10 @@ function syncTransactions ({ number, walletId, webContents }) {
   const web3 = getWeb3()
 
   const indexerApiUrl = settings.get('app.indexerApiUrl')
-  const bestBlock = settings.get('app.bestBlock', { number: -1 })
 
   return promiseAllProps({
     addresses: getWalletAddresses(walletId),
+    bestBlock: getBestBlock().then(get('number')),
     latest: number || web3.eth.getBlockNumber(),
     indexed: axios
       .get(`${indexerApiUrl}/blocks/latest/number`)
@@ -320,7 +334,7 @@ function syncTransactions ({ number, walletId, webContents }) {
       .then(data => data.number)
       .then(n => Number.parseInt(n, 10))
   })
-    .then(function ({ addresses, latest, indexed }) {
+    .then(function ({ addresses, bestBlock, latest, indexed }) {
       if (indexed < latest) {
         logger.warn('Tried to sync ahead of indexer', { indexed, latest })
       }
@@ -332,7 +346,7 @@ function syncTransactions ({ number, walletId, webContents }) {
       logger.debug('Syncing', addresses, indexed)
       return Promise.all(
         addresses.map(function (address) {
-          const qs = `from=${bestBlock.number + 1}&to=${indexed}`
+          const qs = `from=${bestBlock + 1}&to=${indexed}`
           return promiseAllProps({
             eth: axios
               .get(`${indexerApiUrl}/addresses/${address}/transactions?${qs}`)
@@ -389,9 +403,11 @@ function syncTransactions ({ number, walletId, webContents }) {
               ])
             })
             .then(function () {
-              settings.set('app.bestBlock', { number: indexed })
-              webContents.send('eth-block', { number: indexed })
               logger.verbose('New best block', { number: indexed })
+
+              webContents.send('eth-block', { number: indexed })
+
+              return setBestBlock({ number: indexed })
             })
         })
       )
@@ -510,7 +526,6 @@ function clearCache () {
 
   return clearDatabase()
     .then(() => {
-      clearBestBlock()
       logger.verbose('Clear cache success')
       restart(1)
     })
@@ -518,8 +533,6 @@ function clearCache () {
 }
 
 function getHooks () {
-  initDatabase()
-
   registerTxParser(transactionParser)
 
   return [

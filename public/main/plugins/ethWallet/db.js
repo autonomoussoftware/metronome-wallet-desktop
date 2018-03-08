@@ -1,38 +1,67 @@
-const logger = require('electron-log')
+'use strict'
+
 const { app } = require('electron')
+const { promisify } = require('util')
 const Datastore = require('nedb')
+const logger = require('electron-log')
+const memoize = require('lodash/memoize')
 const path = require('path')
+const sum = require('lodash/sum')
 
-let db
-
-function initDatabase () {
-  const dataPath = app.getPath('userData')
-
-  db = new Datastore({
-    filename: path.join(dataPath, 'EthereumBlockchainChache.db'),
-    autoload: true
+const promisifyMethods = methods => function (collection) {
+  methods.forEach(function (method) {
+    collection[`${method}Async`] = promisify(collection[method].bind(collection))
   })
 }
 
-function getDatabase () {
+const promisifyCollection = promisifyMethods([
+  'find',
+  'findOne',
+  'remove',
+  'update'
+])
+
+const getDatabase = memoize(function () {
+  const dataPath = app.getPath('userData')
+
+  const db = {}
+
+  db.transactions = new Datastore({
+    filename: path.join(dataPath, 'Database/Transactions'),
+    autoload: true
+  })
+  promisifyCollection(db.transactions)
+
+  db.state = new Datastore({
+    filename: path.join(dataPath, 'Database/State'),
+    autoload: true
+  })
+  promisifyCollection(db.state)
+
   return db
-}
+})
 
 function clearDatabase () {
   logger.verbose('Database clear started')
 
-  return new Promise((resolve, reject) => {
-    db.remove({}, { multi: true }, function (err, numRemoved) {
-      if (err) {
-        logger.error('Database clear failed', err)
-        return reject(err)
-      }
+  const db = getDatabase()
+  const collections = Object.values(db)
 
-      logger.verbose(`Database clear success, removed ${numRemoved} documents`)
-      return resolve(numRemoved)
+  return Promise.all(
+    collections
+      .map(collection => collection.removeAsync({}, { multi: true }))
+  )
+    .then(sum)
+    .then(function (count) {
+      logger.verbose(`Database clear success, removed ${count} documents`)
+
+      return count
     })
-  })
+    .catch(function (err) {
+      logger.error('Database clear failed', err)
+
+      throw err
+    })
 }
 
-// TODO listen window events to stop and restart the coincap listener
-module.exports = { initDatabase, getDatabase, clearDatabase }
+module.exports = { getDatabase, clearDatabase }
