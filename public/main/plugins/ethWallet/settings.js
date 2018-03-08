@@ -1,3 +1,5 @@
+'use strict'
+
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
@@ -52,11 +54,6 @@ function setWalletEncryptedSeed ({ walletId, encryptedSeed }) {
   logger.debug('Updated wallet seed', { walletId })
 }
 
-function clearBestBlock () {
-  settings.set(`app.bestBlock.number`, -1)
-  logger.debug('Update app.bestBlockl.number to -1')
-}
-
 function getWebsocketApiUrl () {
   return settings.get('app.node.websocketApiUrl')
 }
@@ -66,7 +63,6 @@ function getJsonRpcApiUrl () {
 }
 
 module.exports = {
-  clearBestBlock,
   findWalletId,
   getAddressBalance,
   getJsonRpcApiUrl,
