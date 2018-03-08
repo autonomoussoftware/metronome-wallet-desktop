@@ -1,4 +1,7 @@
+'use strict'
+
 const path = require('path')
+const debug = require('debug')('require-lib')
 
 const paths = []
 
@@ -10,10 +13,16 @@ const requireLib = function (request) {
 
   const result = paths.map(p => path.join(p, request)).find(function (p) {
     try {
+      debug('About to require %s', p)
+
       require(p)
+
+      debug('Lib found at %s', p)
 
       return true
     } catch (err) {
+      debug('Lib not found: %s', err.message)
+
       return false
     }
   })
@@ -27,6 +36,8 @@ const requireLib = function (request) {
 
 requireLib.add = function (p) {
   paths.push(p)
+
+  debug('Path added: %s', p)
 
   return requireLib
 }
