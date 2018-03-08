@@ -148,6 +148,11 @@ export const getConverterStatus = createSelector(
   converter => converter.status
 )
 
+export const getConverterPrice = createSelector(
+  getConverterStatus,
+  converterStatus => _.get(converterStatus, 'currentPrice', null)
+)
+
 export const getConverterPriceUSD = createSelector(
   getConverterStatus,
   getEthRate,
@@ -219,14 +224,14 @@ export const getActiveWalletTransactions = createSelector(
           : null
 
       const symbol = ['received', 'sent'].includes(txType)
-        ? tokenData ? 'MTN' : 'ETH'
+        ? tokenData ? 'MET' : 'ETH'
         : null
 
       const contractCallFailed = meta.contractCallFailed || false
 
       const convertedFrom =
         txType === 'converted'
-          ? Web3.utils.toBN(transaction.value).isZero() ? 'MTN' : 'ETH'
+          ? Web3.utils.toBN(transaction.value).isZero() ? 'MET' : 'ETH'
           : null
 
       const fromValue = convertedFrom
@@ -277,7 +282,10 @@ export const getActiveWalletTransactions = createSelector(
       }
     }
 
-    return _.sortBy(txs, 'transaction.blockNumber')
+    return _.sortBy(txs, [
+      'transaction.blockNumber',
+      'transaction.transactionIndex'
+    ])
       .reverse()
       .map(parseTx)
   }

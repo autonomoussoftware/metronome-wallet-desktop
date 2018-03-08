@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_makeshlibs override_dh_perl:
+
+override_dh_install:
+	dh_install usr/share/ usr/
+	dh_install "opt/Metronome\ Wallet/" usr/lib/
+override_dh_link:
+	dh_link usr/lib/Metronome\ Wallet/metronome-desktop-wallet usr/bin/metronome-desktop-wallet

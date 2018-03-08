@@ -1,4 +1,4 @@
-import { BaseBtn, Btn } from './Btn'
+import { BaseBtn, FloatBtn, Btn } from './Btn'
 import ConverterIcon from './ConverterIcon'
 import DisplayValue from './DisplayValue'
 import AuctionIcon from './AuctionIcon'
@@ -34,6 +34,7 @@ export {
   TextInput,
   CopyIcon,
   LogoIcon,
+  FloatBtn,
   BaseBtn,
   TxIcon,
   Drawer,

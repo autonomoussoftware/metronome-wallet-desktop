@@ -1,8 +1,8 @@
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
 
-const { isValidPassword } = require('./user')
-const { presetDefault: presetDefaultSettings } = require('./settings')
+const { isValidPassword } = require('./password')
+const settings = require('./settings')
 const WalletError = require('./WalletError')
 
 function onRendererEvent (eventName, listener) {
@@ -43,8 +43,8 @@ function createRendererEventsRouter () {
   const allHooks = []
 
   return {
-    use: function (module) {
-      const hooks = module.getHooks()
+    use: function (plugin) {
+      const hooks = plugin.getHooks()
 
       hooks.forEach(function (hook) {
         const existingHook = allHooks.find(h => h.eventName === hook.eventName)
@@ -68,13 +68,14 @@ function createRendererEventsRouter () {
         const { eventName, handlers, auth } = hook
 
         onRendererEvent(eventName, function (data, webContents) {
-          if (auth && !isValidPassword(data.password)) {
-            return { error: new WalletError('Invalid password') }
-          }
+          return (auth ? isValidPassword(data.password) : Promise.resolve(true))
+            .then(function (success) {
+              if (!success) {
+                return { error: new WalletError('Invalid password') }
+              }
 
-          return Promise.all(handlers.map(fn => fn(data, webContents)))
-            .then(function (results) {
-              return Object.assign({}, ...results)
+              return Promise.all(handlers.map(fn => fn(data, webContents)))
+                .then(results => Object.assign({}, ...results))
             })
         })
       })
@@ -83,18 +84,19 @@ function createRendererEventsRouter () {
 }
 
 function initMainWorker () {
-  presetDefaultSettings()
+  settings.presetDefaults()
+  settings.attachSync(ipcMain)
 
   ipcMain.on('log.error', function (event, args) {
     logger.error(args)
   })
 
   createRendererEventsRouter()
-    .use(require('./onboarding'))
-    .use(require('./coincap'))
-    .use(require('./ethWallet'))
-    .use(require('./tokens'))
-    .use(require('./metronome'))
+    .use(require('./plugins/onboarding'))
+    .use(require('./plugins/coincap'))
+    .use(require('./plugins/ethWallet'))
+    .use(require('./plugins/tokens'))
+    .use(require('./plugins/metronome'))
     .attach()
 }
 

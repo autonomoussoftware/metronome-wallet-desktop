@@ -4,39 +4,33 @@ import styled from 'styled-components'
 import React from 'react'
 
 const Container = styled.div`
+  will-change: height;
+  transition: height ${({ timeout }) => `${timeout}ms`} ease-in;
+  overflow: hidden;
+
+  &.collapse-exit.collapse-exit-active,
   &.collapse-enter {
-    transition: ${({ timeout }) => `${timeout}ms`} ease-in;
-    max-height: 0;
+    height: 0;
   }
 
-  &.collapse-enter.collapse-enter-active {
-    max-height: ${({ maxHeight }) => maxHeight};
-    overflow: hidden;
-  }
-
+  &.collapse-enter.collapse-enter-active,
   &.collapse-exit {
-    transition: ${({ timeout }) => `${timeout}ms`} ease-in;
-    max-height: ${({ maxHeight }) => maxHeight};
-  }
-
-  &.collapse-exit.collapse-exit-active {
-    max-height: 0;
-    overflow: hidden;
+    height: ${({ maxHeight }) => maxHeight};
   }
 `
 
-const Collapsable = ({ maxHeight, children, timeout = 200, ...other }) => (
+const Collapsable = ({ height, children, timeout = 200, ...other }) => (
   <CSSTransition timeout={timeout} classNames="collapse" {...other}>
-    <Container timeout={timeout} maxHeight={maxHeight}>
+    <Container timeout={timeout} maxHeight={height}>
       {children}
     </Container>
   </CSSTransition>
 )
 
 Collapsable.propTypes = {
-  maxHeight: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
-  timeout: PropTypes.number
+  timeout: PropTypes.number,
+  height: PropTypes.string.isRequired
 }
 
 export default Collapsable

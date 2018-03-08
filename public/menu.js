@@ -62,20 +62,20 @@ const template = [
 ]
 
 if (process.platform === 'darwin') {
-  const name = app.getName()
+  const name = 'Metronome Wallet'
 
   template.unshift({
     label: name,
     submenu: [
-      { role: 'about' },
+      { role: 'about', label: `About ${name}` },
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
-      { role: 'hide' },
+      { role: 'hide', label: `Hide ${name}` },
       { role: 'hideothers' },
       { role: 'unhide' },
       { type: 'separator' },
-      { role: 'quit' }
+      { role: 'quit', label: `Quit ${name}` }
     ]
   })
 

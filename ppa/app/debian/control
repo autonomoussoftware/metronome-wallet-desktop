@@ -1,0 +1,14 @@
+Source: metronome-desktop-wallet
+Maintainer: John C. Vernaleo <johnv@bloq.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.7
+Homepage: https://github.com/MetronomeToken/metronome-desktop-wallet
+Build-Depends: debhelper (>= 9), libcairo2, libxcursor1, libxcomposite1, libpangocairo-1.0-0, libxdamage1, libxrandr2, libatk1.0-0, libx11-xcb1, libxi6, libxext6, libxss1, libgconf2-4, libnss3, libnspr4, libasound2, libcups2, libgtk2.0-0, libxtst6
+
+Package: metronome-desktop-wallet
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcairo2, libxcursor1, libxcomposite1, libpangocairo-1.0-0, libxdamage1, libxrandr2, libatk1.0-0, libx11-xcb1, libxi6, libxext6, libxss1, libgconf2-4, libnss3, libnspr4, libasound2, libcups2, libgtk2.0-0, libxtst6
+Description: Cross Platform Desktop Wallet for Metronome
+ metronome-desktop-wallet is an electron-based wallet for the
+ Metronome Token.

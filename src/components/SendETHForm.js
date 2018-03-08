@@ -1,40 +1,31 @@
-import { BaseBtn, TextInput, TxIcon, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, toETH, toUSD } from '../utils'
+import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable } from '../utils'
+import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
+import ConfirmationWizard from './ConfirmationWizard'
+import * as validators from '../validator'
 import * as selectors from '../selectors'
+import AmountFields from './AmountFields'
+import { debounce } from 'lodash'
 import { connect } from 'react-redux'
+import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
-import {
-  validateEthAmount,
-  validatePassword,
-  validateToAddress
-} from '../validator'
 
-const MaxBtn = BaseBtn.extend`
-  float: right;
-  line-height: 1.8rem;
-  opacity: 0.5;
-  font-size: 1.4rem;
+const ConfirmationContainer = styled.div`
+  font-size: 1.3rem;
   font-weight: 600;
-  letter-spacing: 1.4px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
+  letter-spacing: 0.5px;
 
-  &:hover {
-    opacity: 1;
+  & > div {
+    color: ${p => p.theme.colors.primary};
   }
-`
-
-const ErrorMsg = styled.div`
-  color: ${p => p.theme.colors.danger};
-  margin-top: 1.6rem;
 `
 
 const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
-  padding: 6.4rem 2.4rem;
+  padding: 3.2rem 2.4rem;
   flex-grow: 1;
   height: 100%;
 `
@@ -42,27 +33,19 @@ const Footer = styled.div`
 class SendETHForm extends React.Component {
   static propTypes = {
     availableETH: PropTypes.string.isRequired,
-    onSuccess: PropTypes.func.isRequired,
     ETHprice: PropTypes.number.isRequired,
-    from: PropTypes.string.isRequired
+    from: PropTypes.string.isRequired,
+    tabs: PropTypes.node
   }
 
   state = {
+    useCustomGas: false,
     toAddress: null,
     ethAmount: null,
     usdAmount: null,
-    password: null,
-    status: 'init',
-    errors: {},
-    error: null
-  }
-
-  onMaxClick = () => {
-    const ethAmount = Web3.utils.fromWei(this.props.availableETH)
-    this.setState({
-      usdAmount: toUSD(ethAmount, this.props.ETHprice),
-      ethAmount
-    })
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
+    errors: {}
   }
 
   onInputChange = e => {
@@ -76,119 +59,112 @@ class SendETHForm extends React.Component {
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
+
+    // Estimate gas limit again if parameters changed
+    if (['ethAmount'].includes(id)) this.getGasEstimate()
   }
 
-  onSubmit = ev => {
-    ev.preventDefault()
+  getGasEstimate = debounce(() => {
+    const { ethAmount } = this.state
 
-    const errors = this.validate()
-    if (Object.keys(errors).length > 0) return this.setState({ errors })
+    if (!isWeiable(ethAmount)) return
 
-    const { toAddress, ethAmount, password } = this.state
+    sendToMainProcess('get-gas-limit', {
+      value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+      from: this.props.from
+    })
+      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
+      .catch(err => console.warn('Gas estimation failed', err))
+  }, 500)
 
-    this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('send-eth', {
-        password,
-        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-        from: this.props.from,
-        to: toAddress
-      })
-        .then(this.props.onSuccess)
-        .catch(err =>
-          this.setState({
-            status: 'failure',
-            error: err.message || 'Unknown error'
-          })
-        )
+  validate = () => {
+    const { ethAmount, toAddress, gasPrice, gasLimit } = this.state
+    const max = Web3.utils.fromWei(this.props.availableETH)
+    const errors = {
+      ...validators.validateToAddress(toAddress),
+      ...validators.validateEthAmount(ethAmount, max),
+      ...validators.validateGasPrice(gasPrice),
+      ...validators.validateGasLimit(gasLimit)
+    }
+    const hasErrors = Object.keys(errors).length > 0
+    if (hasErrors) this.setState({ errors })
+    return !hasErrors
+  }
+
+  onWizardSubmit = password => {
+    return sendToMainProcess('send-eth', {
+      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+      gasLimit: this.state.gasLimit,
+      password,
+      value: Web3.utils.toWei(this.state.ethAmount.replace(',', '.')),
+      from: this.props.from,
+      to: this.state.toAddress
+    })
+  }
+
+  renderConfirmation = () => {
+    const { ethAmount, usdAmount, toAddress } = this.state
+    return (
+      <ConfirmationContainer>
+        You will send{' '}
+        <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
+        (${usdAmount}) to the address {toAddress}.
+      </ConfirmationContainer>
     )
   }
 
-  validate = () => {
-    const { ethAmount, toAddress, password } = this.state
-    const max = Web3.utils.fromWei(this.props.availableETH)
-
-    return {
-      ...validateToAddress(toAddress),
-      ...validateEthAmount(ethAmount, max),
-      ...validatePassword(password)
-    }
-  }
-
-  render() {
-    const {
-      toAddress,
-      ethAmount,
-      usdAmount,
-      password,
-      status: sendStatus,
-      errors,
-      error
-    } = this.state
-
+  renderForm = goToReview => {
     return (
       <Flex.Column grow="1">
-        <Sp pt={4} pb={3} px={3}>
-          <form onSubmit={this.onSubmit} id="sendForm">
+        {this.props.tabs}
+        <Sp py={4} px={3}>
+          <form noValidate onSubmit={goToReview} id="sendForm">
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
               onChange={this.onInputChange}
-              error={errors.toAddress}
+              error={this.state.errors.toAddress}
               label="Send to Address"
-              value={toAddress}
+              value={this.state.toAddress}
               id="toAddress"
             />
             <Sp mt={3}>
-              <Flex.Row justify="space-between">
-                <Flex.Item grow="1" basis="0">
-                  <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
-                    MAX
-                  </MaxBtn>
-                  <TextInput
-                    placeholder="0.00"
-                    onChange={this.onInputChange}
-                    label="Amount (ETH)"
-                    value={ethAmount}
-                    error={errors.ethAmount}
-                    id="ethAmount"
-                  />
-                </Flex.Item>
-                <Sp mt={6} mx={1}>
-                  <TxIcon />
-                </Sp>
-                <Flex.Item grow="1" basis="0">
-                  <TextInput
-                    placeholder="0.00"
-                    onChange={this.onInputChange}
-                    label="Amount (USD)"
-                    value={usdAmount}
-                    error={errors.usdAmount}
-                    id="usdAmount"
-                  />
-                </Flex.Item>
-              </Flex.Row>
+              <AmountFields
+                availableETH={this.props.availableETH}
+                ethAmount={this.state.ethAmount}
+                usdAmount={this.state.usdAmount}
+                onChange={this.onInputChange}
+                errors={this.state.errors}
+              />
             </Sp>
-            <Sp my={2}>
-              <Flex.Item grow="1" basis="0">
-                <TextInput
-                  type="password"
-                  onChange={this.onInputChange}
-                  label="Password"
-                  value={password}
-                  error={errors.password}
-                  id="password"
-                />
-              </Flex.Item>
+            <Sp mt={3}>
+              <GasEditor
+                useCustomGas={this.state.useCustomGas}
+                onChange={this.onInputChange}
+                gasPrice={this.state.gasPrice}
+                gasLimit={this.state.gasLimit}
+                errors={this.state.errors}
+              />
             </Sp>
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm" disabled={sendStatus === 'pending'}>
-            {sendStatus === 'pending' ? 'Sending...' : 'Send'}
+          <Btn block submit form="sendForm">
+            Review Send
           </Btn>
-          {error && <ErrorMsg>{error}</ErrorMsg>}
         </Footer>
       </Flex.Column>
+    )
+  }
+
+  render() {
+    return (
+      <ConfirmationWizard
+        renderConfirmation={this.renderConfirmation}
+        onWizardSubmit={this.onWizardSubmit}
+        renderForm={this.renderForm}
+        validate={this.validate}
+      />
     )
   }
 }

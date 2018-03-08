@@ -18,7 +18,7 @@ const Tab = styled.button`
   padding: 2.5rem;
   color: ${p => p.theme.colors.light};
   border-radius: 0;
-  opacity: 1;
+  opacity: 0.5;
   background: transparent;
   line-height: 2rem;
   font-size: 1.6rem;
@@ -31,7 +31,7 @@ const Tab = styled.button`
       rgba(66, 53, 119, 0.4),
       rgba(126, 97, 248, 0.1)
     );
-    opacity: 0.5;
+    opacity: 1;
     border-bottom-color: ${p => p.theme.colors.primary};
   }
   &:focus {
@@ -52,7 +52,7 @@ export default class Tabs extends React.Component {
     ).isRequired
   }
 
-  onClick = e => this.props.onClick(e.target.dataset.tab)
+  onClick = ({ currentTarget }) => this.props.onClick(currentTarget.dataset.tab)
 
   render() {
     const { active, items } = this.props

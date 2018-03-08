@@ -1,3 +1,4 @@
+import { ConverterIcon, DisplayValue, AuctionIcon, TxIcon } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -5,24 +6,15 @@ import styled from 'styled-components'
 import config from '../config'
 import React from 'react'
 import theme from '../theme'
-import {
-  ConverterIcon,
-  DisplayValue,
-  Collapsable,
-  AuctionIcon,
-  TxIcon
-} from './common'
 
-const Tx = styled.div`
+const Container = styled.div`
   margin-left: 1.6rem;
   padding: 1.2rem 2.4rem 1.2rem 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 -1px 0 0 ${p => p.theme.colors.lightShade} inset;
-  &:hover {
-    cursor: pointer;
-  }
+  cursor: pointer;
 `
 
 const Pending = styled.div`
@@ -37,7 +29,7 @@ const Pending = styled.div`
 `
 
 const Details = styled.div`
-  line-height: 1.4rem;
+  line-height: 1.6rem;
   font-size: 1rem;
   letter-spacing: 0px;
   color: ${p => p.theme.colors.copy};
@@ -84,13 +76,26 @@ const Amount = styled.div`
       : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
+  font-size: 2.3vw;
+
+  @media (min-width: 800px) {
+    font-size: 1.8vw;
+  }
+
+  @media (min-width: 1040px) {
+    font-size: 1.5vw;
+  }
+
+  @media (min-width: 1440px) {
+    font-size: 2.2rem;
+  }
 `
 
 const Arrow = styled.span`
   color: ${p => p.theme.colors.primary};
   position: relative;
-  top: -6px;
-  margin: 0 8px;
+  top: -0.4em;
+  margin: 0 0.5em;
   transform: scale3d(1.5, 2, 1);
   display: inline-block;
 `
@@ -98,7 +103,6 @@ const Arrow = styled.span`
 class TxRow extends React.Component {
   static propTypes = {
     confirmations: PropTypes.number.isRequired,
-    in: PropTypes.bool.isRequired,
     parsed: PropTypes.oneOfType([
       PropTypes.shape({
         txType: PropTypes.oneOf(['unknown']).isRequired
@@ -106,7 +110,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['sent']).isRequired,
-        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         value: PropTypes.string.isRequired,
         isCancelApproval: PropTypes.bool.isRequired,
         approvedValue: PropTypes.string,
@@ -116,7 +120,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['received']).isRequired,
-        symbol: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        symbol: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         value: PropTypes.string.isRequired,
         from: PropTypes.string.isRequired
       }),
@@ -129,7 +133,7 @@ class TxRow extends React.Component {
 
       PropTypes.shape({
         txType: PropTypes.oneOf(['converted']).isRequired,
-        convertedFrom: PropTypes.oneOf(['ETH', 'MTN']).isRequired,
+        convertedFrom: PropTypes.oneOf(['ETH', 'MET']).isRequired,
         fromValue: PropTypes.string,
         toValue: PropTypes.string
       })
@@ -137,178 +141,178 @@ class TxRow extends React.Component {
   }
 
   // Prevent superfluous re-renders to improve performance.
-  // Only update while waiting for confirmations or transitioning.
-  shouldComponentUpdate({ in: transitioningIn }) {
-    return this.props.confirmations < 6 || transitioningIn !== this.props.in
+  // Only update while waiting for confirmations.
+  shouldComponentUpdate() {
+    return this.props.confirmations < 6
   }
 
   render() {
     const { confirmations, parsed: tx, ...other } = this.props
-    const isPending = confirmations < 6
     const isFailed =
       (tx.txType === 'auction' &&
         !tx.mtnBoughtInAuction &&
         confirmations > 0) ||
       tx.contractCallFailed
+    const isPending = !isFailed && confirmations < 6
 
     return (
-      <Collapsable maxHeight="6.5rem" {...other}>
-        <Tx>
-          {(tx.txType === 'received' || tx.txType === 'sent') &&
-            !isPending && (
-              <TxIcon
-                color={
-                  tx.contractCallFailed
-                    ? theme.colors.danger
-                    : theme.colors.primary
-                }
-              />
-            )}
-
-          {tx.txType === 'converted' &&
-            !isPending && (
-              <ConverterIcon
-                color={
-                  tx.contractCallFailed
-                    ? theme.colors.danger
-                    : theme.colors.primary
-                }
-              />
-            )}
-
-          {tx.txType === 'auction' &&
-            !isPending && (
-              <AuctionIcon
-                color={
-                  tx.mtnBoughtInAuction && !tx.contractCallFailed
-                    ? theme.colors.primary
-                    : theme.colors.danger
-                }
-              />
-            )}
-
-          {(tx.txType === 'unknown' || isPending) && (
-            <Pending>{confirmations}</Pending>
+      <Container {...other}>
+        {(tx.txType === 'received' || tx.txType === 'sent') &&
+          !isPending && (
+            <TxIcon
+              color={
+                tx.contractCallFailed
+                  ? theme.colors.danger
+                  : theme.colors.primary
+              }
+            />
           )}
-          <div>
-            <Amount
-              isCancelApproval={tx.isCancelApproval}
-              isPending={isPending}
-              isFailed={isFailed}
-            >
-              {tx.txType === 'auction' ? (
-                <React.Fragment>
-                  <DisplayValue
-                    maxSize="2rem"
-                    value={tx.ethSpentInAuction}
-                    post=" ETH"
-                  />
 
-                  {tx.mtnBoughtInAuction && (
+        {tx.txType === 'converted' &&
+          !isPending && (
+            <ConverterIcon
+              color={
+                tx.contractCallFailed
+                  ? theme.colors.danger
+                  : theme.colors.primary
+              }
+            />
+          )}
+
+        {tx.txType === 'auction' &&
+          !isPending && (
+            <AuctionIcon
+              color={
+                tx.mtnBoughtInAuction && !tx.contractCallFailed
+                  ? theme.colors.primary
+                  : theme.colors.danger
+              }
+            />
+          )}
+
+        {(tx.txType === 'unknown' || isPending) && (
+          <Pending>{confirmations}</Pending>
+        )}
+        <div>
+          <Amount
+            isCancelApproval={tx.isCancelApproval}
+            isPending={isPending}
+            isFailed={isFailed}
+          >
+            {tx.txType === 'auction' ? (
+              <React.Fragment>
+                <DisplayValue
+                  maxSize="inherit"
+                  value={tx.ethSpentInAuction}
+                  post=" ETH"
+                />
+
+                {tx.mtnBoughtInAuction && (
+                  <React.Fragment>
+                    <Arrow>&rarr;</Arrow>
+                    <DisplayValue
+                      maxSize="inherit"
+                      value={tx.mtnBoughtInAuction}
+                      post=" MET"
+                    />
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            ) : tx.txType === 'converted' ? (
+              <React.Fragment>
+                {tx.fromValue ? (
+                  <DisplayValue
+                    maxSize="inherit"
+                    value={tx.fromValue}
+                    post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
+                  />
+                ) : (
+                  <div>New transaction</div>
+                )}
+
+                {tx.fromValue &&
+                  tx.toValue && (
                     <React.Fragment>
                       <Arrow>&rarr;</Arrow>
                       <DisplayValue
-                        maxSize="2rem"
-                        value={tx.mtnBoughtInAuction}
-                        post=" MTN"
+                        maxSize="inherit"
+                        value={tx.toValue}
+                        post={tx.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
                       />
                     </React.Fragment>
                   )}
-                </React.Fragment>
-              ) : tx.txType === 'converted' ? (
-                <React.Fragment>
-                  {tx.fromValue ? (
-                    <DisplayValue
-                      maxSize="2rem"
-                      value={tx.fromValue}
-                      post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MTN'}
-                    />
-                  ) : (
-                    <div>New transaction</div>
-                  )}
+              </React.Fragment>
+            ) : tx.txType === 'unknown' || tx.isProcessing ? (
+              <div>New transaction</div>
+            ) : (
+              <DisplayValue
+                maxSize="inherit"
+                value={tx.value}
+                post={` ${tx.symbol}`}
+              />
+            )}
+          </Amount>
 
-                  {tx.fromValue &&
-                    tx.toValue && (
-                      <React.Fragment>
-                        <Arrow>&rarr;</Arrow>
-                        <DisplayValue
-                          maxSize="2rem"
-                          value={tx.toValue}
-                          post={tx.convertedFrom === 'ETH' ? ' MTN' : ' ETH'}
-                        />
-                      </React.Fragment>
+          <Details isPending={isPending}>
+            {(tx.txType === 'auction' &&
+              !isPending &&
+              !tx.mtnBoughtInAuction) ||
+            tx.contractCallFailed ? (
+              <Failed>Failed Transaction</Failed>
+            ) : (
+              <React.Fragment>
+                {tx.txType === 'converted' && (
+                  <div>
+                    {isPending && 'Pending conversion from '}
+                    <Currency>{tx.convertedFrom}</Currency>
+                    {isPending ? ' to ' : ' converted to '}
+                    <Currency>
+                      {tx.convertedFrom === 'ETH' ? 'MET' : 'ETH'}
+                    </Currency>
+                  </div>
+                )}
+
+                {tx.txType === 'received' && (
+                  <div>
+                    {isPending ? 'Pending' : 'Received'} from{' '}
+                    <Address>{tx.from}</Address>
+                  </div>
+                )}
+
+                {tx.txType === 'auction' && (
+                  <div>
+                    <Currency>MET</Currency> purchased in auction
+                  </div>
+                )}
+
+                {tx.txType === 'sent' && (
+                  <div>
+                    {isPending
+                      ? tx.isApproval
+                        ? 'Pending allowance for'
+                        : tx.isCancelApproval
+                          ? 'Pending cancel allowance for'
+                          : 'Pending to'
+                      : tx.isApproval
+                        ? 'Allowance set for'
+                        : tx.isCancelApproval
+                          ? 'Allowance cancelled for'
+                          : 'Sent to'}{' '}
+                    {tx.to === config.MTN_TOKEN_ADDR ? (
+                      'MET TOKEN CONTRACT'
+                    ) : tx.to === config.CONVERTER_ADDR ? (
+                      'CONVERTER CONTRACT'
+                    ) : (
+                      <Address>{tx.to}</Address>
                     )}
-                </React.Fragment>
-              ) : tx.txType === 'unknown' || tx.isProcessing ? (
-                <div>New transaction</div>
-              ) : (
-                <DisplayValue
-                  maxSize="2rem"
-                  value={tx.value}
-                  post={` ${tx.symbol}`}
-                />
-              )}
-            </Amount>
-
-            <Details isPending={isPending}>
-              {(tx.txType === 'auction' && !tx.mtnBoughtInAuction) ||
-              tx.contractCallFailed ? (
-                <Failed>Failed Transaction</Failed>
-              ) : (
-                <React.Fragment>
-                  {tx.txType === 'converted' && (
-                    <div>
-                      {isPending && 'Pending conversion from '}
-                      <Currency>{tx.convertedFrom}</Currency>
-                      {isPending ? ' to ' : ' converted to '}
-                      <Currency>
-                        {tx.convertedFrom === 'ETH' ? 'MTN' : 'ETH'}
-                      </Currency>
-                    </div>
-                  )}
-
-                  {tx.txType === 'received' && (
-                    <div>
-                      {isPending ? 'Pending' : 'Received'} from{' '}
-                      <Address>{tx.from}</Address>
-                    </div>
-                  )}
-
-                  {tx.txType === 'auction' && (
-                    <div>
-                      <Currency>MTN</Currency> purchased in auction
-                    </div>
-                  )}
-
-                  {tx.txType === 'sent' && (
-                    <div>
-                      {isPending
-                        ? tx.isApproval
-                          ? 'Pending allowance for'
-                          : tx.isCancelApproval
-                            ? 'Pending cancel allowance for'
-                            : 'Pending to'
-                        : tx.isApproval
-                          ? 'Allowance set for'
-                          : tx.isCancelApproval
-                            ? 'Allowance cancelled for'
-                            : 'Sent to'}{' '}
-                      {tx.to === config.MTN_TOKEN_ADDR ? (
-                        'MTN TOKEN CONTRACT'
-                      ) : tx.to === config.CONVERTER_ADDR ? (
-                        'CONVERTER CONTRACT'
-                      ) : (
-                        <Address>{tx.to}</Address>
-                      )}
-                    </div>
-                  )}
-                  {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
-                </React.Fragment>
-              )}
-            </Details>
-          </div>
-        </Tx>
-      </Collapsable>
+                  </div>
+                )}
+                {tx.txType === 'unknown' && <div>Waiting for metadata</div>}
+              </React.Fragment>
+            )}
+          </Details>
+        </div>
+      </Container>
     )
   }
 }

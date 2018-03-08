@@ -1,0 +1,25 @@
+{
+  "env": {
+    "es6": true,
+    "mocha": false,
+    "node": true
+  },
+  "extends": ["standard"],
+  "globals": {
+    "requireLib": false
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": false
+    },
+    "ecmaVersion": 8,
+    "sourceType": "script"
+  },
+  "root": true,
+  "rules": {
+    "no-shadow": ["error", { "builtinGlobals": true }],
+    "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true, "vars": "all" }],
+    "no-use-before-define": ["error", { "classes": true, "functions": true, "variables": true }],
+    "strict": ["error", "safe"]
+  }
+}
