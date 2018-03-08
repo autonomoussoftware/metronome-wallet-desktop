@@ -147,7 +147,9 @@ function mergeAndSendPendingWalletStateChanges () {
   }), 'webContents.id')
   Object.values(byWebContent).forEach(function (group) {
     const merged = mergeWith({}, ...group, concatArrays)
+
     merged.webContents.send('wallet-state-changed', merged.data)
+    logger.verbose(`<-- ${merged.log.join(', ')}`, merged.data)
   })
   pendingWalletStateChanges = []
 }
@@ -155,12 +157,13 @@ function mergeAndSendPendingWalletStateChanges () {
 const sendPendingWalletStateChanges = throttle(
   mergeAndSendPendingWalletStateChanges,
   250,
-  { leading: true, trailing: false }
+  { leading: true, trailing: true }
 )
 
 function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
   pendingWalletStateChanges.push({
     webContents,
+    log: [log],
     data: {
       [walletId]: {
         addresses: {
@@ -169,8 +172,8 @@ function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
       }
     }
   })
+  logger.verbose(`<-//- ${log} queued`)
   sendPendingWalletStateChanges()
-  logger.verbose(`<-- ${log} ${address}`, data)
 }
 
 function sendError ({ webContents, walletId, message, err }) {
@@ -283,9 +286,8 @@ function getBestBlock () {
 function sendBestBlock ({ webContents }) {
   getBestBlock()
     .then(function (bestBlock) {
-      logger.verbose('Current best block', bestBlock)
-
       webContents.send('eth-block', bestBlock)
+      logger.verbose('<-- Current best block', bestBlock)
     })
     .catch(function (err) {
       logger.warn('Could not read best block from db', err.message)
@@ -408,9 +410,8 @@ function syncTransactions ({ number, walletId, webContents }) {
               ])
             })
             .then(function () {
-              logger.verbose('New best block', { number: indexed })
-
               webContents.send('eth-block', { number: indexed })
+              logger.verbose('<-- New best block', { number: indexed })
 
               return setBestBlock({ number: indexed })
             })
