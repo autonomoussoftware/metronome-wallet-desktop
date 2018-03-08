@@ -1,9 +1,11 @@
+'use strict'
+
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
-const abi = require('./contracts/AutonomousConverter.753841b')
+const abi = require('./contracts/AutonomousConverter')
 
-function getConverterStatus({ web3, address }) {
+function getConverterStatus ({ web3, address }) {
   const converter = new web3.eth.Contract(abi, address)
 
   const calls = {
@@ -17,7 +19,7 @@ function getConverterStatus({ web3, address }) {
   return promiseAllProps(calls)
 }
 
-function encodeConvertEthToMtn({ web3, address, minReturn = 1 }) {
+function encodeConvertEthToMtn ({ web3, address, minReturn = 1 }) {
   const contract = new web3.eth.Contract(abi, address)
   const convert = contract.methods.convertEthToMtn(minReturn)
   const data = convert.encodeABI()
@@ -25,7 +27,7 @@ function encodeConvertEthToMtn({ web3, address, minReturn = 1 }) {
   return data
 }
 
-function encodeConvertMtnToEth({ web3, address, value, minReturn = 1 }) {
+function encodeConvertMtnToEth ({ web3, address, value, minReturn = 1 }) {
   const contract = new web3.eth.Contract(abi, address)
   const convert = contract.methods.convertMtnToEth(value, minReturn)
   const data = convert.encodeABI()
@@ -33,26 +35,26 @@ function encodeConvertMtnToEth({ web3, address, value, minReturn = 1 }) {
   return data
 }
 
-function getMtnForEthResult({ web3, address, value }) {
+function getMtnForEthResult ({ web3, address, value }) {
   const contract = new web3.eth.Contract(abi, address)
   return contract.methods.getMtnForEthResult(value).call()
 }
 
-function getEthForMtnResult({ web3, address, value }) {
+function getEthForMtnResult ({ web3, address, value }) {
   const contract = new web3.eth.Contract(abi, address)
   return contract.methods.getEthForMtnResult(value).call()
 }
 
-function getConverterGasLimit({ web3, from, address, value, minReturn = '1', type = 'met' }) {
+function getConverterGasLimit ({ web3, from, address, value, minReturn = '1', type = 'met' }) {
   logger.verbose(`Getting ${type} converter gas limit`, { address, value, from, minReturn })
 
   const contract = new web3.eth.Contract(abi, address)
   const convert = type === 'met'
-      ? contract.methods.convertMtnToEth(value, minReturn)
-      : contract.methods.convertEthToMtn(minReturn)
+    ? contract.methods.convertMtnToEth(value, minReturn)
+    : contract.methods.convertEthToMtn(minReturn)
 
   const data = convert.encodeABI()
-  value = type === 'met' ? "0" : value
+  value = type === 'met' ? '0' : value
 
   return web3.eth.estimateGas({ data, from, to: address, value })
     .then(gasLimit => {

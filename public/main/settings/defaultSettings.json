@@ -13,13 +13,13 @@
   },
   "metronome": {
     "contracts": {
-      "auctions": "0xbfcad8234b7044dd114d75aa547c646bdbf3959b",
-      "converter": "0x313d67f1d654e4c531cea79cf9dca27ff8277861",
-      "token": "0xcd68235a0fa4c0d308041db793120f6bb8c944b3"
+      "auctions": "0x9aeb1035b327f4f81198090f4183f21ca6fcb040",
+      "converter": "0x25d99454d94d9459f0abb06009840a48bd04ca44",
+      "token": "0x825a2ce3547e77397b7eac4eb464e2edcfaae514"
     }
   },
   "tokens": {
-    "0xcd68235a0fa4c0d308041db793120f6bb8c944b3": {
+    "0x825a2ce3547e77397b7eac4eb464e2edcfaae514": {
       "decimals": 18,
       "name": "Metronome",
       "symbol": "MET"
