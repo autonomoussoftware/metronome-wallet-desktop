@@ -266,11 +266,16 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
 }
 
 function setBestBlock (data) {
-  return getDatabase().state.updateAsync({ type: 'eth-best-block' }, { data })
+  const query = { type: 'eth-best-block' }
+  const update = Object.assign({ data }, query)
+
+  return getDatabase().state
+    .updateAsync(query, update, { upsert: true })
 }
 
 function getBestBlock () {
-  return getDatabase().state.findOneAsync({ type: 'eth-best-block' })
+  return getDatabase().state
+    .findOneAsync({ type: 'eth-best-block' })
     .then(defaultTo({ data: { number: -1 } }))
     .then(get('data'))
 }
@@ -445,7 +450,7 @@ function openWallet ({ webContents, walletId }) {
           moduleEmitter.emit('new-block-header', header)
         },
         onError: function (err) {
-          logger.warn('New block subscription failed', err)
+          logger.warn('New block subscription failed', err.message)
         }
       })
     }
