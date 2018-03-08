@@ -8,6 +8,7 @@ const logger = require('electron-log')
 const EventEmitter = require('events')
 const settings = require('electron-settings')
 const hdkey = require('ethereumjs-wallet/hdkey')
+const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 
 const Deferred = requireLib('Deferred')
@@ -58,10 +59,16 @@ function sendTransaction (args, resolveToReceipt) {
             deferred.resolve({ hash })
           }
 
-          const web3 = getWeb3()
-          web3.eth.getTransaction(hash).then(function (transaction) {
-            moduleEmitter.emit('unconfirmed-tx', transaction)
-          })
+          pRetry(
+            () => getWeb3().eth.getTransaction(hash)
+              .then(function (transaction) {
+                moduleEmitter.emit('unconfirmed-tx', transaction)
+              }),
+            { retries: 5, minTimeout: 250 }
+          )
+            .catch(function (err) {
+              logger.warn('Could not get transaction hash', hash, err.message)
+            })
         })
         .once('receipt', function (receipt) {
           logger.verbose('Transaction receipt received', receipt)
@@ -362,19 +369,21 @@ function syncTransactions ({ number, walletId, webContents }) {
                 ),
                 Promise.all(
                   Object.keys(tok).map(function (tokenAddress) {
-                    return tok[tokenAddress].map(function (hash) {
-                      logger.debug('Parsing token tx', hash)
-                      return getTransactionAndReceipt({ web3, hash }).then(
-                        function ({ transaction, receipt }) {
-                          return parseTransaction({
-                            transaction,
-                            receipt,
-                            walletId,
-                            webContents
-                          })
-                        }
-                      )
-                    })
+                    return Promise.all(
+                      tok[tokenAddress].map(function (hash) {
+                        logger.debug('Parsing token tx', hash)
+                        return getTransactionAndReceipt({ web3, hash }).then(
+                          function ({ transaction, receipt }) {
+                            return parseTransaction({
+                              transaction,
+                              receipt,
+                              walletId,
+                              webContents
+                            })
+                          }
+                        )
+                      })
+                    )
                   })
                 )
               ])
