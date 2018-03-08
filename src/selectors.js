@@ -282,7 +282,10 @@ export const getActiveWalletTransactions = createSelector(
       }
     }
 
-    return _.sortBy(txs, 'transaction.blockNumber')
+    return _.sortBy(txs, [
+      'transaction.blockNumber',
+      'transaction.transactionIndex'
+    ])
       .reverse()
       .map(parseTx)
   }
