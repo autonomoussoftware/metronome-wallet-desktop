@@ -1,5 +1,6 @@
 import { TextInput, BaseBtn, Btn, Sp } from './common'
-import { validateMnemonic } from '../validator'
+import * as validators from '../validator'
+import EntropyMeter from './EntropyMeter'
 import AltLayout from './AltLayout'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -19,6 +20,11 @@ const Message = styled.div`
     cursor: pointer;
     color: ${p => p.theme.colors.success};
   }
+`
+
+const Green = styled.div`
+  display: inline-block;
+  color: ${p => p.theme.colors.success};
 `
 
 const Mnemonic = styled.div`
@@ -102,15 +108,11 @@ export default class Onboarding extends React.Component {
   // Perform validations and return an object of type { fieldId: [String] }
   validatePass = () => {
     const { password, passwordAgain } = this.state
-    const errors = {}
+    const errors = validators.validatePassword(password)
 
-    if (!password) {
-      errors.password = 'Password is required'
-    } else if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long'
-    } else if (!passwordAgain) {
+    if (!errors.password && !passwordAgain) {
       errors.passwordAgain = 'Repeat the password'
-    } else if (passwordAgain !== password) {
+    } else if (!errors.password && passwordAgain !== password) {
       errors.passwordAgain = "Passwords don't match"
     }
 
@@ -129,7 +131,7 @@ export default class Onboarding extends React.Component {
     } = this.state
 
     if (useOwnMnemonic) {
-      const errors = validateMnemonic(userMnemonic, 'userMnemonic')
+      const errors = validators.validateMnemonic(userMnemonic, 'userMnemonic')
       if (Object.keys(errors).length > 0) return this.setState({ errors })
     } else {
       if (mnemonic !== mnemonicAgain) {
@@ -187,7 +189,10 @@ export default class Onboarding extends React.Component {
         {termsWereAccepted &&
           !passwordWasDefined && (
             <form onSubmit={this.onPasswordSubmitted}>
-              <Message>It must be at least 8 characters long.</Message>
+              <Message>
+                Enter a strong password until the meter turns{' '}
+                <Green>green</Green>.
+              </Message>
               <Sp mt={2}>
                 <TextInput
                   autoFocus
@@ -197,7 +202,11 @@ export default class Onboarding extends React.Component {
                   value={password}
                   type="password"
                   id="password"
+                  noFocus
                 />
+                {!errors.password && (
+                  <EntropyMeter targetEntropy={72} password={password} />
+                )}
               </Sp>
               <Sp mt={3}>
                 <TextInput
