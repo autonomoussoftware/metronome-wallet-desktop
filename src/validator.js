@@ -1,6 +1,7 @@
-import Web3 from 'web3'
-import bip39 from 'bip39'
 import { isWeiable, isHexable, gweiToWei } from './utils'
+import stringEntropy from 'fast-password-entropy'
+import bip39 from 'bip39'
+import Web3 from 'web3'
 
 function validateAmount(amount, propName, max, errors = {}) {
   if (!amount) {
@@ -71,9 +72,8 @@ export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
 export function validatePassword(password, errors = {}) {
   if (!password) {
     errors.password = 'Password is required'
-  } else if (password.length < 8) {
-    errors.password =
-      'Password length must be equal or greater than 8 characters'
+  } else if (stringEntropy(password) < 72) {
+    errors.password = 'Password is not strong enough'
   }
 
   return errors

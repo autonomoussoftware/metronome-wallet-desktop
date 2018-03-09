@@ -8,7 +8,7 @@ const Label = styled.label`
   font-weight: 600;
   letter-spacing: 0.5px;
   color: ${p => (p.hasErrors ? p.theme.colors.danger : p.theme.colors.light)};
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: ${p => p.theme.textShadow};
 `
 
 const Input = styled.input`
@@ -16,7 +16,7 @@ const Input = styled.input`
   display: block;
   height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
   padding: 0.8rem 1.6rem;
-  background-color: rgba(126, 97, 248, 0.2);
+  background-color: ${p => p.theme.colors.translucentPrimary};
   margin-top: 0.8rem;
   width: 100%;
   line-height: 4rem;
@@ -24,7 +24,7 @@ const Input = styled.input`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: ${p => p.theme.textShadow};
   transition: box-shadow 300ms;
   resize: vertical;
   box-shadow: 0 2px 0 0px
@@ -33,6 +33,10 @@ const Input = styled.input`
   &:focus {
     outline: none;
     box-shadow: 0 2px 0 0px ${p => p.theme.colors.primary};
+    box-shadow: ${p =>
+      p.noFocus && p.value.length > 0
+        ? 'none'
+        : `0 2px 0 0px ${p.theme.colors.primary}`};
   }
 `
 
@@ -42,7 +46,7 @@ const ErrorMsg = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   text-align: right;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: ${p => p.theme.textShadow};
   margin-top: 0.4rem;
   width: 100%;
   margin-bottom: -2rem;
@@ -59,7 +63,7 @@ export default class TextInput extends React.Component {
     ]),
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
-    type: PropTypes.string,
+    type: PropTypes.oneOf(['text', 'number', 'password']),
     rows: PropTypes.number,
     cols: PropTypes.number,
     id: PropTypes.string.isRequired
@@ -79,7 +83,6 @@ export default class TextInput extends React.Component {
 
   render() {
     const { label, value, type, id, error, ...other } = this.props
-
     const { isPristine } = this.state
 
     const hasErrors = error && error.length > 0
