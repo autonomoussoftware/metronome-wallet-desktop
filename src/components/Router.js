@@ -33,7 +33,9 @@ export default class Router extends Component {
       <HashRouter>
         <Container>
           <Sidebar />
-          <Main>
+          <Main
+            data-scrollelement // Required by react-virtualized implementation in Dashboard/TxList
+          >
             <Switch>
               <Route path="/" exact render={() => <Redirect to="/wallets" />} />
               <Route path="/wallets" component={Dashboard} />

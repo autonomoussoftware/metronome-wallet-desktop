@@ -132,7 +132,11 @@ class ReceiptModal extends React.Component {
     if (!tx) return null
 
     return (
-      <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
+      <Modal
+        shouldReturnFocusAfterClose={false}
+        onRequestClose={onRequestClose}
+        isOpen={isOpen}
+      >
         <Container>
           {tx.parsed.txType !== 'unknown' && (
             <Row first>

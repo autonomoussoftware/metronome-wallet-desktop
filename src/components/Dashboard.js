@@ -12,12 +12,12 @@ import React from 'react'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
-  padding: 7.2rem 2.4rem;
+  padding: 7.2rem 2.4rem 2.4rem;
   min-height: 100%;
   position: relative;
 
   @media (min-width: 800px) {
-    padding: 7.2rem 4.8rem;
+    padding: 7.2rem 4.8rem 4.8rem;
   }
 `
 
@@ -36,8 +36,9 @@ const FixedContainer = styled.div`
 `
 
 const Hero = styled.div`
-  margin-top: 4.8rem;
+  margin-top: 2.4rem;
   @media (min-width: 1040px) {
+    margin-top: 4.8rem;
     display: flex;
   }
 `
