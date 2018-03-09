@@ -58,7 +58,7 @@ export default class Modal extends React.Component {
   }
 
   render() {
-    const { onRequestClose, children, isOpen, title } = this.props
+    const { onRequestClose, children, isOpen, title, ...other } = this.props
 
     return (
       <Container
@@ -89,6 +89,7 @@ export default class Modal extends React.Component {
             top: '10rem'
           }
         }}
+        {...other}
       >
         <Header hasTitle={!!title}>
           {title && <Title>{title}</Title>}
