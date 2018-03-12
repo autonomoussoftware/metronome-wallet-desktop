@@ -316,14 +316,16 @@ export const sendFeatureStatus = createSelector(
   }
 )
 
-export const isAuctionEnabled = createSelector(
+export const buyFeatureStatus = createSelector(
   getAuctionStatus,
   getIsOnline,
-  (auctionStatus, isOnline) =>
-    isOnline &&
-    auctionStatus &&
-    auctionStatus.tokenRemaining &&
-    Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
+  (auctionStatus, isOnline) => {
+    const isDepleted =
+      auctionStatus &&
+      auctionStatus.tokenRemaining &&
+      !Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
+    return !isOnline ? 'offline' : isDepleted ? 'depleted' : 'ok'
+  }
 )
 
 export const isConverterEnabled = createSelector(
