@@ -304,13 +304,15 @@ export const hasEnoughData = createSelector(
     blockHeight !== null
 )
 
-export const isSendEnabled = createSelector(
+export const sendFeatureStatus = createSelector(
   getActiveWalletEthBalance,
   getActiveWalletMtnBalance,
   getIsOnline,
   (ethBalance, mtnBalance, isOnline) => {
     const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
-    return isOnline && (hasFunds(ethBalance) || hasFunds(mtnBalance))
+    return !isOnline
+      ? 'offline'
+      : !hasFunds(ethBalance) && !hasFunds(mtnBalance) ? 'no-funds' : 'ok'
   }
 )
 
