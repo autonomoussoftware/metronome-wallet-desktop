@@ -47,6 +47,7 @@
     "raven-js": "^3.22.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-hint": "^3.0.1",
     "react-modal": "^3.1.11",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",

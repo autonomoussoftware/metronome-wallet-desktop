@@ -13,13 +13,9 @@ export const BaseBtn = styled.button.attrs({
   background-color: transparent;
   padding: 0;
   color: ${p => p.theme.colors.light};
+  outline: none;
 
-  &:not([disabled]):hover,
-  &:not([disabled]):focus,
-  &:not([disabled]):active {
-    outline: none;
-  }
-
+  &[data-disabled],
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
@@ -41,9 +37,9 @@ export const Btn = BaseBtn.extend`
   box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
   padding: 1.6rem;
 
-  &:not([disabled]):hover,
-  &:not([disabled]):focus,
-  &:not([disabled]):active {
+  &:not([disabled], [data-disabled]):hover,
+  &:not([disabled], [data-disabled]):focus,
+  &:not([disabled], [data-disabled]):active {
     background-color: ${p => p.theme.colors.bg.white};
     box-shadow: 0 2px 8px 0 ${p => p.theme.colors.darkShade};
   }
