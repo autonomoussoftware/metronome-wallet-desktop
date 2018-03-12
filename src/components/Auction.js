@@ -155,7 +155,7 @@ const AvailableAmount = styled.div`
 
 class Auction extends React.Component {
   static propTypes = {
-    isAuctionEnabled: PropTypes.bool.isRequired,
+    buyFeatureStatus: PropTypes.oneOf(['offline', 'depleted', 'ok']).isRequired,
     auctionPriceUSD: PropTypes.string.isRequired,
     auctionStatus: PropTypes.shape({
       currentPrice: PropTypes.string.isRequired,
@@ -172,7 +172,7 @@ class Auction extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { isAuctionEnabled, auctionPriceUSD, auctionStatus } = this.props
+    const { buyFeatureStatus, auctionPriceUSD, auctionStatus } = this.props
 
     const initialAuctionNotStarted =
       auctionStatus && auctionStatus.genesisTime * 1000 > Date.now()
@@ -222,9 +222,17 @@ class Auction extends React.Component {
             {!initialAuctionNotStarted && (
               <Body>
                 <BuyBtn
+                  data-disabled={buyFeatureStatus !== 'ok' ? true : null}
+                  data-rh-negative
+                  data-rh={
+                    buyFeatureStatus === 'offline'
+                      ? "Can't buy while offline"
+                      : buyFeatureStatus === 'depleted'
+                        ? 'No MET remaining in current auction'
+                        : null
+                  }
                   data-modal="buy"
-                  disabled={!isAuctionEnabled}
-                  onClick={this.onOpenModal}
+                  onClick={buyFeatureStatus === 'ok' ? this.onOpenModal : null}
                 >
                   Buy Metronome
                 </BuyBtn>
@@ -287,7 +295,7 @@ class Auction extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isAuctionEnabled: selectors.isAuctionEnabled(state),
+  buyFeatureStatus: selectors.buyFeatureStatus(state),
   auctionPriceUSD: selectors.getAuctionPriceUSD(state),
   auctionStatus: selectors.getAuctionStatus(state)
 })
