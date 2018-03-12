@@ -9,34 +9,29 @@ const Container = styled.div`
 
 const Tab = styled.button`
   font: inherit;
-  cursor: pointer;
+  cursor: ${p => (p.isDisabled ? 'not-allowed' : 'pointer')};
   flex-grow: 1;
   border: none;
   border-bottom: 2px solid;
-  border-bottom-color: ${p => p.theme.colors.darkShade};
+  border-bottom-color: ${p =>
+    p.isActive ? p.theme.colors.primary : p.theme.colors.darkShade};
   transition: 0.5s;
   padding: 2.5rem;
-  color: ${p => p.theme.colors.light};
+  color: ${p =>
+    p.isActive
+      ? p.theme.colors.light
+      : `rgba(255,255,255,${p.isDisabled ? '0.2' : '0.5'})`};
   border-radius: 0;
-  opacity: 0.5;
-  background: transparent;
+  background: ${p =>
+    p.isActive
+      ? 'linear-gradient(253deg, rgba(66, 53, 119, 0.4), rgba(126, 97, 248, 0.1))'
+      : 'transparent'};
   line-height: 2rem;
   font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: 1.6px;
   text-align: center;
-  &[disabled] {
-    background: linear-gradient(
-      253deg,
-      rgba(66, 53, 119, 0.4),
-      rgba(126, 97, 248, 0.1)
-    );
-    opacity: 1;
-    border-bottom-color: ${p => p.theme.colors.primary};
-  }
-  &:focus {
-    outline: none;
-  }
+  outline: none;
 `
 
 export default class Tabs extends React.Component {
@@ -59,12 +54,14 @@ export default class Tabs extends React.Component {
 
     return (
       <Container>
-        {items.map(({ label, id }) => (
+        {items.map(({ label, id, disabled, ...other }) => (
           <Tab
-            disabled={active === id}
+            isDisabled={disabled}
+            isActive={active === id}
             data-tab={id}
-            onClick={this.onClick}
+            onClick={disabled ? null : this.onClick}
             key={id}
+            {...other}
           >
             {label}
           </Tab>

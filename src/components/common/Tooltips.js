@@ -15,10 +15,11 @@ injectGlobal`
 `
 
 const Container = styled.div`
-  background: ${p => p.theme.colors.dark};
+  background-color: ${p => p.theme.colors.dark};
   font-size: 1.3rem;
   padding: 8px 12px;
   border-radius: 4px;
+  box-shadow: 0 0px 3px 0px #7e61f8;
 `
 
 const onRenderContent = (target, content) => {
