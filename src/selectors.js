@@ -328,15 +328,14 @@ export const buyFeatureStatus = createSelector(
   }
 )
 
-export const isConverterEnabled = createSelector(
+export const convertFeatureStatus = createSelector(
   getCurrentAuction,
   getIsOnline,
   (currentAuction, isOnline) => {
-    const isInDailyAuction = parseInt(currentAuction, 10) > 0
+    const isInInitialAuction = parseInt(currentAuction, 10) === 0
 
-    // TODO remove this when Converter Contract is working fine
-    const isConverterWorking = true
-
-    return isConverterWorking && isInDailyAuction && isOnline
+    return !isOnline
+      ? 'offline'
+      : isInInitialAuction ? 'in-daily-auction' : 'ok'
   }
 )

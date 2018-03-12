@@ -113,7 +113,11 @@ const AvailableAmount = styled.div`
 
 class Converter extends React.Component {
   static propTypes = {
-    isConverterEnabled: PropTypes.bool.isRequired,
+    convertFeatureStatus: PropTypes.oneOf([
+      'in-initial-auction',
+      'offline',
+      'ok'
+    ]).isRequired,
     converterPriceUSD: PropTypes.string.isRequired,
     converterStatus: PropTypes.shape({
       availableEth: PropTypes.string.isRequired,
@@ -131,7 +135,7 @@ class Converter extends React.Component {
 
   render() {
     const {
-      isConverterEnabled,
+      convertFeatureStatus,
       converterPriceUSD,
       converterStatus
     } = this.props
@@ -187,9 +191,17 @@ class Converter extends React.Component {
             </StatsContainer>
 
             <ConvertBtn
+              data-disabled={convertFeatureStatus !== 'ok' ? true : null}
+              data-rh-negative
+              data-rh={
+                convertFeatureStatus === 'offline'
+                  ? "Can't convert while offline"
+                  : convertFeatureStatus === 'in-initial-auction'
+                    ? 'Conversions are disabled during Initial Auction'
+                    : null
+              }
               data-modal="convert"
-              disabled={!isConverterEnabled}
-              onClick={this.onOpenModal}
+              onClick={convertFeatureStatus === 'ok' ? this.onOpenModal : null}
             >
               Convert
             </ConvertBtn>
@@ -215,7 +227,7 @@ class Converter extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isConverterEnabled: selectors.isConverterEnabled(state),
+  convertFeatureStatus: selectors.convertFeatureStatus(state),
   converterPriceUSD: selectors.getConverterPriceUSD(state),
   converterStatus: selectors.getConverterStatus(state)
 })
