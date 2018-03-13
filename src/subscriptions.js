@@ -17,7 +17,13 @@ export const subscribeToMainProcessMessages = store => {
     'eth-block'
   ])
 
-  ipcRenderer.on('error', (ev, { error }) => toast.error(error.message))
+  const errorsMap = {}
+
+  ipcRenderer.on('error', (ev, { error }) => {
+    if (!toast.isActive(errorsMap[error.message])) {
+      errorsMap[error.message] = toast.error(error.message)
+    }
+  })
 
   /**
    * For more complex subscriptions you can do the following
