@@ -1,14 +1,17 @@
-import React from 'react'
+import { DarkLayout, Btn, Sp, TextInput } from './common'
+import { sendToMainProcess } from '../utils'
+import { validateMnemonic } from '../validator'
+import ConfirmationWizard from './ConfirmationWizard'
+import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { withRouter } from 'react-router-dom'
+import React from 'react'
 
-import { sendToMainProcess } from '../utils'
-import { DarkLayout, Btn, Sp, TextInput } from './common'
-import { validateMnemonic, validatePassword } from '../validator'
-
-const ErrorMsg = styled.p`
+const Confirmation = styled.div`
   color: ${p => p.theme.colors.danger};
+  background-color: ${p => p.theme.colors.darkShade};
+  border-radius: 4px;
+  padding: 0.8rem 1.6rem;
 `
 
 class RecoverFromMnemonic extends React.Component {
@@ -20,39 +23,14 @@ class RecoverFromMnemonic extends React.Component {
 
   state = {
     mnemonic: null,
-    password: null,
-    errors: {},
-    status: 'init',
-    error: null
-  }
-
-  onSubmit = e => {
-    e.preventDefault()
-
-    const errors = this.validate()
-    if (Object.keys(errors).length > 0) return this.setState({ errors })
-
-    const { password, mnemonic } = this.state
-
-    this.setState({ status: 'pending', error: null, errors: {} }, () =>
-      sendToMainProcess('create-wallet', { password, mnemonic })
-        .then(() => this.props.history.push('/wallets'))
-        .catch(err =>
-          this.setState({
-            status: 'failure',
-            error: err.message || 'Unknown error'
-          })
-        )
-    )
+    errors: {}
   }
 
   validate = () => {
-    const { password, mnemonic } = this.state
-
-    return {
-      ...validateMnemonic(mnemonic),
-      ...validatePassword(password)
-    }
+    const errors = validateMnemonic(this.state.mnemonic)
+    const hasErrors = Object.keys(errors).length > 0
+    if (hasErrors) this.setState({ errors })
+    return !hasErrors
   }
 
   onInputChanged = e => {
@@ -64,53 +42,70 @@ class RecoverFromMnemonic extends React.Component {
     }))
   }
 
+  onWizardSubmit = password => {
+    return sendToMainProcess('create-wallet', {
+      mnemonic: this.state.mnemonic,
+      password
+    }).then(() => this.props.history.push('/wallets'))
+  }
+
+  renderConfirmation = () => {
+    return (
+      <Confirmation>
+        <h3>Are you sure?</h3>
+        <p>This operation will overwrite and restart the current wallet!</p>
+      </Confirmation>
+    )
+  }
+
+  renderForm = goToReview => {
+    const { mnemonic, errors } = this.state
+
+    return (
+      <form onSubmit={goToReview}>
+        <p>Enter the 12 words to recover your wallet.</p>
+        <p>This action will replace your current stored seed!</p>
+        <TextInput
+          autoFocus
+          onChange={this.onInputChanged}
+          label="Recovery phrase"
+          error={errors.mnemonic}
+          value={mnemonic || ''}
+          rows={2}
+          id="mnemonic"
+        />
+        <Sp mt={4}>
+          <Btn submit>Recover</Btn>
+        </Sp>
+      </form>
+    )
+  }
+
   render() {
-    const { password, mnemonic, error, errors } = this.state
-
-    const weHave12words =
-      mnemonic &&
-      mnemonic
-        .trim()
-        .split(' ')
-        .map(w => w.trim())
-        .filter(w => w.length > 0).length === 12
-
     return (
       <DarkLayout title="Recover wallet">
         <Sp py={4} px={6}>
-          <form onSubmit={this.onSubmit}>
-            <p>Enter the 12 words to recover your wallet.</p>
-            <p>This action will replace your current stored seed!</p>
-
-            <TextInput
-              autoFocus
-              onChange={this.onInputChanged}
-              label="Recovery phrase"
-              error={errors.mnemonic}
-              value={mnemonic || ''}
-              rows={2}
-              id="mnemonic"
-            />
-
-            <Sp my={2}>
-              <TextInput
-                type="password"
-                onChange={this.onInputChanged}
-                label="Password"
-                error={errors.password}
-                value={password || ''}
-                id="password"
-              />
-            </Sp>
-
-            {error && <ErrorMsg>{error}</ErrorMsg>}
-
-            <Sp mt={4}>
-              <Btn disabled={!weHave12words} submit>
-                Recover
-              </Btn>
-            </Sp>
-          </form>
+          <ConfirmationWizard
+            renderConfirmation={this.renderConfirmation}
+            confirmationTitle=""
+            onWizardSubmit={this.onWizardSubmit}
+            pendingTitle="Recovering..."
+            successText="Wallet successfully recovered"
+            renderForm={this.renderForm}
+            validate={this.validate}
+            noCancel
+            styles={{
+              confirmation: {
+                padding: 0
+              },
+              btns: {
+                background: 'none',
+                marginTop: '3.2rem',
+                maxWidth: '200px',
+                padding: 0
+              }
+            }}
+          />
         </Sp>
       </DarkLayout>
     )
