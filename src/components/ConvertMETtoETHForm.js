@@ -1,4 +1,4 @@
-import { DisplayValue, FloatBtn, TextInput, Flex, Btn, Sp } from './common'
+import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess, weiToGwei, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
@@ -122,9 +122,9 @@ class ConvertMETtoETHForm extends React.Component {
         <Sp py={4} px={3}>
           <form onSubmit={goToReview} id="convertForm" noValidate>
             <div>
-              <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
+              <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
                 MAX
-              </FloatBtn>
+              </FieldBtn>
               <TextInput
                 placeholder="0.00"
                 autoFocus
