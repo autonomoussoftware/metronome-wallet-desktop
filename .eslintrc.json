@@ -1,6 +1,0 @@
-{
-  "extends": ["plugin:react/recommended", "react-app", "standard", "prettier"],
-  "rules": {
-    "no-shadow": ["error"]
-  }
-}

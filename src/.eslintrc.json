@@ -1,0 +1,22 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "bloq",
+    "prettier",
+    "react-app"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "root": true,
+  "rules": {
+    "arrow-body-style": "off",
+    "complexity": ["error", 10]
+  }
+}
