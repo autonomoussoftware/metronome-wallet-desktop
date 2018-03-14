@@ -108,7 +108,7 @@ export default class Onboarding extends React.Component {
   // Perform validations and return an object of type { fieldId: [String] }
   validatePass = () => {
     const { password, passwordAgain } = this.state
-    const errors = validators.validatePassword(password)
+    const errors = validators.validatePasswordCreation(password)
 
     if (!errors.password && !passwordAgain) {
       errors.passwordAgain = 'Repeat the password'

@@ -72,6 +72,14 @@ export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
 export function validatePassword(password, errors = {}) {
   if (!password) {
     errors.password = 'Password is required'
+  }
+
+  return errors
+}
+
+export function validatePasswordCreation(password, errors = {}) {
+  if (!password) {
+    errors.password = 'Password is required'
   } else if (stringEntropy(password) < 72) {
     errors.password = 'Password is not strong enough'
   }
