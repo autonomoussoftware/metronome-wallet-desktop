@@ -1,4 +1,4 @@
-import { TextInput, FloatBtn, Flex, Sp } from './common'
+import { TextInput, FieldBtn, Flex, Sp } from './common'
 import { sendToMainProcess, weiToGwei } from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -8,6 +8,7 @@ const GasLabel = styled.span`
   opacity: 0.5;
   font-size: 1.3rem;
   white-space: nowrap;
+  margin-right: 1em;
 `
 
 export default class GasEditor extends React.Component {
@@ -43,49 +44,37 @@ export default class GasEditor extends React.Component {
   render() {
     const { useCustomGas, gasPrice, gasLimit, errors, onChange } = this.props
 
-    return (
+    return useCustomGas ? (
       <Flex.Row justify="space-between">
         <Flex.Item grow="1" basis="0">
-          {useCustomGas ? (
-            <TextInput
-              onChange={onChange}
-              label="Gas Limit (UNITS)"
-              error={errors.gasLimit}
-              value={gasLimit}
-              type="number"
-              min="1"
-              id="gasLimit"
-            />
-          ) : (
-            <GasLabel>Gas Limit: {gasLimit} (UNITS)</GasLabel>
-          )}
+          <TextInput
+            onChange={onChange}
+            label="Gas Limit (Units)"
+            error={errors.gasLimit}
+            value={gasLimit}
+            id="gasLimit"
+          />
         </Flex.Item>
-
-        {useCustomGas && <Sp mt={6} mx={2.5} />}
-
+        <Sp mt={6} mx={2.5} />
         <Flex.Item grow="1" basis="0">
-          {useCustomGas ? (
-            <TextInput
-              onChange={onChange}
-              label="Gas Price (GWEI)"
-              error={errors.gasPrice}
-              value={gasPrice}
-              type="number"
-              min="1"
-              id="gasPrice"
-            />
-          ) : (
-            <GasLabel>Gas Price: {gasPrice} (GWEI)</GasLabel>
-          )}
+          <TextInput
+            onChange={onChange}
+            label="Gas Price (Gwei)"
+            error={errors.gasPrice}
+            value={gasPrice}
+            id="gasPrice"
+          />
         </Flex.Item>
-
-        {!useCustomGas && (
-          <Flex.Item basis="0">
-            <FloatBtn onClick={this.onGasToggle} tabIndex="-1">
-              EDIT GAS
-            </FloatBtn>
-          </Flex.Item>
-        )}
+      </Flex.Row>
+    ) : (
+      <Flex.Row justify="space-between" align="flex-start">
+        <Flex.Row rowwrap shrink="1">
+          <GasLabel>Gas Limit: {gasLimit} (Units)</GasLabel>
+          <GasLabel>Gas Price: {gasPrice} (Gwei)</GasLabel>
+        </Flex.Row>
+        <FieldBtn onClick={this.onGasToggle} tabIndex="-1">
+          EDIT GAS
+        </FieldBtn>
       </Flex.Row>
     )
   }

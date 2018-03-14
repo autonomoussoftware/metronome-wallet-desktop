@@ -45,15 +45,15 @@ export const Btn = BaseBtn.extend`
   }
 `
 
-export const FloatBtn = BaseBtn.extend`
-  float: right;
+export const FieldBtn = BaseBtn.extend`
+  float: ${p => (p.float ? 'right' : 'none')};
   line-height: 1.8rem;
   opacity: 0.5;
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: 1.4px;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
+  margin-top: ${p => (p.float ? '0.4rem' : 0)};
   white-space: nowrap;
 
   &:hover {

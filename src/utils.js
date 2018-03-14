@@ -44,10 +44,10 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   return deferred.promise
 }
 
-export function isWeiable(amount) {
+export function isWeiable(amount, unit = 'ether') {
   let isValid
   try {
-    Web3.utils.toWei(amount.replace(',', '.'))
+    Web3.utils.toWei(amount.replace(',', '.'), unit)
     isValid = true
   } catch (e) {
     isValid = false
@@ -128,13 +128,9 @@ export function toMET(amount, rate, errorValue = 'Invalid amount') {
 }
 
 export function weiToGwei(amount) {
-  return new BigNumber(
-    new BigNumber(amount) / new BigNumber(1000000000)
-  ).toString(10)
+  return Web3.utils.fromWei(amount, 'gwei')
 }
 
 export function gweiToWei(amount) {
-  return new BigNumber(
-    new BigNumber(amount) * new BigNumber(1000000000)
-  ).toString(10)
+  return Web3.utils.toWei(amount, 'gwei')
 }

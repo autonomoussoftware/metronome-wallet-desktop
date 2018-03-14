@@ -20,7 +20,7 @@ Item.propTypes = {
 const Row = Item.extend`
   justify-content: ${p => p.justify || 'flex-start'};
   align-items: ${p => p.align || 'stretch'};
-  flex-wrap: ${p => (p.wrap ? 'wrap' : 'nowrap')};
+  flex-wrap: ${p => (p.rowwrap ? 'wrap' : 'nowrap')};
   display: flex;
 `
 
@@ -38,8 +38,8 @@ const containerProptypes = {
     'flex-end',
     'center'
   ]),
-  align: PropTypes.oneOf(['center', 'flex-start', 'flex-end', 'baseline']),
-  wrap: PropTypes.bool
+  rowwrap: PropTypes.bool,
+  align: PropTypes.oneOf(['center', 'flex-start', 'flex-end', 'baseline'])
 }
 
 Column.propTypes = containerProptypes
