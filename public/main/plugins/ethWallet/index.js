@@ -453,7 +453,13 @@ function openWallet ({ webContents, walletId }) {
           onError: function (err) {
             logger.warn('New block subscription failed', err.message)
 
-            syncTransactions({ walletId, webContents })
+            getWeb3().eth.getBlock('latest')
+              .then(function (header) {
+                moduleEmitter.emit('new-block-header', header)
+              })
+              .catch(function (err) { // eslint-disable-line no-shadow
+                logger.warn('Get block fallback failed too', err.message)
+              })
           }
         })
       }
