@@ -47,7 +47,7 @@ function sendStatus({ web3, webContents }) {
 
       webContents.send('connectivity-state-changed', {
         ok: false,
-        reason: 'Call to Ethereum node failed',
+        reason: 'Connection to Ethereum node failed',
         plugin: 'metronome',
         err: err.message
       })
