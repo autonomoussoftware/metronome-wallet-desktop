@@ -66,9 +66,13 @@ class BuyMETDrawer extends React.Component {
     this.setState(state => ({
       ...state,
       usdAmount:
-        id === 'ethAmount' ? utils.toUSD(value, ETHprice) : state.usdAmount,
+        id === 'ethAmount'
+          ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+          : state.usdAmount,
       ethAmount:
-        id === 'usdAmount' ? utils.toETH(value, ETHprice) : state.ethAmount,
+        id === 'usdAmount'
+          ? utils.toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+          : state.ethAmount,
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))

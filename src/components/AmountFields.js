@@ -16,6 +16,8 @@ export default class AmountFields extends React.Component {
     }).isRequired
   }
 
+  static INVALID_PLACEHOLDER = 'Invalid amount'
+
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.props.onChange({ target: { id: 'ethAmount', value: ethAmount } })
@@ -31,12 +33,18 @@ export default class AmountFields extends React.Component {
             MAX
           </FieldBtn>
           <TextInput
-            placeholder="0.00"
+            placeholder={
+              ethAmount === AmountFields.INVALID_PLACEHOLDER
+                ? AmountFields.INVALID_PLACEHOLDER
+                : '0.00'
+            }
             autoFocus={autoFocus}
             onChange={onChange}
             error={errors.ethAmount}
             label="Amount (ETH)"
-            value={ethAmount}
+            value={
+              ethAmount === AmountFields.INVALID_PLACEHOLDER ? '' : ethAmount
+            }
             id="ethAmount"
           />
         </Flex.Item>
@@ -45,11 +53,17 @@ export default class AmountFields extends React.Component {
         </Sp>
         <Flex.Item grow="1" basis="0">
           <TextInput
-            placeholder="0.00"
+            placeholder={
+              usdAmount === AmountFields.INVALID_PLACEHOLDER
+                ? AmountFields.INVALID_PLACEHOLDER
+                : '0.00'
+            }
             onChange={onChange}
             error={errors.usdAmount}
             label="Amount (USD)"
-            value={usdAmount}
+            value={
+              usdAmount === AmountFields.INVALID_PLACEHOLDER ? '' : usdAmount
+            }
             id="usdAmount"
           />
         </Flex.Item>
