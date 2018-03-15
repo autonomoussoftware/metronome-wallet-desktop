@@ -21,14 +21,14 @@ const requireLib = function (request) {
 
       return true
     } catch (err) {
-      debug('Lib not found: %s', err.message)
+      debug('Could not load library: %s', err.message)
 
       return false
     }
   })
 
   if (!result) {
-    throw new Error(`Cannot find library '${request}'`)
+    throw new Error(`Could not library '${request}'`)
   }
 
   return require(result)
