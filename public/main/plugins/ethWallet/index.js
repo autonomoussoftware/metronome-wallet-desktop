@@ -478,7 +478,13 @@ function unsubscribeUpdates (_, webContents) {
 
 moduleEmitter.on('unconfirmed-tx', function (transaction) {
   subscriptions.forEach(function (s) {
-    parseTransaction(Object.assign({ transaction }, s))
+    pRetry(
+      () => parseTransaction(Object.assign({ transaction }, s)),
+      { retries: 5, minTimeout: 250 }
+    )
+      .catch(function (err) {
+        logger.warn('Could not parse transaction', transaction.hash, err.message)
+      })
   })
 })
 
