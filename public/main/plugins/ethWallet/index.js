@@ -335,8 +335,7 @@ function syncTransactions ({ number, walletId, webContents }) {
     addresses: getWalletAddresses(walletId),
     bestBlock: getBestBlock().then(get('number')),
     latest: number || web3.eth.getBlockNumber(),
-    indexed: axios
-      .get(`${indexerApiUrl}/blocks/latest/number`)
+    indexed: axios.get(`${indexerApiUrl}/blocks/latest/number`)
       .then(res => res.data)
       .then(data => data.number)
       .then(n => Number.parseInt(n, 10))
@@ -355,13 +354,13 @@ function syncTransactions ({ number, walletId, webContents }) {
         addresses.map(function (address) {
           const qs = `from=${bestBlock + 1}&to=${indexed}`
           return promiseAllProps({
-            eth: axios
-              .get(`${indexerApiUrl}/addresses/${address}/transactions?${qs}`)
+            eth: axios.get(
+              `${indexerApiUrl}/addresses/${address}/transactions?${qs}`
+            )
               .then(res => res.data),
-            tok: axios
-              .get(
-                `${indexerApiUrl}/addresses/${address}/tokentransactions?${qs}`
-              )
+            tok: axios.get(
+              `${indexerApiUrl}/addresses/${address}/tokentransactions?${qs}`
+            )
               .then(res => res.data)
           })
             .then(function ({ eth, tok }) {
@@ -441,21 +440,23 @@ function openWallet ({ webContents, walletId }) {
 
   sendCachedTransactions({ walletId, webContents })
 
-  syncTransactions({ walletId, webContents }).then(function () {
-    subscriptions = subscriptions.concat({ walletId, webContents })
+  syncTransactions({ walletId, webContents })
+    .catch(() => {})
+    .then(function () {
+      subscriptions = subscriptions.concat({ walletId, webContents })
 
-    if (subscriptions.length === 1) {
-      blocksSubscription = subscribe({
-        url: getWebsocketApiUrl(),
-        onData: function (header) {
-          moduleEmitter.emit('new-block-header', header)
-        },
-        onError: function (err) {
-          logger.warn('New block subscription failed', err.message)
-        }
-      })
-    }
-  })
+      if (subscriptions.length === 1) {
+        blocksSubscription = subscribe({
+          url: getWebsocketApiUrl(),
+          onData: function (header) {
+            moduleEmitter.emit('new-block-header', header)
+          },
+          onError: function (err) {
+            logger.warn('New block subscription failed', err.message)
+          }
+        })
+      }
+    })
 }
 
 function unsubscribeUpdates (_, webContents) {
