@@ -55,8 +55,14 @@ class ConvertETHtoMETForm extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount: id === 'ethAmount' ? toUSD(value, ETHprice) : state.usdAmount,
-      ethAmount: id === 'usdAmount' ? toETH(value, ETHprice) : state.ethAmount,
+      usdAmount:
+        id === 'ethAmount'
+          ? toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+          : state.usdAmount,
+      ethAmount:
+        id === 'usdAmount'
+          ? toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+          : state.ethAmount,
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))

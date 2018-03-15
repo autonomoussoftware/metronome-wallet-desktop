@@ -69,31 +69,21 @@ export default class TextInput extends React.Component {
     id: PropTypes.string.isRequired
   }
 
-  state = { isPristine: true }
-
   InputControl = this.props.rows || this.props.cols
     ? Input.withComponent('textarea')
     : Input
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.value !== this.props.value) {
-      this.setState({ isPristine: false })
-    }
-  }
-
   render() {
     const { label, value, type, id, error, ...other } = this.props
-    const { isPristine } = this.state
 
     const hasErrors = error && error.length > 0
 
     return (
       <div>
-        <Label isPristine={isPristine} hasErrors={hasErrors} htmlFor={id}>
+        <Label hasErrors={hasErrors} htmlFor={id}>
           {label}
         </Label>
         <this.InputControl
-          isPristine={isPristine}
           hasErrors={hasErrors}
           value={value || ''}
           type={type || 'text'}
