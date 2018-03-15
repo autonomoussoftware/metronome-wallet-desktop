@@ -1,3 +1,5 @@
+'use strict'
+
 const { merge, unset } = require('lodash')
 const logger = require('electron-log')
 const settings = require('electron-settings')
@@ -17,6 +19,9 @@ const overwritableSettings = {
   1: [
     'metronome.contracts',
     'tokens.0x4c00f8ec2d4fc3d9cbe4d7bd04d80780d5cae77f'
+  ],
+  2: [
+    'user'
   ]
 }
 
