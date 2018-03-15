@@ -441,7 +441,6 @@ function openWallet ({ webContents, walletId }) {
   sendCachedTransactions({ walletId, webContents })
 
   syncTransactions({ walletId, webContents })
-    .catch(() => {})
     .then(function () {
       subscriptions = subscriptions.concat({ walletId, webContents })
 
@@ -453,6 +452,8 @@ function openWallet ({ webContents, walletId }) {
           },
           onError: function (err) {
             logger.warn('New block subscription failed', err.message)
+
+            syncTransactions({ walletId, webContents })
           }
         })
       }
