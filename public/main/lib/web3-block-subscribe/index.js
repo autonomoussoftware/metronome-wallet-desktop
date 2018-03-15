@@ -1,9 +1,11 @@
+'use strict'
+
 const debug = require('debug')('web3-block-subscribe')
 const Web3 = require('web3')
 
 const timeBombs = require('../time-bombs')
 
-const noop = () => {}
+const noop = () => undefined
 
 const pendingUnsubscriptions = []
 
@@ -34,6 +36,10 @@ function tryToUnsubscribe (subscription, callback = noop) {
     }
 
     debug('(%s) Unsubscribed', id, success)
+
+    subscription.options.requestManager.provider.connection.close()
+
+    debug('(%s) Closing connection', id)
 
     callback(null, true)
   })
