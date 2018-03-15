@@ -119,7 +119,7 @@ class TxList extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   rowRenderer = items => ({ key, style, index }) => (
-    <div style={style} key={key}>
+    <div style={style} key={`${key}-${items[index].transaction.hash}`}>
       <TxRow
         data-hash={items[index].transaction.hash}
         onClick={this.onTxClicked}
