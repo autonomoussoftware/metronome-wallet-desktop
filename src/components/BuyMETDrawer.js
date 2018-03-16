@@ -9,7 +9,6 @@ import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -43,11 +42,8 @@ class BuyMETDrawer extends React.Component {
   }
 
   static initialState = {
-    useCustomGas: false,
-    ethAmount: null,
-    usdAmount: null,
-    gasPrice: utils.weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('MET'),
     errors: {}
   }
 
@@ -65,14 +61,7 @@ class BuyMETDrawer extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? utils.toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))

@@ -1,5 +1,5 @@
 import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
@@ -37,11 +37,9 @@ class SendMETForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
+    ...GasEditor.initialState('MET'),
     toAddress: null,
     metAmount: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 

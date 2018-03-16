@@ -1,4 +1,5 @@
 import { TextInput, FieldBtn, TxIcon, Flex, Sp } from './common'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Web3 from 'web3'
@@ -17,6 +18,23 @@ export default class AmountFields extends React.Component {
   }
 
   static INVALID_PLACEHOLDER = 'Invalid amount'
+
+  static initialState = {
+    ethAmount: null,
+    usdAmount: null
+  }
+
+  static onInputChange = (state, ETHprice, id, value) => ({
+    ...state,
+    usdAmount:
+      id === 'ethAmount'
+        ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+        : state.usdAmount,
+    ethAmount:
+      id === 'usdAmount'
+        ? utils.toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+        : state.ethAmount
+  })
 
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
