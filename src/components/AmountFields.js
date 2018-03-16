@@ -1,22 +1,7 @@
-import { TextInput, BaseBtn, TxIcon, Flex, Sp } from './common'
+import { TextInput, FieldBtn, TxIcon, Flex, Sp } from './common'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Web3 from 'web3'
-
-const MaxBtn = BaseBtn.extend`
-  float: right;
-  line-height: 1.8rem;
-  opacity: 0.5;
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-top: 0.4rem;
-
-  &:hover {
-    opacity: 1;
-  }
-`
 
 export default class AmountFields extends React.Component {
   static propTypes = {
@@ -31,6 +16,8 @@ export default class AmountFields extends React.Component {
     }).isRequired
   }
 
+  static INVALID_PLACEHOLDER = 'Invalid amount'
+
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.props.onChange({ target: { id: 'ethAmount', value: ethAmount } })
@@ -42,16 +29,22 @@ export default class AmountFields extends React.Component {
     return (
       <Flex.Row justify="space-between">
         <Flex.Item grow="1" basis="0">
-          <MaxBtn onClick={this.onMaxClick} tabIndex="-1">
+          <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
             MAX
-          </MaxBtn>
+          </FieldBtn>
           <TextInput
-            placeholder="0.00"
+            placeholder={
+              ethAmount === AmountFields.INVALID_PLACEHOLDER
+                ? AmountFields.INVALID_PLACEHOLDER
+                : '0.00'
+            }
             autoFocus={autoFocus}
             onChange={onChange}
             error={errors.ethAmount}
             label="Amount (ETH)"
-            value={ethAmount}
+            value={
+              ethAmount === AmountFields.INVALID_PLACEHOLDER ? '' : ethAmount
+            }
             id="ethAmount"
           />
         </Flex.Item>
@@ -60,11 +53,17 @@ export default class AmountFields extends React.Component {
         </Sp>
         <Flex.Item grow="1" basis="0">
           <TextInput
-            placeholder="0.00"
+            placeholder={
+              usdAmount === AmountFields.INVALID_PLACEHOLDER
+                ? AmountFields.INVALID_PLACEHOLDER
+                : '0.00'
+            }
             onChange={onChange}
             error={errors.usdAmount}
             label="Amount (USD)"
-            value={usdAmount}
+            value={
+              usdAmount === AmountFields.INVALID_PLACEHOLDER ? '' : usdAmount
+            }
             id="usdAmount"
           />
         </Flex.Item>

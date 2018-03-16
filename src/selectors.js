@@ -304,35 +304,38 @@ export const hasEnoughData = createSelector(
     blockHeight !== null
 )
 
-export const isSendEnabled = createSelector(
+export const sendFeatureStatus = createSelector(
   getActiveWalletEthBalance,
   getActiveWalletMtnBalance,
   getIsOnline,
   (ethBalance, mtnBalance, isOnline) => {
     const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
-    return isOnline && (hasFunds(ethBalance) || hasFunds(mtnBalance))
+    return !isOnline
+      ? 'offline'
+      : !hasFunds(ethBalance) && !hasFunds(mtnBalance) ? 'no-funds' : 'ok'
   }
 )
 
-export const isAuctionEnabled = createSelector(
+export const buyFeatureStatus = createSelector(
   getAuctionStatus,
   getIsOnline,
-  (auctionStatus, isOnline) =>
-    isOnline &&
-    auctionStatus &&
-    auctionStatus.tokenRemaining &&
-    Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
+  (auctionStatus, isOnline) => {
+    const isDepleted =
+      auctionStatus &&
+      auctionStatus.tokenRemaining &&
+      !Web3.utils.toBN(auctionStatus.tokenRemaining).gt(Web3.utils.toBN(0))
+    return !isOnline ? 'offline' : isDepleted ? 'depleted' : 'ok'
+  }
 )
 
-export const isConverterEnabled = createSelector(
+export const convertFeatureStatus = createSelector(
   getCurrentAuction,
   getIsOnline,
   (currentAuction, isOnline) => {
-    const isInDailyAuction = parseInt(currentAuction, 10) > 0
+    const isInInitialAuction = parseInt(currentAuction, 10) === 0
 
-    // TODO remove this when Converter Contract is working fine
-    const isConverterWorking = true
-
-    return isConverterWorking && isInDailyAuction && isOnline
+    return !isOnline
+      ? 'offline'
+      : isInInitialAuction ? 'in-daily-auction' : 'ok'
   }
 )

@@ -12,12 +12,12 @@ import React from 'react'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
-  padding: 7.2rem 2.4rem;
+  padding: 7.2rem 2.4rem 2.4rem;
   min-height: 100%;
   position: relative;
 
   @media (min-width: 800px) {
-    padding: 7.2rem 4.8rem;
+    padding: 7.2rem 4.8rem 4.8rem;
   }
 `
 
@@ -36,8 +36,9 @@ const FixedContainer = styled.div`
 `
 
 const Hero = styled.div`
-  margin-top: 4.8rem;
+  margin-top: 2.4rem;
   @media (min-width: 1040px) {
+    margin-top: 4.8rem;
     display: flex;
   }
 `
@@ -85,8 +86,9 @@ const NoTx = styled.div`
 
 class Dashboard extends React.Component {
   static propTypes = {
-    hasTransactions: PropTypes.bool.isRequired,
-    isSendEnabled: PropTypes.bool.isRequired
+    sendFeatureStatus: PropTypes.oneOf(['offline', 'no-funds', 'ok'])
+      .isRequired,
+    hasTransactions: PropTypes.bool.isRequired
   }
 
   state = {
@@ -98,7 +100,7 @@ class Dashboard extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { isSendEnabled, hasTransactions } = this.props
+    const { sendFeatureStatus, hasTransactions } = this.props
 
     return (
       <Container>
@@ -112,13 +114,21 @@ class Dashboard extends React.Component {
           </Left>
           <Right>
             <Btn
+              data-disabled={sendFeatureStatus !== 'ok' ? true : null}
+              data-rh={
+                sendFeatureStatus === 'offline'
+                  ? "Can't send while offline"
+                  : sendFeatureStatus === 'no-funds'
+                    ? 'You need some funds to send'
+                    : null
+              }
               data-modal="send"
-              disabled={!isSendEnabled}
-              onClick={this.onOpenModal}
+              onClick={sendFeatureStatus === 'ok' ? this.onOpenModal : null}
               block
             >
               Send
             </Btn>
+
             <ReceiveBtn block data-modal="receive" onClick={this.onOpenModal}>
               Receive
             </ReceiveBtn>
@@ -145,8 +155,8 @@ class Dashboard extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  hasTransactions: selectors.getActiveWalletTransactions(state).length > 0,
-  isSendEnabled: selectors.isSendEnabled(state)
+  sendFeatureStatus: selectors.sendFeatureStatus(state),
+  hasTransactions: selectors.getActiveWalletTransactions(state).length > 0
 })
 
 export default connect(mapStateToProps)(Dashboard)

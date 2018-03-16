@@ -1,4 +1,4 @@
-import { DisplayValue, FloatBtn, TextInput, Flex, Btn, Sp } from './common'
+import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
 import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
@@ -131,9 +131,9 @@ class SendMETForm extends React.Component {
               id="toAddress"
             />
             <Sp mt={3}>
-              <FloatBtn onClick={this.onMaxClick} tabIndex="-1">
+              <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
                 MAX
-              </FloatBtn>
+              </FieldBtn>
               <TextInput
                 placeholder="0.00"
                 onChange={this.onInputChange}

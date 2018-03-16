@@ -1,6 +1,7 @@
-import Web3 from 'web3'
-import bip39 from 'bip39'
 import { isWeiable, isHexable, gweiToWei } from './utils'
+import stringEntropy from 'fast-password-entropy'
+import bip39 from 'bip39'
+import Web3 from 'web3'
 
 function validateAmount(amount, propName, max, errors = {}) {
   if (!amount) {
@@ -33,26 +34,36 @@ export function validateToAddress(toAddress, errors = {}) {
 }
 
 export function validateGasLimit(gasLimit, min, errors = {}) {
-  if (!gasLimit) {
+  const value = parseFloat((gasLimit || '').replace(',', '.'), 10)
+
+  if (Number.isNaN(value)) {
+    errors.gasLimit = 'Invalid value'
+  } else if (!value) {
     errors.gasLimit = 'Gas limit is required'
-  } else if (!isHexable(gasLimit.replace(',', '.'))) {
-    errors.gasLimit = 'Invalid gas limit'
-  } else if (gasLimit <= 0) {
+  } else if (Math.floor(value) !== value) {
+    errors.gasLimit = 'Gas limit must be an integer'
+  } else if (value <= 0) {
     errors.gasLimit = 'Gas limit must be greater than 0'
+  } else if (!isHexable(value)) {
+    errors.gasLimit = 'Invalid value'
   }
 
   return errors
 }
 
 export function validateGasPrice(gasPrice, errors = {}) {
-  gasPrice = gweiToWei(gasPrice)
+  const value = parseFloat((gasPrice || '').replace(',', '.'), 10)
 
-  if (!gasPrice) {
+  if (Number.isNaN(value)) {
+    errors.gasPrice = 'Invalid value'
+  } else if (!value) {
     errors.gasPrice = 'Gas price is required'
-  } else if (!isHexable(gasPrice.replace(',', '.'))) {
-    errors.gasPrice = 'Invalid gas price'
-  } else if (gasPrice <= 0) {
+  } else if (value <= 0) {
     errors.gasPrice = 'Gas price must be greater than 0'
+  } else if (!isWeiable(gasPrice, 'gwei')) {
+    errors.gasPrice = 'Invalid value'
+  } else if (!isHexable(gweiToWei(gasPrice))) {
+    errors.gasPrice = 'Invalid value'
   }
 
   return errors
@@ -71,9 +82,16 @@ export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
 export function validatePassword(password, errors = {}) {
   if (!password) {
     errors.password = 'Password is required'
-  } else if (password.length < 8) {
-    errors.password =
-      'Password length must be equal or greater than 8 characters'
+  }
+
+  return errors
+}
+
+export function validatePasswordCreation(password, errors = {}) {
+  if (!password) {
+    errors.password = 'Password is required'
+  } else if (stringEntropy(password) < 72) {
+    errors.password = 'Password is not strong enough'
   }
 
   return errors

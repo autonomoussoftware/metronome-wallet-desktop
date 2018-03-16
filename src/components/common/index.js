@@ -1,8 +1,7 @@
-import { BaseBtn, FloatBtn, Btn } from './Btn'
+import { BaseBtn, FieldBtn, Btn } from './Btn'
 import ConverterIcon from './ConverterIcon'
 import DisplayValue from './DisplayValue'
 import AuctionIcon from './AuctionIcon'
-import Collapsable from './Collapsable'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
 import LoadingBar from './LoadingBar'
@@ -10,6 +9,7 @@ import WalletIcon from './WalletIcon'
 import CloseIcon from './CloseIcon'
 import CheckIcon from './CheckIcon'
 import TextInput from './TextInput'
+import Tooltips from './Tooltips'
 import CopyIcon from './CopyIcon'
 import LogoIcon from './LogoIcon'
 import TxIcon from './TxIcon'
@@ -24,7 +24,6 @@ export {
   ConverterIcon,
   DisplayValue,
   AuctionIcon,
-  Collapsable,
   ItemFilter,
   DarkLayout,
   LoadingBar,
@@ -32,9 +31,10 @@ export {
   CloseIcon,
   CheckIcon,
   TextInput,
+  Tooltips,
   CopyIcon,
   LogoIcon,
-  FloatBtn,
+  FieldBtn,
   BaseBtn,
   TxIcon,
   Drawer,

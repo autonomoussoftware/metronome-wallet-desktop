@@ -31,11 +31,21 @@ class SendDrawer extends React.Component {
     const { isInitialAuction, onRequestClose, isOpen } = this.props
     const { activeTab } = this.state
 
-    const tabs = !isInitialAuction && (
+    const tabs = (
       <Tabs
         onClick={this.onTabChange}
         active={this.state.activeTab}
-        items={[{ id: 'met', label: 'MET' }, { id: 'eth', label: 'ETH' }]}
+        items={[
+          {
+            id: 'met',
+            label: 'MET',
+            disabled: isInitialAuction,
+            'data-rh': isInitialAuction
+              ? 'MET transactions are disabled during Initial Auction'
+              : null
+          },
+          { id: 'eth', label: 'ETH' }
+        ]}
       />
     )
 

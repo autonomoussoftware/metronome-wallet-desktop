@@ -81,7 +81,9 @@ export default class ConfirmationWizard extends React.Component {
     renderForm: PropTypes.func.isRequired,
     disclaimer: PropTypes.string,
     editLabel: PropTypes.string,
-    validate: PropTypes.func
+    noCancel: PropTypes.bool,
+    validate: PropTypes.func,
+    styles: PropTypes.object
   }
 
   static defaultProps = {
@@ -91,7 +93,8 @@ export default class ConfirmationWizard extends React.Component {
       'You can view the status of this transaction in the transaction list.',
     failureTitle: 'Error',
     pendingTitle: 'Sending...',
-    editLabel: 'Edit this transaction'
+    editLabel: 'Edit this transaction',
+    styles: {}
   }
 
   static initialState = {
@@ -139,7 +142,7 @@ export default class ConfirmationWizard extends React.Component {
     if (status === 'confirm') {
       return (
         <form onSubmit={this.onConfirmClick}>
-          <Sp py={4} px={3}>
+          <Sp py={4} px={3} style={this.props.styles.confirmation || {}}>
             {this.props.confirmationTitle && (
               <ConfirmationTitle>
                 {this.props.confirmationTitle}
@@ -158,13 +161,15 @@ export default class ConfirmationWizard extends React.Component {
               />
             </Sp>
           </Sp>
-          <BtnContainer>
+          <BtnContainer style={this.props.styles.btns || {}}>
             <Btn submit block>
               Confirm
             </Btn>
-            <EditBtn onClick={this.onCancelClick}>
-              {this.props.editLabel}
-            </EditBtn>
+            {!this.props.noCancel && (
+              <EditBtn onClick={this.onCancelClick}>
+                {this.props.editLabel}
+              </EditBtn>
+            )}
           </BtnContainer>
           {this.props.disclaimer && (
             <Disclaimer>{this.props.disclaimer}</Disclaimer>
