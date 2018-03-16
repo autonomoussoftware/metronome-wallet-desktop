@@ -1,5 +1,5 @@
 import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, weiToGwei, isWeiable } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
 import * as validators from '../validator'
@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -38,11 +37,9 @@ class ConvertMETtoETHForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
+    ...GasEditor.initialState('MET'),
     metAmount: null,
     estimate: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 

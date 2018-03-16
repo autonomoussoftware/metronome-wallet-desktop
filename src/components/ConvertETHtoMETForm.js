@@ -1,4 +1,4 @@
-import { sendToMainProcess, toETH, toUSD, isWeiable, weiToGwei } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
@@ -10,7 +10,6 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -40,12 +39,9 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
-    ethAmount: null,
-    usdAmount: null,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('MET'),
     estimate: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -55,14 +51,7 @@ class ConvertETHtoMETForm extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))

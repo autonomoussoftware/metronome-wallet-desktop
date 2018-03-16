@@ -1,5 +1,5 @@
-import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable } from '../utils'
 import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -39,12 +38,9 @@ class SendETHForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('ETH'),
     toAddress: null,
-    ethAmount: null,
-    usdAmount: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -54,14 +50,7 @@ class SendETHForm extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))

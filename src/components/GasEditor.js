@@ -2,6 +2,7 @@ import { TextInput, FieldBtn, Flex, Sp } from './common'
 import { sendToMainProcess, weiToGwei } from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import config from '../config'
 import React from 'react'
 
 const GasLabel = styled.span`
@@ -22,6 +23,12 @@ export default class GasEditor extends React.Component {
       gasLimit: PropTypes.string
     }).isRequired
   }
+
+  static initialState = currency => ({
+    useCustomGas: false,
+    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
+    gasLimit: config[`${currency}_DEFAULT_GAS_LIMIT`]
+  })
 
   componentDidMount() {
     // Avoid getting current price if using custom price
