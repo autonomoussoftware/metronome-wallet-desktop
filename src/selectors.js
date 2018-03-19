@@ -216,7 +216,13 @@ export const getActiveWalletTransactions = createSelector(
           ? tokenData.value
           : transaction.value
 
-      const ethSpentInAuction = txType === 'auction' ? transaction.value : null
+      const ethSpentInAuction =
+        txType === 'auction' && meta
+          ? Web3.utils
+              .toBN(transaction.value)
+              .sub(Web3.utils.toBN(meta.returnedValue))
+              .toString(10)
+          : null
 
       const mtnBoughtInAuction =
         txType === 'auction' && transaction.blockHash && tokenData
