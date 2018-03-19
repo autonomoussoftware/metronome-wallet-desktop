@@ -201,7 +201,9 @@ export default class ConfirmationWizard extends React.Component {
               <Title>{this.props.failureTitle}</Title>
             </Sp>
             {error && <Message>{error}</Message>}
-            <TryAgainBtn onClick={this.onCancelClick}>Try again</TryAgainBtn>
+            <TryAgainBtn onClick={this.onCancelClick} autoFocus>
+              Try again
+            </TryAgainBtn>
           </Flex.Column>
         </Sp>
       )
