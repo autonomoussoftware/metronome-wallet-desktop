@@ -111,8 +111,8 @@ class ReceiptModal extends React.Component {
         PropTypes.shape({
           txType: PropTypes.oneOf(['converted']).isRequired,
           convertedFrom: PropTypes.oneOf(['ETH', 'MET']).isRequired,
-          fromValue: PropTypes.string.isRequired,
-          toValue: PropTypes.string.isRequired
+          fromValue: PropTypes.string,
+          toValue: PropTypes.string
         })
       ]).isRequired
     })
