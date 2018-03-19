@@ -1,3 +1,5 @@
+'use strict'
+
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
 
@@ -10,7 +12,6 @@ const {
   registerTxParser,
   sendTransaction
 } = require('../ethWallet')
-
 const {
   encodeConvertEthToMtn,
   encodeConvertMtnToEth,
@@ -19,14 +20,14 @@ const {
   getEthForMtnResult,
   getConverterGasLimit
 } = require('./converter')
-
+const { getTokenStatus } = require('./token')
 const {
   getAuctionAddress,
   getConverterAddress,
   getTokenAddress
 } = require('./settings')
 
-function sendStatus({ web3, webContents }) {
+function sendStatus ({ web3, webContents }) {
   promiseAllProps({
     auctionStatus: getAuctionStatus({ web3, address: getAuctionAddress() }),
     converterStatus: getConverterStatus({
@@ -34,13 +35,23 @@ function sendStatus({ web3, webContents }) {
       address: getConverterAddress()
     })
   })
-    .then(function({ auctionStatus, converterStatus }) {
-      logger.verbose('Metronome status', auctionStatus, converterStatus)
+    .then(function (status) {
+      if (status.auctionStatus.isInitialAuctionEnded) {
+        return getTokenStatus({ web3, address: getTokenAddress() })
+          .then(function (tokenStatus) {
+            return Object.assign(status, { tokenStatus })
+          })
+      }
+      return Object.assign(status, { tokenStatus: { transferAllowed: false } })
+    })
+    .then(function ({ auctionStatus, converterStatus, tokenStatus }) {
+      logger.verbose('<-- Metronome status', auctionStatus, converterStatus, tokenStatus)
 
       webContents.send('auction-status-updated', auctionStatus)
       webContents.send('mtn-converter-status-updated', converterStatus)
+      webContents.send('metronome-token-status-updated', tokenStatus)
     })
-    .catch(function(err) {
+    .catch(function (err) {
       logger.warn('Could not get metronome status', err)
 
       // TODO retry before notifying
@@ -56,16 +67,16 @@ function sendStatus({ web3, webContents }) {
 
 let subscriptions = []
 
-function unsubscribeUpdates(_, webContents) {
+function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-function listenForBlocks(_, webContents) {
+function listenForBlocks (_, webContents) {
   const web3 = getWeb3()
 
   sendStatus({ web3, webContents })
 
-  webContents.on('destroyed', function() {
+  webContents.on('destroyed', function () {
     unsubscribeUpdates(null, webContents)
   })
 
@@ -78,7 +89,7 @@ ethEvents.on('new-block-header', function () {
   subscriptions.forEach(sendStatus)
 })
 
-function buyMetronome({ password, from, value, gasLimit, gasPrice }) {
+function buyMetronome ({ password, from, value, gasLimit, gasPrice }) {
   const address = getAuctionAddress()
 
   logger.verbose('Buying MET in auction', { from, value, address, gasLimit, gasPrice })
@@ -86,7 +97,7 @@ function buyMetronome({ password, from, value, gasLimit, gasPrice }) {
   return sendTransaction({ password, from, to: address, value, gasLimit, gasPrice })
 }
 
-function convertEthToMtn({ password, from, value, gasLimit, gasPrice }) {
+function convertEthToMtn ({ password, from, value, gasLimit, gasPrice }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
   const data = encodeConvertEthToMtn({ web3, address, value })
@@ -104,12 +115,12 @@ function convertEthToMtn({ password, from, value, gasLimit, gasPrice }) {
   })
 }
 
-function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
+function convertMtnToEth ({ password, from, value, gasPrice, gasLimit }) {
   const token = getTokenAddress()
   const address = getConverterAddress()
 
   return getAllowance({ token, from, to: address })
-    .then(function(allowance) {
+    .then(function (allowance) {
       logger.debug('Current allowance', allowance)
       const web3 = getWeb3()
       if (web3.utils.toBN(allowance).gtn(0)) {
@@ -119,13 +130,13 @@ function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
         )
       }
     })
-    .then(function() {
+    .then(function () {
       logger.debug('Setting new allowance')
       return approveToken(
         { password, token, from, to: address, value, gasPrice, gasLimit },
         true
       )
-        .then(function() {
+        .then(function () {
           const web3 = getWeb3()
           const data = encodeConvertMtnToEth({ web3, address, value })
 
@@ -133,7 +144,7 @@ function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
 
           return sendTransaction({ password, from, to: address, data, gasPrice, gasLimit })
         })
-        .catch(function(err) {
+        .catch(function (err) {
           logger.warn('Conversion failed - removing approval')
           return approveToken({
             password,
@@ -143,18 +154,18 @@ function convertMtnToEth({ password, from, value, gasPrice, gasLimit }) {
             value: 0,
             gasLimit,
             gasPrice
-          }).then(function() {
+          }).then(function () {
             logger.info('Approval removed')
             throw err
           })
         })
     })
-    .catch(function(err) {
+    .catch(function (err) {
       throw err
     })
 }
 
-function estimateEthToMet({ value }) {
+function estimateEthToMet ({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
@@ -163,7 +174,7 @@ function estimateEthToMet({ value }) {
   }))
 }
 
-function estimateMetToEth({ value }) {
+function estimateMetToEth ({ value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
@@ -172,14 +183,14 @@ function estimateMetToEth({ value }) {
   }))
 }
 
-function getEthGasLimit({ from, value }) {
+function getEthGasLimit ({ from, value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
   return getConverterGasLimit({ web3, from, address, value, type: 'eth' })
 }
 
-function getMetGasLimit({ from, value }) {
+function getMetGasLimit ({ from, value }) {
   const web3 = getWeb3()
   const address = getConverterAddress()
 
@@ -193,7 +204,7 @@ function getAuctionMetGasLimit ({ from, value }) {
   return getAuctionGasLimit({ web3, to, from, value })
 }
 
-function getHooks() {
+function getHooks () {
   registerTxParser(transactionParser)
 
   return [
