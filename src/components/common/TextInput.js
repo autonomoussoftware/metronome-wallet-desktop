@@ -63,7 +63,7 @@ export default class TextInput extends React.Component {
     ]),
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
-    type: PropTypes.oneOf(['text', 'number', 'password']),
+    type: PropTypes.oneOf(['text', 'number', 'password', 'url']),
     rows: PropTypes.number,
     cols: PropTypes.number,
     id: PropTypes.string.isRequired
