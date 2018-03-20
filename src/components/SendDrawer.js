@@ -8,13 +8,19 @@ import React from 'react'
 
 class SendDrawer extends React.Component {
   static propTypes = {
-    isInitialAuction: PropTypes.bool.isRequired,
+    sendMetFeatureStatus: PropTypes.oneOf([
+      'in-initial-auction',
+      'transfer-disabled',
+      'no-funds',
+      'offline',
+      'ok'
+    ]).isRequired,
     onRequestClose: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
 
   initialState = {
-    activeTab: this.props.isInitialAuction ? 'eth' : 'met'
+    activeTab: this.props.sendMetFeatureStatus !== 'ok' ? 'eth' : 'met'
   }
 
   state = this.initialState
@@ -28,7 +34,7 @@ class SendDrawer extends React.Component {
   onTabChange = activeTab => this.setState({ activeTab })
 
   render() {
-    const { isInitialAuction, onRequestClose, isOpen } = this.props
+    const { sendMetFeatureStatus, onRequestClose, isOpen } = this.props
     const { activeTab } = this.state
 
     const tabs = (
@@ -39,10 +45,13 @@ class SendDrawer extends React.Component {
           {
             id: 'met',
             label: 'MET',
-            disabled: isInitialAuction,
-            'data-rh': isInitialAuction
-              ? 'MET transactions are disabled during Initial Auction'
-              : null
+            disabled: sendMetFeatureStatus !== 'ok',
+            'data-rh':
+              sendMetFeatureStatus === 'in-initial-auction'
+                ? 'MET transactions are disabled during Initial Auction'
+                : sendMetFeatureStatus === 'transfer-disabled'
+                  ? 'MET transactions not enabled yet'
+                  : null
           },
           { id: 'eth', label: 'ETH' }
         ]}
@@ -63,7 +72,7 @@ class SendDrawer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isInitialAuction: selectors.getCurrentAuction(state) === '0'
+  sendMetFeatureStatus: selectors.sendMetFeatureStatus(state)
 })
 
 export default connect(mapStateToProps)(SendDrawer)

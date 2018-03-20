@@ -7,6 +7,7 @@ export const subscribeToMainProcessMessages = store => {
    * action of type { type: MSG_CHANNEL, payload: MSG_ARG }
    */
   subscribeTo([
+    'metronome-token-status-updated',
     'mtn-converter-status-updated',
     'connectivity-state-changed',
     'auction-status-updated',

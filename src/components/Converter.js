@@ -115,6 +115,7 @@ class Converter extends React.Component {
   static propTypes = {
     convertFeatureStatus: PropTypes.oneOf([
       'in-initial-auction',
+      'transfer-disabled',
       'offline',
       'ok'
     ]).isRequired,
@@ -198,7 +199,9 @@ class Converter extends React.Component {
                   ? "Can't convert while offline"
                   : convertFeatureStatus === 'in-initial-auction'
                     ? 'Conversions are disabled during Initial Auction'
-                    : null
+                    : convertFeatureStatus === 'transfer-disabled'
+                      ? 'MET conversions not enabled yet'
+                      : null
               }
               data-modal="convert"
               onClick={convertFeatureStatus === 'ok' ? this.onOpenModal : null}

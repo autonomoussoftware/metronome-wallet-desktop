@@ -130,6 +130,11 @@ export const getCurrentAuction = createSelector(
       : '-1'
 )
 
+export const getIsInitialAuction = createSelector(
+  getCurrentAuction,
+  currentAuction => parseInt(currentAuction, 10) === 0
+)
+
 export const getAuctionPriceUSD = createSelector(
   getAuctionStatus,
   getEthRate,
@@ -297,17 +302,26 @@ export const getActiveWalletTransactions = createSelector(
   }
 )
 
+export const metronomeStatus = state => state.metronome
+
+export const getMetTransferAllowed = createSelector(
+  metronomeStatus,
+  metronomeStatus => metronomeStatus.transferAllowed
+)
+
 // Returns true if Main Process has sent enough data to render dashboard
 export const hasEnoughData = createSelector(
   getActiveWalletEthBalance,
   getActiveWalletMtnBalance,
+  getMetTransferAllowed,
   getBlockHeight,
   getEthRate,
-  (ethBalance, mtnBalance, blockHeight, ethRate) =>
+  (ethBalance, mtnBalance, metTransferAllowed, blockHeight, ethRate) =>
+    metTransferAllowed !== null &&
+    blockHeight !== null &&
     ethBalance !== null &&
     mtnBalance !== null &&
-    ethRate !== null &&
-    blockHeight !== null
+    ethRate !== null
 )
 
 export const sendFeatureStatus = createSelector(
@@ -319,6 +333,23 @@ export const sendFeatureStatus = createSelector(
     return !isOnline
       ? 'offline'
       : !hasFunds(ethBalance) && !hasFunds(mtnBalance) ? 'no-funds' : 'ok'
+  }
+)
+
+export const sendMetFeatureStatus = createSelector(
+  getActiveWalletMtnBalance,
+  getMetTransferAllowed,
+  getIsInitialAuction,
+  getIsOnline,
+  (mtnBalance, metTransferAllowed, isInitialAuction, isOnline) => {
+    const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
+    return !isOnline
+      ? 'offline'
+      : !hasFunds(mtnBalance)
+        ? 'no-funds'
+        : isInitialAuction
+          ? 'in-initial-auction'
+          : !metTransferAllowed ? 'transfer-disabled' : 'ok'
   }
 )
 
@@ -335,13 +366,14 @@ export const buyFeatureStatus = createSelector(
 )
 
 export const convertFeatureStatus = createSelector(
-  getCurrentAuction,
+  getMetTransferAllowed,
+  getIsInitialAuction,
   getIsOnline,
-  (currentAuction, isOnline) => {
-    const isInInitialAuction = parseInt(currentAuction, 10) === 0
-
+  (metTransferAllowed, isInitialAuction, isOnline) => {
     return !isOnline
       ? 'offline'
-      : isInInitialAuction ? 'in-daily-auction' : 'ok'
+      : isInitialAuction
+        ? 'in-initial-auction'
+        : !metTransferAllowed ? 'transfer-disabled' : 'ok'
   }
 )
