@@ -10,6 +10,8 @@ function validateAmount(amount, propName, max, errors = {}) {
     errors[propName] = 'Invalid amount'
   } else if (max && parseFloat(amount) > parseFloat(max)) {
     errors[propName] = 'Insufficient funds'
+  } else if (parseFloat(amount) < 0) {
+    errors[propName] = 'Amount must be greater than 0'
   }
 
   return errors
