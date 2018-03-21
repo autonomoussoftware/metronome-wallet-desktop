@@ -105,7 +105,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
   return expectedETHamount
 }
 
-export function toMET(amount, rate, errorValue = 'Invalid amount') {
+export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
   let isValidAmount
   let weiAmount
   try {
@@ -124,7 +124,25 @@ export function toMET(amount, rate, errorValue = 'Invalid amount') {
       )
     : errorValue
 
-  return expectedMETamount
+  const excedes = isValidAmount
+    ? Web3.utils.toBN(expectedMETamount).gte(Web3.utils.toBN(remaining))
+    : null
+
+  const usedETHAmount =
+    isValidAmount && excedes
+      ? new BigNumber(remaining)
+          .multipliedBy(new BigNumber(rate))
+          .dividedBy(new BigNumber(Web3.utils.toWei('1')))
+          .decimalPlaces(18)
+          .toString(10)
+      : null
+
+  const excessETHAmount =
+    isValidAmount && excedes
+      ? weiAmount.minus(usedETHAmount).toString(10)
+      : null
+
+  return { expectedMETamount, excedes, usedETHAmount, excessETHAmount }
 }
 
 export function weiToGwei(amount) {
