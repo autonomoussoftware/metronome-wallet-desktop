@@ -14,7 +14,7 @@ const Label = styled.label`
 const Input = styled.input`
   border: none;
   display: block;
-  height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
+  height: ${({ rows }) => (rows ? 4 * rows + 0.8 + 'rem' : '4.8rem')};
   padding: 0.8rem 1.6rem;
   background-color: ${p => p.theme.colors.translucentPrimary};
   margin-top: 0.8rem;
@@ -37,6 +37,10 @@ const Input = styled.input`
       p.noFocus && p.value.length > 0
         ? 'none'
         : `0 2px 0 0px ${p.theme.colors.primary}`};
+  }
+
+  @media (min-height: 600px) {
+    height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
   }
 `
 
