@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
+<div>
+  <header
+    class="sc-jTzLTM bbfTuz"
+  >
+    <h1
+      class="sc-fjdhpX fHYciM"
+      data-testid="drawer-title"
+    >
+      Buy Metronome
+    </h1>
+    <button
+      class="sc-jzJRlG fzwWXa"
+      data-testid="drawer-close-btn"
+    >
+      <svg
+        class="sc-bxivhb hXQRLM"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 24C5.386 24 0 18.614 0 12S5.386 0 12 0s12 5.386 12 12-5.386 12-12 12zM12 .96C5.914.96.96 5.914.96 12c0 6.086 4.954 11.04 11.04 11.04 6.086 0 11.04-4.954 11.04-11.04C23.04 5.914 18.086.96 12 .96zm3.984 15.696L12 12.672l-3.984 3.984-.682-.682 3.984-3.984-3.984-3.984.682-.681L12 11.309l3.984-3.984.682.681-3.984 3.984 3.984 3.984-.682.682z"
+        />
+      </svg>
+    </button>
+  </header>
+  <div
+    data-testid="buy-drawer"
+  >
+    <form
+      novalidate=""
+      data-testid="buy-form"
+    >
+      <div
+        class="sc-hMqMXs dKMJsu"
+      >
+        <div
+          class="sc-jKJlTe fkNCah"
+        >
+          <div
+            class="sc-ckVGcZ kvHIve"
+          >
+            <button
+              type="button"
+              class="sc-htpNat fdEoJm"
+              tabindex="-1"
+            >
+              MAX
+            </button>
+            <div>
+              <label
+                class="sc-dnqmqq ilsafR"
+                for="ethAmount"
+              >
+                Amount (ETH)
+              </label>
+              <input
+                type="text"
+                class="sc-iwsKbI eeXHwo"
+                value=""
+                id="ethAmount"
+                data-testid="ethAmount-field"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+          <div
+            class="sc-hMqMXs dnTKXF"
+          >
+            <svg
+              class="sc-bxivhb hXQRLM"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M24 7.136v.96H1.642l4.464 4.464-.682.682-5.28-5.28a.475.475 0 0 1 0-.682L5.424 2l.682.682-4.464 4.464H24v-.01zM18.576 11.6l-.682.682 4.464 4.464H0v.96h22.358l-4.464 4.464.682.681 5.28-5.28a.475.475 0 0 0 0-.681l-5.28-5.29z"
+              />
+            </svg>
+          </div>
+          <div
+            class="sc-ckVGcZ kvHIve"
+          >
+            <div>
+              <label
+                class="sc-dnqmqq ilsafR"
+                for="usdAmount"
+              >
+                Amount (USD)
+              </label>
+              <input
+                type="text"
+                class="sc-iwsKbI eeXHwo"
+                value=""
+                id="usdAmount"
+                data-testid="usdAmount-field"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-hMqMXs bQjXee"
+        >
+          <div
+            class="sc-jKJlTe kWLJKD"
+          >
+            <div
+              class="sc-jKJlTe jGctBw"
+            >
+              <span
+                class="sc-brqgnP fKuwbL"
+              >
+                Gas Limit: 
+                2000000
+                (Units)
+              </span>
+              <span
+                class="sc-brqgnP fKuwbL"
+              >
+                Gas Price: 
+                1
+                (Gwei)
+              </span>
+            </div>
+            <button
+              type="button"
+              class="sc-htpNat henWpP"
+              data-testid="edit-gas-btn"
+              tabindex="-1"
+            >
+              EDIT GAS
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-jDwBTQ kemwUK"
+      >
+        <button
+          type="submit"
+          class="sc-bwzfXH emHLVs"
+        >
+          Review Buy
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

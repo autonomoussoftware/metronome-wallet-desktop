@@ -51,6 +51,7 @@ export default class AmountFields extends React.Component {
             MAX
           </FieldBtn>
           <TextInput
+            data-testid="ethAmount-field"
             placeholder={
               ethAmount === AmountFields.INVALID_PLACEHOLDER
                 ? AmountFields.INVALID_PLACEHOLDER
@@ -71,6 +72,7 @@ export default class AmountFields extends React.Component {
         </Sp>
         <Flex.Item grow="1" basis="0">
           <TextInput
+            data-testid="usdAmount-field"
             placeholder={
               usdAmount === AmountFields.INVALID_PLACEHOLDER
                 ? AmountFields.INVALID_PLACEHOLDER

@@ -110,7 +110,7 @@ class BuyMETDrawer extends React.Component {
   renderConfirmation = () => {
     const { ethAmount, usdAmount } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will use{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
         (${usdAmount}) to buy approximately{' '}
@@ -141,7 +141,7 @@ class BuyMETDrawer extends React.Component {
     )
 
     return (
-      <form onSubmit={goToReview} noValidate>
+      <form onSubmit={goToReview} noValidate data-testid="buy-form">
         <Sp py={4} px={3}>
           <AmountFields
             availableETH={this.props.availableETH}

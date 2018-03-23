@@ -1,11 +1,11 @@
-import { reduxRender, testModalIsCalled } from '../../testUtils'
+import * as testUtils from '../../testUtils'
 import Auction from '../Auction'
 import config from '../../config'
 import React from 'react'
 
 describe('<Auction/>', () => {
   it('displays a "waiting..." message until the first auction status is received', () => {
-    const { queryByTestId, store } = reduxRender(<Auction />)
+    const { queryByTestId, store } = testUtils.reduxRender(<Auction />)
     expect(queryByTestId('waiting')).not.toBeNull()
     store.dispatch(auctionStatusUpdated(initialAuctionNotStarted()))
     expect(queryByTestId('waiting')).toBeNull()
@@ -13,7 +13,7 @@ describe('<Auction/>', () => {
 
   describe('if INITIAL auction is NOT STARTED yet', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(initialAuctionNotStarted())
       )
@@ -23,7 +23,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays a time countdown until genesis time', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(initialAuctionNotStarted())
       )
@@ -31,7 +31,7 @@ describe('<Auction/>', () => {
     })
 
     it('do NOT display stats and Buy button', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(initialAuctionNotStarted())
       )
@@ -42,7 +42,7 @@ describe('<Auction/>', () => {
 
   describe('if we are on the INITIAL auction', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
@@ -52,7 +52,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays a time countdown until INITIAL auction ends', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
@@ -60,7 +60,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays stats', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
@@ -69,26 +69,26 @@ describe('<Auction/>', () => {
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { getByTestId } = reduxRender(
+        const { getByTestId } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
         store.dispatch(auctionStatusUpdated({ tokenRemaining: '0' }))
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
@@ -102,16 +102,16 @@ describe('<Auction/>', () => {
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction())
         )
         store.dispatch(goOffline())
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction())
         )
@@ -126,7 +126,7 @@ describe('<Auction/>', () => {
 
   describe('if we are IN BETWEEN auctions', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
@@ -134,7 +134,7 @@ describe('<Auction/>', () => {
     })
 
     it('do NOT display stats and Buy button', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
@@ -143,7 +143,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays a "waiting..." message until the first daily auction starts', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
@@ -153,7 +153,7 @@ describe('<Auction/>', () => {
 
   describe('if we are on a DAILY auction', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
@@ -163,7 +163,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays a time countdown until current DAILY auction ends', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
@@ -171,7 +171,7 @@ describe('<Auction/>', () => {
     })
 
     it('displays stats', () => {
-      const { queryByTestId } = reduxRender(
+      const { queryByTestId } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
@@ -180,26 +180,26 @@ describe('<Auction/>', () => {
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { getByTestId } = reduxRender(
+        const { getByTestId } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
         store.dispatch(auctionStatusUpdated({ tokenRemaining: '0' }))
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
@@ -213,16 +213,16 @@ describe('<Auction/>', () => {
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction())
         )
         store.dispatch(goOffline())
-        testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = reduxRender(
+        const { getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction())
         )
@@ -250,45 +250,40 @@ function goOffline() {
   }
 }
 
-const twoWeeksAgo = () => Date.now() / 1000 - 60 * 60 * 24 * 7 * 2
-const oneHourAgo = () => Date.now() / 1000 - 60 * 60
-const inOneHour = () => Date.now() / 1000 + 60 * 60
-const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7
-
-const initialAuctionNotStarted = (other = {}) => ({
-  nextAuctionStartTime: inOneHour(),
+const initialAuctionNotStarted = (overrides = {}) => ({
+  nextAuctionStartTime: testUtils.inOneHour(),
   tokenRemaining: '1',
   currentAuction: '0',
   currentPrice: '33000000000',
-  genesisTime: inOneHour(),
-  ...other
+  genesisTime: testUtils.inOneHour(),
+  ...overrides
 })
 
-const inInitialAuction = (other = {}) => ({
-  nextAuctionStartTime: inOneWeek(),
+const inInitialAuction = (overrides = {}) => ({
+  nextAuctionStartTime: testUtils.inOneWeek(),
   tokenRemaining: '1',
   currentAuction: '0',
   currentPrice: '33000000000',
-  genesisTime: oneHourAgo(),
-  ...other
+  genesisTime: testUtils.oneHourAgo(),
+  ...overrides
 })
 
-const inBetweenAuctions = (other = {}) => ({
-  nextAuctionStartTime: inOneHour(),
+const inBetweenAuctions = (overrides = {}) => ({
+  nextAuctionStartTime: testUtils.inOneHour(),
   tokenRemaining: '1',
   currentAuction: '0',
   currentPrice: '33000000000',
-  genesisTime: twoWeeksAgo(),
-  ...other
+  genesisTime: testUtils.twoWeeksAgo(),
+  ...overrides
 })
 
-const inDailyAuction = (other = {}) => ({
-  nextAuctionStartTime: inOneHour(),
+const inDailyAuction = (overrides = {}) => ({
+  nextAuctionStartTime: testUtils.inOneHour(),
   tokenRemaining: '1',
   currentAuction: '10',
   currentPrice: '33000000000',
-  genesisTime: twoWeeksAgo(),
-  ...other
+  genesisTime: testUtils.twoWeeksAgo(),
+  ...overrides
 })
 
 function getInitialState(auctionStatus = null) {

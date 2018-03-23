@@ -55,6 +55,7 @@ export default class GasEditor extends React.Component {
       <Flex.Row justify="space-between">
         <Flex.Item grow="1" basis="0">
           <TextInput
+            data-testid="gas-limit-field"
             onChange={onChange}
             label="Gas Limit (Units)"
             error={errors.gasLimit}
@@ -65,6 +66,7 @@ export default class GasEditor extends React.Component {
         <Sp mt={6} mx={2.5} />
         <Flex.Item grow="1" basis="0">
           <TextInput
+            data-testid="gas-price-field"
             onChange={onChange}
             label="Gas Price (Gwei)"
             error={errors.gasPrice}
@@ -79,7 +81,11 @@ export default class GasEditor extends React.Component {
           <GasLabel>Gas Limit: {gasLimit} (Units)</GasLabel>
           <GasLabel>Gas Price: {gasPrice} (Gwei)</GasLabel>
         </Flex.Row>
-        <FieldBtn onClick={this.onGasToggle} tabIndex="-1">
+        <FieldBtn
+          data-testid="edit-gas-btn"
+          tabIndex="-1"
+          onClick={this.onGasToggle}
+        >
           EDIT GAS
         </FieldBtn>
       </Flex.Row>
