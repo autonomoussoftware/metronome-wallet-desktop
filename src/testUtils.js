@@ -94,3 +94,12 @@ export function testModalIsCalled(getter, btnId, modalId, shouldOpen = true) {
 export function queryModalByTestId(testId) {
   return document.body.querySelector(`[data-testid=${testId}]`)
 }
+
+/**
+ * Return UTC timestamps relative to the current time
+ * Useful for setting up different auction scenarios.
+ */
+export const twoWeeksAgo = () => Date.now() / 1000 - 60 * 60 * 24 * 7 * 2
+export const oneHourAgo = () => Date.now() / 1000 - 60 * 60
+export const inOneHour = () => Date.now() / 1000 + 60 * 60
+export const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7

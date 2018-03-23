@@ -116,7 +116,7 @@ class BuyMETDrawer extends React.Component {
     const expected = utils.toMET(ethAmount, currentPrice, null, tokenRemaining)
 
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         {expected.excedes ? (
           <React.Fragment>
             You will use{' '}
@@ -174,7 +174,7 @@ class BuyMETDrawer extends React.Component {
     )
 
     return (
-      <form onSubmit={goToReview} noValidate>
+      <form onSubmit={goToReview} noValidate data-testid="buy-form">
         <Sp py={4} px={3}>
           <AmountFields
             availableETH={this.props.availableETH}
