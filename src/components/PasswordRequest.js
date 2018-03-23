@@ -57,9 +57,10 @@ export default class PasswordRequest extends React.Component {
 
     return (
       <AltLayout title="Enter your password">
-        <form onSubmit={this.onPasswordSubmitted}>
+        <form onSubmit={this.onPasswordSubmitted} data-testid="login-form">
           <Sp mt={4}>
             <TextInput
+              data-testid="pass-field"
               autoFocus
               onChange={this.onInputChanged}
               error={errors.password}

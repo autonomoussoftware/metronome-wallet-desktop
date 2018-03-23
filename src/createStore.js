@@ -1,5 +1,4 @@
 import { createStore, applyMiddleware, compose } from 'redux'
-import { subscribeToMainProcessMessages } from './subscriptions'
 import reducer from './reducers'
 
 const { ipcRenderer } = window.require('electron')
@@ -40,9 +39,5 @@ export default function(initialState) {
     initialState,
     composeEnhancers(applyMiddleware(ipcMiddleware))
   )
-
-  // Initialize all the Main Process subscriptions
-  subscribeToMainProcessMessages(store)
-
   return store
 }

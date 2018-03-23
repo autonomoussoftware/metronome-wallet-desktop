@@ -82,8 +82,6 @@ const CloseButton = styled.button`
   }
 `
 
-Modal.setAppElement('#root')
-
 export default class Drawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,

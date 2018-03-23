@@ -12,7 +12,8 @@ class App extends Component {
   static propTypes = {
     isSessionActive: PropTypes.bool.isRequired,
     hasEnoughData: PropTypes.bool.isRequired,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    onMount: PropTypes.func.isRequired
   }
 
   state = {
@@ -20,7 +21,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    sendToMainProcess('ui-ready')
+    this.props
+      .onMount()
       .then(({ onboardingComplete }) => {
         this.setState({ onboardingComplete })
       })

@@ -41,7 +41,7 @@ export default class AltLayout extends React.Component {
     const { children, title } = this.props
 
     return (
-      <Container align="center">
+      <Container align="center" {...this.props}>
         <Banner />
         <Body>
           {title && <Title>{title}</Title>}
