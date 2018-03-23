@@ -31,7 +31,7 @@ export default class Router extends Component {
   render() {
     return (
       <HashRouter>
-        <Container>
+        <Container data-testid="router-container">
           <Sidebar />
           <Main
             data-scrollelement // Required by react-virtualized implementation in Dashboard/TxList
