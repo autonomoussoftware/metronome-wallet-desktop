@@ -80,6 +80,7 @@ const CloseButton = styled.button`
 export default class Drawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    'data-testid': PropTypes.string,
     children: PropTypes.node.isRequired,
     isOpen: PropTypes.bool.isRequired,
     title: PropTypes.string
@@ -93,6 +94,7 @@ export default class Drawer extends React.Component {
         onRequestClose={onRequestClose}
         closeTimeoutMS={600}
         contentLabel="Modal"
+        ariaHideApp={process.env.NODE_ENV !== 'test'}
         isOpen={isOpen}
         style={{
           overlay: {
@@ -122,13 +124,16 @@ export default class Drawer extends React.Component {
       >
         {title && (
           <Header>
-            <Title>{title}</Title>
-            <CloseButton onClick={onRequestClose}>
+            <Title data-testid="drawer-title">{title}</Title>
+            <CloseButton
+              data-testid="drawer-close-btn"
+              onClick={onRequestClose}
+            >
               <CloseIcon />
             </CloseButton>
           </Header>
         )}
-        {children}
+        <div data-testid={this.props['data-testid']}>{children}</div>
       </Container>
     )
   }

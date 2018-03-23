@@ -186,6 +186,7 @@ class Auction extends React.Component {
     const isInitialAuction =
       auctionStatus &&
       auctionStatus.currentAuction === '0' &&
+      !initialAuctionNotStarted &&
       initialAuctionEndTime * 1000 > Date.now()
 
     const dailyAuctionsNotStarted =
@@ -195,7 +196,7 @@ class Auction extends React.Component {
       <DarkLayout title="Metronome Auction">
         {auctionStatus ? (
           <Container>
-            <Text>
+            <Text data-testid="title">
               {initialAuctionNotStarted
                 ? 'Initial Auction starts in'
                 : isInitialAuction
@@ -216,7 +217,7 @@ class Auction extends React.Component {
             >
               {({ days, hours, minutes, seconds, inFuture }) =>
                 inFuture ? (
-                  <Row>
+                  <Row data-testid="countdown">
                     <Cell isFaded={days === 0}>{days} days</Cell>
                     <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
                     <Cell isFaded={days + hours + minutes === 0}>
@@ -227,7 +228,7 @@ class Auction extends React.Component {
                     </Cell>
                   </Row>
                 ) : (
-                  <Row>
+                  <Row data-testid="waiting-next">
                     <Cell>Waiting to confirm auction start...</Cell>
                   </Row>
                 )
@@ -247,12 +248,13 @@ class Auction extends React.Component {
                         : null
                   }
                   data-modal="buy"
+                  data-testid="buy-btn"
                   onClick={buyFeatureStatus === 'ok' ? this.onOpenModal : null}
                 >
                   Buy Metronome
                 </BuyBtn>
 
-                <StatsContainer>
+                <StatsContainer data-testid="stats">
                   <Sp p={3}>
                     <Flex.Row justify="space-between" align="baseline">
                       <Label>Current Price</Label>
@@ -297,7 +299,7 @@ class Auction extends React.Component {
           </Container>
         ) : (
           <Sp p={6}>
-            <LoadingContainer>
+            <LoadingContainer data-testid="waiting">
               <Text>Waiting for auction status...</Text>
               <Sp py={2}>
                 <LoadingBar />

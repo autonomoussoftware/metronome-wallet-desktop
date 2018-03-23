@@ -187,6 +187,7 @@ class BuyMETDrawer extends React.Component {
     return (
       <Drawer
         onRequestClose={onRequestClose}
+        data-testid="buy-drawer"
         isOpen={isOpen}
         title="Buy Metronome"
       >

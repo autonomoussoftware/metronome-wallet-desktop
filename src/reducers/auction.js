@@ -8,7 +8,7 @@ const reducer = handleActions(
   {
     'auction-status-updated': (state, { payload }) => ({
       ...state,
-      status: payload
+      status: { ...state.status, ...payload }
     })
   },
   initialState

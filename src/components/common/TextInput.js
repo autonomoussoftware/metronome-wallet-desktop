@@ -54,7 +54,7 @@ const ErrorMsg = styled.div`
 
 export default class TextInput extends React.Component {
   static propTypes = {
-    'data-testid': PropTypes.string.isRequired,
+    'data-testid': PropTypes.string,
     placeholder: PropTypes.string,
     autoFocus: PropTypes.bool,
     onChange: PropTypes.func.isRequired,

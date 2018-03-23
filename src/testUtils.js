@@ -20,10 +20,12 @@ export function reduxRender(element, initialState) {
 
   const renderResult = render(
     <Provider store={store}>
-      <ThemeProvider theme={theme}>{element}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <React.Fragment>{element}</React.Fragment>
+      </ThemeProvider>
     </Provider>
   )
-  return { ...renderResult, store }
+  return { ...renderResult, store, queryModalByTestId }
 }
 
 /**
@@ -51,4 +53,44 @@ export function testValidation(getter, formId, { formData, errors }) {
       expect.stringContaining(errors[fieldId])
     )
   })
+}
+
+/**
+ * Test react-modal being rendered or not
+ *
+ * This needs a bit of tweaking because react-modal appends to document.body
+ * and also there is an issue with jsdom and dataset.
+ *
+ * getter     : function that receives a data-testid and returns an HTML element
+ * btnId      : data-testid of the button triggering the modal
+ * modalId    : data-testid of the modal
+ * shouldOpen : true if modal should open when the button is clicked
+ *              useful for testing if the button is disabled
+ */
+export function testModalIsCalled(getter, btnId, modalId, shouldOpen = true) {
+  const btn = getter(btnId)
+
+  // Hack required because jsdom has no support for dataset yet.
+  // See https://github.com/jsdom/jsdom/issues/961
+  btn.dataset = { modal: btn.getAttribute('data-modal') }
+
+  expect(queryModalByTestId(modalId)).toBeNull()
+  Simulate.click(btn)
+
+  if (shouldOpen) {
+    expect(queryModalByTestId(modalId)).not.toBeNull()
+  } else {
+    expect(queryModalByTestId(modalId)).toBeNull()
+  }
+
+  document.body.innerHTML = ''
+}
+
+/**
+ * Similar to queryByTestId() but using the document.body as root instead of
+ * the rendered container. This is needed because react-modal appends the
+ * modal to the document.body so it won't appear inside the container.
+ */
+export function queryModalByTestId(testId) {
+  return document.body.querySelector(`[data-testid=${testId}]`)
 }
