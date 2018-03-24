@@ -141,7 +141,7 @@ export default class ConfirmationWizard extends React.Component {
     if (status === 'init') return this.props.renderForm(this.goToReview)
     if (status === 'confirm') {
       return (
-        <form onSubmit={this.onConfirmClick}>
+        <form onSubmit={this.onConfirmClick} data-testid="confirm-form">
           <Sp py={4} px={3} style={this.props.styles.confirmation || {}}>
             {this.props.confirmationTitle && (
               <ConfirmationTitle>
@@ -151,6 +151,7 @@ export default class ConfirmationWizard extends React.Component {
             {this.props.renderConfirmation()}
             <Sp mt={2}>
               <TextInput
+                data-testid="pass-field"
                 autoFocus
                 onChange={this.onPasswordChange}
                 error={errors.password}
@@ -166,7 +167,7 @@ export default class ConfirmationWizard extends React.Component {
               Confirm
             </Btn>
             {!this.props.noCancel && (
-              <EditBtn onClick={this.onCancelClick}>
+              <EditBtn onClick={this.onCancelClick} data-testid="cancel-btn">
                 {this.props.editLabel}
               </EditBtn>
             )}
@@ -179,7 +180,7 @@ export default class ConfirmationWizard extends React.Component {
     }
     if (status === 'success') {
       return (
-        <Sp my={19} mx={12}>
+        <Sp my={19} mx={12} data-testid="success">
           <Flex.Column align="center">
             <CheckIcon color={theme.colors.success} />
             <Sp my={2}>
@@ -194,14 +195,18 @@ export default class ConfirmationWizard extends React.Component {
     }
     if (status === 'failure') {
       return (
-        <Sp my={19} mx={12}>
+        <Sp my={19} mx={12} data-testid="failure">
           <Flex.Column align="center">
             <CloseIcon color={theme.colors.danger} size="4.8rem" />
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
             {error && <Message>{error}</Message>}
-            <TryAgainBtn onClick={this.onCancelClick} autoFocus>
+            <TryAgainBtn
+              data-testid="try-again-btn"
+              onClick={this.onCancelClick}
+              autoFocus
+            >
               Try again
             </TryAgainBtn>
           </Flex.Column>
@@ -209,7 +214,7 @@ export default class ConfirmationWizard extends React.Component {
       )
     }
     return (
-      <Sp my={19} mx={12}>
+      <Sp my={19} mx={12} data-testid="waiting">
         <Flex.Column align="center">
           <Sp mb={2}>
             <Title>{this.props.pendingTitle}</Title>
