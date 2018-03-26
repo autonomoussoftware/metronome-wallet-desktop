@@ -59,11 +59,16 @@ const Header = styled.header`
 `
 
 const Title = styled.h1`
-  font-size: 2.4rem;
-  line-height: 3rem;
+  font-size: 2rem;
+  line-height: 2rem;
   font-weight: bold;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0;
+
+  @media (min-height: 700px) {
+    font-size: 2.4rem;
+    line-height: 3rem;
+  }
 `
 
 const CloseButton = styled.button`
