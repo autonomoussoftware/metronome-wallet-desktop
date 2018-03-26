@@ -44,6 +44,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
             <button
               type="button"
               class="sc-htpNat fdEoJm"
+              data-testid="max-btn"
               tabindex="-1"
             >
               MAX
