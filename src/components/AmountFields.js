@@ -47,7 +47,12 @@ export default class AmountFields extends React.Component {
     return (
       <Flex.Row justify="space-between">
         <Flex.Item grow="1" basis="0">
-          <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
+          <FieldBtn
+            data-testid="max-btn"
+            tabIndex="-1"
+            onClick={this.onMaxClick}
+            float
+          >
             MAX
           </FieldBtn>
           <TextInput

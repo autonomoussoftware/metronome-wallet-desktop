@@ -22,6 +22,59 @@ describe('<BuyMETDrawer/>', () => {
     expect(container).toMatchSnapshot()
   })
 
+  describe('When editing the amount fields', () => {
+    it('updates the USD field when ETH field changes', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      const ethField = getByTestId('ethAmount-field')
+      const usdField = getByTestId('usdAmount-field')
+      expect(ethField.value).toBe('')
+      expect(usdField.value).toBe('')
+      ethField.value = '1'
+      Simulate.change(ethField)
+      expect(usdField.value).toBe('250')
+    })
+
+    it('updates the ETH field when USD field changes', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      const ethField = getByTestId('ethAmount-field')
+      const usdField = getByTestId('usdAmount-field')
+      usdField.value = '500'
+      Simulate.change(usdField)
+      expect(ethField.value).toBe('2')
+    })
+
+    it('updates ETH and USD fields when MAX button is clicked', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      const ethField = getByTestId('ethAmount-field')
+      const usdField = getByTestId('usdAmount-field')
+      Simulate.click(getByTestId('max-btn'))
+      expect(ethField.value).toBe('5000')
+      expect(usdField.value).toBe('1250000')
+    })
+
+    it('displays a "Invalid amount" placeholder in USD field when ETH value is invalid', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      const ethField = getByTestId('ethAmount-field')
+      const usdField = getByTestId('usdAmount-field')
+      expect(usdField.placeholder).toBe('0.00')
+      ethField.value = 'foo'
+      Simulate.change(ethField)
+      expect(usdField.value).toBe('')
+      expect(usdField.placeholder).toBe('Invalid amount')
+    })
+
+    it('displays a "Invalid amount" placeholder in ETH field when USD value is invalid', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      const ethField = getByTestId('ethAmount-field')
+      const usdField = getByTestId('usdAmount-field')
+      expect(ethField.placeholder).toBe('0.00')
+      usdField.value = 'foo'
+      Simulate.change(usdField)
+      expect(ethField.value).toBe('')
+      expect(ethField.placeholder).toBe('Invalid amount')
+    })
+  })
+
   describe('When submitting the form', () => {
     it('displays an error if AMOUNT is not provided', () => {
       const { getByTestId } = testUtils.reduxRender(element, getInitialState())
@@ -166,7 +219,7 @@ function getInitialState() {
       }
     },
     session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: 300 } },
+    rates: { ETH: { token: 'ETH', price: 250 } },
     wallets: {
       active: 'foo',
       allIds: ['foo'],
