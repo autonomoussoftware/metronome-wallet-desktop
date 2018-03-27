@@ -142,7 +142,10 @@ class Converter extends React.Component {
     } = this.props
 
     return (
-      <DarkLayout title="Autonomous Converter">
+      <DarkLayout
+        data-testid="converter-container"
+        title="Autonomous Converter"
+      >
         {converterStatus ? (
           <Container>
             <StatsContainer>

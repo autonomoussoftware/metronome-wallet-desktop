@@ -103,7 +103,7 @@ class Dashboard extends React.Component {
     const { sendFeatureStatus, hasTransactions } = this.props
 
     return (
-      <Container>
+      <Container data-testid="dashboard-container">
         <FixedContainer>
           <DashboardHeader />
         </FixedContainer>

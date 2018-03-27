@@ -8,7 +8,9 @@ export default class Settings extends React.Component {
   static propTypes = {}
 
   state = {
-    ethereumNetworkUrl: ipcRenderer.sendSync('settings-get', { key:'app.node.websocketApiUrl' }),
+    ethereumNetworkUrl: ipcRenderer.sendSync('settings-get', {
+      key: 'app.node.websocketApiUrl'
+    }),
     errors: {},
     status: 'init',
     error: null
@@ -46,10 +48,9 @@ export default class Settings extends React.Component {
     const { ethereumNetworkUrl, errors } = this.state
 
     return (
-      <DarkLayout title="Settings">
+      <DarkLayout title="Settings" data-testid="settings-container">
         <Sp py={4} px={6}>
           <form onSubmit={this.onSubmit}>
-
             <TextInput
               autoFocus
               type="url"
@@ -61,23 +62,16 @@ export default class Settings extends React.Component {
             />
 
             <Sp mt={4}>
-              <Btn submit>
-                Save & Restart
-              </Btn>
+              <Btn submit>Save & Restart</Btn>
             </Sp>
-
           </form>
         </Sp>
 
         <Sp py={4} px={6}>
           <form onSubmit={this.onClearCacheSubmit}>
-
             <Sp mt={4}>
-              <Btn submit>
-                Rescan Transactions
-              </Btn>
+              <Btn submit>Rescan Transactions</Btn>
             </Sp>
-
           </form>
         </Sp>
       </DarkLayout>
