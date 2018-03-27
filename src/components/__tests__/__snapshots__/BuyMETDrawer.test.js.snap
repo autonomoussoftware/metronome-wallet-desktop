@@ -6,7 +6,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
     class="sc-jTzLTM bbfTuz"
   >
     <h1
-      class="sc-fjdhpX fHYciM"
+      class="sc-fjdhpX gUwcgC"
       data-testid="drawer-title"
     >
       Buy Metronome
@@ -58,7 +58,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
               </label>
               <input
                 type="text"
-                class="sc-iwsKbI eeXHwo"
+                class="sc-iwsKbI kZiHEX"
                 value=""
                 id="ethAmount"
                 data-testid="ethAmount-field"
@@ -90,7 +90,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
               </label>
               <input
                 type="text"
-                class="sc-iwsKbI eeXHwo"
+                class="sc-iwsKbI kZiHEX"
                 value=""
                 id="usdAmount"
                 data-testid="usdAmount-field"

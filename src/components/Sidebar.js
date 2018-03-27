@@ -173,19 +173,31 @@ class Sidebar extends Component {
         </LogoSmallContainer>
 
         <MainMenu>
-          <Button activeClassName="active" to="/wallets">
+          <Button
+            activeClassName="active"
+            data-testid="wallets-nav-btn"
+            to="/wallets"
+          >
             <IconWrapper>
               <WalletIcon />
             </IconWrapper>
             <BtnText>Wallets</BtnText>
           </Button>
-          <Button activeClassName="active" to="/auction">
+          <Button
+            activeClassName="active"
+            data-testid="auction-nav-btn"
+            to="/auction"
+          >
             <IconWrapper>
               <AuctionIcon />
             </IconWrapper>
             <BtnText>Auction</BtnText>
           </Button>
-          <Button activeClassName="active" to="/converter">
+          <Button
+            activeClassName="active"
+            data-testid="converter-nav-btn"
+            to="/converter"
+          >
             <IconWrapper>
               <ConverterIcon />
             </IconWrapper>
@@ -193,13 +205,26 @@ class Sidebar extends Component {
           </Button>
         </MainMenu>
         <Sp mt={2}>
-          <SecondaryBtn activeClassName="active" to="/tools">
+          <SecondaryBtn
+            activeClassName="active"
+            to="/tools"
+            data-testid="tools-nav-btn"
+          >
             Tools
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/settings">
+          <SecondaryBtn
+            activeClassName="active"
+            to="/settings"
+            data-testid="settings-nav-btn"
+          >
             Settings
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" disabled to="/help">
+          <SecondaryBtn
+            activeClassName="active"
+            disabled
+            to="/help"
+            data-testid="help-nav-btn"
+          >
             Help
           </SecondaryBtn>
         </Sp>

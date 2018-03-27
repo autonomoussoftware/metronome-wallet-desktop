@@ -83,7 +83,7 @@ class RecoverFromMnemonic extends React.Component {
 
   render() {
     return (
-      <DarkLayout title="Recover wallet">
+      <DarkLayout title="Recover wallet" data-testid="recover-container">
         <Sp py={4} px={6}>
           <ConfirmationWizard
             renderConfirmation={this.renderConfirmation}

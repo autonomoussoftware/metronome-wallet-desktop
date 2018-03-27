@@ -27,28 +27,28 @@ const Main = styled.div`
   overflow-y: auto;
 `
 
+export const layout = (
+  <Container data-testid="router-container">
+    <Sidebar />
+    <Main
+      data-scrollelement // Required by react-virtualized implementation in Dashboard/TxList
+    >
+      <Switch>
+        <Route path="/" exact render={() => <Redirect to="/wallets" />} />
+        <Route path="/wallets" component={Dashboard} />
+        <Route path="/auction" component={Auction} />
+        <Route path="/converter" component={Converter} />
+        <Route path="/tools" component={RecoverFromMnemonic} />
+        <Route component={Settings} path="/settings" />
+        <Route component={Help} path="/help" />
+      </Switch>
+    </Main>
+    <OfflineWarning />
+  </Container>
+)
+
 export default class Router extends Component {
   render() {
-    return (
-      <HashRouter>
-        <Container data-testid="router-container">
-          <Sidebar />
-          <Main
-            data-scrollelement // Required by react-virtualized implementation in Dashboard/TxList
-          >
-            <Switch>
-              <Route path="/" exact render={() => <Redirect to="/wallets" />} />
-              <Route path="/wallets" component={Dashboard} />
-              <Route path="/auction" component={Auction} />
-              <Route path="/converter" component={Converter} />
-              <Route path="/tools" component={RecoverFromMnemonic} />
-              <Route component={Settings} path="/settings" />
-              <Route component={Help} path="/help" />
-            </Switch>
-          </Main>
-          <OfflineWarning />
-        </Container>
-      </HashRouter>
-    )
+    return <HashRouter>{layout}</HashRouter>
   }
 }

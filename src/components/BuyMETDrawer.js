@@ -129,11 +129,11 @@ class BuyMETDrawer extends React.Component {
             />{' '}
             at current price and get a return of approximately{' '}
             <DisplayValue inline value={expected.excessETHAmount} post=" ETH" />.
-            <p>
+            <Sp my={2}>
               <ExpectedMsg error>
                 This operation will deplete the current auction.
               </ExpectedMsg>
-            </p>
+            </Sp>
           </React.Fragment>
         ) : (
           <React.Fragment>

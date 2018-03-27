@@ -25,10 +25,10 @@ const Title = styled.h1`
 `
 
 const DarkLayout = props => {
-  const { children, title } = props
+  const { children, title, ...other } = props
 
   return (
-    <Container>
+    <Container {...other}>
       <Header>
         <Title>{title}</Title>
       </Header>

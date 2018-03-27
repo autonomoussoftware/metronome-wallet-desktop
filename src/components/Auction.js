@@ -193,7 +193,7 @@ class Auction extends React.Component {
       auctionStatus && parseInt(auctionStatus.currentAuction, 10) < 1
 
     return (
-      <DarkLayout title="Metronome Auction">
+      <DarkLayout title="Metronome Auction" data-testid="auction-container">
         {auctionStatus ? (
           <Container>
             <Text data-testid="title">
