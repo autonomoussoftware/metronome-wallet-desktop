@@ -99,7 +99,7 @@ class ConvertETHtoMETForm extends React.Component {
   renderConfirmation = () => {
     const { ethAmount, usdAmount, estimate } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
         (${usdAmount}) and get approximately{' '}
@@ -113,7 +113,12 @@ class ConvertETHtoMETForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form onSubmit={goToReview} id="convertForm" noValidate>
+          <form
+            data-testid="ethToMet-form"
+            noValidate
+            onSubmit={goToReview}
+            id="convertForm"
+          >
             <AmountFields
               availableETH={this.props.availableETH}
               ethAmount={this.state.ethAmount}
