@@ -148,7 +148,7 @@ class Converter extends React.Component {
       >
         {converterStatus ? (
           <Container>
-            <StatsContainer>
+            <StatsContainer data-testid="stats">
               <Sp p={2}>
                 <Flex.Row justify="space-between" align="baseline">
                   <Label>Current Price</Label>
@@ -207,6 +207,7 @@ class Converter extends React.Component {
                       : null
               }
               data-modal="convert"
+              data-testid="convert-btn"
               onClick={convertFeatureStatus === 'ok' ? this.onOpenModal : null}
             >
               Convert
@@ -219,7 +220,7 @@ class Converter extends React.Component {
           </Container>
         ) : (
           <Sp p={6}>
-            <LoadingContainer>
+            <LoadingContainer data-testid="waiting">
               <Text>Waiting for converter status...</Text>
               <Sp py={2}>
                 <LoadingBar />

@@ -1,4 +1,5 @@
 import * as testUtils from '../../testUtils'
+import { Simulate } from 'react-testing-library'
 import Auction from '../Auction'
 import config from '../../config'
 import React from 'react'
@@ -69,22 +70,28 @@ describe('<Auction/>', () => {
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { getByTestId } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).not.toBeNull()
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
         store.dispatch(auctionStatusUpdated({ tokenRemaining: '0' }))
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).toBeNull()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
@@ -102,12 +109,15 @@ describe('<Auction/>', () => {
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction())
         )
         store.dispatch(goOffline())
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).toBeNull()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
@@ -180,22 +190,28 @@ describe('<Auction/>', () => {
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { getByTestId } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer')
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).not.toBeNull()
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
         store.dispatch(auctionStatusUpdated({ tokenRemaining: '0' }))
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).toBeNull()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
@@ -213,12 +229,15 @@ describe('<Auction/>', () => {
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction())
         )
         store.dispatch(goOffline())
-        testUtils.testModalIsCalled(getByTestId, 'buy-btn', 'buy-drawer', false)
+        const btn = testUtils.withDataset(getByTestId('buy-btn'), 'modal')
+        expect(queryByTestId('buy-drawer')).toBeNull()
+        Simulate.click(btn)
+        expect(queryByTestId('buy-drawer')).toBeNull()
       })
 
       it('Buy button shows a tooltip when hovered', () => {

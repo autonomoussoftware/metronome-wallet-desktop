@@ -25,7 +25,7 @@ export function reduxRender(element, initialState) {
       </ThemeProvider>
     </Provider>
   )
-  return { ...renderResult, store, queryModalByTestId }
+  return { ...renderResult, store }
 }
 
 /**
@@ -56,43 +56,28 @@ export function testValidation(getter, formId, { formData, errors }) {
 }
 
 /**
- * Test react-modal being rendered or not
+ * Add dataset property (data-foo attribute values) to nodes
  *
- * This needs a bit of tweaking because react-modal appends to document.body
- * and also there is an issue with jsdom and dataset.
+ * This hack is required because jsdom has no support for dataset yet
+ * which prevents us from testing components that rely on it.
+ * See https://github.com/jsdom/jsdom/issues/961
  *
- * getter     : function that receives a data-testid and returns an HTML element
- * btnId      : data-testid of the button triggering the modal
- * modalId    : data-testid of the modal
- * shouldOpen : true if modal should open when the button is clicked
- *              useful for testing if the button is disabled
+ * element   : DOM node to add the dataset to
+ * dataAttrs : attribute names to add to the node
+ *
+ * Usage:
+ * <button data-testid="btn" data-modal="buy" data-foo="bar">Click</button>
+ *
+ * const btn = withDataset(getByTestId('btn'), 'modal', 'foo')
+ * // btn.dataset === { modal: 'buy', foo: 'bar'}
+ *
  */
-export function testModalIsCalled(getter, btnId, modalId, shouldOpen = true) {
-  const btn = getter(btnId)
-
-  // Hack required because jsdom has no support for dataset yet.
-  // See https://github.com/jsdom/jsdom/issues/961
-  btn.dataset = { modal: btn.getAttribute('data-modal') }
-
-  expect(queryModalByTestId(modalId)).toBeNull()
-  Simulate.click(btn)
-
-  if (shouldOpen) {
-    expect(queryModalByTestId(modalId)).not.toBeNull()
-  } else {
-    expect(queryModalByTestId(modalId)).toBeNull()
-  }
-
-  document.body.innerHTML = ''
-}
-
-/**
- * Similar to queryByTestId() but using the document.body as root instead of
- * the rendered container. This is needed because react-modal appends the
- * modal to the document.body so it won't appear inside the container.
- */
-export function queryModalByTestId(testId) {
-  return document.body.querySelector(`[data-testid=${testId}]`)
+export function withDataset(element, ...dataAttrs) {
+  element.dataset = dataAttrs.reduce((acc, attr) => {
+    acc[attr] = element.getAttribute(`data-${attr}`)
+    return acc
+  }, {})
+  return element
 }
 
 /**

@@ -64,7 +64,12 @@ export default class ConvertDrawer extends React.Component {
     )
 
     return (
-      <Drawer onRequestClose={onRequestClose} isOpen={isOpen} title="Converter">
+      <Drawer
+        onRequestClose={onRequestClose}
+        data-testid="convert-drawer"
+        isOpen={isOpen}
+        title="Converter"
+      >
         {activeTab === 'ethToMet' && <ConvertETHtoMETForm tabs={tabs} />}
         {activeTab === 'metToEth' && <ConvertMETtoETHForm tabs={tabs} />}
       </Drawer>
