@@ -60,6 +60,7 @@ export default class Tabs extends React.Component {
       <Container>
         {items.map(({ label, id, disabled, ...other }) => (
           <Tab
+            data-testid={`${id}-tab`}
             isDisabled={disabled}
             isActive={active === id}
             data-tab={id}

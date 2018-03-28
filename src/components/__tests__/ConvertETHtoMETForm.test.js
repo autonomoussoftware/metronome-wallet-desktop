@@ -1,25 +1,16 @@
+import ConvertETHtoMETForm from '../ConvertETHtoMETForm'
 import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import BuyMETDrawer from '../BuyMETDrawer'
 import config from '../../config'
 import React from 'react'
 
-const closeHandler = jest.fn()
-
-const element = (
-  <BuyMETDrawer
-    tokenRemaining="100"
-    onRequestClose={closeHandler}
-    currentPrice="10"
-    isOpen
-  />
-)
+const element = <ConvertETHtoMETForm />
 
 const ETHprice = 250
 
-describe('<BuyMETDrawer/>', () => {
+describe('<ConvertETHtoMETForm/>', () => {
   it('should match its snapshot', () => {
     const { container } = testUtils.reduxRender(element, getInitialState())
     expect(container).toMatchSnapshot()
@@ -30,9 +21,9 @@ describe('<BuyMETDrawer/>', () => {
   })
 
   describe('When submitting the form', () => {
-    amountFields.runValidateTests(element, getInitialState(), 'buy-form')
+    amountFields.runValidateTests(element, getInitialState(), 'ethToMet-form')
 
-    gasEditor.runValidateTests(element, getInitialState(), 'buy-form')
+    gasEditor.runValidateTests(element, getInitialState(), 'ethToMet-form')
 
     it('displays the confirmation view if there are no errors', () => {
       const { queryByTestId, getByTestId } = testUtils.reduxRender(
@@ -43,7 +34,7 @@ describe('<BuyMETDrawer/>', () => {
       const amountField = getByTestId('ethAmount-field')
       amountField.value = '1'
       Simulate.change(amountField)
-      Simulate.submit(getByTestId('buy-form'))
+      Simulate.submit(getByTestId('ethToMet-form'))
       expect(queryByTestId('confirmation')).not.toBeNull()
     })
   })
@@ -54,16 +45,12 @@ function getInitialState() {
     connectivity: { isOnline: true },
     blockchain: { height: 1 },
     metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: {
+    converter: {
       status: {
-        nextAuctionStartTime: testUtils.inOneHour(),
-        tokenRemaining: '100',
-        currentAuction: '5',
-        currentPrice: '10',
-        genesisTime: testUtils.twoWeeksAgo()
+        currentPrice: '10'
       }
     },
+    auction: { status: null },
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: ETHprice } },
     wallets: {
