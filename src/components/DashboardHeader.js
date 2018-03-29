@@ -96,7 +96,7 @@ class DashboardHeader extends React.Component {
         <AddressContainer>
           <Label>Address</Label>
           <Bg>
-            <Address>{address}</Address>
+            <Address data-testid="address">{address}</Address>
             <CopyBtn onClick={this.onCopyToClipboardClick}>Copy</CopyBtn>
           </Bg>
         </AddressContainer>

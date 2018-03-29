@@ -118,6 +118,7 @@ class Receive extends React.Component {
     return (
       <Drawer
         onRequestClose={onRequestClose}
+        data-testid="receive-drawer"
         isOpen={isOpen}
         title="Receive Transaction"
       >

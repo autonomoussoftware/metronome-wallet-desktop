@@ -71,7 +71,7 @@ const Amount = styled.div`
   text-align: right;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   color: ${p =>
-    p.isPending || p.isCancelApproval
+    p.isPending
       ? p.theme.colors.copy
       : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
   display: flex;
