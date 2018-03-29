@@ -115,6 +115,7 @@ class Dashboard extends React.Component {
           <Right>
             <Btn
               data-disabled={sendFeatureStatus !== 'ok' ? true : null}
+              data-testid="send-btn"
               data-rh={
                 sendFeatureStatus === 'offline'
                   ? "Can't send while offline"
@@ -129,7 +130,12 @@ class Dashboard extends React.Component {
               Send
             </Btn>
 
-            <ReceiveBtn block data-modal="receive" onClick={this.onOpenModal}>
+            <ReceiveBtn
+              data-testid="receive-btn"
+              data-modal="receive"
+              onClick={this.onOpenModal}
+              block
+            >
               Receive
             </ReceiveBtn>
           </Right>
@@ -138,7 +144,7 @@ class Dashboard extends React.Component {
         {hasTransactions ? (
           <TxList />
         ) : (
-          <NoTx>No transactions to show yet.</NoTx>
+          <NoTx data-testid="notx-msg">No transactions to show yet.</NoTx>
         )}
 
         <ReceiveDrawer

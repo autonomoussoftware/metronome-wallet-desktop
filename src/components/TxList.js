@@ -105,7 +105,14 @@ class TxList extends React.Component {
 
   componentDidMount() {
     // We need to grab the scrolling div (in <Router/>) to sync with react-virtualized scroll
-    this.scrollElement = document.querySelector('[data-scrollelement]')
+    const element = document.querySelector('[data-scrollelement]')
+    if (!element && process.env.NODE_ENV !== 'test') {
+      throw new Error(
+        "react-virtualized in transactions list requires the scrolling parent to have a 'data-scrollelement' attribute."
+      )
+    }
+    // For tests, where this component is rendered in isolation, we default to window
+    this.scrollElement = element || window
     this.setState({ isReady: true })
   }
 
@@ -121,6 +128,7 @@ class TxList extends React.Component {
   rowRenderer = items => ({ key, style, index }) => (
     <div style={style} key={`${key}-${items[index].transaction.hash}`}>
       <TxRow
+        data-testid="tx-row"
         data-hash={items[index].transaction.hash}
         onClick={this.onTxClicked}
         {...items[index]}
@@ -132,7 +140,7 @@ class TxList extends React.Component {
     const { items } = this.props
     if (!this.state.isReady) return null
     return (
-      <Container>
+      <Container data-testid="tx-list">
         <ItemFilter extractValue={tx => tx.parsed.txType} items={items}>
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
@@ -192,8 +200,8 @@ class TxList extends React.Component {
                             rowHeight={65}
                             rowCount={filteredItems.length}
                             onScroll={onChildScroll}
-                            height={height}
-                            width={width}
+                            height={height || 500} // defaults for tests
+                            width={width || 500} // defaults for tests
                           />
                         )}
                       </AutoSizer>

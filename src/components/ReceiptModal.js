@@ -137,7 +137,7 @@ class ReceiptModal extends React.Component {
         onRequestClose={onRequestClose}
         isOpen={isOpen}
       >
-        <Container>
+        <Container data-testid="receipt-modal">
           {tx.parsed.txType !== 'unknown' && (
             <Row first>
               <Label>Amount</Label>

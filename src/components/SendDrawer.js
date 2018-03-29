@@ -61,6 +61,7 @@ class SendDrawer extends React.Component {
     return (
       <Drawer
         onRequestClose={onRequestClose}
+        data-testid="send-drawer"
         isOpen={isOpen}
         title="Send Transaction"
       >
