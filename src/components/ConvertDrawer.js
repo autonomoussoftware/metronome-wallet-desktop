@@ -17,7 +17,7 @@ const Arrow = styled.span`
 export default class ConvertDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
-    defaultTab: PropTypes.string,
+    defaultTab: PropTypes.oneOf(['ethToMet', 'metToEth']),
     isOpen: PropTypes.bool.isRequired
   }
 

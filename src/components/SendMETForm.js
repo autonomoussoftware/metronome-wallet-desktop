@@ -118,7 +118,12 @@ class SendMETForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form onSubmit={goToReview} id="sendForm" noValidate>
+          <form
+            data-testid="sendMet-form"
+            noValidate
+            onSubmit={goToReview}
+            id="sendForm"
+          >
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
               autoFocus
