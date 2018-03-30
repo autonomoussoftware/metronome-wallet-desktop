@@ -100,7 +100,7 @@ class SendETHForm extends React.Component {
   renderConfirmation = () => {
     const { ethAmount, usdAmount, toAddress } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will send{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
         (${usdAmount}) to the address {toAddress}.
@@ -121,6 +121,7 @@ class SendETHForm extends React.Component {
           >
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
+              data-testid="toAddress-field"
               autoFocus
               onChange={this.onInputChange}
               error={this.state.errors.toAddress}
