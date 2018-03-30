@@ -51,7 +51,7 @@ class RecoverFromMnemonic extends React.Component {
 
   renderConfirmation = () => {
     return (
-      <Confirmation>
+      <Confirmation data-testid="confirmation">
         <h3>Are you sure?</h3>
         <p>This operation will overwrite and restart the current wallet!</p>
       </Confirmation>
@@ -62,10 +62,11 @@ class RecoverFromMnemonic extends React.Component {
     const { mnemonic, errors } = this.state
 
     return (
-      <form onSubmit={goToReview}>
+      <form data-testid="recover-form" onSubmit={goToReview}>
         <p>Enter the 12 words to recover your wallet.</p>
         <p>This action will replace your current stored seed!</p>
         <TextInput
+          data-testid="mnemonic-field"
           autoFocus
           onChange={this.onInputChanged}
           label="Recovery phrase"
