@@ -1,0 +1,268 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AmountFields/> should match its snapshot 1`] = `
+<div>
+  <div
+    class="sc-jKJlTe fkNCah"
+  >
+    <div
+      class="sc-ckVGcZ kvHIve"
+    >
+      <button
+        type="button"
+        class="sc-htpNat fdEoJm"
+        data-testid="max-btn"
+        tabindex="-1"
+      >
+        MAX
+      </button>
+      <div>
+        <label
+          class="sc-dnqmqq ilsafR"
+          for="ethAmount"
+        >
+          Amount (ETH)
+        </label>
+        <input
+          type="text"
+          class="sc-iwsKbI kZiHEX"
+          value=""
+          id="ethAmount"
+          data-testid="ethAmount-field"
+          placeholder="0.00"
+        />
+      </div>
+    </div>
+    <div
+      class="sc-hMqMXs dnTKXF"
+    >
+      <svg
+        class="sc-bxivhb hXQRLM"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M24 7.136v.96H1.642l4.464 4.464-.682.682-5.28-5.28a.475.475 0 0 1 0-.682L5.424 2l.682.682-4.464 4.464H24v-.01zM18.576 11.6l-.682.682 4.464 4.464H0v.96h22.358l-4.464 4.464.682.681 5.28-5.28a.475.475 0 0 0 0-.681l-5.28-5.29z"
+        />
+      </svg>
+    </div>
+    <div
+      class="sc-ckVGcZ kvHIve"
+    >
+      <div>
+        <label
+          class="sc-dnqmqq ilsafR"
+          for="usdAmount"
+        >
+          Amount (USD)
+        </label>
+        <input
+          type="text"
+          class="sc-iwsKbI kZiHEX"
+          value=""
+          id="usdAmount"
+          data-testid="usdAmount-field"
+          placeholder="0.00"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<GasEditor/> should match its snapshot 1`] = `
+<div>
+  <div
+    class="sc-jKJlTe fkNCah"
+  >
+    <div
+      class="sc-ckVGcZ kvHIve"
+    >
+      <div>
+        <label
+          class="sc-dnqmqq ilsafR"
+          for="gasLimit"
+        >
+          Gas Limit (Units)
+        </label>
+        <input
+          type="text"
+          class="sc-iwsKbI kZiHEX"
+          value="21000"
+          id="gasLimit"
+          data-testid="gas-limit-field"
+        />
+      </div>
+    </div>
+    <div
+      class="sc-hMqMXs keWZLk"
+    />
+    <div
+      class="sc-ckVGcZ kvHIve"
+    >
+      <div>
+        <label
+          class="sc-dnqmqq ilsafR"
+          for="gasPrice"
+        >
+          Gas Price (Gwei)
+        </label>
+        <input
+          type="text"
+          class="sc-iwsKbI kZiHEX"
+          value="1"
+          id="gasPrice"
+          data-testid="gas-price-field"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<SendETHForm/> should match its snapshot 1`] = `
+<div>
+  <div
+    class="sc-eNQAEJ hdurla"
+  >
+    <div
+      class="sc-hMqMXs dKMJsu"
+    >
+      <form
+        data-testid="sendEth-form"
+        novalidate=""
+        id="sendForm"
+      >
+        <div>
+          <label
+            class="sc-dnqmqq ilsafR"
+            for="toAddress"
+          >
+            Send to Address
+          </label>
+          <input
+            type="text"
+            class="sc-iwsKbI kZiHEX"
+            value=""
+            id="toAddress"
+            placeholder="e.g. 0x2345678998765434567"
+            data-testid="toAddress-field"
+          />
+        </div>
+        <div
+          class="sc-hMqMXs bQjXee"
+        >
+          <div
+            class="sc-jKJlTe fkNCah"
+          >
+            <div
+              class="sc-ckVGcZ kvHIve"
+            >
+              <button
+                type="button"
+                class="sc-htpNat fdEoJm"
+                data-testid="max-btn"
+                tabindex="-1"
+              >
+                MAX
+              </button>
+              <div>
+                <label
+                  class="sc-dnqmqq ilsafR"
+                  for="ethAmount"
+                >
+                  Amount (ETH)
+                </label>
+                <input
+                  type="text"
+                  class="sc-iwsKbI kZiHEX"
+                  value=""
+                  id="ethAmount"
+                  data-testid="ethAmount-field"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-hMqMXs dnTKXF"
+            >
+              <svg
+                class="sc-bxivhb hXQRLM"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M24 7.136v.96H1.642l4.464 4.464-.682.682-5.28-5.28a.475.475 0 0 1 0-.682L5.424 2l.682.682-4.464 4.464H24v-.01zM18.576 11.6l-.682.682 4.464 4.464H0v.96h22.358l-4.464 4.464.682.681 5.28-5.28a.475.475 0 0 0 0-.681l-5.28-5.29z"
+                />
+              </svg>
+            </div>
+            <div
+              class="sc-ckVGcZ kvHIve"
+            >
+              <div>
+                <label
+                  class="sc-dnqmqq ilsafR"
+                  for="usdAmount"
+                >
+                  Amount (USD)
+                </label>
+                <input
+                  type="text"
+                  class="sc-iwsKbI kZiHEX"
+                  value=""
+                  id="usdAmount"
+                  data-testid="usdAmount-field"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-hMqMXs bQjXee"
+        >
+          <div
+            class="sc-jKJlTe kWLJKD"
+          >
+            <div
+              class="sc-jKJlTe jGctBw"
+            >
+              <span
+                class="sc-kEYyzF ekxbwv"
+              >
+                Gas Limit: 
+                21000
+                (Units)
+              </span>
+              <span
+                class="sc-kEYyzF ekxbwv"
+              >
+                Gas Price: 
+                1
+                (Gwei)
+              </span>
+            </div>
+            <button
+              type="button"
+              class="sc-htpNat henWpP"
+              data-testid="edit-gas-btn"
+              tabindex="-1"
+            >
+              EDIT GAS
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div
+      class="sc-jAaTju dAcEaj"
+    >
+      <button
+        type="submit"
+        class="sc-bwzfXH emHLVs"
+        form="sendForm"
+      >
+        Review Send
+      </button>
+    </div>
+  </div>
+</div>
+`;
