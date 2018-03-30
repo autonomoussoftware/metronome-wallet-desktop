@@ -5,6 +5,9 @@ global.window.require = function() {
       send: jest.fn(),
       on: jest.fn()
     },
+    clipboard: {
+      writeText: jest.fn()
+    },
     shell: {
       openExternal: jest.fn()
     }

@@ -95,7 +95,7 @@ const QRmsg = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
-class Receive extends React.Component {
+class ReceiveDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     address: PropTypes.string.isRequired,
@@ -126,11 +126,17 @@ class Receive extends React.Component {
           <Body>
             <Flex.Column align="center">
               <Title>Your address</Title>
-              <Address>{address}</Address>
-              <CopyBtn onClick={this.onCopyToClipboardClick}>
+              <Address data-testid="address">{address}</Address>
+              <CopyBtn
+                data-testid="copy-btn"
+                onClick={this.onCopyToClipboardClick}
+              >
                 <CopyIcon />
               </CopyBtn>
-              <BtnLabel isCopied={copyStatus !== 'init'}>
+              <BtnLabel
+                data-testid="btn-label"
+                isCopied={copyStatus !== 'init'}
+              >
                 {copyStatus === 'init' ? 'Copy' : 'Copied to clipboard!'}
               </BtnLabel>
             </Flex.Column>
@@ -151,4 +157,4 @@ const mapStateToProps = state => ({
   address: selectors.getActiveWalletAddresses(state)[0]
 })
 
-export default connect(mapStateToProps)(Receive)
+export default connect(mapStateToProps)(ReceiveDrawer)
