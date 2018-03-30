@@ -4,10 +4,14 @@ import config from '../../config'
 import React from 'react'
 import App from '../App'
 
+const getElement = (response = { onboardingComplete: true }) => (
+  <App onMount={() => Promise.resolve(response)} />
+)
+
 describe('<App/>', () => {
   it('displays a login form if user is already on board', async () => {
     const { queryByTestId } = reduxRender(
-      <App onMount={() => Promise.resolve({ onboardingComplete: true })} />
+      getElement({ onboardingComplete: true })
     )
     expect(queryByTestId('login-form')).toBeNull()
     await flushPromises()
@@ -16,7 +20,7 @@ describe('<App/>', () => {
 
   it('displays onboarding wizard if user is NOT on board', async () => {
     const { queryByTestId } = reduxRender(
-      <App onMount={() => Promise.resolve({ onboardingComplete: false })} />
+      getElement({ onboardingComplete: false })
     )
     expect(queryByTestId('onboarding-container')).toBeNull()
     await flushPromises()
@@ -24,9 +28,7 @@ describe('<App/>', () => {
   })
 
   it('displays a loading screen while waiting for wallet data', async () => {
-    const { queryByTestId, store } = reduxRender(
-      <App onMount={() => Promise.resolve({ onboardingComplete: true })} />
-    )
+    const { queryByTestId, store } = reduxRender(getElement())
     await flushPromises()
     expect(queryByTestId('loading-scene')).toBeNull()
     store.dispatch({ type: 'session-started' })
@@ -34,9 +36,7 @@ describe('<App/>', () => {
   })
 
   it('displays router after enough data was received', async () => {
-    const { queryByTestId, store } = reduxRender(
-      <App onMount={() => Promise.resolve({ onboardingComplete: true })} />
-    )
+    const { queryByTestId, store } = reduxRender(getElement())
     await flushPromises()
 
     // In order to display the inner screens of the wallet the Main Process

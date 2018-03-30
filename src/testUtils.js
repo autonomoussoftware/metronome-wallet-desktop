@@ -1,5 +1,6 @@
 import { render, Simulate } from 'react-testing-library'
 import { ThemeProvider } from 'styled-components'
+import { MemoryRouter } from 'react-router'
 import { Provider } from 'react-redux'
 import createStore from './createStore'
 import theme from './theme'
@@ -26,6 +27,19 @@ export function reduxRender(element, initialState) {
     </Provider>
   )
   return { ...renderResult, store }
+}
+
+/**
+ * The same as reduxRender() above but also wrapped with 'react-router'
+ * in order to test navigation flows.
+ *
+ * Returns the same object as reduxRender()
+ */
+export function routerRender(element, initialState, initialRoute = '/') {
+  return reduxRender(
+    <MemoryRouter initialEntries={[initialRoute]}>{element}</MemoryRouter>,
+    initialState
+  )
 }
 
 /**
