@@ -16,11 +16,15 @@ class SendDrawer extends React.Component {
       'ok'
     ]).isRequired,
     onRequestClose: PropTypes.func.isRequired,
+    defaultTab: PropTypes.oneOf(['eth', 'met']),
     isOpen: PropTypes.bool.isRequired
   }
 
   initialState = {
-    activeTab: this.props.sendMetFeatureStatus !== 'ok' ? 'eth' : 'met'
+    activeTab:
+      this.props.sendMetFeatureStatus !== 'ok'
+        ? 'eth'
+        : this.props.defaultTab === 'eth' ? 'eth' : 'met'
   }
 
   state = this.initialState
@@ -51,7 +55,11 @@ class SendDrawer extends React.Component {
                 ? 'MET transactions are disabled during Initial Auction'
                 : sendMetFeatureStatus === 'transfer-disabled'
                   ? 'MET transactions not enabled yet'
-                  : null
+                  : sendMetFeatureStatus === 'no-funds'
+                    ? 'You need some MET to send'
+                    : sendMetFeatureStatus === 'offline'
+                      ? "Can't send while offline"
+                      : null
           },
           { id: 'eth', label: 'ETH' }
         ]}
