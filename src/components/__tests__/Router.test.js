@@ -1,9 +1,7 @@
 import { layout as element } from '../Router'
-import { MemoryRouter } from 'react-router'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import config from '../../config'
-import React from 'react'
 
 describe('<Router/>', () => {
   test('navigates to WALLET screen when clicking WALLET sidebar button', () => {
@@ -31,23 +29,24 @@ describe('<Router/>', () => {
   })
 
   test('redirects to WALLET route for / route', () => {
-    const { queryByTestId } = renderWithRouter('/')
+    const { queryByTestId } = testUtils.routerRender(
+      element,
+      getInitialState(),
+      '/'
+    )
     expect(queryByTestId('dashboard-container')).not.toBeNull()
   })
 })
 
 function clickAndExpect(linkTestId, pageTestId, initialRoute) {
-  const { getByTestId, queryByTestId } = renderWithRouter(initialRoute)
+  const { getByTestId, queryByTestId } = testUtils.routerRender(
+    element,
+    getInitialState(),
+    initialRoute
+  )
   expect(queryByTestId(pageTestId)).toBeNull()
   Simulate.click(getByTestId(linkTestId), { button: 0 })
   expect(queryByTestId(pageTestId)).not.toBeNull()
-}
-
-function renderWithRouter(initialRoute = '/') {
-  return testUtils.reduxRender(
-    <MemoryRouter initialEntries={[initialRoute]}>{element}</MemoryRouter>,
-    getInitialState()
-  )
 }
 
 function getInitialState() {
