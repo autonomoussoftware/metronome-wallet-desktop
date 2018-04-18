@@ -25,7 +25,6 @@ const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
 const { transactionParser } = require('./transactionParser')
 const { getDatabase, clearDatabase } = require('./db')
-
 const {
   getAddressBalance,
   getWalletAddresses,
@@ -443,7 +442,7 @@ function openWallet ({ bus, webContents, walletId }) {
           onData (header) {
             bus.emit('new-block-header', header)
           },
-          onError: function (err) {
+          onError (err) {
             logger.warn('New block subscription failed', err.message)
 
             getWeb3().eth.getBlock('latest')
@@ -540,7 +539,7 @@ function clearCache () {
   logger.verbose('Clear cache started')
 
   return clearDatabase()
-    .then(() => {
+    .then(function () {
       logger.verbose('Clear cache success')
       restart(1)
     })

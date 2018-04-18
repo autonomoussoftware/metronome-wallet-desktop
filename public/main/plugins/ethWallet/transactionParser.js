@@ -5,6 +5,7 @@ const { parseTraces } = require('./tracesParser')
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
+// eslint-disable-next-line complexity
 function transactionParser ({ transaction, receipt, walletId }) {
   const from = transaction.from.toLowerCase()
   const to = (transaction.to || NULL_ADDRESS).toLowerCase()

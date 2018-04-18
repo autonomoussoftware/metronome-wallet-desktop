@@ -57,11 +57,11 @@ function getConverterGasLimit ({ web3, from, address, value, minReturn = '1', ty
   value = type === 'met' ? '0' : value
 
   return web3.eth.estimateGas({ data, from, to: address, value })
-    .then(gasLimit => {
+    .then(function (gasLimit) {
       logger.verbose(`Converter ${type} gas limit retrieved`, gasLimit)
       return { gasLimit }
     })
-    .catch(err => {
+    .catch(function (err) {
       logger.warn(`Could not estimate converter ${type} gas`, err.message)
       throw err
     })
