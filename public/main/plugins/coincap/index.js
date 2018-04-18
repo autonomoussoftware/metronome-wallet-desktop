@@ -1,3 +1,5 @@
+'use strict'
+
 const coincap = require('coincap-lib')
 const settings = require('electron-settings')
 const throttle = require('lodash/throttle')

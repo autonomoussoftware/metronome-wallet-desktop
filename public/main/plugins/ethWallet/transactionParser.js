@@ -1,3 +1,5 @@
+'use strict'
+
 const { isAddressInWallet } = require('./settings')
 const { parseTraces } = require('./tracesParser')
 

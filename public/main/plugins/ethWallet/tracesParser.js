@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 const { utils: { toBN } } = require('web3')
 

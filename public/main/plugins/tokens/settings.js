@@ -1,3 +1,5 @@
+'use strict'
+
 const settings = require('electron-settings')
 const logger = require('electron-log')
 

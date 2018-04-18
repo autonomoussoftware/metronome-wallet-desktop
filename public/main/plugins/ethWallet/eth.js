@@ -1,3 +1,5 @@
+'use strict'
+
 const { merge } = require('lodash')
 const EthereumTx = require('ethereumjs-tx')
 const logger = require('electron-log')

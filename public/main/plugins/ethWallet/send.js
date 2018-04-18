@@ -1,3 +1,5 @@
+'use strict'
+
 const web3 = require('web3')
 const { decrypt: decryptOld } = require('../../crypto/aes256cbc')
 const { encrypt, decrypt } = require('../../crypto/aes256cbcIv')

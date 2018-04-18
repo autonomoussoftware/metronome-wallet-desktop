@@ -1,3 +1,5 @@
+'use strict'
+
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
 
