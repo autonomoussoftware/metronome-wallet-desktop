@@ -1,5 +1,6 @@
 'use strict'
 
+const { inspect } = require('util')
 const { ipcMain } = require('electron')
 const EventEmitter = require('events')
 const logger = require('electron-log')
@@ -49,6 +50,13 @@ function createRendererEventsRouter () {
 
   const eventsBus = new EventEmitter()
 
+  const eventsBusEmit = eventsBus.emit.bind(eventsBus)
+  eventsBus.emit = function (eventName, ...args) {
+    logger.verbose(`<<-- ${eventName}`, inspect(args))
+
+    eventsBusEmit(eventName, ...args)
+  }
+
   return {
     use (plugin) {
       const {
@@ -70,20 +78,23 @@ function createRendererEventsRouter () {
         })
       }
 
-      uiHooks.forEach(function (hook) {
-        const existingHook = allUiHooks.find(h => h.eventName === hook.eventName)
+      if (uiHooks) {
+        uiHooks.forEach(function (hook) {
+          const existingHook = allUiHooks
+            .find(h => h.eventName === hook.eventName)
 
-        if (existingHook) {
-          existingHook.handlers.push(hook.handler)
-          existingHook.auth |= hook.auth
-        } else {
-          allUiHooks.push({
-            eventName: hook.eventName,
-            handlers: [hook.handler],
-            auth: hook.auth
-          })
-        }
-      })
+          if (existingHook) {
+            existingHook.handlers.push(hook.handler)
+            existingHook.auth |= hook.auth
+          } else {
+            allUiHooks.push({
+              eventName: hook.eventName,
+              handlers: [hook.handler],
+              auth: hook.auth
+            })
+          }
+        })
+      }
 
       return this
     },
@@ -118,6 +129,7 @@ function initMainWorker () {
   createRendererEventsRouter()
     .use(require('./plugins/onboarding'))
     .use(require('./plugins/coincap'))
+    .use(require('./plugins/bloq-eth-explorer'))
     .use(require('./plugins/ethWallet'))
     .use(require('./plugins/tokens'))
     .use(require('./plugins/metronome'))

@@ -2,7 +2,6 @@
 
 const { defaultTo, get } = require('lodash/fp')
 const { groupBy, isArray, mergeWith, throttle } = require('lodash')
-const axios = require('axios')
 const bip39 = require('bip39')
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
@@ -32,11 +31,10 @@ const {
   isAddressInWallet
 } = require('./settings')
 
-function concatArrays (objValue, srcValue) {
-  if (isArray(objValue)) {
-    return objValue.concat(srcValue)
-  }
-}
+let bloqEthExplorer
+
+const concatArrays = (objValue, srcValue) =>
+  isArray(objValue) ? objValue.concat(srcValue) : undefined
 
 const createSendTransaction = bus => function (args, resolveToReceipt) {
   const deferred = new Deferred()
@@ -321,16 +319,12 @@ function sendCachedTransactions ({ walletId, webContents }) {
 function syncTransactions ({ number, walletId, webContents }) {
   const web3 = getWeb3()
 
-  const indexerApiUrl = settings.get('app.indexerApiUrl')
-
   return promiseAllProps({
     addresses: getWalletAddresses(walletId),
     bestBlock: getBestBlock().then(get('number')),
     latest: number || web3.eth.getBlockNumber(),
-    indexed: axios.get(`${indexerApiUrl}/blocks/latest/number`)
-      .then(res => res.data)
-      .then(data => data.number)
-      .then(n => Number.parseInt(n, 10))
+    indexed: bloqEthExplorer.getBestBlock()
+      .then(best => best.number)
   })
     .then(function ({ addresses, bestBlock, latest, indexed }) {
       if (indexed < latest) {
@@ -338,22 +332,17 @@ function syncTransactions ({ number, walletId, webContents }) {
       }
       if (indexed <= bestBlock) {
         logger.warn('Nothing to get from indexer', { indexed, bestBlock })
-        return
+        return false
       }
 
       logger.debug('Syncing', addresses, indexed)
       return Promise.all(
         addresses.map(function (address) {
-          const qs = `from=${bestBlock + 1}&to=${indexed}`
+          const from = bestBlock + 1
+          const to = indexed
           return promiseAllProps({
-            eth: axios.get(
-              `${indexerApiUrl}/addresses/${address}/transactions?${qs}`
-            )
-              .then(res => res.data),
-            tok: axios.get(
-              `${indexerApiUrl}/addresses/${address}/tokentransactions?${qs}`
-            )
-              .then(res => res.data)
+            eth: bloqEthExplorer.getTxs({ address, from, to }),
+            tok: bloqEthExplorer.getTxsWithTokenLogs({ address, from, to })
           })
             .then(function ({ eth, tok }) {
               const txCount = eth.length + Object.keys(tok).length
@@ -546,14 +535,16 @@ function clearCache () {
     .catch(err => logger.error('Clear cache failed: ', err))
 }
 
-function init ({ eventsBus }) {
-  registerTxParser(transactionParser)
+function init ({ plugins, eventsBus }) {
+  bloqEthExplorer = plugins.bloqEthExplorer
 
   const createWallet = createCreateWallet(eventsBus)
   const openWallets = createOpenWallets(eventsBus)
   const sendTransaction = createSendTransaction(eventsBus)
 
   attachToEvents(eventsBus)
+
+  registerTxParser(transactionParser)
 
   return {
     name: 'ethWallet',
@@ -563,6 +554,7 @@ function init ({ eventsBus }) {
       registerTxParser,
       sendTransaction
     },
+    dependencies: ['bloqEthExplorer'],
     uiHooks: [
       { eventName: 'create-wallet', auth: true, handler: createWallet },
       { eventName: 'open-wallets', auth: true, handler: openWallets },

@@ -108,7 +108,11 @@ function attachToEvents (bus) {
     subscriptions = subscriptions.concat({ walletId, addresses, webContents })
   })
 
-  bus.on('new-block-header', function () {
+  bus.on('tok-tx-confirmed', function () {
+    subscriptions.forEach(sendBalances)
+  })
+
+  bus.on('tok-tx-unconfirmed', function () {
     subscriptions.forEach(sendBalances)
   })
 }
