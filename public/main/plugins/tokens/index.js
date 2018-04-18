@@ -4,12 +4,8 @@ const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
 const WalletError = require('../../WalletError')
-const {
-  getWeb3,
-  sendTransaction,
-  getEvents,
-  registerTxParser
-} = require('../ethWallet')
+
+let ethWallet
 
 const {
   getTokenBalance,
@@ -27,7 +23,7 @@ const {
 function sendBalances ({ walletId, addresses, webContents }) {
   const contractAddresses = getTokenContractAddresses()
 
-  const web3 = getWeb3()
+  const web3 = ethWallet.getWeb3()
   const contracts = contractAddresses
     .map(a => a.toLowerCase())
     .map(address => ({
@@ -101,21 +97,21 @@ function unsubscribeUpdates (_, webContents) {
   subscriptions = subscriptions.filter(s => s.webContents !== webContents)
 }
 
-const ethEvents = getEvents()
+function attachToEvents (bus) {
+  bus.on('wallet-opened', function ({ walletId, addresses, webContents }) {
+    sendBalances({ walletId, addresses, webContents })
 
-ethEvents.on('wallet-opened', function ({ walletId, addresses, webContents }) {
-  sendBalances({ walletId, addresses, webContents })
+    webContents.on('destroyed', function () {
+      unsubscribeUpdates(null, webContents)
+    })
 
-  webContents.on('destroyed', function () {
-    unsubscribeUpdates(null, webContents)
+    subscriptions = subscriptions.concat({ walletId, addresses, webContents })
   })
 
-  subscriptions = subscriptions.concat({ walletId, addresses, webContents })
-})
-
-ethEvents.on('new-block-header', function () {
-  subscriptions.forEach(sendBalances)
-})
+  bus.on('new-block-header', function () {
+    subscriptions.forEach(sendBalances)
+  })
+}
 
 function callTokenMethod (method, args, waitForReceipt) {
   const { password, token, from, to, value, gasPrice, gasLimit } = args
@@ -129,12 +125,12 @@ function callTokenMethod (method, args, waitForReceipt) {
     gasPrice
   })
 
-  const web3 = getWeb3()
+  const web3 = ethWallet.getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   const call = contract.methods[method](to, value)
   const data = call.encodeABI()
 
-  return sendTransaction({ password, from, to: token, data, gasPrice, gasLimit }, waitForReceipt)
+  return ethWallet.sendTransaction({ password, from, to: token, data, gasPrice, gasLimit }, waitForReceipt)
     .then(function (result) {
       if (!waitForReceipt) {
         return result
@@ -173,7 +169,7 @@ function approveToken (args, waitForReceipt) {
 }
 
 function getAllowance ({ token, from, to }) {
-  const web3 = getWeb3()
+  const web3 = ethWallet.getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   return contract.methods.allowance(from, to).call()
 }
@@ -183,25 +179,37 @@ function getGasLimit ({ token, to, from, value }) {
 
   logger.verbose('Getting token gas limit', { to, value, symbol })
 
-  const web3 = getWeb3()
+  const web3 = ethWallet.getWeb3()
   const contract = new web3.eth.Contract(abi, token)
   const transfer = contract.methods.transfer(to, value)
 
-  return transfer.estimateGas({ from }).then(gasLimit => {
+  return transfer.estimateGas({ from }).then(function (gasLimit) {
     logger.verbose('Token gas limit retrieved', gasLimit)
 
     return { gasLimit }
   })
 }
 
-function getHooks () {
-  registerTxParser(transactionParser)
+function init ({ plugins, eventsBus }) {
+  ethWallet = plugins.ethWallet
 
-  return [
-    { eventName: 'send-token', auth: true, handler: args => sendToken(args) },
-    { eventName: 'ui-unload', handler: unsubscribeUpdates },
-    { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
-  ]
+  ethWallet.registerTxParser(transactionParser(ethWallet))
+
+  attachToEvents(eventsBus)
+
+  return {
+    name: 'tokens',
+    api: {
+      approveToken,
+      getAllowance
+    },
+    dependencies: ['ethWallet'],
+    uiHooks: [
+      { eventName: 'send-token', auth: true, handler: args => sendToken(args) },
+      { eventName: 'ui-unload', handler: unsubscribeUpdates },
+      { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
+    ]
+  }
 }
 
-module.exports = { getHooks, approveToken, getAllowance }
+module.exports = { init }

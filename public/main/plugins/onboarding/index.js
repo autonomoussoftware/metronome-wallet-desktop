@@ -7,11 +7,13 @@ function onboardingStatus () {
   return { onboardingComplete }
 }
 
-function getHooks () {
-  return [{
-    eventName: 'ui-ready',
-    handler: onboardingStatus
-  }]
+function init () {
+  return {
+    uiHooks: [{
+      eventName: 'ui-ready',
+      handler: onboardingStatus
+    }]
+  }
 }
 
-module.exports = { getHooks }
+module.exports = { init }

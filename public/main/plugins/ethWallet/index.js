@@ -4,7 +4,6 @@ const { defaultTo, get } = require('lodash/fp')
 const { groupBy, isArray, mergeWith, throttle } = require('lodash')
 const axios = require('axios')
 const bip39 = require('bip39')
-const EventEmitter = require('events')
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
@@ -40,13 +39,7 @@ function concatArrays (objValue, srcValue) {
   }
 }
 
-const moduleEmitter = new EventEmitter()
-
-function getEvents () {
-  return moduleEmitter
-}
-
-function sendTransaction (args, resolveToReceipt) {
+const createSendTransaction = bus => function (args, resolveToReceipt) {
   const deferred = new Deferred()
 
   signAndSendTransaction(args)
@@ -62,7 +55,7 @@ function sendTransaction (args, resolveToReceipt) {
           pRetry(
             () => getWeb3().eth.getTransaction(hash)
               .then(function (transaction) {
-                moduleEmitter.emit('unconfirmed-tx', transaction)
+                bus.emit('unconfirmed-tx', transaction)
               }),
             { retries: 5, minTimeout: 250 }
           )
@@ -77,7 +70,7 @@ function sendTransaction (args, resolveToReceipt) {
             deferred.resolve(receipt)
           }
 
-          moduleEmitter.emit('tx-receipt', receipt)
+          bus.emit('tx-receipt', receipt)
         })
         .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
@@ -217,10 +210,10 @@ function sendBalances ({ walletId, webContents }) {
     })
 }
 
-function sendWalletOpen (webContents, walletId) {
+function sendWalletOpen (bus, webContents, walletId) {
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
-  moduleEmitter.emit('wallet-opened', {
+  bus.emit('wallet-opened', {
     walletId,
     addresses: Object.keys(addresses).map(a => a.toLowerCase()),
     webContents
@@ -431,8 +424,8 @@ let subscriptions = []
 
 let blocksSubscription = null
 
-function openWallet ({ webContents, walletId }) {
-  sendWalletOpen(webContents, walletId)
+function openWallet ({ bus, webContents, walletId }) {
+  sendWalletOpen(bus, webContents, walletId)
 
   sendBalances({ walletId, webContents })
 
@@ -447,15 +440,15 @@ function openWallet ({ webContents, walletId }) {
       if (subscriptions.length === 1) {
         blocksSubscription = subscribe({
           url: getWebsocketApiUrl(),
-          onData: function (header) {
-            moduleEmitter.emit('new-block-header', header)
+          onData (header) {
+            bus.emit('new-block-header', header)
           },
           onError: function (err) {
             logger.warn('New block subscription failed', err.message)
 
             getWeb3().eth.getBlock('latest')
               .then(function (header) {
-                moduleEmitter.emit('new-block-header', header)
+                bus.emit('new-block-header', header)
               })
               .catch(function (err) { // eslint-disable-line no-shadow
                 logger.warn('Get block fallback failed too', err.message)
@@ -483,23 +476,25 @@ function unsubscribeUpdates (_, webContents) {
   }
 }
 
-moduleEmitter.on('unconfirmed-tx', function (transaction) {
-  subscriptions.forEach(function (s) {
-    pRetry(
-      () => parseTransaction(Object.assign({ transaction }, s)),
-      { retries: 5, minTimeout: 250 }
-    )
-      .catch(function (err) {
-        logger.warn('Could not parse transaction', transaction.hash, err.message)
-      })
+function attachToEvents (bus) {
+  bus.on('unconfirmed-tx', function (transaction) {
+    subscriptions.forEach(function (s) {
+      pRetry(
+        () => parseTransaction(Object.assign({ transaction }, s)),
+        { retries: 5, minTimeout: 250 }
+      )
+        .catch(function (err) {
+          logger.warn('Could not parse transaction', transaction.hash, err.message)
+        })
+    })
   })
-})
 
-moduleEmitter.on('new-block-header', function ({ number }) {
-  subscriptions.forEach(function (s) {
-    syncTransactions(Object.assign({ number }, s))
+  bus.on('new-block-header', function ({ number }) {
+    subscriptions.forEach(function (s) {
+      syncTransactions(Object.assign({ number }, s))
+    })
   })
-})
+}
 
 function getGasPrice () {
   logger.verbose('Getting gas price for')
@@ -509,18 +504,18 @@ function getGasPrice () {
     .then(gasPrice => ({ gasPrice }))
 }
 
-function openWallets (data, webContents) {
+const createOpenWallets = bus => function (data, webContents) {
   const activeWallet = settings.get('user.activeWallet')
   const walletIds = Object.keys(settings.get('user.wallets'))
 
   walletIds.forEach(function (walletId) {
-    openWallet({ webContents, walletId })
+    openWallet({ bus, webContents, walletId })
   })
 
   return { walletIds, activeWallet }
 }
 
-function createWallet (data, webContents) {
+const createCreateWallet = bus => function (data, webContents) {
   const { password, mnemonic } = data
   const result = generateWallet(mnemonic, password)
 
@@ -528,7 +523,7 @@ function createWallet (data, webContents) {
     return result
   }
 
-  openWallet({ webContents, walletId: result.walletId })
+  openWallet({ bus, webContents, walletId: result.walletId })
 
   return result
 }
@@ -552,29 +547,33 @@ function clearCache () {
     .catch(err => logger.error('Clear cache failed: ', err))
 }
 
-function getHooks () {
+function init ({ eventsBus }) {
   registerTxParser(transactionParser)
 
-  return [
-    { eventName: 'create-wallet', auth: true, handler: createWallet },
-    { eventName: 'open-wallets', auth: true, handler: openWallets },
-    {
-      eventName: 'send-eth',
-      auth: true,
-      handler: args => sendTransaction(args)
+  const createWallet = createCreateWallet(eventsBus)
+  const openWallets = createOpenWallets(eventsBus)
+  const sendTransaction = createSendTransaction(eventsBus)
+
+  attachToEvents(eventsBus)
+
+  return {
+    name: 'ethWallet',
+    api: {
+      getWeb3,
+      isAddressInWallet,
+      registerTxParser,
+      sendTransaction
     },
-    { eventName: 'ui-unload', handler: unsubscribeUpdates },
-    { eventName: 'get-gas-price', handler: getGasPrice },
-    { eventName: 'get-gas-limit', handler: getGasLimit },
-    { eventName: 'cache-clear', handler: clearCache }
-  ]
+    uiHooks: [
+      { eventName: 'create-wallet', auth: true, handler: createWallet },
+      { eventName: 'open-wallets', auth: true, handler: openWallets },
+      { eventName: 'send-eth', auth: true, handler: sendTransaction },
+      { eventName: 'ui-unload', handler: unsubscribeUpdates },
+      { eventName: 'get-gas-price', handler: getGasPrice },
+      { eventName: 'get-gas-limit', handler: getGasLimit },
+      { eventName: 'cache-clear', handler: clearCache }
+    ]
+  }
 }
 
-module.exports = {
-  getHooks,
-  getWeb3,
-  sendTransaction,
-  getEvents,
-  registerTxParser,
-  isAddressInWallet
-}
+module.exports = { init }

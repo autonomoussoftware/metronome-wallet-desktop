@@ -1,11 +1,22 @@
 'use strict'
 
 const { ipcMain } = require('electron')
+const EventEmitter = require('events')
 const logger = require('electron-log')
 
 const { isValidPassword } = require('./password')
 const settings = require('./settings')
 const WalletError = require('./WalletError')
+
+function getLogData (data) {
+  if (!data) { return '' }
+  const logData = Object.assign({}, data)
+
+  const blackList = ['password']
+  blackList.forEach(w => delete logData[w])
+
+  return JSON.stringify(logData)
+}
 
 function onRendererEvent (eventName, listener) {
   ipcMain.on(eventName, function (event, { id, data }) {
@@ -31,31 +42,42 @@ function onRendererEvent (eventName, listener) {
   })
 }
 
-function getLogData (data) {
-  if (!data) { return '' }
-  const logData = Object.assign({}, data)
-
-  const blackList = ['password']
-  blackList.forEach(w => delete logData[w])
-
-  return JSON.stringify(logData)
-}
-
 function createRendererEventsRouter () {
-  const allHooks = []
+  const allUiHooks = []
+
+  const plugins = {}
+
+  const eventsBus = new EventEmitter()
 
   return {
-    use: function (plugin) {
-      const hooks = plugin.getHooks()
+    use (plugin) {
+      const {
+        api,
+        dependencies,
+        name,
+        uiHooks
+      } = plugin.init({ plugins, eventsBus })
 
-      hooks.forEach(function (hook) {
-        const existingHook = allHooks.find(h => h.eventName === hook.eventName)
+      if (name && api) {
+        plugins[name] = api
+      }
+
+      if (dependencies) {
+        dependencies.forEach(function (dependency) {
+          if (!plugins[dependency]) {
+            throw new Error('Cannot initialize plugin', name, dependency)
+          }
+        })
+      }
+
+      uiHooks.forEach(function (hook) {
+        const existingHook = allUiHooks.find(h => h.eventName === hook.eventName)
 
         if (existingHook) {
           existingHook.handlers.push(hook.handler)
           existingHook.auth |= hook.auth
         } else {
-          allHooks.push({
+          allUiHooks.push({
             eventName: hook.eventName,
             handlers: [hook.handler],
             auth: hook.auth
@@ -65,9 +87,9 @@ function createRendererEventsRouter () {
 
       return this
     },
-    attach: function () {
-      allHooks.forEach(function (hook) {
-        const { eventName, handlers, auth } = hook
+    attachUiEvents () {
+      allUiHooks.forEach(function (hook) {
+        const { auth, eventName, handlers } = hook
 
         onRendererEvent(eventName, function (data, webContents) {
           return (auth ? isValidPassword(data.password) : Promise.resolve(true))
@@ -99,7 +121,7 @@ function initMainWorker () {
     .use(require('./plugins/ethWallet'))
     .use(require('./plugins/tokens'))
     .use(require('./plugins/metronome'))
-    .attach()
+    .attachUiEvents()
 }
 
 module.exports = { initMainWorker }

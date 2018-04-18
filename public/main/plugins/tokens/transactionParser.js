@@ -1,4 +1,4 @@
-const { getWeb3, isAddressInWallet } = require('../ethWallet')
+'use strict'
 
 const { getTokenContractAddresses } = require('./settings')
 
@@ -14,7 +14,7 @@ const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const topicToAddress = topic => `0x${topic.substr(-40)}`.toLowerCase()
 
-function transactionParser ({ transaction, receipt, walletId }) {
+const transactionParser = ethWallet => function ({ transaction, receipt, walletId }) {
   const addresses = getTokenContractAddresses()
 
   const meta = {}
@@ -47,11 +47,11 @@ function transactionParser ({ transaction, receipt, walletId }) {
         const from = topicToAddress(log.topics[1])
         const to = topicToAddress(log.topics[2])
 
-        const web3 = getWeb3()
+        const web3 = ethWallet.getWeb3()
         const value = web3.utils.toBN(log.data).toString()
 
-        const outgoing = isAddressInWallet({ walletId, address: from })
-        const incoming = isAddressInWallet({ walletId, address: to })
+        const outgoing = ethWallet.isAddressInWallet({ walletId, address: from })
+        const incoming = ethWallet.isAddressInWallet({ walletId, address: to })
 
         if (outgoing || incoming) {
           tokens[address] = {

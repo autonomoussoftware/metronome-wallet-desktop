@@ -109,15 +109,17 @@ function stopCoinCap (data, webContents) {
   removeListener(webContents)
 }
 
-function getHooks () {
-  return [{
-    eventName: 'ui-ready',
-    handler: startCoinCap
-  }, {
-    eventName: 'ui-unload',
-    handler: stopCoinCap
-  }]
+function init () {
+  return {
+    uiHooks: [{
+      eventName: 'ui-ready',
+      handler: startCoinCap
+    }, {
+      eventName: 'ui-unload',
+      handler: stopCoinCap
+    }]
+  }
 }
 // TODO listen window events to stop and restart the coincap listener
 
-module.exports = { getHooks }
+module.exports = { init }
