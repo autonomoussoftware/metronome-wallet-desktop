@@ -37,11 +37,11 @@ const broadcastBalances = ethWallet => function (subscriptions) {
 }
 
 const stop = eventsBus => function () {
-  eventsBus.off('wallet-opened')
+  eventsBus.removeAllListeners('wallet-opened')
 
-  eventsBus.off('tok-tx-confirmed')
+  eventsBus.removeAllListeners('tok-tx-confirmed')
 
-  eventsBus.off('tok-tx-unconfirmed')
+  eventsBus.removeAllListeners('tok-tx-unconfirmed')
 }
 
 function init ({ plugins, eventsBus }) {

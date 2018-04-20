@@ -45,11 +45,11 @@ function broadcastConnectivityState (subscriptions, state) {
 }
 
 function stop () {
-  socket.off('error')
+  socket.removeAllListeners('error')
 
-  socket.off('connect')
+  socket.removeAllListeners('connect')
 
-  socket.off('disconnect')
+  socket.removeAllListeners('disconnect')
 
   socket.close()
 }
