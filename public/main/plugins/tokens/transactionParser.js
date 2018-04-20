@@ -1,18 +1,10 @@
 'use strict'
 
 const { getTokenContractAddresses } = require('./settings')
-
-const erc20Events = [{
-  name: 'Transfer',
-  signature: '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-}, {
-  name: 'Approval',
-  signature: '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
-}]
+const erc20Events = require('./erc20-events')
+const topicToAddress = require('./topic-to-address')
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-const topicToAddress = topic => `0x${topic.substr(-40)}`.toLowerCase()
 
 const transactionParser = ethWallet => function ({ transaction, receipt, walletId }) {
   const addresses = getTokenContractAddresses()
@@ -74,4 +66,4 @@ const transactionParser = ethWallet => function ({ transaction, receipt, walletI
   return meta
 }
 
-module.exports = { transactionParser, topicToAddress, erc20Events }
+module.exports = transactionParser
