@@ -7,13 +7,11 @@ function onboardingStatus () {
   return { onboardingComplete }
 }
 
-function init () {
-  return {
-    uiHooks: [{
-      eventName: 'ui-ready',
-      handler: onboardingStatus
-    }]
-  }
-}
+const init = () => ({
+  uiHooks: [{
+    eventName: 'ui-ready',
+    handler: onboardingStatus
+  }]
+})
 
 module.exports = { init }
