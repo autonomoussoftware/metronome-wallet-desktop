@@ -25,9 +25,7 @@ function onRendererEvent (eventName, listener) {
     const result = Promise.resolve(listener(data, event.sender))
 
     result
-      .then(function (res) {
-        return res.error ? Promise.reject(res.error) : res
-      })
+      .then(res => res.error ? Promise.reject(res.error) : res)
       .then(function (res) {
         event.sender.send(eventName, { id, data: res })
         return res
@@ -102,17 +100,19 @@ function createRendererEventsRouter () {
       allUiHooks.forEach(function (hook) {
         const { auth, eventName, handlers } = hook
 
-        onRendererEvent(eventName, function (data, webContents) {
-          return (auth ? isValidPassword(data.password) : Promise.resolve(true))
-            .then(function (success) {
-              if (!success) {
-                return { error: new WalletError('Invalid password') }
-              }
+        onRendererEvent(
+          eventName,
+          (data, webContents) =>
+            (auth ? isValidPassword(data.password) : Promise.resolve(true))
+              .then(function (success) {
+                if (!success) {
+                  return { error: new WalletError('Invalid password') }
+                }
 
-              return Promise.all(handlers.map(fn => fn(data, webContents)))
-                .then(results => Object.assign({}, ...results))
-            })
-        })
+                return Promise.all(handlers.map(fn => fn(data, webContents)))
+                  .then(results => Object.assign({}, ...results))
+              })
+        )
       })
     }
   }
