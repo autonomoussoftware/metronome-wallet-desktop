@@ -11,6 +11,7 @@
   },
   "parserOptions": {
     "ecmaFeatures": {
+      "experimentalObjectRestSpread": false,
       "jsx": false
     },
     "ecmaVersion": 2017
