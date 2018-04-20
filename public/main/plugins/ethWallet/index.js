@@ -128,13 +128,16 @@ function generateWallet (mnemonic, password) {
 let pendingWalletStateChanges = []
 
 function mergeAndSendPendingWalletStateChanges () {
-  const byWebContent = groupBy(pendingWalletStateChanges.filter(function ({ webContents }) {
-    try {
-      return webContents.id || true
-    } catch (err) {
-      return false
-    }
-  }), 'webContents.id')
+  const byWebContent = groupBy(
+    pendingWalletStateChanges.filter(function ({ webContents }) {
+      try {
+        return webContents.id || true
+      } catch (err) {
+        return false
+      }
+    }),
+    'webContents.id'
+  )
   Object.values(byWebContent).forEach(function (group) {
     const merged = mergeWith({}, ...group, concatArrays)
 
@@ -144,9 +147,11 @@ function mergeAndSendPendingWalletStateChanges () {
   pendingWalletStateChanges = []
 }
 
+const GUARD_TIME = 250
+
 const sendPendingWalletStateChanges = throttle(
   mergeAndSendPendingWalletStateChanges,
-  250,
+  GUARD_TIME,
   { leading: true, trailing: true }
 )
 
@@ -225,8 +230,8 @@ function registerTxParser (parser) {
   txParsers.push(parser)
 }
 
-function parseTransaction ({ transaction, receipt, walletId, webContents }) {
-  return Promise.all(
+const parseTransaction = ({ transaction, receipt, walletId, webContents }) =>
+  Promise.all(
     txParsers.map(txParser => txParser({ transaction, receipt, walletId }))
   ).then(function (metas) {
     const meta = mergeWith({}, ...metas, concatArrays)
@@ -256,7 +261,6 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
 
     return parsedTransaction
   })
-}
 
 function setBestBlock (data) {
   const query = { type: 'eth-best-block' }
@@ -266,12 +270,10 @@ function setBestBlock (data) {
     .updateAsync(query, update, { upsert: true })
 }
 
-function getBestBlock () {
-  return getDatabase().state
-    .findOneAsync({ type: 'eth-best-block' })
-    .then(defaultTo({ data: { number: -1 } }))
-    .then(get('data'))
-}
+const getBestBlock = () => getDatabase().state
+  .findOneAsync({ type: 'eth-best-block' })
+  .then(defaultTo({ data: { number: -1 } }))
+  .then(get('data'))
 
 function sendBestBlock ({ webContents }) {
   getBestBlock()
@@ -357,35 +359,29 @@ function syncTransactions ({ number, walletId, webContents }) {
                   eth.map(function (hash) {
                     logger.debug('Parsing ETH tx', hash)
                     return getTransactionAndReceipt({ web3, hash }).then(
-                      function ({ transaction, receipt }) {
-                        return parseTransaction({
+                      ({ transaction, receipt }) => parseTransaction({
+                        transaction,
+                        receipt,
+                        walletId,
+                        webContents
+                      })
+                    )
+                  })
+                ),
+                Promise.all(
+                  Object.keys(tok).map(tokenAddress => Promise.all(
+                    tok[tokenAddress].map(function (hash) {
+                      logger.debug('Parsing token tx', hash)
+                      return getTransactionAndReceipt({ web3, hash }).then(
+                        ({ transaction, receipt }) => parseTransaction({
                           transaction,
                           receipt,
                           walletId,
                           webContents
                         })
-                      }
-                    )
-                  })
-                ),
-                Promise.all(
-                  Object.keys(tok).map(function (tokenAddress) {
-                    return Promise.all(
-                      tok[tokenAddress].map(function (hash) {
-                        logger.debug('Parsing token tx', hash)
-                        return getTransactionAndReceipt({ web3, hash }).then(
-                          function ({ transaction, receipt }) {
-                            return parseTransaction({
-                              transaction,
-                              receipt,
-                              walletId,
-                              webContents
-                            })
-                          }
-                        )
-                      })
-                    )
-                  })
+                      )
+                    })
+                  ))
                 )
               ])
             })
@@ -472,7 +468,9 @@ function attachToEvents (bus) {
         { retries: 5, minTimeout: 250 }
       )
         .catch(function (err) {
-          logger.warn('Could not parse transaction', transaction.hash, err.message)
+          logger.warn(
+            'Could not parse transaction', transaction.hash, err.message
+          )
         })
     })
   })
