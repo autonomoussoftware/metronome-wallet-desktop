@@ -12,8 +12,8 @@ const transactionParser = ethWallet => function ({ transaction, walletId }) {
   const meta = { metronome }
 
   const outgoing = ethWallet.isAddressInWallet({ walletId, address: from })
-  const toAuction = to === getAuctionAddress() // settings.get('metronome.contracts.auctions').toLowerCase()
-  const toConverter = to === getConverterAddress() // settings.get('metronome.contracts.converter').toLowerCase()
+  const toAuction = to === getAuctionAddress()
+  const toConverter = to === getConverterAddress()
 
   if (outgoing) {
     if (toAuction) {
@@ -30,4 +30,4 @@ const transactionParser = ethWallet => function ({ transaction, walletId }) {
   return meta
 }
 
-module.exports = { transactionParser }
+module.exports = transactionParser

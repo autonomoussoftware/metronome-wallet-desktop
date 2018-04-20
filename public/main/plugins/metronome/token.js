@@ -6,9 +6,7 @@ const tokenAbi = require('./contracts/MTNToken')
 
 const contracts = {}
 
-function isTransferAllowed (address) {
-  return contracts[address.toLowerCase()] || false
-}
+const isTransferAllowed = address => contracts[address.toLowerCase()] || false
 
 function setTransferAllowed (address, allowed) {
   contracts[address.toLowerCase()] = !!allowed

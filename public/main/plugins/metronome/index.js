@@ -1,228 +1,73 @@
 'use strict'
 
-const logger = require('electron-log')
-const promiseAllProps = require('promise-all-props')
+const createBasePlugin = require('../../base-plugin')
 
-const { getAuctionStatus, getAuctionGasLimit } = require('./auctions')
-const { transactionParser } = require('./transactionParser')
-const {
-  encodeConvertEthToMtn,
-  encodeConvertMtnToEth,
-  getConverterStatus,
-  getMtnForEthResult,
-  getEthForMtnResult,
-  getConverterGasLimit
-} = require('./converter')
-const { getTokenStatus } = require('./token')
-const {
-  getAuctionAddress,
-  getConverterAddress,
-  getTokenAddress
-} = require('./settings')
+const createApi = require('./api')
+const sendStatus = require('./status')
+const transactionParser = require('./transactionParser')
 
-let ethWallet
-let tokens
-
-function sendStatus ({ web3, webContents }) {
-  promiseAllProps({
-    auctionStatus: getAuctionStatus({ web3, address: getAuctionAddress() }),
-    converterStatus: getConverterStatus({
-      web3,
-      address: getConverterAddress()
-    })
-  })
-    .then(function (status) {
-      if (status.auctionStatus.isInitialAuctionEnded) {
-        return getTokenStatus({ web3, address: getTokenAddress() })
-          .then(function (tokenStatus) {
-            return Object.assign(status, { tokenStatus })
-          })
-      }
-      return Object.assign(status, { tokenStatus: { transferAllowed: false } })
-    })
-    .then(function ({ auctionStatus, converterStatus, tokenStatus }) {
-      logger.verbose('<-- Metronome status', auctionStatus, converterStatus, tokenStatus)
-
-      webContents.send('auction-status-updated', auctionStatus)
-      webContents.send('mtn-converter-status-updated', converterStatus)
-      webContents.send('metronome-token-status-updated', tokenStatus)
-    })
-    .catch(function (err) {
-      logger.warn('Could not get metronome status', err)
-
-      // TODO retry before notifying
-
-      webContents.send('connectivity-state-changed', {
-        ok: false,
-        reason: 'Connection to Ethereum node failed',
-        plugin: 'metronome',
-        err: err.message
-      })
-    })
-}
-
-let subscriptions = []
-
-function unsubscribeUpdates (_, webContents) {
-  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
-}
-
-function listenForBlocks (_, webContents) {
-  const web3 = ethWallet.getWeb3()
-
-  sendStatus({ web3, webContents })
-
-  webContents.on('destroyed', function () {
-    unsubscribeUpdates(null, webContents)
+const start = (eventsBus, ethWallet) => function (pluginEmitter) {
+  eventsBus.on('wallet-opened', function ({ webContents }) {
+    sendStatus(ethWallet, webContents)
   })
 
-  subscriptions = subscriptions.concat({ web3, webContents })
-}
-
-function attachToEvents (bus) {
-  bus.on('new-block-header', function () {
-    subscriptions.forEach(sendStatus)
+  eventsBus.on('new-block-header', function () {
+    // TODO send auction status on each block but converter status on txs seen
+    // by the indexer
+    pluginEmitter.emit('new-block')
   })
 }
 
-function buyMetronome ({ password, from, value, gasLimit, gasPrice }) {
-  const address = getAuctionAddress()
-
-  logger.verbose('Buying MET in auction', { from, value, address, gasLimit, gasPrice })
-
-  return ethWallet.sendTransaction({ password, from, to: address, value, gasLimit, gasPrice })
-}
-
-function convertEthToMtn ({ password, from, value, gasLimit, gasPrice }) {
-  const web3 = ethWallet.getWeb3()
-  const address = getConverterAddress()
-  const data = encodeConvertEthToMtn({ web3, address, value })
-
-  logger.verbose('Converting ETH to MET', { from, value, address })
-
-  return ethWallet.sendTransaction({
-    password,
-    from,
-    to: address,
-    value,
-    data,
-    gasLimit,
-    gasPrice
+const broadcastStatus = ethWallet => function (subscriptions) {
+  subscriptions.forEach(function ({ webContents }) {
+    sendStatus(ethWallet, webContents)
   })
 }
 
-function convertMtnToEth ({ password, from, value, gasPrice, gasLimit }) {
-  const token = getTokenAddress()
-  const address = getConverterAddress()
+const stop = eventsBus => function () {
+  eventsBus.removeAllListeners('wallet-opened')
 
-  return tokens.getAllowance({ token, from, to: address })
-    .then(function (allowance) {
-      logger.debug('Current allowance', allowance)
-      const web3 = ethWallet.getWeb3()
-      if (web3.utils.toBN(allowance).gtn(0)) {
-        return tokens.approveToken(
-          { password, token, from, to: address, value: 0, gasPrice, gasLimit },
-          true
-        )
-      }
-    })
-    .then(function () {
-      logger.debug('Setting new allowance')
-      return tokens.approveToken(
-        { password, token, from, to: address, value, gasPrice, gasLimit },
-        true
-      )
-        .then(function () {
-          const web3 = ethWallet.getWeb3()
-          const data = encodeConvertMtnToEth({ web3, address, value })
-
-          logger.verbose('Converting MET to ETH', { from, value, address })
-
-          return ethWallet.sendTransaction({ password, from, to: address, data, gasPrice, gasLimit })
-        })
-        .catch(function (err) {
-          logger.warn('Conversion failed - removing approval')
-          return tokens.approveToken({
-            password,
-            token,
-            from,
-            to: address,
-            value: 0,
-            gasLimit,
-            gasPrice
-          }).then(function () {
-            logger.info('Approval removed')
-            throw err
-          })
-        })
-    })
-    .catch(function (err) {
-      throw err
-    })
-}
-
-function estimateEthToMet ({ value }) {
-  const web3 = ethWallet.getWeb3()
-  const address = getConverterAddress()
-
-  return getMtnForEthResult({ web3, address, value }).then(result => ({
-    result
-  }))
-}
-
-function estimateMetToEth ({ value }) {
-  const web3 = ethWallet.getWeb3()
-  const address = getConverterAddress()
-
-  return getEthForMtnResult({ web3, address, value }).then(result => ({
-    result
-  }))
-}
-
-function getEthGasLimit ({ from, value }) {
-  const web3 = ethWallet.getWeb3()
-  const address = getConverterAddress()
-
-  return getConverterGasLimit({ web3, from, address, value, type: 'eth' })
-}
-
-function getMetGasLimit ({ from, value }) {
-  const web3 = ethWallet.getWeb3()
-  const address = getConverterAddress()
-
-  return getConverterGasLimit({ web3, from, address, value, type: 'met' })
-}
-
-function getAuctionMetGasLimit ({ from, value }) {
-  const web3 = ethWallet.getWeb3()
-  const to = getAuctionAddress()
-
-  return getAuctionGasLimit({ web3, to, from, value })
+  eventsBus.removeAllListeners('new-block-header')
 }
 
 function init ({ plugins, eventsBus }) {
-  ethWallet = plugins.ethWallet
-  tokens = plugins.tokens
+  const { ethWallet } = plugins
 
   ethWallet.registerTxParser(transactionParser(ethWallet))
 
-  attachToEvents(eventsBus)
+  const {
+    onBuyMetronome,
+    onConvertEthToMtn,
+    onConvertMtnToEth,
+    onEstimateEthToMet,
+    onEstimateMetToEth,
+    onEthGasLimit,
+    onMetGasLimit,
+    onAuctionGasLimit
+  } = createApi(plugins)
 
-  return {
-    dependencies: ['ethWallet', 'tokens'],
-    uiHooks: [
-      { eventName: 'ui-ready', handler: listenForBlocks },
-      { eventName: 'ui-unload', handler: unsubscribeUpdates },
-      { eventName: 'metronome-buy', auth: true, handler: buyMetronome },
-      { eventName: 'mtn-convert-eth', auth: true, handler: convertEthToMtn },
-      { eventName: 'mtn-convert-mtn', auth: true, handler: convertMtnToEth },
-      { eventName: 'metronome-estimate-eth-to-met', handler: estimateEthToMet },
-      { eventName: 'metronome-estimate-met-to-eth', handler: estimateMetToEth },
-      { eventName: 'metronome-convert-eth-gas-limit', handler: getEthGasLimit },
-      { eventName: 'metronome-convert-met-gas-limit', handler: getMetGasLimit },
-      { eventName: 'metronome-auction-gas-limit', handler: getAuctionMetGasLimit }
-    ]
-  }
+  const plugin = createBasePlugin({
+    start: start(eventsBus, ethWallet),
+    stop: stop(eventsBus),
+    onPluginEvents: [{
+      eventName: 'new-block',
+      handler: broadcastStatus(ethWallet)
+    }]
+  })
+
+  plugin.dependencies = ['ethWallet', 'tokens']
+  plugin.uiHooks.push(...[
+    { eventName: 'metronome-buy', auth: true, handler: onBuyMetronome },
+    { eventName: 'mtn-convert-eth', auth: true, handler: onConvertEthToMtn },
+    { eventName: 'mtn-convert-mtn', auth: true, handler: onConvertMtnToEth },
+    { eventName: 'metronome-estimate-eth-to-met', handler: onEstimateEthToMet },
+    { eventName: 'metronome-estimate-met-to-eth', handler: onEstimateMetToEth },
+    { eventName: 'metronome-convert-eth-gas-limit', handler: onEthGasLimit },
+    { eventName: 'metronome-convert-met-gas-limit', handler: onMetGasLimit },
+    { eventName: 'metronome-auction-gas-limit', handler: onAuctionGasLimit }
+  ])
+
+  return plugin
 }
 
 module.exports = { init }
