@@ -558,7 +558,11 @@ function init ({ plugins, eventsBus }) {
     uiHooks: [
       { eventName: 'create-wallet', auth: true, handler: createWallet },
       { eventName: 'open-wallets', auth: true, handler: openWallets },
-      { eventName: 'send-eth', auth: true, handler: sendTransaction },
+      {
+        eventName: 'send-eth',
+        auth: true,
+        handler: args => sendTransaction(args)
+      },
       { eventName: 'ui-unload', handler: unsubscribeUpdates },
       { eventName: 'get-gas-price', handler: getGasPrice },
       { eventName: 'get-gas-limit', handler: getGasLimit },
