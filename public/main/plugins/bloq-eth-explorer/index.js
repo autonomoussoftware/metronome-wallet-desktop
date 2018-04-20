@@ -1,90 +1,100 @@
 'use strict'
 
-const axios = require('axios')
 const io = require('socket.io-client')
 const logger = require('electron-log')
 
+const createBasePlugin = require('../../base-plugin')
+
 const { getIndexerApiUrl } = require('./settings')
+const api = require('./api')
 
 const baseURL = getIndexerApiUrl()
 
-const get = (url, params) => axios({ baseURL, url, params })
-  .then(res => res.data)
-
-const getBestBlock = () =>
-  get('/blocks/best')
-
-const getTxs = ({ address, from, to }) =>
-  get(`/addresses/${address}/transactions`, { from, to })
-
-const getTxsWithTokenLogs = ({ address, from, to, tokens = [] }) =>
-  get(
-    `/addresses/${address}/tokentransactions`,
-    { from, to, tokens: tokens.join(',') }
-  )
-
 const socket = io(`${baseURL}/v1`, { autoConnect: false })
 
-socket.on('error', function (err) {
-  logger.warn('Connection error', err.message)
-})
+function start (pluginEmitter) {
+  socket.on('error', function (err) {
+    logger.warn('Connection error', err.message)
 
-socket.on('connect', function () {
-  logger.verbose('Client connected')
-})
+    pluginEmitter.emit('connection-state-changed', 'error')
+  })
 
-socket.on('disconnect', function (reason) {
-  logger.verbose('Connection closed', reason)
-})
+  socket.on('connect', function () {
+    logger.debug('Client connected')
 
-function connect () {
+    pluginEmitter.emit('connection-state-changed', 'connected')
+  })
+
+  socket.on('disconnect', function (reason) {
+    logger.debug('Connection closed', reason)
+
+    pluginEmitter.emit('connection-state-changed', 'disconnected')
+  })
+
   socket.open()
 }
 
-function disconnect () {
+function broadcastConnectivityState (subscriptions, state) {
+  subscriptions.forEach(function ({ webContents }) {
+    webContents.send('connectivity-state-changed', {
+      ok: state === 'connected',
+      reason: `Connection to indexer is ${state}`,
+      plugin: 'bloq-eth-explorer'
+    })
+  })
+}
+
+function stop () {
+  socket.off('error')
+
+  socket.off('connect')
+
+  socket.off('disconnect')
+
   socket.close()
 }
 
-function subscribeAddresses ({ bus, walletId, addresses }) {
+function subscribeAddresses ({ eventsBus, walletId, addresses }) {
   socket.emit('subscribe', addresses, function (err) {
     if (err) {
       logger.warn('Subscription failed', walletId, err)
+      return
     }
+
     logger.debug('Subscription successfull', walletId)
   })
 
   socket.on('tx', function (data) {
     const { type, txid, status, meta } = data
-    logger.debug('New transaction received', { walletId, data })
 
-    bus.emit(`${type}-tx-${status}`, { walletId, txid, meta })
+    logger.verbose('New transaction received', { walletId, data })
+
+    eventsBus.emit(`${type}-tx-${status}`, { walletId, txid, meta })
   })
 }
 
-function attachToEvents (bus) {
-  bus.on('wallet-opened', function ({ walletId, addresses }) {
-    subscribeAddresses({ bus, walletId, addresses })
+function attachToEvents (eventsBus) {
+  eventsBus.on('wallet-opened', function ({ walletId, addresses }) {
+    subscribeAddresses({ eventsBus, walletId, addresses })
   })
 }
 
 function init ({ eventsBus }) {
   attachToEvents(eventsBus)
 
-  return {
-    name: 'bloqEthExplorer',
-    api: {
-      getBestBlock,
-      getTxs,
-      getTxsWithTokenLogs
-    },
-    uiHooks: [{
-      eventName: 'ui-ready',
-      handler: connect
-    }, {
-      eventName: 'ui-unload',
-      handler: disconnect
+  const plugin = createBasePlugin({
+    start,
+    stop,
+    onPluginEvents: [{
+      eventName: 'connection-state-changed',
+      handler: broadcastConnectivityState
     }]
-  }
+  })
+
+  plugin.name = 'bloqEthExplorer'
+  plugin.api = api
+
+  return plugin
 }
 
 module.exports = { init }
