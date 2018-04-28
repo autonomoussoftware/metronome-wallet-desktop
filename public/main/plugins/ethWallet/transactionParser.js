@@ -30,12 +30,10 @@ function transactionParser ({ transaction, receipt, walletId }) {
 
   if (outgoing) {
     return parseTraces({ hash, from })
-      .then(function (parsed) {
-        return Object.assign(meta, parsed)
-      })
+      .then(parsed => Object.assign(meta, parsed))
   }
 
   return meta
 }
 
-module.exports = { transactionParser }
+module.exports = transactionParser

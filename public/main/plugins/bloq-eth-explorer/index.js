@@ -12,7 +12,24 @@ const baseURL = getIndexerApiUrl()
 
 const socket = io(`${baseURL}/v1`, { autoConnect: false })
 
-function start (pluginEmitter) {
+function subscribeBlocks (eventsBus) {
+  socket.emit('subscribe', { type: 'blocks' }, function (err) {
+    if (err) {
+      logger.warn('Blocks subscription failed', err)
+      return
+    }
+
+    logger.debug('Blocks subscription successfull')
+  })
+
+  socket.on('block', function (data) {
+    logger.verbose('New block received', data)
+
+    eventsBus.emit('new-best-block', data)
+  })
+}
+
+const start = eventsBus => function (pluginEmitter) {
   socket.on('error', function (err) {
     logger.warn('Connection error', err.message)
 
@@ -23,6 +40,8 @@ function start (pluginEmitter) {
     logger.debug('Client connected')
 
     pluginEmitter.emit('connection-state-changed', 'connected')
+
+    subscribeBlocks(eventsBus)
   })
 
   socket.on('disconnect', function (reason) {
@@ -55,7 +74,7 @@ function stop () {
 }
 
 function subscribeAddresses ({ eventsBus, walletId, addresses }) {
-  socket.emit('subscribe', addresses, function (err) {
+  socket.emit('subscribe', { type: 'txs', addresses }, function (err) {
     if (err) {
       logger.warn('Subscription failed', walletId, err)
       return
@@ -80,10 +99,8 @@ function attachToEvents (eventsBus) {
 }
 
 function init ({ eventsBus }) {
-  attachToEvents(eventsBus)
-
   const plugin = createBasePlugin({
-    start,
+    start: start(eventsBus),
     stop,
     onPluginEvents: [{
       eventName: 'connection-state-changed',
@@ -93,6 +110,8 @@ function init ({ eventsBus }) {
 
   plugin.name = 'bloqEthExplorer'
   plugin.api = api
+
+  attachToEvents(eventsBus)
 
   return plugin
 }

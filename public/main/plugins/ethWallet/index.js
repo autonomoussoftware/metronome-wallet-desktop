@@ -12,26 +12,23 @@ const settings = require('electron-settings')
 
 const Deferred = requireLib('Deferred')
 const { restart } = requireLib('electron-restart')
-const { subscribe } = requireLib('web3-block-subscribe')
 
+const { encrypt } = require('../../crypto/aes256cbcIv')
+const createBasePlugin = require('../../base-plugin')
 const sha256 = require('../../crypto/sha256')
 const WalletError = require('../../WalletError')
-const { encrypt } = require('../../crypto/aes256cbcIv')
 
-const getWeb3 = require('./web3')
 const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
-const { transactionParser } = require('./transactionParser')
 const { getDatabase, clearDatabase } = require('./db')
 const {
   getAddressBalance,
   getWalletAddresses,
-  getWebsocketApiUrl,
   isAddressInWallet
 } = require('./settings')
-
-let bloqEthExplorer
+const getWeb3 = require('./web3')
+const transactionParser = require('./transactionParser')
 
 const concatArrays = (objValue, srcValue) =>
   isArray(objValue) ? objValue.concat(srcValue) : undefined
@@ -318,7 +315,10 @@ function sendCachedTransactions ({ walletId, webContents }) {
   })
 }
 
-function syncTransactions ({ number, walletId, webContents }) {
+// TODO continue here... When a wallet is opened, the tx cache has to be updated
+// and txs added to the UI. And when new txs arrive, the same.
+
+function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
   const web3 = getWeb3()
 
   return promiseAllProps({
@@ -404,11 +404,9 @@ function syncTransactions ({ number, walletId, webContents }) {
     })
 }
 
-let subscriptions = []
+function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
+  const { bloqEthExplorer } = plugins
 
-let blocksSubscription = null
-
-function openWallet ({ bus, webContents, walletId }) {
   sendWalletOpen(bus, webContents, walletId)
 
   sendBalances({ walletId, webContents })
@@ -417,69 +415,107 @@ function openWallet ({ bus, webContents, walletId }) {
 
   sendCachedTransactions({ walletId, webContents })
 
-  syncTransactions({ walletId, webContents })
+  syncTransactions({ walletId, webContents, bloqEthExplorer })
     .then(function () {
-      subscriptions = subscriptions.concat({ walletId, webContents })
-
-      if (subscriptions.length === 1) {
-        blocksSubscription = subscribe({
-          url: getWebsocketApiUrl(),
-          onData (header) {
-            bus.emit('new-block-header', header)
-          },
-          onError (err) {
-            logger.warn('New block subscription failed', err.message)
-
-            getWeb3().eth.getBlock('latest')
-              .then(function (header) {
-                bus.emit('new-block-header', header)
-              })
-              .catch(function (err) { // eslint-disable-line no-shadow
-                logger.warn('Get block fallback failed too', err.message)
-              })
-          }
-        })
+      function emitNewBlock (data) {
+        plugin.emitter.emit('new-block', data)
       }
+
+      bus.on('new-best-block', emitNewBlock)
+
+      bus.on('stop-updating-best-block', function () {
+        bus.removeListener('new-best-block', emitNewBlock)
+      })
     })
 }
 
-function unsubscribeUpdates (_, webContents) {
-  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
-
-  if (!subscriptions.length && blocksSubscription) {
-    blocksSubscription.unsubscribe(function (err) {
-      if (err) {
-        logger.warn('Could not unsubscribe', err.message)
-        return
-      }
-
-      logger.verbose('New block subscription canceled')
-    })
-
-    blocksSubscription = null
-  }
+const stop = eventsBus => function () {
+  eventsBus.emit('stop-updating-best-block')
 }
 
-function attachToEvents (bus) {
-  bus.on('unconfirmed-tx', function (transaction) {
-    subscriptions.forEach(function (s) {
-      pRetry(
-        () => parseTransaction(Object.assign({ transaction }, s)),
-        { retries: 5, minTimeout: 250 }
+function parseUnconfirmedTransaction (subscriptions, transaction) {
+  subscriptions.forEach(function (s) {
+    pRetry(
+      () => parseTransaction(Object.assign({ transaction }, s, s.meta)),
+      { retries: 5, minTimeout: 250 }
+    )
+      .catch(function (err) {
+        logger.warn(
+          'Could not parse transaction', transaction.hash, err.message
+        )
+      })
+  })
+}
+
+function parseNewTransaction (subscriptions, { walletId, txid }) {
+  const web3 = getWeb3()
+
+  getTransactionAndReceipt({ web3, hash: txid })
+    .then(({ transaction, receipt }) =>
+      Promise.all(subscriptions.map(s =>
+        parseTransaction(Object.assign({
+          transaction,
+          receipt,
+          walletId
+        }, s))
+          .then(() => sendBalances({ walletId, webContents: s.webContents }))
+      ))
+    )
+    .catch(function (err) {
+      logger.warn(
+        'Could not parse incoming transaction', txid, err.message
       )
-        .catch(function (err) {
-          logger.warn(
-            'Could not parse transaction', transaction.hash, err.message
-          )
-        })
     })
+}
+
+function broadcastNewBlock (subscriptions, data) {
+  Promise.all(subscriptions.map(function (s) {
+    s.webContents.send('eth-block', data)
+    logger.verbose('<-- New best block', data)
+
+    return setBestBlock(data)
+  }))
+    .catch(function (err) {
+      logger.warn(
+        'Could not broadcast new block', data.number, err.message
+      )
+    })
+}
+
+function attachToEvents (eventsBus, plugins, plugin) {
+  const { ethWallet } = plugins
+
+  eventsBus.on('unconfirmed-tx', function (transaction) {
+    plugin.emitter.emit('new-tx-received', transaction)
   })
 
-  bus.on('new-block-header', function ({ number }) {
-    subscriptions.forEach(function (s) {
-      syncTransactions(Object.assign({ number }, s))
-    })
+  eventsBus.on('eth-tx-confirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
   })
+
+  eventsBus.on('eth-tx-unconfirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on('tok-tx-confirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on('tok-tx-unconfirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on(
+    'wallet-opened',
+    function ({ walletId, addresses, webContents }) {
+      sendBalances({ ethWallet, walletId, addresses, webContents })
+
+      plugin.emitter.emit(
+        'register-webcontents-metadata',
+        { webContents, meta: { walletId, addresses } }
+      )
+    }
+  )
 }
 
 function getGasPrice () {
@@ -490,29 +526,31 @@ function getGasPrice () {
     .then(gasPrice => ({ gasPrice }))
 }
 
-const createOpenWallets = bus => function (data, webContents) {
-  const activeWallet = settings.get('user.activeWallet')
-  const walletIds = Object.keys(settings.get('user.wallets'))
+const createOpenWallets = (bus, plugins, plugin) =>
+  function (data, webContents) {
+    const activeWallet = settings.get('user.activeWallet')
+    const walletIds = Object.keys(settings.get('user.wallets'))
 
-  walletIds.forEach(function (walletId) {
-    openWallet({ bus, webContents, walletId })
-  })
+    walletIds.forEach(function (walletId) {
+      openWallet({ bus, webContents, walletId, plugins, plugin })
+    })
 
-  return { walletIds, activeWallet }
-}
-
-const createCreateWallet = bus => function (data, webContents) {
-  const { password, mnemonic } = data
-  const result = generateWallet(mnemonic, password)
-
-  if (result.error) {
-    return result
+    return { walletIds, activeWallet }
   }
 
-  openWallet({ bus, webContents, walletId: result.walletId })
+const createCreateWallet = (bus, plugins, plugin) =>
+  function (data, webContents) {
+    const { password, mnemonic } = data
+    const result = generateWallet(mnemonic, password)
 
-  return result
-}
+    if (result.error) {
+      return result
+    }
+
+    openWallet({ bus, webContents, walletId: result.walletId, plugins, plugin })
+
+    return result
+  }
 
 function getGasLimit ({ to }) {
   logger.verbose('Getting limit gas for address: ', to)
@@ -534,39 +572,50 @@ function clearCache () {
 }
 
 function init ({ plugins, eventsBus }) {
-  bloqEthExplorer = plugins.bloqEthExplorer
-
-  const createWallet = createCreateWallet(eventsBus)
-  const openWallets = createOpenWallets(eventsBus)
-  const sendTransaction = createSendTransaction(eventsBus)
-
-  attachToEvents(eventsBus)
-
   registerTxParser(transactionParser)
 
-  return {
-    name: 'ethWallet',
-    api: {
-      getWeb3,
-      isAddressInWallet,
-      registerTxParser,
-      sendTransaction
-    },
-    dependencies: ['bloqEthExplorer'],
-    uiHooks: [
-      { eventName: 'create-wallet', auth: true, handler: createWallet },
-      { eventName: 'open-wallets', auth: true, handler: openWallets },
-      {
-        eventName: 'send-eth',
-        auth: true,
-        handler: args => sendTransaction(args)
-      },
-      { eventName: 'ui-unload', handler: unsubscribeUpdates },
-      { eventName: 'get-gas-price', handler: getGasPrice },
-      { eventName: 'get-gas-limit', handler: getGasLimit },
-      { eventName: 'cache-clear', handler: clearCache }
-    ]
+  const plugin = createBasePlugin({
+    stop: stop(eventsBus),
+    onPluginEvents: [{
+      eventName: 'new-tx-received',
+      handler: parseUnconfirmedTransaction
+    }, {
+      eventName: 'new-txid-received',
+      handler: parseNewTransaction
+    }, {
+      eventName: 'new-block',
+      handler: broadcastNewBlock
+    }]
+  })
+
+  const createWallet = createCreateWallet(eventsBus, plugins, plugin)
+  const openWallets = createOpenWallets(eventsBus, plugins, plugin)
+  const sendTransaction = createSendTransaction(eventsBus)
+
+  plugin.name = 'ethWallet'
+  plugin.api = {
+    getWeb3,
+    isAddressInWallet,
+    registerTxParser,
+    sendTransaction
   }
+  plugin.dependencies = ['bloqEthExplorer']
+  plugin.uiHooks.push(...[
+    { eventName: 'create-wallet', auth: true, handler: createWallet },
+    { eventName: 'open-wallets', auth: true, handler: openWallets },
+    {
+      eventName: 'send-eth',
+      auth: true,
+      handler: args => sendTransaction(args)
+    },
+    { eventName: 'get-gas-price', handler: getGasPrice },
+    { eventName: 'get-gas-limit', handler: getGasLimit },
+    { eventName: 'cache-clear', handler: clearCache }
+  ])
+
+  attachToEvents(eventsBus, plugins, plugin)
+
+  return plugin
 }
 
 module.exports = { init }

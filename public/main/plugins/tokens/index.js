@@ -6,13 +6,15 @@ const createApi = require('./api')
 const sendBalances = require('./balances')
 const transactionParser = require('./transactionParser')
 
-const start = (eventsBus, ethWallet) => function (pluginEmitter) {
+function attachToEvents (eventsBus, plugins, plugin) {
+  const { ethWallet } = plugins
+
   eventsBus.on(
     'wallet-opened',
     function ({ walletId, addresses, webContents }) {
       sendBalances({ ethWallet, walletId, addresses, webContents })
 
-      pluginEmitter.emit(
+      plugin.emitter.emit(
         'register-webcontents-metadata',
         { webContents, meta: { walletId, addresses } }
       )
@@ -20,11 +22,11 @@ const start = (eventsBus, ethWallet) => function (pluginEmitter) {
   )
 
   eventsBus.on('tok-tx-confirmed', function () {
-    pluginEmitter.emit('token-event')
+    plugin.emitter.emit('token-event')
   })
 
   eventsBus.on('tok-tx-unconfirmed', function () {
-    pluginEmitter.emit('token-event')
+    plugin.emitter.emit('token-event')
   })
 }
 
@@ -36,16 +38,10 @@ const broadcastBalances = ethWallet => function (subscriptions) {
   })
 }
 
-const stop = eventsBus => function () {
-  eventsBus.removeAllListeners('wallet-opened')
-
-  eventsBus.removeAllListeners('tok-tx-confirmed')
-
-  eventsBus.removeAllListeners('tok-tx-unconfirmed')
-}
-
 function init ({ plugins, eventsBus }) {
   const { ethWallet } = plugins
+
+  ethWallet.registerTxParser(transactionParser(ethWallet))
 
   const {
     approveToken,
@@ -54,11 +50,7 @@ function init ({ plugins, eventsBus }) {
     sendToken
   } = createApi(ethWallet)
 
-  ethWallet.registerTxParser(transactionParser(ethWallet))
-
   const plugin = createBasePlugin({
-    start: start(eventsBus, ethWallet),
-    stop: stop(eventsBus),
     onPluginEvents: [{
       eventName: 'token-event',
       handler: broadcastBalances(ethWallet)
@@ -75,6 +67,8 @@ function init ({ plugins, eventsBus }) {
     { eventName: 'send-token', auth: true, handler: args => sendToken(args) },
     { eventName: 'tokens-get-gas-limit', handler: getGasLimit }
   ])
+
+  attachToEvents(eventsBus, plugins, plugin)
 
   return plugin
 }

@@ -65,6 +65,7 @@ function createBasePlugin (options) {
   })
 
   return {
+    emitter: pluginEmitter,
     uiHooks: [
       { eventName: 'ui-ready', handler: onReady },
       { eventName: 'ui-unload', handler: onUnload }

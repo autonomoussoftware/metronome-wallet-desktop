@@ -6,15 +6,17 @@ const createApi = require('./api')
 const sendStatus = require('./status')
 const transactionParser = require('./transactionParser')
 
-const start = (eventsBus, ethWallet) => function (pluginEmitter) {
+function attachToEvents (eventsBus, plugins, plugin) {
+  const { ethWallet } = plugins
+
   eventsBus.on('wallet-opened', function ({ webContents }) {
     sendStatus(ethWallet, webContents)
   })
 
-  eventsBus.on('new-block-header', function () {
+  eventsBus.on('new-best-block', function () {
     // TODO send auction status on each block but converter status on txs seen
     // by the indexer
-    pluginEmitter.emit('new-block')
+    plugin.emitter.emit('new-block')
   })
 }
 
@@ -22,12 +24,6 @@ const broadcastStatus = ethWallet => function (subscriptions) {
   subscriptions.forEach(function ({ webContents }) {
     sendStatus(ethWallet, webContents)
   })
-}
-
-const stop = eventsBus => function () {
-  eventsBus.removeAllListeners('wallet-opened')
-
-  eventsBus.removeAllListeners('new-block-header')
 }
 
 function init ({ plugins, eventsBus }) {
@@ -47,8 +43,6 @@ function init ({ plugins, eventsBus }) {
   } = createApi(plugins)
 
   const plugin = createBasePlugin({
-    start: start(eventsBus, ethWallet),
-    stop: stop(eventsBus),
     onPluginEvents: [{
       eventName: 'new-block',
       handler: broadcastStatus(ethWallet)
@@ -66,6 +60,8 @@ function init ({ plugins, eventsBus }) {
     { eventName: 'metronome-convert-met-gas-limit', handler: onMetGasLimit },
     { eventName: 'metronome-auction-gas-limit', handler: onAuctionGasLimit }
   ])
+
+  attachToEvents(eventsBus, plugins, plugin)
 
   return plugin
 }

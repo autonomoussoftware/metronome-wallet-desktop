@@ -1,3 +1,5 @@
+'use strict'
+
 const { app, BrowserWindow } = require('electron')
 const autoUpdater = require('electron-updater').autoUpdater
 const isDev = require('electron-is-dev')
@@ -40,11 +42,11 @@ function loadWindow () {
   initAutoUpdate()
 
   mainWindow.webContents.on('crashed', function (ev, killed) {
-    logger.error(ev, killed)
+    logger.error('Crashed', ev, killed)
   })
 
   mainWindow.on('unresponsive', function (ev) {
-    logger.error(ev)
+    logger.error('Unresponsive', ev.sender.id)
   })
 
   mainWindow.on('closed', function () {
@@ -72,12 +74,12 @@ function initAutoUpdate () {
     logger.info('Update not available.')
   })
   autoUpdater.on('error', err => {
-    logger.error('Error in auto-updater. ' + err)
+    logger.error(`Error in auto-updater. ${err}`)
   })
   autoUpdater.on('download-progress', progressObj => {
-    let msg = 'Download speed: ' + progressObj.bytesPerSecond
-    msg += ' - Downloaded ' + progressObj.percent + '%'
-    msg += ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+    let msg = `Download speed: ${progressObj.bytesPerSecond}`
+    msg += ` - Downloaded ${progressObj.percent}%`
+    msg += ` (${progressObj.transferred}/${progressObj.total})`
     logger.info(msg)
   })
   autoUpdater.on('update-downloaded', info => {
