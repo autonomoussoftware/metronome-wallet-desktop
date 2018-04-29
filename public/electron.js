@@ -14,7 +14,7 @@ const initContextMenu = require('./contextMenu')
 if (isDev) {
   require('dotenv').config()
 
-  app.on('ready', function() {
+  app.on('ready', function () {
     require('electron-debug')({ enabled: true })
 
     const {
@@ -24,8 +24,8 @@ if (isDev) {
     } = require('electron-devtools-installer')
 
     installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-      .then(extName => console.log(`Added Extension:  ${extName}`))
-      .catch(err => console.log('An error occurred: ', err))
+      .then(extName => logger.debug(`Added Extension:  ${extName}`))
+      .catch(err => logger.debug('An error occurred: ', err))
   })
 } else {
   if (config.sentryDsn) {
@@ -42,7 +42,7 @@ if (isDev) {
   }
 }
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -53,7 +53,7 @@ createWindow()
 
 const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
 
-app.on('ready', function() {
+app.on('ready', function () {
   logger.info('App ready, initializing...')
   initMenu()
   initContextMenu()

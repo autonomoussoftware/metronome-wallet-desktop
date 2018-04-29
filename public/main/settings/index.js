@@ -25,9 +25,7 @@ const overwritableSettings = {
   ]
 }
 
-function getKey (key) {
-  return settings.get(key)
-}
+const getKey = key => settings.get(key)
 
 function setKey (key, value) {
   settings.set(key, value)
@@ -76,9 +74,7 @@ function attachSync (ipcMain) {
   })
 }
 
-function getPasswordHash () {
-  return getKey(`user.passwordHash`)
-}
+const getPasswordHash = () => getKey(`user.passwordHash`)
 
 function setPasswordHash (hash) {
   setKey(`user.passwordHash`, hash)
