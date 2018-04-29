@@ -9,7 +9,7 @@
 
 
 ## Install the project dependencies
-The applicatipon need Yarn for install dependencies and run tasks.
+The application need Yarn for install dependencies and run tasks.
 More info and install steps in https://yarnpkg.com/
 
 ```bash
