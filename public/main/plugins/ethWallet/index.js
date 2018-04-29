@@ -6,11 +6,11 @@ const bip39 = require('bip39')
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
+const pDefer = require('p-defer')
 const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
-const Deferred = requireLib('Deferred')
 const { restart } = requireLib('electron-restart')
 
 const { encrypt } = require('../../crypto/aes256cbcIv')
@@ -34,7 +34,7 @@ const concatArrays = (objValue, srcValue) =>
   isArray(objValue) ? objValue.concat(srcValue) : undefined
 
 const createSendTransaction = bus => function (args, resolveToReceipt) {
-  const deferred = new Deferred()
+  const deferred = pDefer()
 
   signAndSendTransaction(args)
     .then(function ({ emitter: txEmitter }) {
