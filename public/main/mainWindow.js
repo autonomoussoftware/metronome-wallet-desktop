@@ -7,7 +7,7 @@ const logger = require('electron-log')
 const notifier = require('node-notifier')
 const path = require('path')
 
-const { restart } = requireLib('electron-restart')
+const restart = require('./electron-restart')
 
 let mainWindow
 

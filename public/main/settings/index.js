@@ -4,7 +4,7 @@ const { merge, unset } = require('lodash')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-const { restart } = requireLib('electron-restart')
+const restart = require('../electron-restart')
 
 const settableSettings = [
   'app.node.websocketApiUrl'

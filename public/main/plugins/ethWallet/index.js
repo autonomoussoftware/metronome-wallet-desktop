@@ -11,10 +11,9 @@ const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
-const { restart } = requireLib('electron-restart')
-
 const { encrypt } = require('../../crypto/aes256cbcIv')
 const createBasePlugin = require('../../base-plugin')
+const restart = require('../../electron-restart')
 const sha256 = require('../../crypto/sha256')
 const WalletError = require('../../WalletError')
 
