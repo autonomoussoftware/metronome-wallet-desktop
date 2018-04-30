@@ -68,6 +68,14 @@ const Disclaimer = styled.div`
   text-align: justify;
 `
 
+const Focusable = styled.div.attrs({
+  tabIndex: '-1'
+})`
+  &:focus {
+    outline: none;
+  }
+`
+
 export default class ConfirmationWizard extends React.Component {
   static propTypes = {
     renderConfirmation: PropTypes.func.isRequired,
@@ -106,6 +114,8 @@ export default class ConfirmationWizard extends React.Component {
 
   state = ConfirmationWizard.initialState
 
+  focusable = null
+
   goToReview = ev => {
     ev.preventDefault()
     const isValid = !this.props.validate || this.props.validate()
@@ -119,10 +129,14 @@ export default class ConfirmationWizard extends React.Component {
 
     if (!this.validateConfirmation()) return
 
-    this.setState({ status: 'pending' })
+    this.setState(
+      { status: 'pending' },
+      () => (this.focusable ? this.focusable.focus() : null)
+    )
     this.props
       .onWizardSubmit(this.state.password)
       .then(result => this.setState({ status: 'success' }))
+      .then(() => (this.focusable ? this.focusable.focus() : null))
       .catch(err => this.setState({ status: 'failure', error: err.message }))
   }
 
@@ -181,15 +195,17 @@ export default class ConfirmationWizard extends React.Component {
     if (status === 'success') {
       return (
         <Sp my={19} mx={12} data-testid="success">
-          <Flex.Column align="center">
-            <CheckIcon color={theme.colors.success} />
-            <Sp my={2}>
-              <Title>{this.props.successTitle}</Title>
-            </Sp>
-            {this.props.successText && (
-              <Message>{this.props.successText}</Message>
-            )}
-          </Flex.Column>
+          <Focusable innerRef={element => (this.focusable = element)}>
+            <Flex.Column align="center">
+              <CheckIcon color={theme.colors.success} />
+              <Sp my={2}>
+                <Title>{this.props.successTitle}</Title>
+              </Sp>
+              {this.props.successText && (
+                <Message>{this.props.successText}</Message>
+              )}
+            </Flex.Column>
+          </Focusable>
         </Sp>
       )
     }
@@ -215,17 +231,19 @@ export default class ConfirmationWizard extends React.Component {
     }
     return (
       <Sp my={19} mx={12} data-testid="waiting">
-        <Flex.Column align="center">
-          <Sp mb={2}>
-            <Title>{this.props.pendingTitle}</Title>
-          </Sp>
-          <LoadingBar />
-          {this.props.pendingText && (
-            <Sp mt={2}>
-              <Message>{this.props.pendingText}</Message>
+        <Focusable innerRef={element => (this.focusable = element)}>
+          <Flex.Column align="center">
+            <Sp mb={2}>
+              <Title>{this.props.pendingTitle}</Title>
             </Sp>
-          )}
-        </Flex.Column>
+            <LoadingBar />
+            {this.props.pendingText && (
+              <Sp mt={2}>
+                <Message>{this.props.pendingText}</Message>
+              </Sp>
+            )}
+          </Flex.Column>
+        </Focusable>
       </Sp>
     )
   }
