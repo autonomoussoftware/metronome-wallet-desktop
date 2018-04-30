@@ -24,13 +24,14 @@ const Container = styled.div`
 const FixedContainer = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
   position: fixed;
-  padding: 0 2.4rem;
+  padding: 0 0.8rem 0 2.4rem;
+  margin-right: 1.6rem;
   left: 64px;
   z-index: 2;
   right: 0;
   top: 0;
   @media (min-width: 800px) {
-    padding: 0 4.8rem;
+    padding: 0 3.2rem 0 4.8rem;
     left: 200px;
   }
 `
