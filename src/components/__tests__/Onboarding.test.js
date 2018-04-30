@@ -83,9 +83,9 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       createPassword(getByTestId)
       acceptMnemonic(getByTestId)
-      expect(queryByTestId('mnemonic')).toBeNull()
+      expect(queryByTestId('mnemonic-label')).toBeNull()
       Simulate.click(getByTestId('goback-btn'))
-      expect(queryByTestId('mnemonic')).not.toBeNull()
+      expect(queryByTestId('mnemonic-label')).not.toBeNull()
     })
 
     describe('when submitting the verify mnemonic form', () => {
@@ -107,7 +107,7 @@ describe('<Onboarding/>', () => {
         const { getByTestId } = reduxRender(element)
         acceptTerms(getByTestId)
         createPassword(getByTestId)
-        const mnemonic = getByTestId('mnemonic').textContent
+        const mnemonic = getByTestId('mnemonic-label').textContent
         acceptMnemonic(getByTestId)
 
         const mnemonicField = getByTestId('mnemonic-field')
@@ -139,9 +139,9 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       createPassword(getByTestId)
       recoverFromMnemonic(getByTestId)
-      expect(queryByTestId('mnemonic')).toBeNull()
+      expect(queryByTestId('mnemonic-label')).toBeNull()
       Simulate.click(getByTestId('cancel-btn'))
-      expect(queryByTestId('mnemonic')).not.toBeNull()
+      expect(queryByTestId('mnemonic-label')).not.toBeNull()
     })
 
     describe('when submitting the recovery form', () => {

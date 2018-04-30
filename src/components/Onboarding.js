@@ -274,7 +274,7 @@ export default class Onboarding extends React.Component {
                     id={useOwnMnemonic ? 'userMnemonic' : 'mnemonicAgain'}
                   />
                 ) : (
-                  <Mnemonic data-testid="mnemonic">{mnemonic}</Mnemonic>
+                  <Mnemonic data-testid="mnemonic-label">{mnemonic}</Mnemonic>
                 )}
               </Sp>
 
