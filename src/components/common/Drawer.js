@@ -23,6 +23,7 @@ injectGlobal`
     opacity: 0;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
+    overflow-x: hidden;
     overflow-y: auto;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open:before {

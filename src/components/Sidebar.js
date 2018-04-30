@@ -10,6 +10,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   transition: width 0.3s;
   position: absolute;
