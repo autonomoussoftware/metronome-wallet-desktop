@@ -1,4 +1,5 @@
 import { validatePassword } from '../validator'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
@@ -201,7 +202,7 @@ export default class ConfirmationWizard extends React.Component {
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
-            {error && <Message>{error}</Message>}
+            {error && <Message>{utils.messageParser(error)}</Message>}
             <TryAgainBtn
               data-testid="try-again-btn"
               onClick={this.onCancelClick}
