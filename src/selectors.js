@@ -176,6 +176,11 @@ export const getBlockHeight = createSelector(
   blockchain => blockchain.height
 )
 
+export const getNetworkGasPrice = createSelector(
+  getBlockchain,
+  blockchain => blockchain.gasPrice
+)
+
 export const getTxConfirmations = createSelector(
   getBlockHeight,
   (state, props) => props.transaction.blockNumber,
