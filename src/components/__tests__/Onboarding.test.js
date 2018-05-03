@@ -3,7 +3,7 @@ import { Simulate } from 'react-testing-library'
 import Onboarding from '../Onboarding'
 import React from 'react'
 
-const mockCallback = jest.fn()
+const mockCallback = jest.fn(() => Promise.resolve())
 const element = <Onboarding onOnboardingCompleted={mockCallback} />
 const VALID_PASSWORD = 'asdasdasdasdasdasd'
 const VALID_MNEMONIC =
