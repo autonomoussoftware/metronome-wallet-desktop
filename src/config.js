@@ -7,7 +7,7 @@ export default {
     '0x6d0cb3142e66f5f3cf196b1df32082bf5f3325d3',
   MTN_EXPLORER_URL:
     process.env.REACT_APP_MTN_EXPLORER_URL ||
-    'http://explorer.mtn.bloqrock.net',
+    'https://explorer.met.bloqrock.net',
   SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN,
   ETH_DEFAULT_GAS_LIMIT: '21000',
   MET_DEFAULT_GAS_LIMIT: '2000000',

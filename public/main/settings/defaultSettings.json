@@ -2,12 +2,12 @@
   "app": {
     "bestBlock": 2500000,
     "node": {
-      "jsonRpcApiUrl": "http://parity.bloqrock.net:8545",
-      "websocketApiUrl": "ws://parity.bloqrock.net:8546"
+      "jsonRpcApiUrl": "http://54.87.93.241:8545",
+      "websocketApiUrl": "ws://54.87.93.241:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
-    "indexerApiUrl": "http://api.indexer.bloqrock.net",
-    "tracerApiUrl": "http://tracer.bloqrock.net"
+    "indexerApiUrl": "https://tracer.met.bloqrock.net",
+    "tracerApiUrl": "https://indexer.met.bloqrock.net"
   },
   "coincap": {
     "ethPriceEmitRate": 5
