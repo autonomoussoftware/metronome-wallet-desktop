@@ -39,7 +39,7 @@ function sendStatus (ethWallet, webContents) {
       webContents.send('metronome-token-status-updated', tokenStatus)
     })
     .catch(function (err) {
-      logger.warn('Could not get metronome status', err)
+      logger.warn('Could not get metronome status', err.message)
 
       // TODO retry before notifying
 

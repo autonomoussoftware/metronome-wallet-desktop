@@ -47,7 +47,7 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
         .catch(function (err) {
-          logger.warn('Could not get token balance', symbol, err)
+          logger.warn('Could not get token balance', symbol, err.message)
 
           // TODO retry before notifying
           webContents.send('connectivity-state-changed', {
