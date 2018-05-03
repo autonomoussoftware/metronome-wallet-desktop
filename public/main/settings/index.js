@@ -1,6 +1,6 @@
 'use strict'
 
-const { merge, unset } = require('lodash')
+const { merge } = require('lodash')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
@@ -9,21 +9,6 @@ const restart = require('../electron-restart')
 const settableSettings = [
   'app.node.websocketApiUrl'
 ]
-
-const overwritableSettings = {
-  0: [
-    'app.bestBlock',
-    'metronome.contracts',
-    'tokens.0xf583c8fe0cbf447727378e3b1e921b1ef81adda8'
-  ],
-  1: [
-    'metronome.contracts',
-    'tokens.0x4c00f8ec2d4fc3d9cbe4d7bd04d80780d5cae77f'
-  ],
-  2: [
-    'user'
-  ]
-}
 
 const getKey = key => settings.get(key)
 
@@ -38,14 +23,23 @@ function presetDefaults () {
   const currentSettings = settings.getAll()
   const defaultSettings = require('./defaultSettings')
 
-  // Clear previous settings if settings file version changed
   const currentSettingsVersion = currentSettings.settingsVersion || 0
-  const settingsToOverwrite = overwritableSettings[currentSettingsVersion] || []
-  if (settingsToOverwrite.length) {
+
+  // User settings format was changed in v2
+  if (currentSettingsVersion <= 1) {
+    logger.warn('Removing old user settings')
+    delete currentSettings.user
+  }
+
+  // Overwrite old settings if settings file version changed
+  if (defaultSettings.settingsVersion > currentSettingsVersion) {
     logger.verbose('Updating default settings')
-    settingsToOverwrite.concat(['settingsVersion']).forEach(function (prop) {
-      unset(currentSettings, prop)
-    })
+
+    if (currentSettings.app) {
+      delete currentSettings.app.bestBlock
+    }
+
+    merge(currentSettings, defaultSettings)
   }
 
   settings.setAll(merge(defaultSettings, currentSettings))
