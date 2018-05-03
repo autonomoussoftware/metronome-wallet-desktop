@@ -95,6 +95,10 @@ function subscribeAddresses ({ eventsBus, walletId, addresses }) {
 function attachToEvents (eventsBus) {
   eventsBus.on('wallet-opened', function ({ walletId, addresses }) {
     subscribeAddresses({ eventsBus, walletId, addresses })
+
+    socket.on('connect', function () {
+      subscribeAddresses({ eventsBus, walletId, addresses })
+    })
   })
 }
 
