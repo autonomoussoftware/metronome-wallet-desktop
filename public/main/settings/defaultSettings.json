@@ -1,5 +1,6 @@
 {
   "app": {
+    "bestBlock": 2500000,
     "node": {
       "jsonRpcApiUrl": "http://parity.bloqrock.net:8545",
       "websocketApiUrl": "ws://parity.bloqrock.net:8546"
@@ -13,17 +14,17 @@
   },
   "metronome": {
     "contracts": {
-      "auctions": "0x9aeb1035b327f4f81198090f4183f21ca6fcb040",
-      "converter": "0x25d99454d94d9459f0abb06009840a48bd04ca44",
-      "token": "0x825a2ce3547e77397b7eac4eb464e2edcfaae514"
+      "auctions": "0x7e25f34e0f16059bea3ffae7d6545c04896cced2",
+      "converter": "0x6d0cb3142e66f5f3cf196b1df32082bf5f3325d3",
+      "token": "0xe0df19e55ebbbe076c3e393ff5d0418a2a0de5f8"
     }
   },
   "tokens": {
-    "0x825a2ce3547e77397b7eac4eb464e2edcfaae514": {
+    "0xe0df19e55ebbbe076c3e393ff5d0418a2a0de5f8": {
       "decimals": 18,
       "name": "Metronome",
       "symbol": "MET"
     }
   },
-  "settingsVersion": 3
+  "settingsVersion": 4
 }

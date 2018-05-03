@@ -213,18 +213,6 @@
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "enableMTNTransfers",
-    "outputs": [{
-      "name": "",
-      "type": "bool"
-    }],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
     "inputs": [{
         "name": "_spender",
         "type": "address"
@@ -235,6 +223,18 @@
       }
     ],
     "name": "approveMore",
+    "outputs": [{
+      "name": "",
+      "type": "bool"
+    }],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "enableMETTransfers",
     "outputs": [{
       "name": "",
       "type": "bool"
@@ -258,11 +258,11 @@
   {
     "constant": true,
     "inputs": [{
-        "name": "_subscriber",
+        "name": "_owner",
         "type": "address"
       },
       {
-        "name": "_subscribedTo",
+        "name": "_recipient",
         "type": "address"
       }
     ],
@@ -358,7 +358,7 @@
   {
     "constant": false,
     "inputs": [{
-      "name": "_from",
+      "name": "_owner",
       "type": "address"
     }],
     "name": "subWithdraw",
@@ -522,6 +522,21 @@
   {
     "constant": false,
     "inputs": [{
+      "name": "_owners",
+      "type": "address[]"
+    }],
+    "name": "multiSubWithdraw",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [{
         "name": "_to",
         "type": "address"
       },
@@ -627,11 +642,11 @@
   {
     "constant": false,
     "inputs": [{
-        "name": "owners",
+        "name": "_owners",
         "type": "address[]"
       },
       {
-        "name": "recipients",
+        "name": "_recipients",
         "type": "address[]"
       }
     ],
@@ -640,18 +655,6 @@
       "name": "",
       "type": "uint256"
     }],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-      "name": "bits",
-      "type": "uint256[]"
-    }],
-    "name": "multiSubWithdraw",
-    "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"

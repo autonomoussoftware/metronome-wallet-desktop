@@ -14,10 +14,9 @@ function getAuctionStatus ({ web3, address }) {
       .then(t => Number.parseInt(t, 10)),
     currentPrice: auctions.methods.currentPrice().call(),
     tokenRemaining: auctions.methods.heartbeat().call()
-      .then(get('[4]')),
-    nextAuctionStartTime: auctions.methods.nextAuction().call()
-      .then(data => data._startTime)
-      .then(t => Number.parseInt(t, 10)),
+      .then(get('minting')), // [4]
+    nextAuctionStartTime: auctions.methods.heartbeat().call()
+      .then(get('nextAuctionGMT')), // [9]
     currentAuction: auctions.methods.currentAuction().call(),
     isInitialAuctionEnded: auctions.methods.isInitialAuctionEnded().call()
   }
