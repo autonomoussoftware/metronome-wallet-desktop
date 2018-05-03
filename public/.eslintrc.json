@@ -6,9 +6,6 @@
   "extends": [
     "bloq"
   ],
-  "globals": {
-    "requireLib": false
-  },
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": false,
