@@ -188,3 +188,14 @@ export function messageParser(str) {
     str
   )
 }
+
+/**
+ * Removes extra spaces and converts to lowercase
+ * Useful for sanitizing user input before recovering a wallet.
+ */
+export function sanitizeMnemonic(str) {
+  return str
+    .replace(/\s+/gi, ' ')
+    .trim()
+    .toLowerCase()
+}

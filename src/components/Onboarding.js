@@ -1,4 +1,5 @@
 import { TextInput, BaseBtn, Btn, Sp } from './common'
+import { sanitizeMnemonic } from '../utils'
 import * as validators from '../validator'
 import EntropyMeter from './EntropyMeter'
 import AltLayout from './AltLayout'
@@ -43,6 +44,12 @@ const RecoverBtn = styled(BaseBtn)`
   }
 `
 
+const ErrorMsg = styled.div`
+  color: ${p => p.theme.colors.danger};
+  margin-top: 1.6rem;
+  text-align: center;
+`
+
 export default class Onboarding extends React.Component {
   static propTypes = {
     onOnboardingCompleted: PropTypes.func.isRequired
@@ -58,7 +65,8 @@ export default class Onboarding extends React.Component {
     userMnemonic: null,
     password: null,
     mnemonic: bip39.generateMnemonic(),
-    errors: {}
+    errors: {},
+    error: null
   }
 
   onTermsAccepted = () => this.setState({ termsWereAccepted: true })
@@ -68,7 +76,8 @@ export default class Onboarding extends React.Component {
     this.setState(state => ({
       ...state,
       [id]: value,
-      errors: { ...state.errors, [id]: null }
+      errors: { ...state.errors, [id]: null },
+      error: null
     }))
   }
 
@@ -131,10 +140,13 @@ export default class Onboarding extends React.Component {
     } = this.state
 
     if (useOwnMnemonic) {
-      const errors = validators.validateMnemonic(userMnemonic, 'userMnemonic')
+      const errors = validators.validateMnemonic(
+        sanitizeMnemonic(userMnemonic),
+        'userMnemonic'
+      )
       if (Object.keys(errors).length > 0) return this.setState({ errors })
     } else {
-      if (mnemonic !== mnemonicAgain) {
+      if (mnemonic !== sanitizeMnemonic(mnemonicAgain)) {
         return this.setState({
           errors: {
             mnemonicAgain:
@@ -144,10 +156,14 @@ export default class Onboarding extends React.Component {
       }
     }
 
-    this.props.onOnboardingCompleted({
-      password,
-      mnemonic: useOwnMnemonic ? userMnemonic : mnemonic
-    })
+    this.props
+      .onOnboardingCompleted({
+        password,
+        mnemonic: useOwnMnemonic ? sanitizeMnemonic(userMnemonic) : mnemonic
+      })
+      .catch(({ message }) =>
+        this.setState({ status: 'failure', error: message || 'Unknown error' })
+      )
   }
 
   render() {
@@ -161,12 +177,23 @@ export default class Onboarding extends React.Component {
       userMnemonic,
       password,
       mnemonic,
-      errors
+      errors,
+      error
     } = this.state
 
     const title = !termsWereAccepted
       ? 'Accept to Continue'
       : !passwordWasDefined ? 'Define a Password' : 'Recovery Passphrase'
+
+    const getWordsAmount = phrase =>
+      sanitizeMnemonic(phrase || '').split(' ').length
+
+    const shouldSubmit = phrase => getWordsAmount(phrase) === 12
+
+    const getTooltip = phrase =>
+      shouldSubmit(phrase)
+        ? null
+        : 'A recovery phrase must have exactly 12 words'
 
     return (
       <AltLayout title={title} data-testid="onboarding-container">
@@ -276,15 +303,29 @@ export default class Onboarding extends React.Component {
                 ) : (
                   <Mnemonic data-testid="mnemonic-label">{mnemonic}</Mnemonic>
                 )}
+                {error && <ErrorMsg data-testid="error-msg">{error}</ErrorMsg>}
               </Sp>
 
               <Sp mt={5}>
                 {useOwnMnemonic ? (
-                  <Btn block submit>
+                  <Btn
+                    data-rh-negative
+                    data-disabled={!shouldSubmit(userMnemonic)}
+                    data-rh={getTooltip(userMnemonic)}
+                    submit={shouldSubmit(userMnemonic)}
+                    block
+                  >
                     Recover
                   </Btn>
                 ) : mnemonicWasCopied ? (
-                  <Btn block submit key="sendMnemonic">
+                  <Btn
+                    data-rh-negative
+                    data-disabled={!shouldSubmit(mnemonicAgain)}
+                    data-rh={getTooltip(mnemonicAgain)}
+                    submit={shouldSubmit(mnemonicAgain)}
+                    block
+                    key="sendMnemonic"
+                  >
                     Done
                   </Btn>
                 ) : (
