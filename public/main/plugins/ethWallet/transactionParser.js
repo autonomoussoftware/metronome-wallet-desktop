@@ -31,6 +31,7 @@ function transactionParser ({ transaction, receipt, walletId }) {
   if (outgoing) {
     return parseTraces({ hash, from })
       .then(parsed => Object.assign(meta, parsed))
+      .catch(err => Object.assign(meta, { parseError: err.message }))
   }
 
   return meta
