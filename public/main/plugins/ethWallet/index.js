@@ -171,7 +171,7 @@ function sendError ({ webContents, walletId, message, err }) {
   webContents.send('error', {
     error: new WalletError(message, err)
   })
-  logger.warn(`<-- Error: ${message}`, { walletId })
+  logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
 function sendBalances ({ walletId, webContents }) {
