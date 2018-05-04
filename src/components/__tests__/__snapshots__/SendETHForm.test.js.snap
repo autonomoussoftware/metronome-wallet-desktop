@@ -236,7 +236,7 @@ exports[`<SendETHForm/> should match its snapshot 1`] = `
                 class="sc-kEYyzF ekxbwv"
               >
                 Gas Price: 
-                1
+                0.0000001
                 (Gwei)
               </span>
             </div>
@@ -253,7 +253,7 @@ exports[`<SendETHForm/> should match its snapshot 1`] = `
       </form>
     </div>
     <div
-      class="sc-jAaTju dAcEaj"
+      class="sc-jDwBTQ fPkhoR"
     >
       <button
         type="submit"

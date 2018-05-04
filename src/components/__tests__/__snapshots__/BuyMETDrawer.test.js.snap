@@ -188,7 +188,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
                 class="sc-kEYyzF ekxbwv"
               >
                 Gas Price: 
-                1
+                0.0000001
                 (Gwei)
               </span>
             </div>
@@ -204,7 +204,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
         </div>
       </div>
       <div
-        class="sc-jDwBTQ kemwUK"
+        class="sc-gPEVay fwZOlX"
       >
         <button
           type="submit"

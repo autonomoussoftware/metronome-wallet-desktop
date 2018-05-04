@@ -103,7 +103,7 @@ function getInitialState({
 } = {}) {
   return {
     connectivity: { isOnline: true },
-    blockchain: { height: 1 },
+    blockchain: { height: 1, gasPrice: '100' },
     metronome: { transferAllowed },
     converter: {
       status: null

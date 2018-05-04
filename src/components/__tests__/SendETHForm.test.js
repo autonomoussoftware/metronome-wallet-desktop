@@ -74,7 +74,7 @@ describe('<SendETHForm/>', () => {
 function getInitialState() {
   return {
     connectivity: { isOnline: true },
-    blockchain: { height: 1 },
+    blockchain: { height: 1, gasPrice: '100' },
     metronome: { transferAllowed: true },
     converter: { status: null },
     auction: { status: null },
