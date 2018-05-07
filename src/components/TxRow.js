@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import config from '../config'
 import React from 'react'
 import theme from '../theme'
+import Web3 from 'web3'
 
 const Container = styled.div`
   margin-left: 1.6rem;
@@ -275,7 +276,7 @@ class TxRow extends React.Component {
                 {tx.txType === 'received' && (
                   <div>
                     {isPending ? 'Pending' : 'Received'} from{' '}
-                    <Address>{tx.from}</Address>
+                    <Address>{Web3.utils.toChecksumAddress(tx.from)}</Address>
                   </div>
                 )}
 
@@ -303,7 +304,7 @@ class TxRow extends React.Component {
                     ) : tx.to === config.CONVERTER_ADDR ? (
                       'CONVERTER CONTRACT'
                     ) : (
-                      <Address>{tx.to}</Address>
+                      <Address>{Web3.utils.toChecksumAddress(tx.to)}</Address>
                     )}
                   </div>
                 )}

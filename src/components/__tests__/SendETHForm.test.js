@@ -39,6 +39,16 @@ describe('<SendETHForm/>', () => {
       })
     })
 
+    it('displays an error if ADDRESS CHECKSUM is invalid', () => {
+      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
+      testUtils.testValidation(getByTestId, 'sendEth-form', {
+        formData: {
+          'toAddress-field': '0xd6758d1907Ed647605429d40cd19C58A6d05Eb8b'
+        },
+        errors: { 'toAddress-field': 'Address checksum is invalid' }
+      })
+    })
+
     amountFields.runValidateTests(element, getInitialState(), 'sendEth-form')
 
     gasEditor.runValidateTests(element, getInitialState(), 'sendEth-form')
