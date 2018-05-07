@@ -5,7 +5,7 @@ import config from '../../config'
 import React from 'react'
 import 'react-testing-library/extend-expect'
 
-const ACTIVE_ADDRESS = '0xf00'
+const ACTIVE_ADDRESS = '0x15dd2028C976beaA6668E286b496A518F457b5Cf'
 
 describe('<Dashboard/>', () => {
   it('Displays active address in header', () => {

@@ -28,8 +28,12 @@ export function validateMetAmount(mtnAmount, max, errors = {}) {
 export function validateToAddress(toAddress, errors = {}) {
   if (!toAddress) {
     errors.toAddress = 'Address is required'
-  } else if (!Web3.utils.isAddress(toAddress)) {
+    // Specifically check for address validity (ignoring checksum)
+  } else if (!Web3.utils.isAddress(toAddress.toLowerCase())) {
     errors.toAddress = 'Invalid address'
+    // Specifically check address checksum
+  } else if (!Web3.utils.checkAddressChecksum(toAddress)) {
+    errors.toAddress = 'Address checksum is invalid'
   }
 
   return errors

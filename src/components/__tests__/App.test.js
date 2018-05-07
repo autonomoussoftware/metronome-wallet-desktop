@@ -61,7 +61,7 @@ describe('<App/>', () => {
       payload: {
         foo: {
           addresses: {
-            '0xf00': {
+            '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: { [config.MTN_TOKEN_ADDR]: { balance: '1' } },
               balance: '1'
             }
