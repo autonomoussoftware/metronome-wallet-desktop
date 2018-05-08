@@ -41,6 +41,12 @@ function sendStatus (ethWallet, webContents) {
     .catch(function (err) {
       logger.warn('Could not get metronome status', err.message)
 
+      // Send token status anyway to allow the UI to start
+      webContents.send(
+        'metronome-token-status-updated',
+        { transferAllowed: false }
+      )
+
       // TODO retry before notifying
 
       webContents.send('connectivity-state-changed', {

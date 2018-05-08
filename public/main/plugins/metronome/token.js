@@ -26,6 +26,12 @@ function getTokenStatus ({ web3, address }) {
 
       return { transferAllowed: allowed }
     })
+    .catch(function (err) {
+      logger.warn('Could not get token transfer status', err.message)
+
+      // Default to false, as this is the "conservative" option
+      return { transferAllowed: false }
+    })
 }
 
 module.exports = { getTokenStatus }
