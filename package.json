@@ -15,6 +15,7 @@
   "dependencies": {
     "7zip-bin": "^3.1.0",
     "axios": "^0.17.1",
+    "axios-cookiejar-support": "^0.3.5",
     "bignumber.js": "^6.0.0",
     "bip39": "^2.5.0",
     "chalk": "^2.3.1",
@@ -65,6 +66,7 @@
     "socket.io-client": "^2.0.4",
     "styled-components": "^3.0.2",
     "supports-color": "^5.3.0",
+    "tough-cookie": "^2.3.4",
     "web3": "1.0.0-beta.33"
   },
   "homepage": "./",
