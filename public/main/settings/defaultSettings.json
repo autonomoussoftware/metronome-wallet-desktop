@@ -6,8 +6,8 @@
       "websocketApiUrl": "ws://54.87.93.241:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
-    "indexerApiUrl": "https://tracer.met.bloqrock.net",
-    "tracerApiUrl": "https://indexer.met.bloqrock.net"
+    "indexerApiUrl": "https://indexer.met.bloqrock.net",
+    "tracerApiUrl": "https://tracer.met.bloqrock.net"
   },
   "coincap": {
     "ethPriceEmitRate": 5
