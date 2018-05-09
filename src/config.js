@@ -1,13 +1,13 @@
 export default {
   MTN_TOKEN_ADDR:
     process.env.REACT_APP_MTN_TOKEN_ADDR ||
-    '0x825a2ce3547e77397b7eac4eb464e2edcfaae514',
+    '0xe0df19e55ebbbe076c3e393ff5d0418a2a0de5f8',
   CONVERTER_ADDR:
     process.env.REACT_APP_CONVERTER_ADDR ||
-    '0x25d99454d94d9459f0abb06009840a48bd04ca44',
+    '0x6d0cb3142e66f5f3cf196b1df32082bf5f3325d3',
   MTN_EXPLORER_URL:
     process.env.REACT_APP_MTN_EXPLORER_URL ||
-    'http://explorer.mtn.bloqrock.net',
+    'https://explorer.met.bloqrock.net',
   SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN,
   ETH_DEFAULT_GAS_LIMIT: '21000',
   MET_DEFAULT_GAS_LIMIT: '2000000',

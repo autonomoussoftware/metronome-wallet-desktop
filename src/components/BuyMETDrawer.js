@@ -9,7 +9,6 @@ import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -25,6 +24,7 @@ const ConfirmationContainer = styled.div`
 
 const ExpectedMsg = styled.div`
   font-size: 1.3rem;
+  color: ${p => (p.error ? p.theme.colors.danger : 'inherit')};
 `
 
 const BtnContainer = styled.div`
@@ -34,6 +34,7 @@ const BtnContainer = styled.div`
 
 class BuyMETDrawer extends React.Component {
   static propTypes = {
+    tokenRemaining: PropTypes.string.isRequired,
     onRequestClose: PropTypes.func.isRequired,
     currentPrice: PropTypes.string.isRequired,
     availableETH: PropTypes.string.isRequired,
@@ -43,11 +44,8 @@ class BuyMETDrawer extends React.Component {
   }
 
   static initialState = {
-    useCustomGas: false,
-    ethAmount: null,
-    usdAmount: null,
-    gasPrice: utils.weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('MET'),
     errors: {}
   }
 
@@ -65,14 +63,7 @@ class BuyMETDrawer extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? utils.toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
@@ -119,18 +110,48 @@ class BuyMETDrawer extends React.Component {
   }
 
   renderConfirmation = () => {
+    const { currentPrice, tokenRemaining } = this.props
     const { ethAmount, usdAmount } = this.state
+
+    const expected = utils.toMET(ethAmount, currentPrice, null, tokenRemaining)
+
     return (
-      <ConfirmationContainer>
-        You will use{' '}
-        <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
-        (${usdAmount}) to buy approximately{' '}
-        <DisplayValue
-          inline
-          value={utils.toMET(ethAmount, this.props.currentPrice)}
-          post=" MET"
-        />{' '}
-        at current price.
+      <ConfirmationContainer data-testid="confirmation">
+        {expected.excedes ? (
+          <React.Fragment>
+            You will use{' '}
+            <DisplayValue value={expected.usedETHAmount} post=" ETH" inline />{' '}
+            to buy{' '}
+            <DisplayValue
+              inline
+              value={this.props.tokenRemaining}
+              post=" MET"
+            />{' '}
+            at current price and get a return of approximately{' '}
+            <DisplayValue inline value={expected.excessETHAmount} post=" ETH" />.
+            <Sp my={2}>
+              <ExpectedMsg error>
+                This operation will deplete the current auction.
+              </ExpectedMsg>
+            </Sp>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            You will use{' '}
+            <DisplayValue
+              value={Web3.utils.toWei(ethAmount)}
+              post=" ETH"
+              inline
+            />{' '}
+            (${usdAmount}) to buy approximately{' '}
+            <DisplayValue
+              inline
+              value={expected.expectedMETamount}
+              post=" MET"
+            />{' '}
+            at current price.
+          </React.Fragment>
+        )}
       </ConfirmationContainer>
     )
   }
@@ -145,14 +166,15 @@ class BuyMETDrawer extends React.Component {
       errors
     } = this.state
 
-    const expectedMETamount = utils.toMET(
+    const { expectedMETamount, excedes, excessETHAmount } = utils.toMET(
       ethAmount,
       this.props.currentPrice,
-      null
+      null,
+      this.props.tokenRemaining
     )
 
     return (
-      <form onSubmit={goToReview} noValidate>
+      <form onSubmit={goToReview} noValidate data-testid="buy-form">
         <Sp py={4} px={3}>
           <AmountFields
             availableETH={this.props.availableETH}
@@ -175,10 +197,23 @@ class BuyMETDrawer extends React.Component {
 
           {expectedMETamount && (
             <Sp mt={2}>
-              <ExpectedMsg>
-                You would get approximately{' '}
-                <DisplayValue inline value={expectedMETamount} post=" MET" />.
-              </ExpectedMsg>
+              {excedes ? (
+                <ExpectedMsg error>
+                  You would get all remaining{' '}
+                  <DisplayValue
+                    inline
+                    value={this.props.tokenRemaining}
+                    post=" MET"
+                  />{' '}
+                  and receive a return of approximately{' '}
+                  <DisplayValue inline value={excessETHAmount} post=" ETH" />.
+                </ExpectedMsg>
+              ) : (
+                <ExpectedMsg>
+                  You would get approximately{' '}
+                  <DisplayValue inline value={expectedMETamount} post=" MET" />.
+                </ExpectedMsg>
+              )}
             </Sp>
           )}
         </Sp>
@@ -198,6 +233,7 @@ class BuyMETDrawer extends React.Component {
     return (
       <Drawer
         onRequestClose={onRequestClose}
+        data-testid="buy-drawer"
         isOpen={isOpen}
         title="Buy Metronome"
       >

@@ -19,71 +19,6 @@ export default class Banner extends React.Component {
             <stop offset="100%" stopColor="#6E4FF2" />
           </linearGradient>
           <rect id="b" width="64" height="64" rx="24" />
-          <filter
-            id="a"
-            width="425%"
-            height="425%"
-            x="-162.5%"
-            y="-162.5%"
-            filterUnits="objectBoundingBox"
-          >
-            <feOffset in="SourceAlpha" result="shadowOffsetOuter1" />
-            <feGaussianBlur
-              in="shadowOffsetOuter1"
-              result="shadowBlurOuter1"
-              stdDeviation="24"
-            />
-            <feComposite
-              in="shadowBlurOuter1"
-              in2="SourceAlpha"
-              operator="out"
-              result="shadowBlurOuter1"
-            />
-            <feColorMatrix
-              in="shadowBlurOuter1"
-              result="shadowMatrixOuter1"
-              values="0 0 0 0 0.494117647 0 0 0 0 0.380392157 0 0 0 0 0.97254902 0 0 0 0.5 0"
-            />
-            <feOffset in="SourceAlpha" result="shadowOffsetOuter2" />
-            <feGaussianBlur
-              in="shadowOffsetOuter2"
-              result="shadowBlurOuter2"
-              stdDeviation="8"
-            />
-            <feComposite
-              in="shadowBlurOuter2"
-              in2="SourceAlpha"
-              operator="out"
-              result="shadowBlurOuter2"
-            />
-            <feColorMatrix
-              in="shadowBlurOuter2"
-              result="shadowMatrixOuter2"
-              values="0 0 0 0 0.494117647 0 0 0 0 0.380392157 0 0 0 0 0.97254902 0 0 0 0.422526042 0"
-            />
-            <feOffset in="SourceAlpha" result="shadowOffsetOuter3" />
-            <feGaussianBlur
-              in="shadowOffsetOuter3"
-              result="shadowBlurOuter3"
-              stdDeviation="8"
-            />
-            <feComposite
-              in="shadowBlurOuter3"
-              in2="SourceAlpha"
-              operator="out"
-              result="shadowBlurOuter3"
-            />
-            <feColorMatrix
-              in="shadowBlurOuter3"
-              result="shadowMatrixOuter3"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"
-            />
-            <feMerge>
-              <feMergeNode in="shadowMatrixOuter1" />
-              <feMergeNode in="shadowMatrixOuter2" />
-              <feMergeNode in="shadowMatrixOuter3" />
-            </feMerge>
-          </filter>
         </defs>
         <g fill="none" fillRule="evenodd">
           <g fill="#7E61F8">
@@ -94,7 +29,6 @@ export default class Banner extends React.Component {
             d="M211.863 52.724h2.526l-4.1 10.459h-2.257l-2.588-6.856-2.526 6.856h-2.278l-4.1-10.46h2.65l2.693 7.374 2.712-7.373h1.864l2.712 7.435 2.692-7.435zm14.163 0v10.459h-2.547v-1.678a3.36 3.36 0 0 1-1.366 1.357c-.594.324-1.27.487-2.03.487-.91 0-1.718-.221-2.422-.663-.704-.442-1.25-1.07-1.636-1.885-.386-.815-.58-1.76-.58-2.837 0-1.077.197-2.034.59-2.869.394-.835.943-1.484 1.647-1.947.704-.462 1.504-.694 2.402-.694.759 0 1.435.162 2.029.487a3.36 3.36 0 0 1 1.366 1.357v-1.574h2.547zm-5.238 8.595c.856 0 1.518-.297 1.987-.89.47-.594.704-1.43.704-2.507 0-1.104-.234-1.954-.704-2.547-.469-.594-1.138-.891-2.008-.891-.856 0-1.522.307-1.998.922-.476.614-.715 1.467-.715 2.558 0 1.077.239 1.905.715 2.485.476.58 1.149.87 2.019.87zm8.816 1.864V47.939h2.568v15.244h-2.568zm6.166 0V47.939h2.568v15.244h-2.568zm14.557-5.095h-7.206c.055 1.118.335 1.943.839 2.475.503.532 1.252.797 2.246.797 1.146 0 2.209-.372 3.189-1.118l.745 1.781c-.496.4-1.107.722-1.832.963a6.93 6.93 0 0 1-2.205.363c-1.712 0-3.058-.484-4.038-1.45-.98-.967-1.47-2.292-1.47-3.977 0-1.063.214-2.009.642-2.837a4.74 4.74 0 0 1 1.801-1.937c.773-.462 1.65-.694 2.63-.694 1.436 0 2.57.466 3.406 1.398.835.932 1.253 2.213 1.253 3.842v.394zm-4.597-3.77c-.69 0-1.253.204-1.688.611-.434.408-.714.998-.838 1.771h4.866c-.083-.787-.321-1.38-.715-1.781-.393-.4-.935-.6-1.625-.6zm10.084.352v4.681c0 1.23.573 1.844 1.719 1.844a3.66 3.66 0 0 0 1.035-.166v2.05c-.456.166-1.008.249-1.657.249-1.187 0-2.098-.331-2.733-.994-.635-.663-.952-1.616-.952-2.858V54.67h-2.009v-1.946h2.009v-2.548l2.588-.87v3.418h2.775v1.946h-2.775z"
           />
           <g>
-            <use fill="#000" filter="url(#a)" xlinkHref="#b" />
             <use fill="url(#c)" xlinkHref="#b" />
             <rect
               width="62"

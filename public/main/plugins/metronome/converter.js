@@ -9,10 +9,10 @@ function getConverterStatus ({ web3, address }) {
   const converter = new web3.eth.Contract(abi, address)
 
   const calls = {
-    availableMtn: converter.methods.getMtnBalance().call(),
+    availableMtn: converter.methods.getMetBalance().call(),
     availableEth: converter.methods.getEthBalance().call(),
     currentPrice: converter.methods
-      .getEthForMtnResult(web3.utils.toWei('1', 'ether'))
+      .getEthForMetResult(web3.utils.toWei('1', 'ether'))
       .call()
   }
 
@@ -21,7 +21,7 @@ function getConverterStatus ({ web3, address }) {
 
 function encodeConvertEthToMtn ({ web3, address, minReturn = 1 }) {
   const contract = new web3.eth.Contract(abi, address)
-  const convert = contract.methods.convertEthToMtn(minReturn)
+  const convert = contract.methods.convertEthToMet(minReturn)
   const data = convert.encodeABI()
 
   return data
@@ -29,7 +29,7 @@ function encodeConvertEthToMtn ({ web3, address, minReturn = 1 }) {
 
 function encodeConvertMtnToEth ({ web3, address, value, minReturn = 1 }) {
   const contract = new web3.eth.Contract(abi, address)
-  const convert = contract.methods.convertMtnToEth(value, minReturn)
+  const convert = contract.methods.convertMetToEth(value, minReturn)
   const data = convert.encodeABI()
 
   return data
@@ -37,12 +37,12 @@ function encodeConvertMtnToEth ({ web3, address, value, minReturn = 1 }) {
 
 function getMtnForEthResult ({ web3, address, value }) {
   const contract = new web3.eth.Contract(abi, address)
-  return contract.methods.getMtnForEthResult(value).call()
+  return contract.methods.getMetForEthResult(value).call()
 }
 
 function getEthForMtnResult ({ web3, address, value }) {
   const contract = new web3.eth.Contract(abi, address)
-  return contract.methods.getEthForMtnResult(value).call()
+  return contract.methods.getEthForMetResult(value).call()
 }
 
 function getConverterGasLimit ({ web3, from, address, value, minReturn = '1', type = 'met' }) {
@@ -50,18 +50,18 @@ function getConverterGasLimit ({ web3, from, address, value, minReturn = '1', ty
 
   const contract = new web3.eth.Contract(abi, address)
   const convert = type === 'met'
-    ? contract.methods.convertMtnToEth(value, minReturn)
-    : contract.methods.convertEthToMtn(minReturn)
+    ? contract.methods.convertMetToEth(value, minReturn)
+    : contract.methods.convertEthToMet(minReturn)
 
   const data = convert.encodeABI()
   value = type === 'met' ? '0' : value
 
   return web3.eth.estimateGas({ data, from, to: address, value })
-    .then(gasLimit => {
+    .then(function (gasLimit) {
       logger.verbose(`Converter ${type} gas limit retrieved`, gasLimit)
       return { gasLimit }
     })
-    .catch(err => {
+    .catch(function (err) {
       logger.warn(`Could not estimate converter ${type} gas`, err.message)
       throw err
     })

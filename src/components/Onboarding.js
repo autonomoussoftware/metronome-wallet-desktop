@@ -1,4 +1,5 @@
 import { TextInput, BaseBtn, Btn, Sp } from './common'
+import { sanitizeMnemonic } from '../utils'
 import * as validators from '../validator'
 import EntropyMeter from './EntropyMeter'
 import AltLayout from './AltLayout'
@@ -43,6 +44,12 @@ const RecoverBtn = styled(BaseBtn)`
   }
 `
 
+const ErrorMsg = styled.div`
+  color: ${p => p.theme.colors.danger};
+  margin-top: 1.6rem;
+  text-align: center;
+`
+
 export default class Onboarding extends React.Component {
   static propTypes = {
     onOnboardingCompleted: PropTypes.func.isRequired
@@ -58,7 +65,8 @@ export default class Onboarding extends React.Component {
     userMnemonic: null,
     password: null,
     mnemonic: bip39.generateMnemonic(),
-    errors: {}
+    errors: {},
+    error: null
   }
 
   onTermsAccepted = () => this.setState({ termsWereAccepted: true })
@@ -68,7 +76,8 @@ export default class Onboarding extends React.Component {
     this.setState(state => ({
       ...state,
       [id]: value,
-      errors: { ...state.errors, [id]: null }
+      errors: { ...state.errors, [id]: null },
+      error: null
     }))
   }
 
@@ -131,10 +140,13 @@ export default class Onboarding extends React.Component {
     } = this.state
 
     if (useOwnMnemonic) {
-      const errors = validators.validateMnemonic(userMnemonic, 'userMnemonic')
+      const errors = validators.validateMnemonic(
+        sanitizeMnemonic(userMnemonic),
+        'userMnemonic'
+      )
       if (Object.keys(errors).length > 0) return this.setState({ errors })
     } else {
-      if (mnemonic !== mnemonicAgain) {
+      if (mnemonic !== sanitizeMnemonic(mnemonicAgain)) {
         return this.setState({
           errors: {
             mnemonicAgain:
@@ -144,10 +156,14 @@ export default class Onboarding extends React.Component {
       }
     }
 
-    this.props.onOnboardingCompleted({
-      password,
-      mnemonic: useOwnMnemonic ? userMnemonic : mnemonic
-    })
+    this.props
+      .onOnboardingCompleted({
+        password,
+        mnemonic: useOwnMnemonic ? sanitizeMnemonic(userMnemonic) : mnemonic
+      })
+      .catch(({ message }) =>
+        this.setState({ status: 'failure', error: message || 'Unknown error' })
+      )
   }
 
   render() {
@@ -161,15 +177,26 @@ export default class Onboarding extends React.Component {
       userMnemonic,
       password,
       mnemonic,
-      errors
+      errors,
+      error
     } = this.state
 
     const title = !termsWereAccepted
       ? 'Accept to Continue'
       : !passwordWasDefined ? 'Define a Password' : 'Recovery Passphrase'
 
+    const getWordsAmount = phrase =>
+      sanitizeMnemonic(phrase || '').split(' ').length
+
+    const shouldSubmit = phrase => getWordsAmount(phrase) === 12
+
+    const getTooltip = phrase =>
+      shouldSubmit(phrase)
+        ? null
+        : 'A recovery phrase must have exactly 12 words'
+
     return (
-      <AltLayout title={title}>
+      <AltLayout title={title} data-testid="onboarding-container">
         {!termsWereAccepted && (
           <React.Fragment>
             <Message>
@@ -180,7 +207,12 @@ export default class Onboarding extends React.Component {
             </Message>
 
             <Sp mt={6}>
-              <Btn block onClick={this.onTermsAccepted} autoFocus>
+              <Btn
+                data-testid="accept-terms-btn"
+                autoFocus
+                onClick={this.onTermsAccepted}
+                block
+              >
                 Accept
               </Btn>
             </Sp>
@@ -188,13 +220,14 @@ export default class Onboarding extends React.Component {
         )}
         {termsWereAccepted &&
           !passwordWasDefined && (
-            <form onSubmit={this.onPasswordSubmitted}>
+            <form onSubmit={this.onPasswordSubmitted} data-testid="pass-form">
               <Message>
                 Enter a strong password until the meter turns{' '}
                 <Green>green</Green>.
               </Message>
               <Sp mt={2}>
                 <TextInput
+                  data-testid="pass-field"
                   autoFocus
                   onChange={this.onInputChanged}
                   error={errors.password}
@@ -210,6 +243,7 @@ export default class Onboarding extends React.Component {
               </Sp>
               <Sp mt={3}>
                 <TextInput
+                  data-testid="pass-again-field"
                   onChange={this.onInputChanged}
                   error={errors.passwordAgain}
                   label="Repeat password"
@@ -227,7 +261,10 @@ export default class Onboarding extends React.Component {
           )}
         {termsWereAccepted &&
           passwordWasDefined && (
-            <form onSubmit={this.onMnemonicAccepted}>
+            <form
+              data-testid="mnemonic-form"
+              onSubmit={this.onMnemonicAccepted}
+            >
               {useOwnMnemonic ? (
                 <Message>
                   Enter a valid 12 word passphrase to recover a previously
@@ -248,6 +285,7 @@ export default class Onboarding extends React.Component {
               <Sp mt={3} mx={-8}>
                 {useOwnMnemonic || mnemonicWasCopied ? (
                   <TextInput
+                    data-testid="mnemonic-field"
                     autoFocus
                     onChange={this.onInputChanged}
                     label="Recovery passphrase"
@@ -263,21 +301,36 @@ export default class Onboarding extends React.Component {
                     id={useOwnMnemonic ? 'userMnemonic' : 'mnemonicAgain'}
                   />
                 ) : (
-                  <Mnemonic>{mnemonic}</Mnemonic>
+                  <Mnemonic data-testid="mnemonic-label">{mnemonic}</Mnemonic>
                 )}
+                {error && <ErrorMsg data-testid="error-msg">{error}</ErrorMsg>}
               </Sp>
 
               <Sp mt={5}>
                 {useOwnMnemonic ? (
-                  <Btn block submit>
+                  <Btn
+                    data-rh-negative
+                    data-disabled={!shouldSubmit(userMnemonic)}
+                    data-rh={getTooltip(userMnemonic)}
+                    submit={shouldSubmit(userMnemonic)}
+                    block
+                  >
                     Recover
                   </Btn>
                 ) : mnemonicWasCopied ? (
-                  <Btn block submit key="sendMnemonic">
+                  <Btn
+                    data-rh-negative
+                    data-disabled={!shouldSubmit(mnemonicAgain)}
+                    data-rh={getTooltip(mnemonicAgain)}
+                    submit={shouldSubmit(mnemonicAgain)}
+                    block
+                    key="sendMnemonic"
+                  >
                     Done
                   </Btn>
                 ) : (
                   <Btn
+                    data-testid="copied-mnemonic-btn"
                     autoFocus
                     onClick={this.onMnemonicWasCopiedToggled}
                     block
@@ -289,15 +342,27 @@ export default class Onboarding extends React.Component {
               </Sp>
               <Sp mt={2}>
                 {useOwnMnemonic ? (
-                  <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
+                  <RecoverBtn
+                    data-testid="cancel-btn"
+                    onClick={this.onUseOwnMnemonicToggled}
+                    block
+                  >
                     Cancel
                   </RecoverBtn>
                 ) : mnemonicWasCopied ? (
-                  <RecoverBtn block onClick={this.onMnemonicWasCopiedToggled}>
+                  <RecoverBtn
+                    data-testid="goback-btn"
+                    onClick={this.onMnemonicWasCopiedToggled}
+                    block
+                  >
                     Go back
                   </RecoverBtn>
                 ) : (
-                  <RecoverBtn block onClick={this.onUseOwnMnemonicToggled}>
+                  <RecoverBtn
+                    data-testid="recover-btn"
+                    onClick={this.onUseOwnMnemonicToggled}
+                    block
+                  >
                     Or recover a wallet from a saved passphrase
                   </RecoverBtn>
                 )}

@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import Deferred from './lib/Deferred'
+import config from './config'
 import cuid from 'cuid'
 import Web3 from 'web3'
 
@@ -105,7 +106,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
   return expectedETHamount
 }
 
-export function toMET(amount, rate, errorValue = 'Invalid amount') {
+export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
   let isValidAmount
   let weiAmount
   try {
@@ -124,7 +125,28 @@ export function toMET(amount, rate, errorValue = 'Invalid amount') {
       )
     : errorValue
 
-  return expectedMETamount
+  const excedes = isValidAmount
+    ? Web3.utils.toBN(expectedMETamount).gte(Web3.utils.toBN(remaining))
+    : null
+
+  const usedETHAmount =
+    isValidAmount && excedes
+      ? new BigNumber(remaining)
+          .multipliedBy(new BigNumber(rate))
+          .dividedBy(new BigNumber(Web3.utils.toWei('1')))
+          .integerValue()
+          .toString(10)
+      : null
+
+  const excessETHAmount =
+    isValidAmount && excedes
+      ? weiAmount
+          .minus(usedETHAmount)
+          .integerValue()
+          .toString(10)
+      : null
+
+  return { expectedMETamount, excedes, usedETHAmount, excessETHAmount }
 }
 
 export function weiToGwei(amount) {
@@ -133,4 +155,50 @@ export function weiToGwei(amount) {
 
 export function gweiToWei(amount) {
   return Web3.utils.toWei(amount, 'gwei')
+}
+
+export function smartRound(weiAmount) {
+  let n = Number.parseFloat(Web3.utils.fromWei(weiAmount), 10)
+  let decimals = -Math.log10(n) + 10
+  if (decimals < 2) {
+    decimals = 2
+  } else if (decimals >= 18) {
+    decimals = 18
+  }
+  // round extra decimals and remove trailing zeroes
+  return new BigNumber(n.toFixed(Math.ceil(decimals))).toString(10)
+}
+
+/**
+ * Perform an array of common replacements on strings
+ * Each replacement is defined by an object of shape { search, replaceWith }
+ * 'search' and 'replaceWith' are used as first and second argument of
+ * String.prototype.replace() so the same specs apply.
+ */
+export function messageParser(str) {
+  const replacements = [
+    { search: config.MTN_TOKEN_ADDR, replaceWith: 'MET TOKEN CONTRACT' },
+    { search: config.CONVERTER_ADDR, replaceWith: 'CONVERTER CONTRACT' },
+    {
+      search: /(.*Insufficient\sfunds.*Required\s)(\d+)(\sand\sgot:\s)(\d+)(.*)/gim,
+      replaceWith: (match, p1, p2, p3, p4, p5) =>
+        [p1, smartRound(p2), ' ETH', p3, smartRound(p4), ' ETH', p5].join('')
+    }
+  ]
+
+  return replacements.reduce(
+    (output, { search, replaceWith }) => output.replace(search, replaceWith),
+    str
+  )
+}
+
+/**
+ * Removes extra spaces and converts to lowercase
+ * Useful for sanitizing user input before recovering a wallet.
+ */
+export function sanitizeMnemonic(str) {
+  return str
+    .replace(/\s+/gi, ' ')
+    .trim()
+    .toLowerCase()
 }

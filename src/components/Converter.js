@@ -115,6 +115,7 @@ class Converter extends React.Component {
   static propTypes = {
     convertFeatureStatus: PropTypes.oneOf([
       'in-initial-auction',
+      'transfer-disabled',
       'offline',
       'ok'
     ]).isRequired,
@@ -141,10 +142,13 @@ class Converter extends React.Component {
     } = this.props
 
     return (
-      <DarkLayout title="Autonomous Converter">
+      <DarkLayout
+        data-testid="converter-container"
+        title="Autonomous Converter"
+      >
         {converterStatus ? (
           <Container>
-            <StatsContainer>
+            <StatsContainer data-testid="stats">
               <Sp p={2}>
                 <Flex.Row justify="space-between" align="baseline">
                   <Label>Current Price</Label>
@@ -198,9 +202,12 @@ class Converter extends React.Component {
                   ? "Can't convert while offline"
                   : convertFeatureStatus === 'in-initial-auction'
                     ? 'Conversions are disabled during Initial Auction'
-                    : null
+                    : convertFeatureStatus === 'transfer-disabled'
+                      ? 'MET conversions not enabled yet'
+                      : null
               }
               data-modal="convert"
+              data-testid="convert-btn"
               onClick={convertFeatureStatus === 'ok' ? this.onOpenModal : null}
             >
               Convert
@@ -213,7 +220,7 @@ class Converter extends React.Component {
           </Container>
         ) : (
           <Sp p={6}>
-            <LoadingContainer>
+            <LoadingContainer data-testid="waiting">
               <Text>Waiting for converter status...</Text>
               <Sp py={2}>
                 <LoadingBar />

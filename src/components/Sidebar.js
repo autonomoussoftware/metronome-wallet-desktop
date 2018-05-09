@@ -1,6 +1,7 @@
 import { ConverterIcon, AuctionIcon, WalletIcon, LogoIcon, Sp } from './common'
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
+import CogIcon from './common/CogIcon'
 import styled from 'styled-components'
 import Logo from './Logo'
 
@@ -10,6 +11,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   transition: width 0.3s;
   position: absolute;
@@ -34,16 +36,44 @@ const LogoLargeContainer = styled.div`
   padding: 3.2rem 3.2rem 5.6rem;
   height: 125px;
   display: none;
+  flex-shrink: 0;
   @media (min-width: 800px) {
     display: block;
   }
 `
+
 const LogoSmallContainer = styled.div`
   padding: 2.3rem 1.6rem;
   height: 125px;
   display: block;
+  flex-shrink: 0;
   @media (min-width: 800px) {
     display: none;
+  }
+`
+
+const SecondaryNavIcon = styled.div`
+  padding: 3.2rem 0 2.4rem 1.9rem;
+  display: block;
+
+  @media (min-height: 650px) {
+    padding-top: 6rem;
+  }
+
+  @media (min-width: 800px) {
+    display: none;
+  }
+
+  & svg {
+    opacity: 0.5;
+    transition: transform 0.3s;
+    transform: rotate(0deg);
+    transform-origin: center center;
+  }
+
+  ${Container}:hover & svg {
+    opacity: 1;
+    transform: rotate(-90deg);
   }
 `
 
@@ -83,9 +113,6 @@ const Button = styled(NavLink)`
 const IconWrapper = styled.div`
   margin-right: 1.6rem;
   margin-left: 0.3rem;
-  @media (min-width: 800px) {
-    margin-left: 0;
-  }
 `
 
 const BtnText = styled.span`
@@ -105,7 +132,7 @@ const SecondaryBtn = styled(NavLink)`
   padding: 0.8rem 1.6rem;
   line-height: 2rem;
   opacity: 0;
-  transition: 0.6s;
+  transition: all 600ms, opacity 200ms, transform 800ms;
   position: relative;
   &[disabled] {
     pointer-events: none;
@@ -135,8 +162,23 @@ const SecondaryBtn = styled(NavLink)`
     height: 8px;
   }
 
+  &:nth-child(1) {
+    transform: translateY(16.2rem);
+  }
+
+  &:nth-child(2) {
+    transform: translateY(12.6rem);
+  }
+
+  &:nth-child(3) {
+    transform: translateY(9rem);
+  }
+
   ${Container}:hover & {
+    transform: translateY(0);
     opacity: 0.5;
+    transition: all 600ms, opacity 400ms, transform 400ms;
+    transition-delay: 0s, 100ms, 0s;
 
     &.active {
       opacity: 1;
@@ -144,6 +186,9 @@ const SecondaryBtn = styled(NavLink)`
   }
 
   @media (min-width: 800px) {
+    ${Container} & {
+      transform: translateY(0);
+    }
     opacity: 0.5;
     &.active {
       opacity: 1;
@@ -153,11 +198,11 @@ const SecondaryBtn = styled(NavLink)`
 
 const Footer = styled.div`
   padding: 4.8rem 1.6rem 2.4rem;
-  height: 104px;
-  transition: opacity 0.3s;
-  opacity: 0;
+  height: 108px;
+  display: none;
+
   @media (min-width: 800px) {
-    opacity: 1;
+    display: block;
   }
 `
 
@@ -173,19 +218,31 @@ class Sidebar extends Component {
         </LogoSmallContainer>
 
         <MainMenu>
-          <Button activeClassName="active" to="/wallets">
+          <Button
+            activeClassName="active"
+            data-testid="wallets-nav-btn"
+            to="/wallets"
+          >
             <IconWrapper>
               <WalletIcon />
             </IconWrapper>
             <BtnText>Wallets</BtnText>
           </Button>
-          <Button activeClassName="active" to="/auction">
+          <Button
+            activeClassName="active"
+            data-testid="auction-nav-btn"
+            to="/auction"
+          >
             <IconWrapper>
               <AuctionIcon />
             </IconWrapper>
             <BtnText>Auction</BtnText>
           </Button>
-          <Button activeClassName="active" to="/converter">
+          <Button
+            activeClassName="active"
+            data-testid="converter-nav-btn"
+            to="/converter"
+          >
             <IconWrapper>
               <ConverterIcon />
             </IconWrapper>
@@ -193,15 +250,31 @@ class Sidebar extends Component {
           </Button>
         </MainMenu>
         <Sp mt={2}>
-          <SecondaryBtn activeClassName="active" to="/tools">
+          <SecondaryBtn
+            activeClassName="active"
+            to="/tools"
+            data-testid="tools-nav-btn"
+          >
             Tools
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" to="/settings">
+          <SecondaryBtn
+            activeClassName="active"
+            to="/settings"
+            data-testid="settings-nav-btn"
+          >
             Settings
           </SecondaryBtn>
-          <SecondaryBtn activeClassName="active" disabled to="/help">
+          <SecondaryBtn
+            activeClassName="active"
+            disabled
+            to="/help"
+            data-testid="help-nav-btn"
+          >
             Help
           </SecondaryBtn>
+          <SecondaryNavIcon>
+            <CogIcon size="2.4rem" />
+          </SecondaryNavIcon>
         </Sp>
         <Footer>
           <LogoIcon negative />

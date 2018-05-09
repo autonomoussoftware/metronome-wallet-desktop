@@ -48,7 +48,11 @@ const Container = styled.div`
 `
 
 const onRenderContent = (target, content) => {
-  return <Container negative={target.dataset.rhNegative}>{content}</Container>
+  return (
+    <Container data-testid="tooltip" negative={target.dataset.rhNegative}>
+      {content}
+    </Container>
+  )
 }
 
 const Tooltips = () => (

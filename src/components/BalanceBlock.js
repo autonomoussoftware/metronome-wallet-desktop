@@ -37,13 +37,14 @@ const CoinSymbol = styled.div`
 
 const Value = styled.div`
   line-height: 1.5;
+  font-weight: 600;
   letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0 1.6rem;
   flex-grow: 1;
   position: relative;
   top: ${relSize(-400)};
-  font-size: ${relSize(40)};
+  font-size: ${relSize(32)};
 
   @media (min-width: 800px) {
     font-size: ${relSize(44)};
@@ -66,7 +67,7 @@ const USDValue = styled.div`
   opacity: ${p => (p.hide ? '0' : '1')};
   position: relative;
   top: ${relSize(-400)};
-  font-size: ${relSize(40)};
+  font-size: ${relSize(36)};
 
   @media (min-width: 800px) {
     font-size: ${relSize(68)};
@@ -97,17 +98,21 @@ class BalanceBlock extends React.Component {
       <React.Fragment>
         <Balance>
           <CoinSymbol>MET</CoinSymbol>
-          <Value large>
+          <Value data-testid="met-balance" large>
             <DisplayValue maxSize="inherit" value={mtnBalanceWei} />
           </Value>
-          <USDValue hide>${mtnBalanceUSD} (USD)</USDValue>
+          <USDValue data-testid="met-balance-usd" hide>
+            ${mtnBalanceUSD} (USD)
+          </USDValue>
         </Balance>
         <Balance>
           <CoinSymbol>ETH</CoinSymbol>
-          <Value>
+          <Value data-testid="eth-balance">
             <DisplayValue maxSize="inherit" value={ethBalanceWei} />
           </Value>
-          <USDValue>${ethBalanceUSD} (USD)</USDValue>
+          <USDValue data-testid="eth-balance-usd">
+            ${ethBalanceUSD} (USD)
+          </USDValue>
         </Balance>
       </React.Fragment>
     )

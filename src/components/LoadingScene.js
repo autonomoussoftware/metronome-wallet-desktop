@@ -5,7 +5,7 @@ import React from 'react'
 export default class LoadingScene extends React.Component {
   render() {
     return (
-      <AltLayout title="Contacting Network...">
+      <AltLayout title="Contacting Network..." data-testid="loading-scene">
         <LoadingBar />
       </AltLayout>
     )

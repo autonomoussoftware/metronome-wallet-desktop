@@ -23,6 +23,7 @@ injectGlobal`
     opacity: 0;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open {
+    overflow-x: hidden;
     overflow-y: auto;
   }
   .ReactModal__Overlay.ReactModal__Overlay--after-open:before {
@@ -59,11 +60,16 @@ const Header = styled.header`
 `
 
 const Title = styled.h1`
-  font-size: 2.4rem;
-  line-height: 3rem;
+  font-size: 2rem;
+  line-height: 2rem;
   font-weight: bold;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0;
+
+  @media (min-height: 700px) {
+    font-size: 2.4rem;
+    line-height: 3rem;
+  }
 `
 
 const CloseButton = styled.button`
@@ -77,11 +83,10 @@ const CloseButton = styled.button`
   }
 `
 
-Modal.setAppElement('#root')
-
 export default class Drawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    'data-testid': PropTypes.string,
     children: PropTypes.node.isRequired,
     isOpen: PropTypes.bool.isRequired,
     title: PropTypes.string
@@ -95,6 +100,7 @@ export default class Drawer extends React.Component {
         onRequestClose={onRequestClose}
         closeTimeoutMS={600}
         contentLabel="Modal"
+        ariaHideApp={process.env.NODE_ENV !== 'test'}
         isOpen={isOpen}
         style={{
           overlay: {
@@ -124,13 +130,16 @@ export default class Drawer extends React.Component {
       >
         {title && (
           <Header>
-            <Title>{title}</Title>
-            <CloseButton onClick={onRequestClose}>
+            <Title data-testid="drawer-title">{title}</Title>
+            <CloseButton
+              data-testid="drawer-close-btn"
+              onClick={onRequestClose}
+            >
               <CloseIcon />
             </CloseButton>
           </Header>
         )}
-        {children}
+        <div data-testid={this.props['data-testid']}>{children}</div>
       </Container>
     )
   }

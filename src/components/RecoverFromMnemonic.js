@@ -1,8 +1,8 @@
-import { DarkLayout, Btn, Sp, TextInput } from './common'
-import { sendToMainProcess } from '../utils'
+import { DarkLayout, Btn, Sp, TextInput, Flex } from './common'
 import { validateMnemonic } from '../validator'
 import ConfirmationWizard from './ConfirmationWizard'
 import { withRouter } from 'react-router-dom'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -12,6 +12,11 @@ const Confirmation = styled.div`
   background-color: ${p => p.theme.colors.darkShade};
   border-radius: 4px;
   padding: 0.8rem 1.6rem;
+`
+const ValidationMsg = styled.div`
+  font-size: 1.4rem;
+  margin-left: 1.6rem;
+  opacity: 0.75;
 `
 
 class RecoverFromMnemonic extends React.Component {
@@ -27,7 +32,7 @@ class RecoverFromMnemonic extends React.Component {
   }
 
   validate = () => {
-    const errors = validateMnemonic(this.state.mnemonic)
+    const errors = validateMnemonic(utils.sanitizeMnemonic(this.state.mnemonic))
     const hasErrors = Object.keys(errors).length > 0
     if (hasErrors) this.setState({ errors })
     return !hasErrors
@@ -43,15 +48,17 @@ class RecoverFromMnemonic extends React.Component {
   }
 
   onWizardSubmit = password => {
-    return sendToMainProcess('create-wallet', {
-      mnemonic: this.state.mnemonic,
-      password
-    }).then(() => this.props.history.push('/wallets'))
+    return utils
+      .sendToMainProcess('create-wallet', {
+        mnemonic: utils.sanitizeMnemonic(this.state.mnemonic),
+        password
+      })
+      .then(() => this.props.history.push('/wallets'))
   }
 
   renderConfirmation = () => {
     return (
-      <Confirmation>
+      <Confirmation data-testid="confirmation">
         <h3>Are you sure?</h3>
         <p>This operation will overwrite and restart the current wallet!</p>
       </Confirmation>
@@ -60,12 +67,14 @@ class RecoverFromMnemonic extends React.Component {
 
   renderForm = goToReview => {
     const { mnemonic, errors } = this.state
+    const wordsAmount = utils.sanitizeMnemonic(mnemonic || '').split(' ').length
 
     return (
-      <form onSubmit={goToReview}>
+      <form data-testid="recover-form" onSubmit={goToReview}>
         <p>Enter the 12 words to recover your wallet.</p>
         <p>This action will replace your current stored seed!</p>
         <TextInput
+          data-testid="mnemonic-field"
           autoFocus
           onChange={this.onInputChanged}
           label="Recovery phrase"
@@ -75,7 +84,16 @@ class RecoverFromMnemonic extends React.Component {
           id="mnemonic"
         />
         <Sp mt={4}>
-          <Btn submit>Recover</Btn>
+          <Flex.Row align="center">
+            <Btn disabled={wordsAmount !== 12} submit>
+              Recover
+            </Btn>
+            {wordsAmount !== 12 && (
+              <ValidationMsg>
+                A recovery phrase must have exactly 12 words
+              </ValidationMsg>
+            )}
+          </Flex.Row>
         </Sp>
       </form>
     )
@@ -83,7 +101,7 @@ class RecoverFromMnemonic extends React.Component {
 
   render() {
     return (
-      <DarkLayout title="Recover wallet">
+      <DarkLayout title="Recover wallet" data-testid="recover-container">
         <Sp py={4} px={6}>
           <ConfirmationWizard
             renderConfirmation={this.renderConfirmation}

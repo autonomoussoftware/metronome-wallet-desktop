@@ -24,13 +24,14 @@ const Container = styled.div`
 const FixedContainer = styled.div`
   background-color: ${p => p.theme.colors.bg.primary};
   position: fixed;
-  padding: 0 2.4rem;
+  padding: 0 0.8rem 0 2.4rem;
+  margin-right: 1.6rem;
   left: 64px;
   z-index: 2;
   right: 0;
   top: 0;
   @media (min-width: 800px) {
-    padding: 0 4.8rem;
+    padding: 0 3.2rem 0 4.8rem;
     left: 200px;
   }
 `
@@ -103,7 +104,7 @@ class Dashboard extends React.Component {
     const { sendFeatureStatus, hasTransactions } = this.props
 
     return (
-      <Container>
+      <Container data-testid="dashboard-container">
         <FixedContainer>
           <DashboardHeader />
         </FixedContainer>
@@ -115,6 +116,7 @@ class Dashboard extends React.Component {
           <Right>
             <Btn
               data-disabled={sendFeatureStatus !== 'ok' ? true : null}
+              data-testid="send-btn"
               data-rh={
                 sendFeatureStatus === 'offline'
                   ? "Can't send while offline"
@@ -129,7 +131,12 @@ class Dashboard extends React.Component {
               Send
             </Btn>
 
-            <ReceiveBtn block data-modal="receive" onClick={this.onOpenModal}>
+            <ReceiveBtn
+              data-testid="receive-btn"
+              data-modal="receive"
+              onClick={this.onOpenModal}
+              block
+            >
               Receive
             </ReceiveBtn>
           </Right>
@@ -138,7 +145,7 @@ class Dashboard extends React.Component {
         {hasTransactions ? (
           <TxList />
         ) : (
-          <NoTx>No transactions to show yet.</NoTx>
+          <NoTx data-testid="notx-msg">No transactions to show yet.</NoTx>
         )}
 
         <ReceiveDrawer

@@ -1,3 +1,5 @@
+'use strict'
+
 const { memoize } = require('lodash')
 const Web3 = require('web3')
 

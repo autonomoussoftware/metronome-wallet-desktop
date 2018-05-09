@@ -7,7 +7,7 @@ export default class Help extends React.Component {
 
   render() {
     return (
-      <DarkLayout title="Help">
+      <DarkLayout title="Help" data-testid="help-container">
         <Sp py={4} px={6}>
           Content...
         </Sp>

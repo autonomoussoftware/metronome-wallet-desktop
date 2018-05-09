@@ -1,3 +1,5 @@
+'use strict'
+
 const chalk = require('chalk')
 const logger = require('electron-log')
 const isDev = require('electron-is-dev')
@@ -10,38 +12,32 @@ if (isDev) {
   logger.transports.file.level = 'debug'
 }
 
-function getColorLevel(level = '') {
-  switch (level.toString()) {
-    case 'error':
-      return 'red'
-    case 'verbose':
-      return 'cyan'
-    case 'warn':
-      return 'yellow'
-    case 'debug':
-      return 'magenta'
-    case 'silly':
-      return 'blue'
-    default:
-      return 'green'
+function getColorLevel (level = '') {
+  const colors = {
+    error: 'red',
+    verbose: 'cyan',
+    warn: 'yellow',
+    debug: 'magenta',
+    silly: 'blue'
   }
+  return colors[level.toString()] || 'green'
 }
 
-logger.transports.console = function(log) {
-  const color = getColorLevel(log.level)
-  const msg = log.data[0]
-  let info = ''
+logger.transports.console = function ({ date, level, data }) {
+  const color = getColorLevel(level)
 
-  if (log.data[1]) {
-    info += ' => '
-    info +=
-      typeof log.data[1] === 'object'
-        ? JSON.stringify(log.data[1])
-        : log.data[1]
+  const text = data.shift()
+
+  let meta = ''
+  if (data.length) {
+    meta += ' => '
+    meta += data.map(d => typeof d === 'object' ? JSON.stringify(d) : d)
+      .join(', ')
   }
 
+  // eslint-disable-next-line no-console
   console.log(
-    `${log.date.toISOString()} - ${chalk[color](log.level)}:\t ${msg}\t ${info}`
+    `${date.toISOString()} - ${chalk[color](level)}:\t${text}\t${meta}`
   )
 }
 

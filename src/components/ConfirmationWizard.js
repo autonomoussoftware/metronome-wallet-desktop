@@ -1,4 +1,5 @@
 import { validatePassword } from '../validator'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../theme'
@@ -68,6 +69,14 @@ const Disclaimer = styled.div`
   text-align: justify;
 `
 
+const Focusable = styled.div.attrs({
+  tabIndex: '-1'
+})`
+  &:focus {
+    outline: none;
+  }
+`
+
 export default class ConfirmationWizard extends React.Component {
   static propTypes = {
     renderConfirmation: PropTypes.func.isRequired,
@@ -106,6 +115,8 @@ export default class ConfirmationWizard extends React.Component {
 
   state = ConfirmationWizard.initialState
 
+  focusable = null
+
   goToReview = ev => {
     ev.preventDefault()
     const isValid = !this.props.validate || this.props.validate()
@@ -119,10 +130,14 @@ export default class ConfirmationWizard extends React.Component {
 
     if (!this.validateConfirmation()) return
 
-    this.setState({ status: 'pending' })
+    this.setState(
+      { status: 'pending' },
+      () => (this.focusable ? this.focusable.focus() : null)
+    )
     this.props
       .onWizardSubmit(this.state.password)
       .then(result => this.setState({ status: 'success' }))
+      .then(() => (this.focusable ? this.focusable.focus() : null))
       .catch(err => this.setState({ status: 'failure', error: err.message }))
   }
 
@@ -141,7 +156,7 @@ export default class ConfirmationWizard extends React.Component {
     if (status === 'init') return this.props.renderForm(this.goToReview)
     if (status === 'confirm') {
       return (
-        <form onSubmit={this.onConfirmClick}>
+        <form onSubmit={this.onConfirmClick} data-testid="confirm-form">
           <Sp py={4} px={3} style={this.props.styles.confirmation || {}}>
             {this.props.confirmationTitle && (
               <ConfirmationTitle>
@@ -151,6 +166,7 @@ export default class ConfirmationWizard extends React.Component {
             {this.props.renderConfirmation()}
             <Sp mt={2}>
               <TextInput
+                data-testid="pass-field"
                 autoFocus
                 onChange={this.onPasswordChange}
                 error={errors.password}
@@ -166,7 +182,7 @@ export default class ConfirmationWizard extends React.Component {
               Confirm
             </Btn>
             {!this.props.noCancel && (
-              <EditBtn onClick={this.onCancelClick}>
+              <EditBtn onClick={this.onCancelClick} data-testid="cancel-btn">
                 {this.props.editLabel}
               </EditBtn>
             )}
@@ -179,46 +195,56 @@ export default class ConfirmationWizard extends React.Component {
     }
     if (status === 'success') {
       return (
-        <Sp my={19} mx={12}>
-          <Flex.Column align="center">
-            <CheckIcon color={theme.colors.success} />
-            <Sp my={2}>
-              <Title>{this.props.successTitle}</Title>
-            </Sp>
-            {this.props.successText && (
-              <Message>{this.props.successText}</Message>
-            )}
-          </Flex.Column>
+        <Sp my={19} mx={12} data-testid="success">
+          <Focusable innerRef={element => (this.focusable = element)}>
+            <Flex.Column align="center">
+              <CheckIcon color={theme.colors.success} />
+              <Sp my={2}>
+                <Title>{this.props.successTitle}</Title>
+              </Sp>
+              {this.props.successText && (
+                <Message>{this.props.successText}</Message>
+              )}
+            </Flex.Column>
+          </Focusable>
         </Sp>
       )
     }
     if (status === 'failure') {
       return (
-        <Sp my={19} mx={12}>
+        <Sp my={19} mx={12} data-testid="failure">
           <Flex.Column align="center">
             <CloseIcon color={theme.colors.danger} size="4.8rem" />
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
-            {error && <Message>{error}</Message>}
-            <TryAgainBtn onClick={this.onCancelClick}>Try again</TryAgainBtn>
+            {error && <Message>{utils.messageParser(error)}</Message>}
+            <TryAgainBtn
+              data-testid="try-again-btn"
+              onClick={this.onCancelClick}
+              autoFocus
+            >
+              Try again
+            </TryAgainBtn>
           </Flex.Column>
         </Sp>
       )
     }
     return (
-      <Sp my={19} mx={12}>
-        <Flex.Column align="center">
-          <Sp mb={2}>
-            <Title>{this.props.pendingTitle}</Title>
-          </Sp>
-          <LoadingBar />
-          {this.props.pendingText && (
-            <Sp mt={2}>
-              <Message>{this.props.pendingText}</Message>
+      <Sp my={19} mx={12} data-testid="waiting">
+        <Focusable innerRef={element => (this.focusable = element)}>
+          <Flex.Column align="center">
+            <Sp mb={2}>
+              <Title>{this.props.pendingTitle}</Title>
             </Sp>
-          )}
-        </Flex.Column>
+            <LoadingBar />
+            {this.props.pendingText && (
+              <Sp mt={2}>
+                <Message>{this.props.pendingText}</Message>
+              </Sp>
+            )}
+          </Flex.Column>
+        </Focusable>
       </Sp>
     )
   }

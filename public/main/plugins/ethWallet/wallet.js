@@ -1,3 +1,5 @@
+'use strict'
+
 const { getAddressBalance } = require('./eth')
 const { getWalletAddresses, setAddressBalance } = require('./settings')
 

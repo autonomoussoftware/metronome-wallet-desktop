@@ -14,7 +14,7 @@ const Label = styled.label`
 const Input = styled.input`
   border: none;
   display: block;
-  height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
+  height: ${({ rows }) => (rows ? 4 * rows + 0.8 + 'rem' : '4.8rem')};
   padding: 0.8rem 1.6rem;
   background-color: ${p => p.theme.colors.translucentPrimary};
   margin-top: 0.8rem;
@@ -38,6 +38,10 @@ const Input = styled.input`
         ? 'none'
         : `0 2px 0 0px ${p.theme.colors.primary}`};
   }
+
+  @media (min-height: 600px) {
+    height: ${({ rows }) => (rows ? 4 * rows + 1.6 + 'rem' : '5.6rem')};
+  }
 `
 
 const ErrorMsg = styled.div`
@@ -54,6 +58,7 @@ const ErrorMsg = styled.div`
 
 export default class TextInput extends React.Component {
   static propTypes = {
+    'data-testid': PropTypes.string,
     placeholder: PropTypes.string,
     autoFocus: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
@@ -63,7 +68,7 @@ export default class TextInput extends React.Component {
     ]),
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
-    type: PropTypes.oneOf(['text', 'number', 'password']),
+    type: PropTypes.oneOf(['text', 'number', 'password', 'url']),
     rows: PropTypes.number,
     cols: PropTypes.number,
     id: PropTypes.string.isRequired
@@ -91,7 +96,7 @@ export default class TextInput extends React.Component {
           {...other}
         />
         {hasErrors && (
-          <ErrorMsg>
+          <ErrorMsg data-testid={`${this.props['data-testid']}-error`}>
             {typeof error === 'string' ? error : error.join('. ')}
           </ErrorMsg>
         )}

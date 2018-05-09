@@ -1,18 +1,19 @@
-const { isAddressInWallet } = require('../ethWallet')
+'use strict'
+
 const { getAuctionAddress, getConverterAddress } = require('./settings')
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-function transactionParser ({ transaction, walletId }) {
+const transactionParser = ethWallet => function ({ transaction, walletId }) {
   const from = transaction.from.toLowerCase()
   const to = (transaction.to || NULL_ADDRESS).toLowerCase()
 
   const metronome = {}
   const meta = { metronome }
 
-  const outgoing = isAddressInWallet({ walletId, address: from })
-  const toAuction = to === getAuctionAddress() // settings.get('metronome.contracts.auctions').toLowerCase()
-  const toConverter = to === getConverterAddress() // settings.get('metronome.contracts.converter').toLowerCase()
+  const outgoing = ethWallet.isAddressInWallet({ walletId, address: from })
+  const toAuction = to === getAuctionAddress()
+  const toConverter = to === getConverterAddress()
 
   if (outgoing) {
     if (toAuction) {
@@ -29,4 +30,4 @@ function transactionParser ({ transaction, walletId }) {
   return meta
 }
 
-module.exports = { transactionParser }
+module.exports = transactionParser

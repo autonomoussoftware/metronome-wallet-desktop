@@ -1,3 +1,5 @@
+'use strict'
+
 const web3 = require('web3')
 const { decrypt: decryptOld } = require('../../crypto/aes256cbc')
 const { encrypt, decrypt } = require('../../crypto/aes256cbcIv')
@@ -15,7 +17,7 @@ const {
 } = require('./settings')
 const { getPrivateKey } = require('./key')
 
-function getAddressPrivateKey({ walletId, address, password }) {
+function getAddressPrivateKey ({ walletId, address, password }) {
   const { encryptedSeed, derivationPath } = getWallet(walletId)
 
   // TODO remove this check for an old encyption before production release
@@ -34,7 +36,7 @@ function getAddressPrivateKey({ walletId, address, password }) {
   return getPrivateKey({ seed, derivationPath, index })
 }
 
-function signAndSendTransaction(args) {
+function signAndSendTransaction (args) {
   const { password } = args
   const { from, to, value, data, gasLimit, gasPrice } = args
 
@@ -47,7 +49,7 @@ function signAndSendTransaction(args) {
     gasPrice: web3.utils.toHex(gasPrice)
   }
 
-  return completedTransactionParams(params).then(function(allParams) {
+  return completedTransactionParams(params).then(function (allParams) {
     const walletId = findWalletId(from)
     if (!walletId) {
       return Promise.reject(new Error('Origin address not found'))

@@ -1,4 +1,5 @@
 import { TextInput, FieldBtn, TxIcon, Flex, Sp } from './common'
+import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Web3 from 'web3'
@@ -18,6 +19,23 @@ export default class AmountFields extends React.Component {
 
   static INVALID_PLACEHOLDER = 'Invalid amount'
 
+  static initialState = {
+    ethAmount: null,
+    usdAmount: null
+  }
+
+  static onInputChange = (state, ETHprice, id, value) => ({
+    ...state,
+    usdAmount:
+      id === 'ethAmount'
+        ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+        : state.usdAmount,
+    ethAmount:
+      id === 'usdAmount'
+        ? utils.toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+        : state.ethAmount
+  })
+
   onMaxClick = () => {
     const ethAmount = Web3.utils.fromWei(this.props.availableETH)
     this.props.onChange({ target: { id: 'ethAmount', value: ethAmount } })
@@ -29,10 +47,16 @@ export default class AmountFields extends React.Component {
     return (
       <Flex.Row justify="space-between">
         <Flex.Item grow="1" basis="0">
-          <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
+          <FieldBtn
+            data-testid="max-btn"
+            tabIndex="-1"
+            onClick={this.onMaxClick}
+            float
+          >
             MAX
           </FieldBtn>
           <TextInput
+            data-testid="ethAmount-field"
             placeholder={
               ethAmount === AmountFields.INVALID_PLACEHOLDER
                 ? AmountFields.INVALID_PLACEHOLDER
@@ -53,6 +77,7 @@ export default class AmountFields extends React.Component {
         </Sp>
         <Flex.Item grow="1" basis="0">
           <TextInput
+            data-testid="usdAmount-field"
             placeholder={
               usdAmount === AmountFields.INVALID_PLACEHOLDER
                 ? AmountFields.INVALID_PLACEHOLDER

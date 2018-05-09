@@ -1,16 +1,21 @@
 [{
-    "constant": true,
+    "constant": false,
     "inputs": [{
-      "name": "_depositAmount",
-      "type": "uint256"
-    }],
-    "name": "getEthForMtnResult",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "name": "_mintReturn",
+        "type": "uint256"
+      }
+    ],
+    "name": "convertMetToEth",
     "outputs": [{
-      "name": "",
+      "name": "returnedEth",
       "type": "uint256"
     }],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -51,11 +56,38 @@
   },
   {
     "constant": true,
+    "inputs": [],
+    "name": "getMetBalance",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
     "inputs": [{
       "name": "_depositAmount",
       "type": "uint256"
     }],
-    "name": "getMtnForEthResult",
+    "name": "getEthForMetResult",
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [{
+      "name": "_depositAmount",
+      "type": "uint256"
+    }],
+    "name": "getMetForEthResult",
     "outputs": [{
       "name": "",
       "type": "uint256"
@@ -74,21 +106,6 @@
     }],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-      "name": "n",
-      "type": "uint256"
-    }],
-    "name": "fSqrt",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -116,23 +133,18 @@
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [{
-        "name": "numerator",
-        "type": "uint256"
-      },
-      {
-        "name": "divisor",
-        "type": "uint256"
-      }
-    ],
-    "name": "fDiv",
-    "outputs": [{
-      "name": "",
+      "name": "_mintReturn",
       "type": "uint256"
     }],
-    "payable": false,
-    "stateMutability": "pure",
+    "name": "convertEthToMet",
+    "outputs": [{
+      "name": "returnedMet",
+      "type": "uint256"
+    }],
+    "payable": true,
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -148,79 +160,12 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [{
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "name": "_mintReturn",
-        "type": "uint256"
-      }
-    ],
-    "name": "convertMtnToEth",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{
-      "name": "_mintReturn",
-      "type": "uint256"
-    }],
-    "name": "convertEthToMtn",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [{
-        "name": "x",
-        "type": "uint256"
-      },
-      {
-        "name": "y",
-        "type": "uint256"
-      }
-    ],
-    "name": "fMul",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
-    "payable": false,
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
     "constant": true,
     "inputs": [],
     "name": "reserveToken",
     "outputs": [{
       "name": "",
       "type": "address"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getMtnBalance",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
     }],
     "payable": false,
     "stateMutability": "view",
@@ -245,6 +190,48 @@
       }
     ],
     "name": "LogFundsIn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": true,
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "eth",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "met",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConvertEthToMet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": true,
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "eth",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "met",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConvertMetToEth",
     "type": "event"
   },
   {

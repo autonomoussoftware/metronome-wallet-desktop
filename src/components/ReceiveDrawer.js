@@ -1,4 +1,4 @@
-import { CopyIcon, BaseBtn, Drawer, Flex, Sp } from './common'
+import { CopyIcon, BaseBtn, Drawer, Flex } from './common'
 import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -6,6 +6,14 @@ import styled from 'styled-components'
 import QRCode from 'qrcode.react'
 import React from 'react'
 const { clipboard } = window.require('electron')
+
+const Body = styled.div`
+  padding: 3.2rem 1.6rem;
+
+  @media (min-height: 700px) {
+    padding: 6.4rem 1.6rem;
+  }
+`
 
 const Title = styled.div`
   line-height: 2rem;
@@ -55,12 +63,16 @@ const BtnLabel = styled.div`
 
 const Footer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
-  padding: 6.4rem 2.4rem;
+  padding: 3.2rem 2.4rem;
   flex-grow: 1;
   height: 100%;
   align-items: center;
   justify-content: center;
   display: flex;
+
+  @media (min-height: 700px) {
+    padding: 6.4rem 2.4rem;
+  }
 `
 
 const QRContainer = styled.div`
@@ -83,7 +95,7 @@ const QRmsg = styled.div`
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
-class Receive extends React.Component {
+class ReceiveDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     address: PropTypes.string.isRequired,
@@ -106,22 +118,29 @@ class Receive extends React.Component {
     return (
       <Drawer
         onRequestClose={onRequestClose}
+        data-testid="receive-drawer"
         isOpen={isOpen}
         title="Receive Transaction"
       >
         <Flex.Column grow="1">
-          <Sp py={8} px={2}>
+          <Body>
             <Flex.Column align="center">
               <Title>Your address</Title>
-              <Address>{address}</Address>
-              <CopyBtn onClick={this.onCopyToClipboardClick}>
+              <Address data-testid="address">{address}</Address>
+              <CopyBtn
+                data-testid="copy-btn"
+                onClick={this.onCopyToClipboardClick}
+              >
                 <CopyIcon />
               </CopyBtn>
-              <BtnLabel isCopied={copyStatus !== 'init'}>
+              <BtnLabel
+                data-testid="btn-label"
+                isCopied={copyStatus !== 'init'}
+              >
                 {copyStatus === 'init' ? 'Copy' : 'Copied to clipboard!'}
               </BtnLabel>
             </Flex.Column>
-          </Sp>
+          </Body>
           <Footer>
             <QRContainer>
               <QRCode value={address} />
@@ -138,4 +157,4 @@ const mapStateToProps = state => ({
   address: selectors.getActiveWalletAddresses(state)[0]
 })
 
-export default connect(mapStateToProps)(Receive)
+export default connect(mapStateToProps)(ReceiveDrawer)

@@ -38,10 +38,10 @@ export default class AltLayout extends React.Component {
   }
 
   render() {
-    const { children, title } = this.props
+    const { children, title, ...other } = this.props
 
     return (
-      <Container align="center">
+      <Container align="center" {...other}>
         <Banner />
         <Body>
           {title && <Title>{title}</Title>}

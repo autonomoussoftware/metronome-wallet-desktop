@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import config from '../config'
 import React from 'react'
+import Web3 from 'web3'
 const { shell } = window.require('electron')
 
 const Container = styled.div`
@@ -111,8 +112,8 @@ class ReceiptModal extends React.Component {
         PropTypes.shape({
           txType: PropTypes.oneOf(['converted']).isRequired,
           convertedFrom: PropTypes.oneOf(['ETH', 'MET']).isRequired,
-          fromValue: PropTypes.string.isRequired,
-          toValue: PropTypes.string.isRequired
+          fromValue: PropTypes.string,
+          toValue: PropTypes.string
         })
       ]).isRequired
     })
@@ -137,7 +138,7 @@ class ReceiptModal extends React.Component {
         onRequestClose={onRequestClose}
         isOpen={isOpen}
       >
-        <Container>
+        <Container data-testid="receipt-modal">
           {tx.parsed.txType !== 'unknown' && (
             <Row first>
               <Label>Amount</Label>
@@ -200,19 +201,23 @@ class ReceiptModal extends React.Component {
             </Type>
           </Row>
 
-          {tx.parsed.txType === 'received' && (
-            <Row>
-              <Label>{isPending ? 'Pending' : 'Received'} from</Label>
-              <Address>{tx.parsed.from}</Address>
-            </Row>
-          )}
+          {tx.parsed.txType === 'received' &&
+            tx.parsed.from && (
+              <Row>
+                <Label>{isPending ? 'Pending' : 'Received'} from</Label>
+                <Address>
+                  {Web3.utils.toChecksumAddress(tx.parsed.from)}
+                </Address>
+              </Row>
+            )}
 
-          {tx.parsed.txType === 'sent' && (
-            <Row>
-              <Label>{isPending ? 'Pending' : 'Sent'} to</Label>
-              <Address>{tx.parsed.to}</Address>
-            </Row>
-          )}
+          {tx.parsed.txType === 'sent' &&
+            tx.parsed.to && (
+              <Row>
+                <Label>{isPending ? 'Pending' : 'Sent'} to</Label>
+                <Address>{Web3.utils.toChecksumAddress(tx.parsed.to)}</Address>
+              </Row>
+            )}
 
           <Row>
             <Label>Confirmations</Label>

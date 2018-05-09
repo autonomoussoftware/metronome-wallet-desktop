@@ -12,7 +12,8 @@ class App extends Component {
   static propTypes = {
     isSessionActive: PropTypes.bool.isRequired,
     hasEnoughData: PropTypes.bool.isRequired,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    onMount: PropTypes.func.isRequired
   }
 
   state = {
@@ -20,7 +21,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    sendToMainProcess('ui-ready')
+    this.props
+      .onMount()
       .then(({ onboardingComplete }) => {
         this.setState({ onboardingComplete })
       })
@@ -46,13 +48,19 @@ class App extends Component {
   }
 
   onOnboardingCompleted = ({ password, mnemonic }) => {
-    sendToMainProcess('create-wallet', { password, mnemonic }).then(() => {
-      this.setState({ onboardingComplete: true })
-      this.props.dispatch({ type: 'session-started' })
-    })
+    return sendToMainProcess('create-wallet', { password, mnemonic }).then(
+      () => {
+        this.setState({ onboardingComplete: true })
+        this.props.dispatch({ type: 'session-started' })
+      }
+    )
   }
 
-  onPasswordAccepted = () => this.props.dispatch({ type: 'session-started' })
+  onLoginSubmit = ({ password }) => {
+    return sendToMainProcess('open-wallets', { password }).then(() =>
+      this.props.dispatch({ type: 'session-started' })
+    )
+  }
 
   render() {
     const { isSessionActive, hasEnoughData } = this.props
@@ -63,7 +71,7 @@ class App extends Component {
     return !onboardingComplete ? (
       <Onboarding onOnboardingCompleted={this.onOnboardingCompleted} />
     ) : !isSessionActive ? (
-      <PasswordRequest onPasswordAccepted={this.onPasswordAccepted} />
+      <PasswordRequest onLoginSubmit={this.onLoginSubmit} />
     ) : !hasEnoughData ? (
       <LoadingScene />
     ) : (

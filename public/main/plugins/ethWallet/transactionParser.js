@@ -1,8 +1,11 @@
+'use strict'
+
 const { isAddressInWallet } = require('./settings')
 const { parseTraces } = require('./tracesParser')
 
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
+// eslint-disable-next-line complexity
 function transactionParser ({ transaction, receipt, walletId }) {
   const from = transaction.from.toLowerCase()
   const to = (transaction.to || NULL_ADDRESS).toLowerCase()
@@ -27,12 +30,11 @@ function transactionParser ({ transaction, receipt, walletId }) {
 
   if (outgoing) {
     return parseTraces({ hash, from })
-      .then(function (parsed) {
-        return Object.assign(meta, parsed)
-      })
+      .then(parsed => Object.assign(meta, parsed))
+      .catch(err => Object.assign(meta, { parseError: err.message }))
   }
 
   return meta
 }
 
-module.exports = { transactionParser }
+module.exports = transactionParser

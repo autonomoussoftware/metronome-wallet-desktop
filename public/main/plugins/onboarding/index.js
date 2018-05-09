@@ -1,3 +1,5 @@
+'use strict'
+
 const { getPasswordHash } = require('../../settings')
 
 function onboardingStatus () {
@@ -5,11 +7,11 @@ function onboardingStatus () {
   return { onboardingComplete }
 }
 
-function getHooks () {
-  return [{
+const init = () => ({
+  uiHooks: [{
     eventName: 'ui-ready',
     handler: onboardingStatus
   }]
-}
+})
 
-module.exports = { getHooks }
+module.exports = { init }

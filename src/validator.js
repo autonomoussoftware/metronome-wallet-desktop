@@ -10,6 +10,8 @@ function validateAmount(amount, propName, max, errors = {}) {
     errors[propName] = 'Invalid amount'
   } else if (max && parseFloat(amount) > parseFloat(max)) {
     errors[propName] = 'Insufficient funds'
+  } else if (parseFloat(amount) < 0) {
+    errors[propName] = 'Amount must be greater than 0'
   }
 
   return errors
@@ -26,8 +28,12 @@ export function validateMetAmount(mtnAmount, max, errors = {}) {
 export function validateToAddress(toAddress, errors = {}) {
   if (!toAddress) {
     errors.toAddress = 'Address is required'
-  } else if (!Web3.utils.isAddress(toAddress)) {
+    // Specifically check for address validity (ignoring checksum)
+  } else if (!Web3.utils.isAddress(toAddress.toLowerCase())) {
     errors.toAddress = 'Invalid address'
+    // Specifically check address checksum
+  } else if (!Web3.utils.checkAddressChecksum(toAddress)) {
+    errors.toAddress = 'Address checksum is invalid'
   }
 
   return errors
@@ -36,10 +42,10 @@ export function validateToAddress(toAddress, errors = {}) {
 export function validateGasLimit(gasLimit, min, errors = {}) {
   const value = parseFloat((gasLimit || '').replace(',', '.'), 10)
 
-  if (Number.isNaN(value)) {
-    errors.gasLimit = 'Invalid value'
-  } else if (!value) {
+  if (gasLimit === null || gasLimit === '') {
     errors.gasLimit = 'Gas limit is required'
+  } else if (Number.isNaN(value)) {
+    errors.gasLimit = 'Invalid value'
   } else if (Math.floor(value) !== value) {
     errors.gasLimit = 'Gas limit must be an integer'
   } else if (value <= 0) {
@@ -54,10 +60,10 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
 export function validateGasPrice(gasPrice, errors = {}) {
   const value = parseFloat((gasPrice || '').replace(',', '.'), 10)
 
-  if (Number.isNaN(value)) {
-    errors.gasPrice = 'Invalid value'
-  } else if (!value) {
+  if (gasPrice === null || gasPrice === '') {
     errors.gasPrice = 'Gas price is required'
+  } else if (Number.isNaN(value)) {
+    errors.gasPrice = 'Invalid value'
   } else if (value <= 0) {
     errors.gasPrice = 'Gas price must be greater than 0'
   } else if (!isWeiable(gasPrice, 'gwei')) {

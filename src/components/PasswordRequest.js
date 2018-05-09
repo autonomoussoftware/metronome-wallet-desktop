@@ -1,11 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-
-import AltLayout from './AltLayout'
-import { sendToMainProcess } from '../utils'
 import { TextInput, Btn, Sp } from './common'
 import { validatePassword } from '../validator'
+import AltLayout from './AltLayout'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
 
 const ErrorMsg = styled.div`
   color: ${p => p.theme.colors.danger};
@@ -14,18 +12,19 @@ const ErrorMsg = styled.div`
 
 export default class PasswordRequest extends React.Component {
   static propTypes = {
-    onPasswordAccepted: PropTypes.func.isRequired
+    onLoginSubmit: PropTypes.func.isRequired
   }
 
   state = {
     password: null,
-    errors: {},
     status: 'init',
+    errors: {},
     error: null
   }
 
-  onInputChanged = e =>
+  onInputChanged = e => {
     this.setState({ [e.target.id]: e.target.value, errors: {}, error: null })
+  }
 
   onPasswordSubmitted = e => {
     e.preventDefault()
@@ -33,17 +32,12 @@ export default class PasswordRequest extends React.Component {
     const errors = this.validate()
     if (Object.keys(errors).length > 0) return this.setState({ errors })
 
-    this.setState({ status: 'pending', error: null }, () =>
-      sendToMainProcess('open-wallets', { password: this.state.password })
-        .then(() =>
-          this.props.onPasswordAccepted({ password: this.state.password })
-        )
-        .catch(err =>
-          this.setState({
-            status: 'failure',
-            error: err.message || 'Unknown error'
-          })
-        )
+    this.setState({ status: 'pending', error: null })
+    this.props.onLoginSubmit({ password: this.state.password }).catch(err =>
+      this.setState({
+        status: 'failure',
+        error: err.message || 'Unknown error'
+      })
     )
   }
 
@@ -57,9 +51,10 @@ export default class PasswordRequest extends React.Component {
 
     return (
       <AltLayout title="Enter your password">
-        <form onSubmit={this.onPasswordSubmitted}>
+        <form onSubmit={this.onPasswordSubmitted} data-testid="login-form">
           <Sp mt={4}>
             <TextInput
+              data-testid="pass-field"
               autoFocus
               onChange={this.onInputChanged}
               error={errors.password}
@@ -74,7 +69,7 @@ export default class PasswordRequest extends React.Component {
               Send
             </Btn>
           </Sp>
-          {error && <ErrorMsg>{error}</ErrorMsg>}
+          {error && <ErrorMsg data-testid="error-msg">{error}</ErrorMsg>}
         </form>
       </AltLayout>
     )

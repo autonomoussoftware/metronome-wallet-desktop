@@ -1,5 +1,5 @@
-import { sendToMainProcess, toETH, toUSD, weiToGwei, isWeiable } from '../utils'
 import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -39,12 +38,9 @@ class SendETHForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('ETH'),
     toAddress: null,
-    ethAmount: null,
-    usdAmount: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.ETH_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -54,14 +50,7 @@ class SendETHForm extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
@@ -111,7 +100,7 @@ class SendETHForm extends React.Component {
   renderConfirmation = () => {
     const { ethAmount, usdAmount, toAddress } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will send{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
         (${usdAmount}) to the address {toAddress}.
@@ -124,9 +113,15 @@ class SendETHForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form noValidate onSubmit={goToReview} id="sendForm">
+          <form
+            data-testid="sendEth-form"
+            noValidate
+            onSubmit={goToReview}
+            id="sendForm"
+          >
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
+              data-testid="toAddress-field"
               autoFocus
               onChange={this.onInputChange}
               error={this.state.errors.toAddress}

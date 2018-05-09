@@ -17,18 +17,19 @@ const Arrow = styled.span`
 export default class ConvertDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    defaultTab: PropTypes.oneOf(['ethToMet', 'metToEth']),
     isOpen: PropTypes.bool.isRequired
   }
 
-  static initialState = {
-    activeTab: 'ethToMet'
+  initialState = {
+    activeTab: this.props.defaultTab || 'ethToMet'
   }
 
-  state = ConvertDrawer.initialState
+  state = this.initialState
 
   componentWillReceiveProps(newProps) {
     if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
-      this.setState(ConvertDrawer.initialState)
+      this.setState(this.initialState)
     }
   }
 
@@ -64,7 +65,12 @@ export default class ConvertDrawer extends React.Component {
     )
 
     return (
-      <Drawer onRequestClose={onRequestClose} isOpen={isOpen} title="Converter">
+      <Drawer
+        onRequestClose={onRequestClose}
+        data-testid="convert-drawer"
+        isOpen={isOpen}
+        title="Converter"
+      >
         {activeTab === 'ethToMet' && <ConvertETHtoMETForm tabs={tabs} />}
         {activeTab === 'metToEth' && <ConvertMETtoETHForm tabs={tabs} />}
       </Drawer>

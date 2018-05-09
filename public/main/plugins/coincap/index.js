@@ -1,24 +1,29 @@
+'use strict'
+
 const coincap = require('coincap-lib')
 const settings = require('electron-settings')
 const throttle = require('lodash/throttle')
 const logger = require('electron-log')
-const EventEmitter = require('events')
 
-let emitter
+const createBasePlugin = require('../../base-plugin')
 
-function startEmitter () {
-  if (emitter) {
-    return
-  }
+function emitPrice (webContents, price) {
+  const priceData = { token: 'ETH', currency: 'USD', price }
 
-  logger.verbose('Initializing CoinCap listener')
+  webContents.send('eth-price-updated', priceData)
 
-  emitter = new EventEmitter()
+  logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
 
+  settings.set('coincap.ETH_USD', price)
+
+  logger.verbose('Cached ETH price updated', price)
+}
+
+function start (pluginEmitter) {
   const ethPriceEmitRateMs = settings.get('coincap.ethPriceEmitRate') * 1000
 
-  const emitEthPrice = throttle(function (price) {
-    emitter.emit('price', price)
+  const throttledEmit = throttle(function (price) {
+    pluginEmitter.emit('eth-price', price)
   }, ethPriceEmitRateMs, { leading: true, trailing: false })
 
   coincap.open()
@@ -30,92 +35,46 @@ function startEmitter () {
       return
     }
 
-    emitEthPrice(price)
+    throttledEmit(price)
   })
 
-  // TODO capture Socket.IO error events
+  logger.debug('CoinCap listener started')
 }
 
-function stopEmitter () {
-  if (!emitter || emitter.listenerCount('price')) {
+function sendCachedPrice (webContents) {
+  const cachedPrice = settings.get('coincap.ETH_USD')
+
+  if (!cachedPrice) {
     return
   }
 
+  logger.debug('Sending cached ETH price')
+
+  emitPrice(webContents, cachedPrice)
+}
+
+function broadcastEthPrice (subscriptions, price) {
+  subscriptions.forEach(function ({ webContents }) {
+    emitPrice(webContents, price)
+  })
+}
+
+function stop () {
   coincap.off('trades')
+
   coincap.close()
 
-  emitter = null
-
-  logger.verbose('CoinCap listener stopped')
+  logger.debug('CoinCap listener stopped')
 }
 
-function emitPrice (webContents) {
-  return function (price) {
-    const priceData = { token: 'ETH', currency: 'USD', price }
-
-    webContents.send('eth-price-updated', priceData)
-    logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
-
-    settings.set('coincap.ETH_USD', price)
-  }
-}
-
-const listeners = []
-
-function registerListener (webContents, listener) {
-  listeners.push({ webContents, listener })
-}
-
-function removeListener (webContents) {
-  const index = listeners.findIndex(r => r.webContents === webContents)
-
-  if (index === -1) {
-    return
-  }
-
-  logger.verbose('Remove ETH price changes listener')
-
-  const record = listeners.splice(index, 1)[0]
-
-  emitter.removeListener('price', record.listener)
-
-  stopEmitter()
-}
-
-function startCoinCap (data, webContents) {
-  startEmitter()
-
-  const emit = emitPrice(webContents)
-
-  const cachedPrice = settings.get('coincap.ETH_USD')
-  if (cachedPrice) {
-    logger.verbose('Sending cached ETH price')
-    emit(cachedPrice)
-  }
-
-  logger.verbose('Attaching listener to ETH price changes')
-  emitter.on('price', emit)
-
-  registerListener(webContents, emit)
-
-  webContents.on('destroyed', function () {
-    removeListener(webContents)
-  })
-}
-
-function stopCoinCap (data, webContents) {
-  removeListener(webContents)
-}
-
-function getHooks () {
-  return [{
-    eventName: 'ui-ready',
-    handler: startCoinCap
-  }, {
-    eventName: 'ui-unload',
-    handler: stopCoinCap
+const init = () => createBasePlugin({
+  start,
+  stop,
+  onNewPage: sendCachedPrice,
+  onPluginEvents: [{
+    eventName: 'eth-price',
+    handler: broadcastEthPrice
   }]
-}
-// TODO listen window events to stop and restart the coincap listener
+})
 
-module.exports = { getHooks }
+module.exports = { init }

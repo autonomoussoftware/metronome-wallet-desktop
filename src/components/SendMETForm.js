@@ -1,5 +1,5 @@
 import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable, weiToGwei } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
@@ -37,11 +37,9 @@ class SendMETForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
+    ...GasEditor.initialState('MET'),
     toAddress: null,
     metAmount: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -95,7 +93,7 @@ class SendMETForm extends React.Component {
   renderConfirmation = () => {
     const { metAmount, toAddress } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will send{' '}
         <DisplayValue value={Web3.utils.toWei(metAmount)} post=" MET" inline />{' '}
         to the address {toAddress}.
@@ -120,9 +118,15 @@ class SendMETForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form onSubmit={goToReview} id="sendForm" noValidate>
+          <form
+            data-testid="sendMet-form"
+            noValidate
+            onSubmit={goToReview}
+            id="sendForm"
+          >
             <TextInput
               placeholder="e.g. 0x2345678998765434567"
+              data-testid="toAddress-field"
               autoFocus
               onChange={this.onInputChange}
               error={this.state.errors.toAddress}
@@ -131,11 +135,17 @@ class SendMETForm extends React.Component {
               id="toAddress"
             />
             <Sp mt={3}>
-              <FieldBtn onClick={this.onMaxClick} tabIndex="-1" float>
+              <FieldBtn
+                data-testid="max-btn"
+                tabIndex="-1"
+                onClick={this.onMaxClick}
+                float
+              >
                 MAX
               </FieldBtn>
               <TextInput
                 placeholder="0.00"
+                data-testid="metAmount-field"
                 onChange={this.onInputChange}
                 error={this.state.errors.metAmount}
                 label="Amount (MET)"

@@ -2,52 +2,38 @@
 
 const { defaultTo, get } = require('lodash/fp')
 const { groupBy, isArray, mergeWith, throttle } = require('lodash')
-const axios = require('axios')
 const bip39 = require('bip39')
-const EventEmitter = require('events')
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
 const logger = require('electron-log')
+const pDefer = require('p-defer')
 const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
 
-const Deferred = requireLib('Deferred')
-const { restart } = requireLib('electron-restart')
-const { subscribe } = requireLib('web3-block-subscribe')
-
+const { encrypt } = require('../../crypto/aes256cbcIv')
+const createBasePlugin = require('../../base-plugin')
+const restart = require('../../electron-restart')
 const sha256 = require('../../crypto/sha256')
 const WalletError = require('../../WalletError')
-const { encrypt } = require('../../crypto/aes256cbcIv')
 
-const getWeb3 = require('./web3')
 const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
-const { transactionParser } = require('./transactionParser')
 const { getDatabase, clearDatabase } = require('./db')
-
 const {
   getAddressBalance,
   getWalletAddresses,
-  getWebsocketApiUrl,
   isAddressInWallet
 } = require('./settings')
+const getWeb3 = require('./web3')
+const transactionParser = require('./transactionParser')
 
-function concatArrays (objValue, srcValue) {
-  if (isArray(objValue)) {
-    return objValue.concat(srcValue)
-  }
-}
+const concatArrays = (objValue, srcValue) =>
+  isArray(objValue) ? objValue.concat(srcValue) : undefined
 
-const moduleEmitter = new EventEmitter()
-
-function getEvents () {
-  return moduleEmitter
-}
-
-function sendTransaction (args, resolveToReceipt) {
-  const deferred = new Deferred()
+const createSendTransaction = bus => function (args, resolveToReceipt) {
+  const deferred = pDefer()
 
   signAndSendTransaction(args)
     .then(function ({ emitter: txEmitter }) {
@@ -62,7 +48,7 @@ function sendTransaction (args, resolveToReceipt) {
           pRetry(
             () => getWeb3().eth.getTransaction(hash)
               .then(function (transaction) {
-                moduleEmitter.emit('unconfirmed-tx', transaction)
+                bus.emit('unconfirmed-tx', transaction)
               }),
             { retries: 5, minTimeout: 250 }
           )
@@ -77,7 +63,7 @@ function sendTransaction (args, resolveToReceipt) {
             deferred.resolve(receipt)
           }
 
-          moduleEmitter.emit('tx-receipt', receipt)
+          bus.emit('tx-receipt', receipt)
         })
         .once('error', function (err) {
           logger.warn('Transaction send error', err.message)
@@ -138,13 +124,16 @@ function generateWallet (mnemonic, password) {
 let pendingWalletStateChanges = []
 
 function mergeAndSendPendingWalletStateChanges () {
-  const byWebContent = groupBy(pendingWalletStateChanges.filter(function ({ webContents }) {
-    try {
-      return webContents.id || true
-    } catch (err) {
-      return false
-    }
-  }), 'webContents.id')
+  const byWebContent = groupBy(
+    pendingWalletStateChanges.filter(function ({ webContents }) {
+      try {
+        return webContents.id || true
+      } catch (err) {
+        return false
+      }
+    }),
+    'webContents.id'
+  )
   Object.values(byWebContent).forEach(function (group) {
     const merged = mergeWith({}, ...group, concatArrays)
 
@@ -154,9 +143,11 @@ function mergeAndSendPendingWalletStateChanges () {
   pendingWalletStateChanges = []
 }
 
+const GUARD_TIME = 250
+
 const sendPendingWalletStateChanges = throttle(
   mergeAndSendPendingWalletStateChanges,
-  250,
+  GUARD_TIME,
   { leading: true, trailing: true }
 )
 
@@ -180,7 +171,7 @@ function sendError ({ webContents, walletId, message, err }) {
   webContents.send('error', {
     error: new WalletError(message, err)
   })
-  logger.warn(`<-- Error: ${message}`, { walletId })
+  logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
 function sendBalances ({ walletId, webContents }) {
@@ -217,10 +208,10 @@ function sendBalances ({ walletId, webContents }) {
     })
 }
 
-function sendWalletOpen (webContents, walletId) {
+function sendWalletOpen (bus, webContents, walletId) {
   const addresses = settings.get(`user.wallets.${walletId}.addresses`)
 
-  moduleEmitter.emit('wallet-opened', {
+  bus.emit('wallet-opened', {
     walletId,
     addresses: Object.keys(addresses).map(a => a.toLowerCase()),
     webContents
@@ -235,8 +226,8 @@ function registerTxParser (parser) {
   txParsers.push(parser)
 }
 
-function parseTransaction ({ transaction, receipt, walletId, webContents }) {
-  return Promise.all(
+const parseTransaction = ({ transaction, receipt, walletId, webContents }) =>
+  Promise.all(
     txParsers.map(txParser => txParser({ transaction, receipt, walletId }))
   ).then(function (metas) {
     const meta = mergeWith({}, ...metas, concatArrays)
@@ -266,7 +257,6 @@ function parseTransaction ({ transaction, receipt, walletId, webContents }) {
 
     return parsedTransaction
   })
-}
 
 function setBestBlock (data) {
   const query = { type: 'eth-best-block' }
@@ -276,12 +266,10 @@ function setBestBlock (data) {
     .updateAsync(query, update, { upsert: true })
 }
 
-function getBestBlock () {
-  return getDatabase().state
-    .findOneAsync({ type: 'eth-best-block' })
-    .then(defaultTo({ data: { number: -1 } }))
-    .then(get('data'))
-}
+const getBestBlock = () => getDatabase().state
+  .findOneAsync({ type: 'eth-best-block' })
+  .then(defaultTo({ data: { number: -1 } }))
+  .then(get('data'))
 
 function sendBestBlock ({ webContents }) {
   getBestBlock()
@@ -326,19 +314,18 @@ function sendCachedTransactions ({ walletId, webContents }) {
   })
 }
 
-function syncTransactions ({ number, walletId, webContents }) {
-  const web3 = getWeb3()
+// TODO continue here... When a wallet is opened, the tx cache has to be updated
+// and txs added to the UI. And when new txs arrive, the same.
 
-  const indexerApiUrl = settings.get('app.indexerApiUrl')
+function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
+  const web3 = getWeb3()
 
   return promiseAllProps({
     addresses: getWalletAddresses(walletId),
     bestBlock: getBestBlock().then(get('number')),
     latest: number || web3.eth.getBlockNumber(),
-    indexed: axios.get(`${indexerApiUrl}/blocks/latest/number`)
-      .then(res => res.data)
-      .then(data => data.number)
-      .then(n => Number.parseInt(n, 10))
+    indexed: bloqEthExplorer.getBestBlock()
+      .then(best => best.number)
   })
     .then(function ({ addresses, bestBlock, latest, indexed }) {
       if (indexed < latest) {
@@ -346,22 +333,17 @@ function syncTransactions ({ number, walletId, webContents }) {
       }
       if (indexed <= bestBlock) {
         logger.warn('Nothing to get from indexer', { indexed, bestBlock })
-        return
+        return false
       }
 
       logger.debug('Syncing', addresses, indexed)
       return Promise.all(
         addresses.map(function (address) {
-          const qs = `from=${bestBlock + 1}&to=${indexed}`
+          const from = bestBlock + 1
+          const to = indexed
           return promiseAllProps({
-            eth: axios.get(
-              `${indexerApiUrl}/addresses/${address}/transactions?${qs}`
-            )
-              .then(res => res.data),
-            tok: axios.get(
-              `${indexerApiUrl}/addresses/${address}/tokentransactions?${qs}`
-            )
-              .then(res => res.data)
+            eth: bloqEthExplorer.getTxs({ address, from, to }),
+            tok: bloqEthExplorer.getTxsWithTokenLogs({ address, from, to })
           })
             .then(function ({ eth, tok }) {
               const txCount = eth.length + Object.keys(tok).length
@@ -376,35 +358,29 @@ function syncTransactions ({ number, walletId, webContents }) {
                   eth.map(function (hash) {
                     logger.debug('Parsing ETH tx', hash)
                     return getTransactionAndReceipt({ web3, hash }).then(
-                      function ({ transaction, receipt }) {
-                        return parseTransaction({
+                      ({ transaction, receipt }) => parseTransaction({
+                        transaction,
+                        receipt,
+                        walletId,
+                        webContents
+                      })
+                    )
+                  })
+                ),
+                Promise.all(
+                  Object.keys(tok).map(tokenAddress => Promise.all(
+                    tok[tokenAddress].map(function (hash) {
+                      logger.debug('Parsing token tx', hash)
+                      return getTransactionAndReceipt({ web3, hash }).then(
+                        ({ transaction, receipt }) => parseTransaction({
                           transaction,
                           receipt,
                           walletId,
                           webContents
                         })
-                      }
-                    )
-                  })
-                ),
-                Promise.all(
-                  Object.keys(tok).map(function (tokenAddress) {
-                    return Promise.all(
-                      tok[tokenAddress].map(function (hash) {
-                        logger.debug('Parsing token tx', hash)
-                        return getTransactionAndReceipt({ web3, hash }).then(
-                          function ({ transaction, receipt }) {
-                            return parseTransaction({
-                              transaction,
-                              receipt,
-                              walletId,
-                              webContents
-                            })
-                          }
-                        )
-                      })
-                    )
-                  })
+                      )
+                    })
+                  ))
                 )
               ])
             })
@@ -427,12 +403,10 @@ function syncTransactions ({ number, walletId, webContents }) {
     })
 }
 
-let subscriptions = []
+function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
+  const { bloqEthExplorer } = plugins
 
-let blocksSubscription = null
-
-function openWallet ({ webContents, walletId }) {
-  sendWalletOpen(webContents, walletId)
+  sendWalletOpen(bus, webContents, walletId)
 
   sendBalances({ walletId, webContents })
 
@@ -440,66 +414,108 @@ function openWallet ({ webContents, walletId }) {
 
   sendCachedTransactions({ walletId, webContents })
 
-  syncTransactions({ walletId, webContents })
+  syncTransactions({ walletId, webContents, bloqEthExplorer })
     .then(function () {
-      subscriptions = subscriptions.concat({ walletId, webContents })
-
-      if (subscriptions.length === 1) {
-        blocksSubscription = subscribe({
-          url: getWebsocketApiUrl(),
-          onData: function (header) {
-            moduleEmitter.emit('new-block-header', header)
-          },
-          onError: function (err) {
-            logger.warn('New block subscription failed', err.message)
-
-            getWeb3().eth.getBlock('latest')
-              .then(function (header) {
-                moduleEmitter.emit('new-block-header', header)
-              })
-              .catch(function (err) { // eslint-disable-line no-shadow
-                logger.warn('Get block fallback failed too', err.message)
-              })
-          }
-        })
+      function emitNewBlock (data) {
+        plugin.emitter.emit('new-block', data)
       }
+
+      bus.on('new-best-block', emitNewBlock)
+
+      bus.on('stop-updating-best-block', function () {
+        bus.removeListener('new-best-block', emitNewBlock)
+      })
     })
 }
 
-function unsubscribeUpdates (_, webContents) {
-  subscriptions = subscriptions.filter(s => s.webContents !== webContents)
-
-  if (!subscriptions.length && blocksSubscription) {
-    blocksSubscription.unsubscribe(function (err) {
-      if (err) {
-        logger.warn('Could not unsubscribe', err.message)
-        return
-      }
-
-      logger.verbose('New block subscription canceled')
-    })
-
-    blocksSubscription = null
-  }
+const stop = eventsBus => function () {
+  eventsBus.emit('stop-updating-best-block')
 }
 
-moduleEmitter.on('unconfirmed-tx', function (transaction) {
+function parseUnconfirmedTransaction (subscriptions, transaction) {
   subscriptions.forEach(function (s) {
     pRetry(
-      () => parseTransaction(Object.assign({ transaction }, s)),
+      () => parseTransaction(Object.assign({ transaction }, s, s.meta)),
       { retries: 5, minTimeout: 250 }
     )
       .catch(function (err) {
-        logger.warn('Could not parse transaction', transaction.hash, err.message)
+        logger.warn(
+          'Could not parse transaction', transaction.hash, err.message
+        )
       })
   })
-})
+}
 
-moduleEmitter.on('new-block-header', function ({ number }) {
-  subscriptions.forEach(function (s) {
-    syncTransactions(Object.assign({ number }, s))
+function parseNewTransaction (subscriptions, { walletId, txid }) {
+  const web3 = getWeb3()
+
+  getTransactionAndReceipt({ web3, hash: txid })
+    .then(({ transaction, receipt }) =>
+      Promise.all(subscriptions.map(s =>
+        parseTransaction(Object.assign({
+          transaction,
+          receipt,
+          walletId
+        }, s))
+          .then(() => sendBalances({ walletId, webContents: s.webContents }))
+      ))
+    )
+    .catch(function (err) {
+      logger.warn(
+        'Could not parse incoming transaction', txid, err.message
+      )
+    })
+}
+
+function broadcastNewBlock (subscriptions, data) {
+  Promise.all(subscriptions.map(function (s) {
+    s.webContents.send('eth-block', data)
+    logger.verbose('<-- New best block', data)
+
+    return setBestBlock(data)
+  }))
+    .catch(function (err) {
+      logger.warn(
+        'Could not broadcast new block', data.number, err.message
+      )
+    })
+}
+
+function attachToEvents (eventsBus, plugins, plugin) {
+  const { ethWallet } = plugins
+
+  eventsBus.on('unconfirmed-tx', function (transaction) {
+    plugin.emitter.emit('new-tx-received', transaction)
   })
-})
+
+  eventsBus.on('eth-tx-confirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on('eth-tx-unconfirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on('tok-tx-confirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on('tok-tx-unconfirmed', function (data) {
+    plugin.emitter.emit('new-txid-received', data)
+  })
+
+  eventsBus.on(
+    'wallet-opened',
+    function ({ walletId, addresses, webContents }) {
+      sendBalances({ ethWallet, walletId, addresses, webContents })
+
+      plugin.emitter.emit(
+        'register-webcontents-metadata',
+        { webContents, meta: { walletId, addresses } }
+      )
+    }
+  )
+}
 
 function getGasPrice () {
   logger.verbose('Getting gas price for')
@@ -509,29 +525,31 @@ function getGasPrice () {
     .then(gasPrice => ({ gasPrice }))
 }
 
-function openWallets (data, webContents) {
-  const activeWallet = settings.get('user.activeWallet')
-  const walletIds = Object.keys(settings.get('user.wallets'))
+const createOpenWallets = (bus, plugins, plugin) =>
+  function (data, webContents) {
+    const activeWallet = settings.get('user.activeWallet')
+    const walletIds = Object.keys(settings.get('user.wallets'))
 
-  walletIds.forEach(function (walletId) {
-    openWallet({ webContents, walletId })
-  })
+    walletIds.forEach(function (walletId) {
+      openWallet({ bus, webContents, walletId, plugins, plugin })
+    })
 
-  return { walletIds, activeWallet }
-}
-
-function createWallet (data, webContents) {
-  const { password, mnemonic } = data
-  const result = generateWallet(mnemonic, password)
-
-  if (result.error) {
-    return result
+    return { walletIds, activeWallet }
   }
 
-  openWallet({ webContents, walletId: result.walletId })
+const createCreateWallet = (bus, plugins, plugin) =>
+  function (data, webContents) {
+    const { password, mnemonic } = data
+    const result = generateWallet(mnemonic, password)
 
-  return result
-}
+    if (result.error) {
+      return result
+    }
+
+    openWallet({ bus, webContents, walletId: result.walletId, plugins, plugin })
+
+    return result
+  }
 
 function getGasLimit ({ to }) {
   logger.verbose('Getting limit gas for address: ', to)
@@ -545,17 +563,43 @@ function clearCache () {
   logger.verbose('Clear cache started')
 
   return clearDatabase()
-    .then(() => {
+    .then(function () {
       logger.verbose('Clear cache success')
       restart(1)
     })
     .catch(err => logger.error('Clear cache failed: ', err))
 }
 
-function getHooks () {
+function init ({ plugins, eventsBus }) {
   registerTxParser(transactionParser)
 
-  return [
+  const plugin = createBasePlugin({
+    stop: stop(eventsBus),
+    onPluginEvents: [{
+      eventName: 'new-tx-received',
+      handler: parseUnconfirmedTransaction
+    }, {
+      eventName: 'new-txid-received',
+      handler: parseNewTransaction
+    }, {
+      eventName: 'new-block',
+      handler: broadcastNewBlock
+    }]
+  })
+
+  const createWallet = createCreateWallet(eventsBus, plugins, plugin)
+  const openWallets = createOpenWallets(eventsBus, plugins, plugin)
+  const sendTransaction = createSendTransaction(eventsBus)
+
+  plugin.name = 'ethWallet'
+  plugin.api = {
+    getWeb3,
+    isAddressInWallet,
+    registerTxParser,
+    sendTransaction
+  }
+  plugin.dependencies = ['bloqEthExplorer']
+  plugin.uiHooks.push(...[
     { eventName: 'create-wallet', auth: true, handler: createWallet },
     { eventName: 'open-wallets', auth: true, handler: openWallets },
     {
@@ -563,18 +607,14 @@ function getHooks () {
       auth: true,
       handler: args => sendTransaction(args)
     },
-    { eventName: 'ui-unload', handler: unsubscribeUpdates },
     { eventName: 'get-gas-price', handler: getGasPrice },
     { eventName: 'get-gas-limit', handler: getGasLimit },
     { eventName: 'cache-clear', handler: clearCache }
-  ]
+  ])
+
+  attachToEvents(eventsBus, plugins, plugin)
+
+  return plugin
 }
 
-module.exports = {
-  getHooks,
-  getWeb3,
-  sendTransaction,
-  getEvents,
-  registerTxParser,
-  isAddressInWallet
-}
+module.exports = { init }

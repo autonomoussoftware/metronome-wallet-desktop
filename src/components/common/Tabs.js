@@ -16,7 +16,7 @@ const Tab = styled.button`
   border-bottom-color: ${p =>
     p.isActive ? p.theme.colors.primary : p.theme.colors.darkShade};
   transition: 0.5s;
-  padding: 2.5rem;
+  padding: 2rem;
   color: ${p =>
     p.isActive
       ? p.theme.colors.light
@@ -32,6 +32,10 @@ const Tab = styled.button`
   letter-spacing: 1.6px;
   text-align: center;
   outline: none;
+
+  @media (min-height: 700px) {
+    padding: 2.5rem;
+  }
 `
 
 export default class Tabs extends React.Component {
@@ -56,6 +60,7 @@ export default class Tabs extends React.Component {
       <Container>
         {items.map(({ label, id, disabled, ...other }) => (
           <Tab
+            data-testid={`${id}-tab`}
             isDisabled={disabled}
             isActive={active === id}
             data-tab={id}

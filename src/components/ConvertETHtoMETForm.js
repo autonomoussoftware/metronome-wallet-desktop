@@ -1,4 +1,4 @@
-import { sendToMainProcess, toETH, toUSD, isWeiable, weiToGwei } from '../utils'
+import { sendToMainProcess, isWeiable } from '../utils'
 import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
@@ -10,7 +10,6 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -40,12 +39,9 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   state = {
-    useCustomGas: false,
-    ethAmount: null,
-    usdAmount: null,
+    ...AmountFields.initialState,
+    ...GasEditor.initialState('MET'),
     estimate: null,
-    gasPrice: weiToGwei(config.DEFAULT_GAS_PRICE),
-    gasLimit: config.MET_DEFAULT_GAS_LIMIT,
     errors: {}
   }
 
@@ -55,14 +51,7 @@ class ConvertETHtoMETForm extends React.Component {
 
     this.setState(state => ({
       ...state,
-      usdAmount:
-        id === 'ethAmount'
-          ? toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.usdAmount,
-      ethAmount:
-        id === 'usdAmount'
-          ? toETH(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
-          : state.ethAmount,
+      ...AmountFields.onInputChange(state, ETHprice, id, value),
       errors: { ...state.errors, [id]: null },
       [id]: value
     }))
@@ -110,7 +99,7 @@ class ConvertETHtoMETForm extends React.Component {
   renderConfirmation = () => {
     const { ethAmount, usdAmount, estimate } = this.state
     return (
-      <ConfirmationContainer>
+      <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
         <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
         (${usdAmount}) and get approximately{' '}
@@ -124,7 +113,12 @@ class ConvertETHtoMETForm extends React.Component {
       <Flex.Column grow="1">
         {this.props.tabs}
         <Sp py={4} px={3}>
-          <form onSubmit={goToReview} id="convertForm" noValidate>
+          <form
+            data-testid="ethToMet-form"
+            noValidate
+            onSubmit={goToReview}
+            id="convertForm"
+          >
             <AmountFields
               availableETH={this.props.availableETH}
               ethAmount={this.state.ethAmount}

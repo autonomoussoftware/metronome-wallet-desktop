@@ -158,6 +158,9 @@ class Auction extends React.Component {
     buyFeatureStatus: PropTypes.oneOf(['offline', 'depleted', 'ok']).isRequired,
     auctionPriceUSD: PropTypes.string.isRequired,
     auctionStatus: PropTypes.shape({
+      nextAuctionStartTime: PropTypes.number.isRequired,
+      tokenRemaining: PropTypes.string.isRequired,
+      currentAuction: PropTypes.string.isRequired,
       currentPrice: PropTypes.string.isRequired,
       genesisTime: PropTypes.number.isRequired
     })
@@ -177,31 +180,44 @@ class Auction extends React.Component {
     const initialAuctionNotStarted =
       auctionStatus && auctionStatus.genesisTime * 1000 > Date.now()
 
+    const initialAuctionEndTime =
+      auctionStatus && auctionStatus.genesisTime + 7 * 24 * 60 * 60
+
     const isInitialAuction =
-      auctionStatus && auctionStatus.currentAuction === '0'
+      auctionStatus &&
+      auctionStatus.currentAuction === '0' &&
+      !initialAuctionNotStarted &&
+      initialAuctionEndTime * 1000 > Date.now()
+
+    const dailyAuctionsNotStarted =
+      auctionStatus && parseInt(auctionStatus.currentAuction, 10) < 1
 
     return (
-      <DarkLayout title="Metronome Auction">
+      <DarkLayout title="Metronome Auction" data-testid="auction-container">
         {auctionStatus ? (
           <Container>
-            <Text>
+            <Text data-testid="title">
               {initialAuctionNotStarted
                 ? 'Initial Auction starts in'
                 : isInitialAuction
                   ? 'Time Remaining in Initial Auction'
-                  : 'Time Remaining in Daily Auction'}
+                  : dailyAuctionsNotStarted
+                    ? 'Initial Auction ended'
+                    : 'Time Remaining in Daily Auction'}
             </Text>
 
             <CountDownProvider
               targetTimestamp={
                 initialAuctionNotStarted
                   ? auctionStatus.genesisTime
-                  : auctionStatus.nextAuctionStartTime
+                  : isInitialAuction || dailyAuctionsNotStarted
+                    ? initialAuctionEndTime
+                    : auctionStatus.nextAuctionStartTime
               }
             >
               {({ days, hours, minutes, seconds, inFuture }) =>
                 inFuture ? (
-                  <Row>
+                  <Row data-testid="countdown">
                     <Cell isFaded={days === 0}>{days} days</Cell>
                     <Cell isFaded={days + hours === 0}>{hours} hrs</Cell>
                     <Cell isFaded={days + hours + minutes === 0}>
@@ -212,14 +228,14 @@ class Auction extends React.Component {
                     </Cell>
                   </Row>
                 ) : (
-                  <Row>
+                  <Row data-testid="waiting-next">
                     <Cell>Waiting to confirm auction start...</Cell>
                   </Row>
                 )
               }
             </CountDownProvider>
 
-            {!initialAuctionNotStarted && (
+            {(isInitialAuction || !dailyAuctionsNotStarted) && (
               <Body>
                 <BuyBtn
                   data-disabled={buyFeatureStatus !== 'ok' ? true : null}
@@ -232,12 +248,13 @@ class Auction extends React.Component {
                         : null
                   }
                   data-modal="buy"
+                  data-testid="buy-btn"
                   onClick={buyFeatureStatus === 'ok' ? this.onOpenModal : null}
                 >
                   Buy Metronome
                 </BuyBtn>
 
-                <StatsContainer>
+                <StatsContainer data-testid="stats">
                   <Sp p={3}>
                     <Flex.Row justify="space-between" align="baseline">
                       <Label>Current Price</Label>
@@ -272,6 +289,7 @@ class Auction extends React.Component {
                 </StatsContainer>
 
                 <BuyMETDrawer
+                  tokenRemaining={auctionStatus.tokenRemaining}
                   onRequestClose={this.onCloseModal}
                   currentPrice={auctionStatus.currentPrice}
                   isOpen={this.state.activeModal === 'buy'}
@@ -281,7 +299,7 @@ class Auction extends React.Component {
           </Container>
         ) : (
           <Sp p={6}>
-            <LoadingContainer>
+            <LoadingContainer data-testid="waiting">
               <Text>Waiting for auction status...</Text>
               <Sp py={2}>
                 <LoadingBar />

@@ -15,7 +15,7 @@ export const BaseBtn = styled.button.attrs({
   color: ${p => p.theme.colors.light};
   outline: none;
 
-  &[data-disabled],
+  &[data-disabled='true'],
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;

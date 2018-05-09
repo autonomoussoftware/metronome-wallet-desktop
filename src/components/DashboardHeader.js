@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { Btn } from './common'
 import styled from 'styled-components'
 import React from 'react'
+import Web3 from 'web3'
 const { clipboard } = window.require('electron')
 
 const Container = styled.header`
@@ -96,7 +97,7 @@ class DashboardHeader extends React.Component {
         <AddressContainer>
           <Label>Address</Label>
           <Bg>
-            <Address>{address}</Address>
+            <Address data-testid="address">{address}</Address>
             <CopyBtn onClick={this.onCopyToClipboardClick}>Copy</CopyBtn>
           </Bg>
         </AddressContainer>
@@ -105,8 +106,11 @@ class DashboardHeader extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  address: selectors.getActiveWalletAddresses(state)[0]
-})
+const mapStateToProps = state => {
+  const address = selectors.getActiveWalletAddresses(state)[0]
+  return {
+    address: address ? Web3.utils.toChecksumAddress(address) : address
+  }
+}
 
 export default connect(mapStateToProps)(DashboardHeader)
