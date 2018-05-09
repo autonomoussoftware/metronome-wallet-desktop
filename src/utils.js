@@ -134,13 +134,16 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
       ? new BigNumber(remaining)
           .multipliedBy(new BigNumber(rate))
           .dividedBy(new BigNumber(Web3.utils.toWei('1')))
-          .decimalPlaces(18)
+          .integerValue()
           .toString(10)
       : null
 
   const excessETHAmount =
     isValidAmount && excedes
-      ? weiAmount.minus(usedETHAmount).toString(10)
+      ? weiAmount
+          .minus(usedETHAmount)
+          .integerValue()
+          .toString(10)
       : null
 
   return { expectedMETamount, excedes, usedETHAmount, excessETHAmount }
