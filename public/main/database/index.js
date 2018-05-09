@@ -24,7 +24,7 @@ const promisifyCollection = promisifyMethods([
 const collections = {}
 
 function addCollection (name) {
-  logger.verbose(`Creating db collection ${name}`)
+  logger.verbose(`Creating database collection ${name}`)
 
   const newCollection = promisifyCollection(new Datastore({
     filename: path.join(
@@ -44,7 +44,7 @@ function collection (name) {
 }
 
 function dropDatabase () {
-  logger.verbose('Dropping db')
+  logger.verbose('Dropping database')
 
   return Promise.all(
     Object.keys(collections)
