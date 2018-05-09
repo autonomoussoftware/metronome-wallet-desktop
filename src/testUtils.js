@@ -3,6 +3,8 @@ import { ThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router'
 import { Provider } from 'react-redux'
 import createStore from './createStore'
+import { merge } from 'lodash'
+import config from './config'
 import theme from './theme'
 import React from 'react'
 
@@ -102,3 +104,90 @@ export const twoWeeksAgo = () => Date.now() / 1000 - 60 * 60 * 24 * 7 * 2
 export const oneHourAgo = () => Date.now() / 1000 - 60 * 60
 export const inOneHour = () => Date.now() / 1000 + 60 * 60
 export const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7
+
+/**
+ * Returns a common initial state for Redux store that is useful for most tests
+ * Accepts an optional object with overrides that will be deeply merged with
+ * the base state object.
+ */
+export function getInitialState(overrides = {}) {
+  const baseState = {
+    connectivity: { isOnline: true },
+    blockchain: { height: 1, gasPrice: config.DEFAULT_GAS_PRICE },
+    metronome: { transferAllowed: true },
+    converter: {
+      status: {
+        availableEth: '100',
+        availableMtn: '100',
+        currentPrice: '10'
+      }
+    },
+    auction: {
+      status: {
+        nextAuctionStartTime: inOneHour(),
+        tokenRemaining: '1',
+        currentAuction: '10',
+        currentPrice: '33000000000',
+        genesisTime: twoWeeksAgo()
+      }
+    },
+    session: { isLoggedIn: true },
+    rates: { ETH: { token: 'ETH', price: 1 } },
+    wallets: {
+      active: 'foo',
+      allIds: ['foo'],
+      byId: {
+        foo: {
+          addresses: {
+            '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
+              token: {
+                [config.MTN_TOKEN_ADDR]: { balance: '5000000000000000000000' }
+              },
+              balance: '5000000000000000000000',
+              transactions: []
+            }
+          }
+        }
+      }
+    }
+  }
+  return merge({}, baseState, overrides)
+}
+
+/**
+ * A sample transaction object. Useful for populating state in tests.
+ */
+export function getDummyTransaction() {
+  return {
+    meta: {
+      metronome: {},
+      tokens: {
+        [config.MTN_TOKEN_ADDR]: {
+          event: 'Transfer',
+          processing: false,
+          value:
+            '0x000000000000000000000000000000000000000000000001e5b8fa8fe2ac0000'
+        }
+      }
+    },
+    receipt: {
+      blockHash: '0x1234567890abcdef',
+      blockNumber: 407574,
+      cumulativeGasUsed: 38484,
+      gasUsed: 38484,
+      transactionHash: '0x1234567890abcdef',
+      transactionIndex: 0
+    },
+    transaction: {
+      transactionIndex: 0,
+      blockNumber: 407574,
+      blockHash: '0x1234567890abcdef',
+      hash: '0x1234567890abcdef',
+      value: '0',
+      gasPrice: '5000000000',
+      gas: 76968,
+      from: '0x15dd2028C976beaA6668E286b496A518F457b5Cf',
+      to: '0xde806D6efD432CDeE42573760682D99eDEdC1d89'
+    }
+  }
+}

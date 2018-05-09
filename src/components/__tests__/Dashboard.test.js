@@ -118,7 +118,7 @@ describe('<Dashboard/>', () => {
       const { queryByTestId } = testUtils.reduxRender(
         <Dashboard />,
         getInitialState({
-          transactions: [getDummyTransaction()]
+          transactions: [testUtils.getDummyTransaction()]
         })
       )
       expect(queryByTestId('notx-msg')).not.toBeInTheDOM()
@@ -149,24 +149,14 @@ function getInitialState({
   ethBalance = '50000000000000000',
   transactions = []
 } = {}) {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
-    metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: { status: null },
-    session: { isLoggedIn: true },
+  return testUtils.getInitialState({
     rates: { ETH: { token: 'ETH', price: 100 } },
     wallets: {
-      active: 'foo',
-      allIds: ['foo'],
       byId: {
         foo: {
           addresses: {
             [ACTIVE_ADDRESS]: {
-              token: {
-                [config.MTN_TOKEN_ADDR]: { balance: metBalance }
-              },
+              token: { [config.MTN_TOKEN_ADDR]: { balance: metBalance } },
               balance: ethBalance,
               transactions
             }
@@ -174,44 +164,5 @@ function getInitialState({
         }
       }
     }
-  }
-}
-
-function getDummyTransaction() {
-  return {
-    meta: {
-      metronome: {},
-      tokens: {
-        '0xde806d6efd432cdee42573760682d99ededc1d89': {
-          event: 'Transfer',
-          processing: false,
-          value:
-            '0x000000000000000000000000000000000000000000000001e5b8fa8fe2ac0000'
-        }
-      }
-    },
-    receipt: {
-      blockHash:
-        '0x6fc6664565759e20bbbe62bc816cc2909c140ebd1d4f40c14d888ef18592e209',
-      blockNumber: 407574,
-      cumulativeGasUsed: 38484,
-      gasUsed: 38484,
-      transactionHash:
-        '0xb7762b4afd014e1539db551b0647973c9a54d0a0f3e0659fb01042f757b50144',
-      transactionIndex: 0
-    },
-    transaction: {
-      transactionIndex: 0,
-      blockNumber: 407574,
-      blockHash:
-        '0x6fc6664565759e20bbbe62bc816cc2909c140ebd1d4f40c14d888ef18592e209',
-      hash:
-        '0xb7762b4afd014e1539db551b0647973c9a54d0a0f3e0659fb01042f757b50144',
-      value: '0',
-      gasPrice: '5000000000',
-      gas: 76968,
-      from: '0x15dd2028C976beaA6668E286b496A518F457b5Cf',
-      to: '0xde806D6efD432CDeE42573760682D99eDEdC1d89'
-    }
-  }
+  })
 }

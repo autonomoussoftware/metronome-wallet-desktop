@@ -3,7 +3,6 @@ import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import BuyMETDrawer from '../BuyMETDrawer'
-import config from '../../config'
 import React from 'react'
 
 const closeHandler = jest.fn()
@@ -50,35 +49,7 @@ describe('<BuyMETDrawer/>', () => {
 })
 
 function getInitialState() {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
-    metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: {
-      status: {
-        nextAuctionStartTime: testUtils.inOneHour(),
-        tokenRemaining: '100',
-        currentAuction: '5',
-        currentPrice: '10',
-        genesisTime: testUtils.twoWeeksAgo()
-      }
-    },
-    session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: ETHprice } },
-    wallets: {
-      active: 'foo',
-      allIds: ['foo'],
-      byId: {
-        foo: {
-          addresses: {
-            '0xf00': {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: '0' } },
-              balance: '5000000000000000000000'
-            }
-          }
-        }
-      }
-    }
-  }
+  return testUtils.getInitialState({
+    rates: { ETH: { token: 'ETH', price: ETHprice } }
+  })
 }

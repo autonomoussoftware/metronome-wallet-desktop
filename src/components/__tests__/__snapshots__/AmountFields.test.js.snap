@@ -10,7 +10,7 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
     >
       <button
         type="button"
-        class="sc-htpNat fdEoJm"
+        class="sc-htpNat fpAZyb"
         data-testid="max-btn"
         tabindex="-1"
       >

@@ -1,7 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import Auction from '../Auction'
-import config from '../../config'
 import React from 'react'
 
 describe('<Auction/>', () => {
@@ -306,27 +305,5 @@ const inDailyAuction = (overrides = {}) => ({
 })
 
 function getInitialState(auctionStatus = null) {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
-    metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: { status: auctionStatus },
-    session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: 1 } },
-    wallets: {
-      active: 'foo',
-      allIds: ['foo'],
-      byId: {
-        foo: {
-          addresses: {
-            '0xf00': {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: '1' } },
-              balance: '1'
-            }
-          }
-        }
-      }
-    }
-  }
+  return testUtils.getInitialState({ auction: { status: auctionStatus } })
 }

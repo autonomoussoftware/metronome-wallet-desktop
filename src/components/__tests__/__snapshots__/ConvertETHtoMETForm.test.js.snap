@@ -10,7 +10,7 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
     >
       <button
         type="button"
-        class="sc-htpNat fdEoJm"
+        class="sc-htpNat fpAZyb"
         data-testid="max-btn"
         tabindex="-1"
       >
@@ -90,7 +90,7 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
           >
             <button
               type="button"
-              class="sc-htpNat fdEoJm"
+              class="sc-htpNat fpAZyb"
               data-testid="max-btn"
               tabindex="-1"
             >
@@ -166,13 +166,13 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
                 class="sc-jDwBTQ hbGHwK"
               >
                 Gas Price: 
-                0.0000001
+                1
                 (Gwei)
               </span>
             </div>
             <button
               type="button"
-              class="sc-htpNat henWpP"
+              class="sc-htpNat bqwpzm"
               data-testid="edit-gas-btn"
               tabindex="-1"
             >
@@ -187,7 +187,7 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
     >
       <button
         type="submit"
-        class="sc-bwzfXH emHLVs"
+        class="sc-bwzfXH gAMukr"
         form="convertForm"
       >
         Review Convert

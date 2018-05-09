@@ -1,7 +1,6 @@
 import { layout as element } from '../Router'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import config from '../../config'
 
 describe('<Router/>', () => {
   test('navigates to WALLET screen when clicking WALLET sidebar button', () => {
@@ -31,7 +30,7 @@ describe('<Router/>', () => {
   test('redirects to WALLET route for / route', () => {
     const { queryByTestId } = testUtils.routerRender(
       element,
-      getInitialState(),
+      testUtils.getInitialState(),
       '/'
     )
     expect(queryByTestId('dashboard-container')).not.toBeNull()
@@ -41,36 +40,10 @@ describe('<Router/>', () => {
 function clickAndExpect(linkTestId, pageTestId, initialRoute) {
   const { getByTestId, queryByTestId } = testUtils.routerRender(
     element,
-    getInitialState(),
+    testUtils.getInitialState(),
     initialRoute
   )
   expect(queryByTestId(pageTestId)).toBeNull()
   Simulate.click(getByTestId(linkTestId), { button: 0 })
   expect(queryByTestId(pageTestId)).not.toBeNull()
-}
-
-function getInitialState() {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
-    metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: { status: null },
-    session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: 1 } },
-    wallets: {
-      active: 'foo',
-      allIds: ['foo'],
-      byId: {
-        foo: {
-          addresses: {
-            '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: '1' } },
-              balance: '1'
-            }
-          }
-        }
-      }
-    }
-  }
 }

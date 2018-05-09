@@ -1,7 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import Converter from '../Converter'
-import config from '../../config'
 import React from 'react'
 
 describe('<Converter/>', () => {
@@ -167,27 +166,9 @@ function getInitialState(
   auctionStatus = null,
   transferAllowed = true
 ) {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
+  return testUtils.getInitialState({
     metronome: { transferAllowed },
     converter: { status: converterStatus },
-    auction: { status: auctionStatus },
-    session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: 1 } },
-    wallets: {
-      active: 'foo',
-      allIds: ['foo'],
-      byId: {
-        foo: {
-          addresses: {
-            '0xf00': {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: '1' } },
-              balance: '1'
-            }
-          }
-        }
-      }
-    }
-  }
+    auction: { status: auctionStatus }
+  })
 }

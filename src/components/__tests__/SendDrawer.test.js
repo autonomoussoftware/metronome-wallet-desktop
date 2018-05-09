@@ -101,19 +101,9 @@ function getInitialState({
   isInitialAuction = false,
   metBalance = '5000000000000000000000'
 } = {}) {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
+  return testUtils.getInitialState({
     metronome: { transferAllowed },
-    converter: {
-      status: null
-    },
-    auction: {
-      status: {
-        currentAuction: isInitialAuction ? '0' : '1'
-      }
-    },
-    session: { isLoggedIn: true },
+    auction: { status: { currentAuction: isInitialAuction ? '0' : '1' } },
     rates: { ETH: { token: 'ETH', price: 250 } },
     wallets: {
       active: 'foo',
@@ -121,7 +111,7 @@ function getInitialState({
       byId: {
         foo: {
           addresses: {
-            '0xf00': {
+            '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: {
                 [config.MTN_TOKEN_ADDR]: { balance: metBalance }
               },
@@ -131,5 +121,5 @@ function getInitialState({
         }
       }
     }
-  }
+  })
 }

@@ -3,7 +3,6 @@ import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import SendMETForm from '../SendMETForm'
-import config from '../../config'
 import React from 'react'
 
 const element = <SendMETForm />
@@ -82,29 +81,7 @@ describe('<SendMETForm/>', () => {
 })
 
 function getInitialState() {
-  return {
-    connectivity: { isOnline: true },
-    blockchain: { height: 1, gasPrice: '100' },
-    metronome: { transferAllowed: true },
-    converter: { status: null },
-    auction: { status: null },
-    session: { isLoggedIn: true },
-    rates: { ETH: { token: 'ETH', price: ETHprice } },
-    wallets: {
-      active: 'foo',
-      allIds: ['foo'],
-      byId: {
-        foo: {
-          addresses: {
-            '0xf00': {
-              token: {
-                [config.MTN_TOKEN_ADDR]: { balance: '5000000000000000000000' }
-              },
-              balance: '5000000000000000000000'
-            }
-          }
-        }
-      }
-    }
-  }
+  return testUtils.getInitialState({
+    rates: { ETH: { token: 'ETH', price: ETHprice } }
+  })
 }
