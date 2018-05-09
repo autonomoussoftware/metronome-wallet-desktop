@@ -5,6 +5,8 @@ branches:
     - master
     - develop
 
+configuration: Debug
+
 init:
   - git config --global core.autocrlf input
 
@@ -26,6 +28,16 @@ platform:
   - x64
 
 build_script:
-  - yarn release
+  - yarn dist
 
 test: off
+
+for:
+-
+  branches:
+    only:
+      - master
+
+  configuration: Release
+  build_script:
+    - yarn release
