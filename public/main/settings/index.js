@@ -5,6 +5,7 @@ const logger = require('electron-log')
 const settings = require('electron-settings')
 
 const restart = require('../electron-restart')
+const { getDb } = require('../database')
 
 const settableSettings = [
   'app.node.websocketApiUrl'
@@ -31,14 +32,25 @@ function presetDefaults () {
     delete currentSettings.user
   }
 
-  // Overwrite old settings if settings file version changed
+  // Overwrite old settings and clear db if settings file version changed
   if (defaultSettings.settingsVersion > currentSettingsVersion) {
-    logger.verbose('Updating default settings')
-
     if (currentSettings.app) {
+      logger.verbose('Clearing best block cache')
       delete currentSettings.app.bestBlock
     }
 
+    logger.verbose('Clearing database cache')
+    const db = getDb()
+    db.collection('transactions')
+    db.collection('state')
+    db.dropDatabase()
+      .catch(function (err) {
+        logger.error('Possible database corruption', err.message)
+
+        restart()
+      })
+
+    logger.verbose('Updating default settings')
     merge(currentSettings, defaultSettings)
   }
 
