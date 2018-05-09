@@ -94,7 +94,7 @@ function loadWindow () {
   initAutoUpdate()
 
   mainWindow.webContents.on('crashed', function (ev, killed) {
-    logger.error('Crashed', ev, killed)
+    logger.error('Crashed', ev.sender.id, killed)
   })
 
   mainWindow.on('unresponsive', function (ev) {
