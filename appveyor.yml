@@ -1,18 +1,24 @@
 image: Visual Studio 2017
 
-platform:
-  - x64
+init:
+  - git config --global core.autocrlf input
+
+shallow_clone: true
+
+environment:
+  DEBUG: electron-builder
 
 cache:
   - node_modules
   - '%USERPROFILE%\.electron'
 
-init:
-  - git config --global core.autocrlf input
-
 install:
-  - ps: Install-Product node 8 x64
+  - ps: Install-Product node LTS x64
+  - npm i --global --production windows-build-tools
   - yarn
+
+platform:
+  - x64
 
 build_script:
   - yarn release
