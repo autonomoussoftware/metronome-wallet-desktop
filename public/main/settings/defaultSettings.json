@@ -1,7 +1,7 @@
 {
   "app": {
-    "bestBlock": 2500000,
     "node": {
+    "bestBlock": 0,
       "jsonRpcApiUrl": "http://54.87.93.241:8545",
       "websocketApiUrl": "ws://54.87.93.241:8546"
     },
