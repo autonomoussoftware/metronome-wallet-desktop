@@ -1,4 +1,7 @@
-const { app, shell, Menu } = require('electron')
+'use strict'
+
+const { shell, Menu } = require('electron')
+const APP_NAME = 'Metronome Wallet'
 
 const template = [
   {
@@ -13,16 +16,15 @@ const template = [
       { role: 'selectall' }
     ]
   },
+
   {
     label: 'View',
     submenu: [
       {
         label: 'Toggle Full Screen',
-        accelerator: (() =>
-          process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11')(),
-        click(item, focusedWindow) {
-          focusedWindow &&
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
+        accelerator: (() => process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11')(),
+        click (item, focusedWindow) {
+          focusedWindow && focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
         }
       },
 
@@ -53,7 +55,7 @@ const template = [
     submenu: [
       {
         label: 'Learn More',
-        click() {
+        click () {
           shell.openExternal('https://metronome.io')
         }
       }
@@ -62,20 +64,18 @@ const template = [
 ]
 
 if (process.platform === 'darwin') {
-  const name = 'Metronome Wallet'
-
   template.unshift({
-    label: name,
+    label: APP_NAME,
     submenu: [
-      { role: 'about', label: `About ${name}` },
+      { role: 'about', label: `About ${APP_NAME}` },
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
-      { role: 'hide', label: `Hide ${name}` },
+      { role: 'hide', label: `Hide ${APP_NAME}` },
       { role: 'hideothers' },
       { role: 'unhide' },
       { type: 'separator' },
-      { role: 'quit', label: `Quit ${name}` }
+      { role: 'quit', label: `Quit ${APP_NAME}` }
     ]
   })
 
@@ -84,8 +84,20 @@ if (process.platform === 'darwin') {
   if (windowMenu) {
     windowMenu.submenu.push({ type: 'separator' }, { role: 'front' })
   }
+} else {
+  template.unshift({
+    label: 'File',
+    submenu: [{ role: 'quit', label: `Quit ${APP_NAME}` }]
+  })
+
+  const help = template.find(t => t.role === 'help')
+
+  if (help) {
+    help.submenu.unshift({ type: 'separator' })
+    help.submenu.unshift({ role: 'about', label: `About ${APP_NAME}` })
+  }
 }
 
-module.exports = function() {
+module.exports = function () {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }

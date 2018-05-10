@@ -24,9 +24,8 @@
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
-	"ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
-    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always",
-    "postinstall": "electron-builder install-app-deps"
+    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
+    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always"
   },
   "dependencies": {
     "7zip-bin": "^3.1.0",
@@ -49,7 +48,6 @@
     "electron-unhandled": "^1.0.0",
     "electron-updater": "^2.20.1",
     "ethereumjs-tx": "^1.3.3",
-    "ethereumjs-util": "^5.1.3",
     "ethereumjs-wallet": "^0.6.0",
     "fast-password-entropy": "^1.0.0",
     "human-standard-token-abi": "^1.0.2",
@@ -71,7 +69,7 @@
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.0",
+    "react-scripts": "1.1.4",
     "react-toastify": "^3.3.2",
     "react-transition-group": "^2.2.1",
     "react-virtualized": "^9.18.5",
@@ -83,7 +81,7 @@
     "styled-components": "^3.0.2",
     "supports-color": "^5.3.0",
     "tough-cookie": "^2.3.4",
-    "web3": "1.0.0-beta.33"
+    "web3": "1.0.0-beta.34"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
