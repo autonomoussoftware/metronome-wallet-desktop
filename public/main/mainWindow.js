@@ -81,7 +81,8 @@ function loadWindow () {
     width: 1140,
     height: 700,
     minWidth: 640,
-    minHeight: 600
+    minHeight: 578,
+    useContentSize: true
   })
 
   const appUrl = isDev
