@@ -1,5 +1,5 @@
 import { Simulate, flushPromises } from 'react-testing-library'
-import Passwordrequest from '../Passwordrequest'
+import Passwordrequest from '../PasswordRequest'
 import * as testUtils from '../../testUtils'
 import React from 'react'
 
