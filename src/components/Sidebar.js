@@ -162,14 +162,10 @@ const SecondaryBtn = styled(NavLink)`
   }
 
   &:nth-child(1) {
-    transform: translateY(13.2rem);
-  }
-
-  &:nth-child(2) {
     transform: translateY(9.6rem);
   }
 
-  &:nth-child(3) {
+  &:nth-child(2) {
     transform: translateY(6rem);
   }
 
@@ -255,13 +251,6 @@ class Sidebar extends Component {
             data-testid="tools-nav-btn"
           >
             Tools
-          </SecondaryBtn>
-          <SecondaryBtn
-            activeClassName="active"
-            to="/settings"
-            data-testid="settings-nav-btn"
-          >
-            Settings
           </SecondaryBtn>
           <SecondaryBtn
             activeClassName="active"

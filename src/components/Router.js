@@ -1,13 +1,12 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import React, { Component } from 'react'
-import RecoverFromMnemonic from './RecoverFromMnemonic'
 import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
-import Settings from './Settings'
 import Sidebar from './Sidebar'
 import Auction from './Auction'
 import styled from 'styled-components'
+import Tools from './Tools'
 import Help from './Help'
 
 const Container = styled.div`
@@ -38,8 +37,7 @@ export const layout = (
         <Route path="/wallets" component={Dashboard} />
         <Route path="/auction" component={Auction} />
         <Route path="/converter" component={Converter} />
-        <Route path="/tools" component={RecoverFromMnemonic} />
-        <Route component={Settings} path="/settings" />
+        <Route path="/tools" component={Tools} />
         <Route component={Help} path="/help" />
       </Switch>
     </Main>
