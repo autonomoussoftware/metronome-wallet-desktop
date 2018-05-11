@@ -110,9 +110,7 @@ class BalanceBlock extends React.Component {
           <Value data-testid="eth-balance">
             <DisplayValue maxSize="inherit" value={ethBalanceWei} />
           </Value>
-          <USDValue data-testid="eth-balance-usd">
-            ${ethBalanceUSD} (USD)
-          </USDValue>
+          <USDValue data-testid="eth-balance-usd">{ethBalanceUSD}</USDValue>
         </Balance>
       </React.Fragment>
     )

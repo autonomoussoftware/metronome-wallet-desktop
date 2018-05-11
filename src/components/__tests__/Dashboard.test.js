@@ -31,7 +31,15 @@ describe('<Dashboard/>', () => {
       <Dashboard />,
       getInitialState()
     )
-    expect(getByTestId('eth-balance-usd')).toHaveTextContent('$5.00 (USD)')
+    expect(getByTestId('eth-balance-usd')).toHaveTextContent('$5 (USD)')
+  })
+
+  it('Displays an abbreviation if USD balance is very small', () => {
+    const { getByTestId } = testUtils.reduxRender(
+      <Dashboard />,
+      getInitialState({ ethBalance: '1', metBalance: '1' })
+    )
+    expect(getByTestId('eth-balance-usd')).toHaveTextContent('< $0.01 (USD)')
   })
 
   it('Displays active address MET BALANCE', () => {

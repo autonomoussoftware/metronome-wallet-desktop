@@ -55,6 +55,17 @@ export function runEditTests(element, initialState, rate) {
     expect(usdField.placeholder).toBe('Invalid amount')
   })
 
+  it('displays a "< $0.01" placeholder in USD field when ETH equivalent value is small', () => {
+    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const ethField = getByTestId('ethAmount-field')
+    const usdField = getByTestId('usdAmount-field')
+    expect(usdField.placeholder).toBe('0.00')
+    ethField.value = '0.0000001'
+    Simulate.change(ethField)
+    expect(usdField.value).toBe('')
+    expect(usdField.placeholder).toBe('< 0.01')
+  })
+
   it('displays a "Invalid amount" placeholder in ETH field when USD value is invalid', () => {
     const { getByTestId } = testUtils.reduxRender(element, initialState)
     const ethField = getByTestId('ethAmount-field')

@@ -75,7 +75,7 @@ const Badge = styled.div`
   padding: 0.4rem 0.8rem;
   margin-right: 0.4rem;
 
-  @media (min-width: 800px) {
+  @media (min-width: 860px) {
     font-size: 2rem;
   }
 `
@@ -85,7 +85,7 @@ const Price = styled.div`
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 
-  @media (min-width: 800px) {
+  @media (min-width: 860px) {
     font-size: 2.4rem;
   }
 `
@@ -96,7 +96,7 @@ const USDPrice = styled.div`
   font-weight: 600;
   text-align: right;
 
-  @media (min-width: 800px) {
+  @media (min-width: 860px) {
     font-size: 1.6rem;
   }
 `
@@ -106,7 +106,7 @@ const AvailableAmount = styled.div`
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 
-  @media (min-width: 800px) {
+  @media (min-width: 860px) {
     font-size: 2.4rem;
   }
 `
@@ -164,7 +164,7 @@ class Converter extends React.Component {
                         />
                       </Price>
                     </Flex.Row>
-                    <USDPrice>${converterPriceUSD}</USDPrice>
+                    <USDPrice>{converterPriceUSD}</USDPrice>
                   </Flex.Column>
                 </Flex.Row>
               </Sp>

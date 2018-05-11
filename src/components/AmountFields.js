@@ -17,6 +17,7 @@ export default class AmountFields extends React.Component {
     }).isRequired
   }
 
+  static SMALL_VALUE_PLACEHOLDER = '< 0.01'
   static INVALID_PLACEHOLDER = 'Invalid amount'
 
   static initialState = {
@@ -28,7 +29,12 @@ export default class AmountFields extends React.Component {
     ...state,
     usdAmount:
       id === 'ethAmount'
-        ? utils.toUSD(value, ETHprice, AmountFields.INVALID_PLACEHOLDER)
+        ? utils.toUSD(
+            value,
+            ETHprice,
+            AmountFields.INVALID_PLACEHOLDER,
+            AmountFields.SMALL_VALUE_PLACEHOLDER
+          )
         : state.usdAmount,
     ethAmount:
       id === 'usdAmount'
@@ -81,13 +87,18 @@ export default class AmountFields extends React.Component {
             placeholder={
               usdAmount === AmountFields.INVALID_PLACEHOLDER
                 ? AmountFields.INVALID_PLACEHOLDER
-                : '0.00'
+                : usdAmount === AmountFields.SMALL_VALUE_PLACEHOLDER
+                  ? AmountFields.SMALL_VALUE_PLACEHOLDER
+                  : '0.00'
             }
             onChange={onChange}
             error={errors.usdAmount}
             label="Amount (USD)"
             value={
-              usdAmount === AmountFields.INVALID_PLACEHOLDER ? '' : usdAmount
+              usdAmount === AmountFields.INVALID_PLACEHOLDER ||
+              usdAmount === AmountFields.SMALL_VALUE_PLACEHOLDER
+                ? ''
+                : usdAmount
             }
             id="usdAmount"
           />
