@@ -20,7 +20,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1180px) {
     padding: 3.2rem 4.8rem;
     align-items: flex-start;
     flex-direction: row;
@@ -31,7 +31,7 @@ const ConvertBtn = styled(Btn)`
   margin-top: 3.2rem;
   min-width: 260px;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1180px) {
     min-width: 200px;
     margin-top: 0;
   }
@@ -50,7 +50,7 @@ const StatsContainer = styled.div`
   margin-right: 0;
   width: 100%;
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1180px) {
     margin-right: 1.6rem;
     max-width: 660px;
   }
@@ -75,7 +75,7 @@ const Badge = styled.div`
   padding: 0.4rem 0.8rem;
   margin-right: 0.4rem;
 
-  @media (min-width: 860px) {
+  @media (min-width: 920px) {
     font-size: 2rem;
   }
 `
@@ -85,7 +85,7 @@ const Price = styled.div`
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 
-  @media (min-width: 860px) {
+  @media (min-width: 920px) {
     font-size: 2.4rem;
   }
 `
@@ -96,7 +96,7 @@ const USDPrice = styled.div`
   font-weight: 600;
   text-align: right;
 
-  @media (min-width: 860px) {
+  @media (min-width: 920px) {
     font-size: 1.6rem;
   }
 `
@@ -106,7 +106,7 @@ const AvailableAmount = styled.div`
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 
-  @media (min-width: 860px) {
+  @media (min-width: 920px) {
     font-size: 2.4rem;
   }
 `
