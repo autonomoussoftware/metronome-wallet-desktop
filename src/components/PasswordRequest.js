@@ -66,7 +66,7 @@ export default class PasswordRequest extends React.Component {
           </Sp>
           <Sp mt={6}>
             <Btn block submit disabled={status === 'pending'}>
-              Send
+              Login
             </Btn>
           </Sp>
           {error && <ErrorMsg data-testid="error-msg">{error}</ErrorMsg>}
