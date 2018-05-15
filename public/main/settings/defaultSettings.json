@@ -2,8 +2,8 @@
   "app": {
     "node": {
     "bestBlock": 0,
-      "jsonRpcApiUrl": "http://54.87.93.241:8545",
-      "websocketApiUrl": "ws://54.87.93.241:8546"
+      "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
+      "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
     "indexerApiUrl": "https://indexer.met.bloqrock.net",
@@ -26,5 +26,5 @@
       "symbol": "MET"
     }
   },
-  "settingsVersion": 4
+  "settingsVersion": 5
 }
