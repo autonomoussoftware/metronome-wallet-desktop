@@ -12,13 +12,17 @@ function getAuctionStatus ({ web3, address }) {
   const calls = {
     genesisTime: auctions.methods.genesisTime().call()
       .then(t => Number.parseInt(t, 10)),
-    currentPrice: auctions.methods.currentPrice().call(),
+    currentPrice: auctions.methods.currentPrice().call()
+      .catch(() => 0),
     tokenRemaining: auctions.methods.heartbeat().call()
+      .catch(() => ({ minting: 0 }))
       .then(get('minting')), // [4]
     nextAuctionStartTime: auctions.methods.heartbeat().call()
+      .catch(() => ({ nextAuctionGMT: 0 }))
       .then(get('nextAuctionGMT')) // [9]
       .then(t => Number.parseInt(t, 10)),
-    currentAuction: auctions.methods.currentAuction().call(),
+    currentAuction: auctions.methods.currentAuction().call()
+      .catch(() => 0),
     isInitialAuctionEnded: auctions.methods.isInitialAuctionEnded().call()
   }
 
