@@ -2,11 +2,11 @@ import { TextInput, FieldBtn, TxIcon, Flex, Sp } from './common'
 import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Web3 from 'web3'
 
 export default class AmountFields extends React.Component {
   static propTypes = {
-    availableETH: PropTypes.string.isRequired,
+    calculatingMax: PropTypes.bool,
+    onMaxClick: PropTypes.func.isRequired,
     ethAmount: PropTypes.string,
     usdAmount: PropTypes.string,
     autoFocus: PropTypes.bool,
@@ -42,11 +42,6 @@ export default class AmountFields extends React.Component {
         : state.ethAmount
   })
 
-  onMaxClick = () => {
-    const ethAmount = Web3.utils.fromWei(this.props.availableETH)
-    this.props.onChange({ target: { id: 'ethAmount', value: ethAmount } })
-  }
-
   render() {
     const { autoFocus, ethAmount, usdAmount, onChange, errors } = this.props
 
@@ -56,7 +51,7 @@ export default class AmountFields extends React.Component {
           <FieldBtn
             data-testid="max-btn"
             tabIndex="-1"
-            onClick={this.onMaxClick}
+            onClick={this.props.onMaxClick}
             float
           >
             MAX
@@ -64,16 +59,21 @@ export default class AmountFields extends React.Component {
           <TextInput
             data-testid="ethAmount-field"
             placeholder={
-              ethAmount === AmountFields.INVALID_PLACEHOLDER
-                ? AmountFields.INVALID_PLACEHOLDER
-                : '0.00'
+              this.props.calculatingMax
+                ? 'Calculating max...'
+                : ethAmount === AmountFields.INVALID_PLACEHOLDER
+                  ? AmountFields.INVALID_PLACEHOLDER
+                  : '0.00'
             }
             autoFocus={autoFocus}
             onChange={onChange}
             error={errors.ethAmount}
             label="Amount (ETH)"
             value={
-              ethAmount === AmountFields.INVALID_PLACEHOLDER ? '' : ethAmount
+              ethAmount === AmountFields.INVALID_PLACEHOLDER ||
+              this.props.calculatingMax
+                ? ''
+                : ethAmount
             }
             id="ethAmount"
           />

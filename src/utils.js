@@ -230,3 +230,22 @@ export function sanitizeMnemonic(str) {
     .trim()
     .toLowerCase()
 }
+
+/**
+ * Receives a balance (in wei) a gas limit (in units) and a gas price (in gwei)
+ * and returns a string (in ETH) equivalent to balance - limit * price.
+ * Userful for populating an "amount" form field with the max possible
+ * amount to transfer
+ */
+export function calculateMaxAmount(weiBalance, gweiGasPrice, gasLimit) {
+  const balanceBN = Web3.utils.toBN(weiBalance)
+  let gasCost
+  try {
+    gasCost = Web3.utils
+      .toBN(gasLimit)
+      .mul(Web3.utils.toWei(Web3.utils.toBN(gweiGasPrice), 'gwei'))
+  } catch (e) {
+    gasCost = Web3.utils.toBN('0')
+  }
+  return Web3.utils.fromWei(balanceBN.sub(gasCost))
+}

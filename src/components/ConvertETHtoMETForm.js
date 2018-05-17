@@ -1,4 +1,3 @@
-import { sendToMainProcess, isWeiable } from '../utils'
 import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
@@ -7,6 +6,7 @@ import * as selectors from '../selectors'
 import AmountFields from './AmountFields'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
+import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -39,6 +39,7 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   state = {
+    calculatingMax: false,
     ...AmountFields.initialState,
     ...GasEditor.initialState('MET'),
     estimate: null,
@@ -57,21 +58,44 @@ class ConvertETHtoMETForm extends React.Component {
     }))
 
     // Estimate gas limit again if parameters changed
-    if (['ethAmount'].includes(id)) this.getGasEstimate()
+    if (['ethAmount'].includes(id)) this.updateGasLimit(value)
   }
 
-  getGasEstimate = debounce(() => {
-    const { ethAmount } = this.state
-
-    if (!isWeiable(ethAmount)) return
-
-    sendToMainProcess('metronome-convert-eth-gas-limit', {
+  getGasEstimate = ethAmount => {
+    if (!utils.isWeiable(ethAmount)) {
+      return Promise.reject(new Error(`${ethAmount} is an invalid value`))
+    }
+    return utils.sendToMainProcess('metronome-convert-eth-gas-limit', {
       value: Web3.utils.toWei(ethAmount.replace(',', '.')),
       from: this.props.from
     })
-      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err))
+  }
+
+  updateGasLimit = debounce(ethAmount => {
+    this.getGasEstimate(ethAmount)
+      .then(({ gasLimit }) => {
+        this.setState({ gasLimit: gasLimit.toString() })
+        return { gasLimit }
+      })
+      .catch(err => console.warn('Gas estimation failed: ', err.message))
   }, 500)
+
+  setMax = gasLimit => {
+    const max = utils.calculateMaxAmount(
+      this.props.availableETH,
+      this.state.gasPrice,
+      gasLimit
+    )
+    this.onInputChange({ target: { id: 'ethAmount', value: max } })
+    this.setState({ calculatingMax: false })
+  }
+
+  onMaxClick = () => {
+    this.setState({ calculatingMax: true })
+    this.getGasEstimate(Web3.utils.fromWei(this.props.availableETH))
+      .then(({ gasLimit }) => this.setMax(gasLimit))
+      .catch(() => this.setMax(this.state.gasLimit))
+  }
 
   validate = () => {
     const { ethAmount, gasPrice, gasLimit } = this.state
@@ -87,7 +111,7 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   onWizardSubmit = password => {
-    return sendToMainProcess('mtn-convert-eth', {
+    return utils.sendToMainProcess('mtn-convert-eth', {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
@@ -120,7 +144,8 @@ class ConvertETHtoMETForm extends React.Component {
             id="convertForm"
           >
             <AmountFields
-              availableETH={this.props.availableETH}
+              calculatingMax={this.state.calculatingMax}
+              onMaxClick={this.onMaxClick}
               ethAmount={this.state.ethAmount}
               usdAmount={this.state.usdAmount}
               autoFocus

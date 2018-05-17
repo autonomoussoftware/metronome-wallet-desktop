@@ -44,6 +44,7 @@ class BuyMETDrawer extends React.Component {
   }
 
   static initialState = {
+    calculatingMax: false,
     ...AmountFields.initialState,
     ...GasEditor.initialState('MET'),
     errors: {}
@@ -69,22 +70,44 @@ class BuyMETDrawer extends React.Component {
     }))
 
     // Estimate gas limit again if parameters changed
-    if (['ethAmount'].includes(id)) this.getGasEstimate()
+    if (['ethAmount'].includes(id)) this.updateGasLimit(value)
   }
 
-  getGasEstimate = debounce(() => {
-    const { ethAmount } = this.state
+  getGasEstimate = ethAmount => {
+    if (!utils.isWeiable(ethAmount)) {
+      return Promise.reject(new Error(`"${ethAmount}"" is an invalid value`))
+    }
+    return utils.sendToMainProcess('metronome-auction-gas-limit', {
+      value: Web3.utils.toWei(ethAmount.replace(',', '.')),
+      from: this.props.from
+    })
+  }
 
-    if (!utils.isWeiable(ethAmount)) return
-
-    utils
-      .sendToMainProcess('metronome-auction-gas-limit', {
-        value: Web3.utils.toWei(ethAmount.replace(',', '.')),
-        from: this.props.from
+  updateGasLimit = debounce(ethAmount => {
+    this.getGasEstimate(ethAmount)
+      .then(({ gasLimit }) => {
+        this.setState({ gasLimit: gasLimit.toString() })
+        return { gasLimit }
       })
-      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err))
+      .catch(err => console.warn('Gas estimation failed: ', err.message))
   }, 500)
+
+  setMax = gasLimit => {
+    const max = utils.calculateMaxAmount(
+      this.props.availableETH,
+      this.state.gasPrice,
+      gasLimit
+    )
+    this.onInputChange({ target: { id: 'ethAmount', value: max } })
+    this.setState({ calculatingMax: false })
+  }
+
+  onMaxClick = () => {
+    this.setState({ calculatingMax: true })
+    this.getGasEstimate(Web3.utils.fromWei(this.props.availableETH))
+      .then(({ gasLimit }) => this.setMax(gasLimit))
+      .catch(() => this.setMax(this.state.gasLimit))
+  }
 
   onWizardSubmit = password => {
     return utils.sendToMainProcess('metronome-buy', {
@@ -177,7 +200,8 @@ class BuyMETDrawer extends React.Component {
       <form onSubmit={goToReview} noValidate data-testid="buy-form">
         <Sp py={4} px={3}>
           <AmountFields
-            availableETH={this.props.availableETH}
+            calculatingMax={this.state.calculatingMax}
+            onMaxClick={this.onMaxClick}
             ethAmount={ethAmount}
             usdAmount={usdAmount}
             autoFocus
