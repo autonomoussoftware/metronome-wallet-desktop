@@ -1,10 +1,10 @@
-import { Simulate } from 'react-testing-library'
 import * as testUtils from '../../testUtils'
+import { Simulate } from 'react-testing-library'
 import AmountFields from '../AmountFields'
 import React from 'react'
 
 const element = (
-  <AmountFields availableETH="100" onChange={jest.fn()} errors={{}} />
+  <AmountFields onChange={jest.fn()} onMaxClick={jest.fn()} errors={{}} />
 )
 
 describe('<AmountFields/>', () => {
@@ -33,15 +33,6 @@ export function runEditTests(element, initialState, rate) {
     usdField.value = '500'
     Simulate.change(usdField)
     expect(ethField.value).toBe((500 / rate).toString())
-  })
-
-  it('updates ETH and USD fields when MAX button is clicked', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
-    const ethField = getByTestId('ethAmount-field')
-    const usdField = getByTestId('usdAmount-field')
-    Simulate.click(getByTestId('max-btn'))
-    expect(ethField.value).toBe('5000')
-    expect(usdField.value).toBe((5000 * rate).toString())
   })
 
   it('displays a "Invalid amount" placeholder in USD field when ETH value is invalid', () => {
