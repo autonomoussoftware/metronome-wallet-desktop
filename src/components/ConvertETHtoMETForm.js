@@ -13,6 +13,14 @@ import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
 
+const WarningMsg = styled.div`
+  margin-top: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: ${p => p.theme.colors.danger};
+`
+
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
@@ -133,6 +141,12 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   renderForm = goToReview => {
+    const hasEnoughFunds = utils.hasEnoughFunds(
+      this.props.availableETH,
+      this.state.gasPrice,
+      this.state.gasLimit,
+      this.state.ethAmount
+    )
     return (
       <Flex.Column grow="1">
         {this.props.tabs}
@@ -167,10 +181,15 @@ class ConvertETHtoMETForm extends React.Component {
               onChange={this.onInputChange}
               amount={this.state.ethAmount}
             />
+            {!hasEnoughFunds && (
+              <WarningMsg>
+                You don&apos;t have enough ETH to cover the amount and gas cost
+              </WarningMsg>
+            )}
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm">
+          <Btn block submit form="convertForm" disabled={!hasEnoughFunds}>
             Review Convert
           </Btn>
         </Footer>

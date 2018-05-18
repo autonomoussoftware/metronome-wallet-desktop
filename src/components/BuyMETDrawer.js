@@ -12,6 +12,14 @@ import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
 
+const WarningMsg = styled.div`
+  margin-top: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: ${p => p.theme.colors.danger};
+`
+
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
@@ -196,6 +204,13 @@ class BuyMETDrawer extends React.Component {
       this.props.tokenRemaining
     )
 
+    const hasEnoughFunds = utils.hasEnoughFunds(
+      this.props.availableETH,
+      this.state.gasPrice,
+      this.state.gasLimit,
+      this.state.ethAmount
+    )
+
     return (
       <form onSubmit={goToReview} noValidate data-testid="buy-form">
         <Sp py={4} px={3}>
@@ -240,10 +255,15 @@ class BuyMETDrawer extends React.Component {
               )}
             </Sp>
           )}
+          {!hasEnoughFunds && (
+            <WarningMsg>
+              You don&apos;t have enough ETH to cover the amount and gas cost
+            </WarningMsg>
+          )}
         </Sp>
 
         <BtnContainer>
-          <Btn submit block>
+          <Btn submit block disabled={!hasEnoughFunds}>
             Review Buy
           </Btn>
         </BtnContainer>

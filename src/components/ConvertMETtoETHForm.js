@@ -1,16 +1,24 @@
 import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
+import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+
+const WarningMsg = styled.div`
+  margin-top: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: ${p => p.theme.colors.danger};
+`
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -31,6 +39,7 @@ const Footer = styled.div`
 
 class ConvertMETtoETHForm extends React.Component {
   static propTypes = {
+    availableETH: PropTypes.string.isRequired,
     availableMTN: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired,
     tabs: PropTypes.node
@@ -63,12 +72,13 @@ class ConvertMETtoETHForm extends React.Component {
   getGasEstimate = debounce(() => {
     const { metAmount } = this.state
 
-    if (!isWeiable(metAmount)) return
+    if (!utils.isWeiable(metAmount)) return
 
-    sendToMainProcess('metronome-convert-met-gas-limit', {
-      value: Web3.utils.toWei(metAmount.replace(',', '.')),
-      from: this.props.from
-    })
+    utils
+      .sendToMainProcess('metronome-convert-met-gas-limit', {
+        value: Web3.utils.toWei(metAmount.replace(',', '.')),
+        from: this.props.from
+      })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
       .catch(err => console.warn('Gas estimation failed', err))
   }, 500)
@@ -87,7 +97,7 @@ class ConvertMETtoETHForm extends React.Component {
   }
 
   onWizardSubmit = password => {
-    return sendToMainProcess(
+    return utils.sendToMainProcess(
       'mtn-convert-mtn',
       {
         gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
@@ -113,6 +123,11 @@ class ConvertMETtoETHForm extends React.Component {
   }
 
   renderForm = goToReview => {
+    const hasEnoughFunds = utils.hasEnoughFunds(
+      this.props.availableETH,
+      this.state.gasPrice,
+      this.state.gasLimit
+    )
     return (
       <Flex.Column grow="1">
         {this.props.tabs}
@@ -157,11 +172,16 @@ class ConvertMETtoETHForm extends React.Component {
                 onChange={this.onInputChange}
                 amount={this.state.metAmount}
               />
+              {!hasEnoughFunds && (
+                <WarningMsg>
+                  You don&apos;t have enough ETH to cover the gas cost
+                </WarningMsg>
+              )}
             </div>
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm">
+          <Btn block submit form="convertForm" disabled={!hasEnoughFunds}>
             Review Convert
           </Btn>
         </Footer>
@@ -185,6 +205,7 @@ class ConvertMETtoETHForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  availableETH: selectors.getEthBalanceWei(state),
   availableMTN: selectors.getMtnBalanceWei(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })

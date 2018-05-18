@@ -232,6 +232,23 @@ export function sanitizeMnemonic(str) {
 }
 
 /**
+ * Receives a gas limit (in units) and a gas price (in gwei) and returns
+ * a BN (in wei) equivalent limit * price, which is the max gas cost for
+ * a transaction.
+ */
+export function calculateGasCost(gweiGasPrice, gasLimit) {
+  let gasCost
+  try {
+    gasCost = Web3.utils
+      .toBN(gasLimit)
+      .mul(Web3.utils.toBN(Web3.utils.toWei(gweiGasPrice, 'gwei')))
+  } catch (e) {
+    gasCost = Web3.utils.toBN('0')
+  }
+  return gasCost
+}
+
+/**
  * Receives a balance (in wei) a gas limit (in units) and a gas price (in gwei)
  * and returns a string (in ETH) equivalent to balance - limit * price.
  * Userful for populating an "amount" form field with the max possible
@@ -239,13 +256,25 @@ export function sanitizeMnemonic(str) {
  */
 export function calculateMaxAmount(weiBalance, gweiGasPrice, gasLimit) {
   const balanceBN = Web3.utils.toBN(weiBalance)
-  let gasCost
-  try {
-    gasCost = Web3.utils
-      .toBN(gasLimit)
-      .mul(Web3.utils.toWei(Web3.utils.toBN(gweiGasPrice), 'gwei'))
-  } catch (e) {
-    gasCost = Web3.utils.toBN('0')
-  }
+  const gasCost = calculateGasCost(gweiGasPrice, gasLimit)
   return Web3.utils.fromWei(balanceBN.sub(gasCost))
+}
+
+/**
+ * Receives a balance (in wei) a gas limit (in units) a gas price (in gwei)
+ * and an amount (in ETH) and returns o boolean.
+ */
+export function hasEnoughFunds(weiBalance, gweiGasPrice, gasLimit, eth) {
+  let ethAmount
+  try {
+    ethAmount = Web3.utils.toWei(eth)
+  } catch (e) {
+    ethAmount = '0'
+  }
+  const balanceBN = Web3.utils.toBN(weiBalance)
+  const gasCost = calculateGasCost(gweiGasPrice, gasLimit)
+  return Web3.utils
+    .toBN(ethAmount)
+    .sub(gasCost)
+    .lte(balanceBN)
 }

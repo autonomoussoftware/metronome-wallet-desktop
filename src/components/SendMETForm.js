@@ -1,16 +1,24 @@
 import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable } from '../utils'
 import ConfirmationWizard from './ConfirmationWizard'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
+import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
+
+const WarningMsg = styled.div`
+  margin-top: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: ${p => p.theme.colors.danger};
+`
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -31,6 +39,7 @@ const Footer = styled.div`
 
 class SendMETForm extends React.Component {
   static propTypes = {
+    availableETH: PropTypes.string.isRequired,
     availableMET: PropTypes.string.isRequired,
     from: PropTypes.string.isRequired,
     tabs: PropTypes.node
@@ -64,14 +73,15 @@ class SendMETForm extends React.Component {
   getGasEstimate = debounce(() => {
     const { metAmount, toAddress } = this.state
 
-    if (!isWeiable(metAmount) || !Web3.utils.isAddress(toAddress)) return
+    if (!utils.isWeiable(metAmount) || !Web3.utils.isAddress(toAddress)) return
 
-    sendToMainProcess('tokens-get-gas-limit', {
-      value: Web3.utils.toWei(metAmount.replace(',', '.')),
-      token: config.MTN_TOKEN_ADDR,
-      from: this.props.from,
-      to: toAddress
-    })
+    utils
+      .sendToMainProcess('tokens-get-gas-limit', {
+        value: Web3.utils.toWei(metAmount.replace(',', '.')),
+        token: config.MTN_TOKEN_ADDR,
+        from: this.props.from,
+        to: toAddress
+      })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
       .catch(err => console.warn('Gas estimation failed', err))
   }, 500)
@@ -102,7 +112,7 @@ class SendMETForm extends React.Component {
   }
 
   onWizardSubmit = password => {
-    return sendToMainProcess('send-token', {
+    return utils.sendToMainProcess('send-token', {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
@@ -114,6 +124,11 @@ class SendMETForm extends React.Component {
   }
 
   renderForm = goToReview => {
+    const hasEnoughFunds = utils.hasEnoughFunds(
+      this.props.availableETH,
+      this.state.gasPrice,
+      this.state.gasLimit
+    )
     return (
       <Flex.Column grow="1">
         {this.props.tabs}
@@ -163,10 +178,15 @@ class SendMETForm extends React.Component {
                 errors={this.state.errors}
               />
             </Sp>
+            {!hasEnoughFunds && (
+              <WarningMsg>
+                You don&apos;t have enough ETH to cover the gas cost
+              </WarningMsg>
+            )}
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="sendForm">
+          <Btn block submit form="sendForm" disabled={!hasEnoughFunds}>
             Review Send
           </Btn>
         </Footer>
@@ -187,6 +207,7 @@ class SendMETForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  availableETH: selectors.getEthBalanceWei(state),
   availableMET: selectors.getMtnBalanceWei(state),
   from: selectors.getActiveWalletAddresses(state)[0]
 })
