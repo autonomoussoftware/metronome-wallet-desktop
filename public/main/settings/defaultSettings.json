@@ -14,17 +14,17 @@
   },
   "metronome": {
     "contracts": {
-      "auctions": "0x7e25f34e0f16059bea3ffae7d6545c04896cced2",
-      "converter": "0x6d0cb3142e66f5f3cf196b1df32082bf5f3325d3",
-      "token": "0xe0df19e55ebbbe076c3e393ff5d0418a2a0de5f8"
+      "auctions": "0x61b0219e056b6d6c67f4aeb6cd5f6bf74a7aac50",
+      "converter": "0xc9b300800e7ffceb1cc68593fce4d4ff842d71db",
+      "token": "0xef532fb902299b97f789f25beb44a1c4a4502760"
     }
   },
   "tokens": {
-    "0xe0df19e55ebbbe076c3e393ff5d0418a2a0de5f8": {
+    "0xef532fb902299b97f789f25beb44a1c4a4502760": {
       "decimals": 18,
       "name": "Metronome",
       "symbol": "MET"
     }
   },
-  "settingsVersion": 5
+  "settingsVersion": 6
 }
