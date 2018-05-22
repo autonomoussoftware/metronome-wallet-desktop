@@ -16,11 +16,7 @@ describe('<Router/>', () => {
   })
 
   test('navigates to TOOLS screen when clicking TOOLS sidebar button', () => {
-    clickAndExpect('tools-nav-btn', 'recover-container')
-  })
-
-  test('navigates to SETTINGS screen when clicking SETTINGS sidebar button', () => {
-    clickAndExpect('settings-nav-btn', 'settings-container')
+    clickAndExpect('tools-nav-btn', 'tools-container')
   })
 
   test('navigates to HELP screen when clicking HELP sidebar button', () => {

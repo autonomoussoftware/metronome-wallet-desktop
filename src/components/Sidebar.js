@@ -11,8 +11,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   transition: width 0.3s;
   position: absolute;
   top: 0;
@@ -163,15 +162,11 @@ const SecondaryBtn = styled(NavLink)`
   }
 
   &:nth-child(1) {
-    transform: translateY(16.2rem);
+    transform: translateY(9.6rem);
   }
 
   &:nth-child(2) {
-    transform: translateY(12.6rem);
-  }
-
-  &:nth-child(3) {
-    transform: translateY(9rem);
+    transform: translateY(6rem);
   }
 
   ${Container}:hover & {
@@ -256,13 +251,6 @@ class Sidebar extends Component {
             data-testid="tools-nav-btn"
           >
             Tools
-          </SecondaryBtn>
-          <SecondaryBtn
-            activeClassName="active"
-            to="/settings"
-            data-testid="settings-nav-btn"
-          >
-            Settings
           </SecondaryBtn>
           <SecondaryBtn
             activeClassName="active"

@@ -546,7 +546,16 @@ const createCreateWallet = (bus, plugins, plugin) =>
       return result
     }
 
-    openWallet({ bus, webContents, walletId: result.walletId, plugins, plugin })
+    setBestBlock({ number: -1 })
+      .then(function () {
+        openWallet({
+          bus,
+          webContents,
+          walletId: result.walletId,
+          plugins,
+          plugin
+        })
+      })
 
     return result
   }

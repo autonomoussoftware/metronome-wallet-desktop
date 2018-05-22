@@ -45,7 +45,12 @@ before_script:
   - git lfs pull
 
 script:
-  - yarn release
+  - |
+    if [ "$TRAVIS_BRANCH" == "develop" ]; then
+      yarn test && yarn dist
+    elif [ "$TRAVIS_BRANCH" == "master" ]; then
+      yarn test && yarn release
+    fi
 
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine

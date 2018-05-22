@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./public/images/banner.png" alt="metronome wallet">
+  <img src="./public/images/banner.png" alt="Metronome Wallet Desktop" width="50%">
 </h1>
 
 💻💰 Metronome wallet for desktop devices
@@ -7,55 +7,69 @@
 [![Build Status](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet.svg?token=zFtwnjoHbEAEPUQyswR1&branch=master)](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Index
 
-## Install the project dependencies
-The application need Yarn for install dependencies and run tasks.
-More info and install steps in https://yarnpkg.com/
+1.  [Requirements](#requirements)
+1.  [Configuration](#configuration)
+1.  [Dev Setup](#dev-Setup)
+1.  [Prod Setup](#prod-setup)
+1.  [Logs](#logs)
+1.  [Development Notes](#development-notes)
+1.  [License](#license)
+
+## Requirements
+
+* [Node.js](https://nodejs.org) v8 (or greater)
+
+## Dev Setup
 
 ```bash
-yarn install
+# Install dependencies
+$ npm i
+
+# Run dev mode
+$ npm run dev
+
+# Run test cases
+$ npm test
 ```
 
-## Run in development mode
+## Prod Setup
 
 ```bash
-yarn dev
-```
+# Run build process
+$ npm run dist
 
-## Create distribution bundle
-
-```bash
-yarn dist
-```
-
-## Create distribution bundle and publish it
-
-```bash
-yarn release
-```
-
-## Create base pack bundle without target any OS
-
-```bash
-yarn pack
+# Run build process and publish to GitHub release
+$ npm run release
 ```
 
 ## Logs
 
 The log output is in the next directories:
 
- * **on Linux:** `~/.config/<app name>/log.log`
- * **on OS X:** `~/Library/Logs/<app name>/log.log`
- * **on Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
+ * **Linux:** `~/.config/<app name>/log.log`
+ * **macOS:** `~/Library/Logs/<app name>/log.log`
+ * **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
 
-More info https://github.com/megahertz/electron-log
+> More info [github.com/megahertz/electron-log](https://github.com/megahertz/electron-log)
 
-## Development notes
+## Development Notes
 
-To remove the settings of the app and start again:
+To remove app settings and start over again:
 
-```
-$ rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
-```
+* **Linux**:
+  ```bash
+  $ rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
+  ```
+* **macOS**:
+  ```bash
+  ```
+* **Windows**:
+  ```bash
+  ```
 
-[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
+
+## LICENSE
+
+[MIT License](https://github.com/MetronomeToken/metronome-desktop-wallet/blob/develop/LICENSE).

@@ -19,7 +19,7 @@ const ValidationMsg = styled.div`
   opacity: 0.75;
 `
 
-class RecoverFromMnemonic extends React.Component {
+class Tools extends React.Component {
   static propTypes = {
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
@@ -29,6 +29,14 @@ class RecoverFromMnemonic extends React.Component {
   state = {
     mnemonic: null,
     errors: {}
+  }
+
+  onRescanTransactionsClick = e => {
+    e.preventDefault()
+    utils
+      .sendToMainProcess('cache-clear')
+      .then(console.log)
+      .catch(console.warn)
   }
 
   validate = () => {
@@ -70,38 +78,54 @@ class RecoverFromMnemonic extends React.Component {
     const wordsAmount = utils.sanitizeMnemonic(mnemonic || '').split(' ').length
 
     return (
-      <form data-testid="recover-form" onSubmit={goToReview}>
-        <p>Enter the 12 words to recover your wallet.</p>
-        <p>This action will replace your current stored seed!</p>
-        <TextInput
-          data-testid="mnemonic-field"
-          autoFocus
-          onChange={this.onInputChanged}
-          label="Recovery phrase"
-          error={errors.mnemonic}
-          value={mnemonic || ''}
-          rows={2}
-          id="mnemonic"
-        />
-        <Sp mt={4}>
-          <Flex.Row align="center">
-            <Btn disabled={wordsAmount !== 12} submit>
-              Recover
-            </Btn>
-            {wordsAmount !== 12 && (
-              <ValidationMsg>
-                A recovery phrase must have exactly 12 words
-              </ValidationMsg>
-            )}
-          </Flex.Row>
+      <Sp mt={-2}>
+        <h2>Recover a Wallet</h2>
+        <form data-testid="recover-form" onSubmit={goToReview}>
+          <p>
+            Enter a valid twelve-word recovery phrase to recover another wallet.
+          </p>
+          <p>This action will replace your current stored seed!</p>
+          <TextInput
+            data-testid="mnemonic-field"
+            autoFocus
+            onChange={this.onInputChanged}
+            label="Recovery phrase"
+            error={errors.mnemonic}
+            value={mnemonic || ''}
+            rows={2}
+            id="mnemonic"
+          />
+          <Sp mt={4}>
+            <Flex.Row align="center">
+              <Btn disabled={wordsAmount !== 12} submit>
+                Recover
+              </Btn>
+              {wordsAmount !== 12 && (
+                <ValidationMsg>
+                  A recovery phrase must have exactly 12 words
+                </ValidationMsg>
+              )}
+            </Flex.Row>
+          </Sp>
+        </form>
+        <Sp mt={5}>
+          <hr />
+          <h2>Rescan Transactions List</h2>
+          <p>
+            This will clear your local cache and rescan all your wallet
+            transactions.
+          </p>
+          <Btn onClick={this.onRescanTransactionsClick}>
+            Rescan Transactions
+          </Btn>
         </Sp>
-      </form>
+      </Sp>
     )
   }
 
   render() {
     return (
-      <DarkLayout title="Recover wallet" data-testid="recover-container">
+      <DarkLayout title="Tools" data-testid="tools-container">
         <Sp py={4} px={6}>
           <ConfirmationWizard
             renderConfirmation={this.renderConfirmation}
@@ -130,4 +154,4 @@ class RecoverFromMnemonic extends React.Component {
   }
 }
 
-export default withRouter(RecoverFromMnemonic)
+export default withRouter(Tools)

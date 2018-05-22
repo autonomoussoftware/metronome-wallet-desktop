@@ -1,15 +1,15 @@
-import RecoverFromMnemonic from '../RecoverFromMnemonic'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
+import Tools from '../Tools'
 import React from 'react'
 import 'react-testing-library/extend-expect'
 
-const element = <RecoverFromMnemonic />
+const element = <Tools />
 
 const VALID_MNEMONIC =
   'discover prepare cause retire pitch web curious own hollow total initial simple'
 
-describe('<RecoverFromMnemonic/>', () => {
+describe('<Tools/>', () => {
   describe('When submitting the form', () => {
     it('displays an error if MNEMONIC is not provided', () => {
       const { getByTestId } = testUtils.routerRender(element)

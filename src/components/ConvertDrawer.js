@@ -21,15 +21,18 @@ export default class ConvertDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  initialState = {
-    activeTab: this.props.defaultTab || 'ethToMet'
+  constructor(props) {
+    super(props)
+    this.state = this.getInitialState(props)
   }
 
-  state = this.initialState
+  getInitialState = props => ({
+    activeTab: props.defaultTab || 'ethToMet'
+  })
 
   componentWillReceiveProps(newProps) {
     if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
-      this.setState(this.initialState)
+      this.setState(this.getInitialState(newProps))
     }
   }
 

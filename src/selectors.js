@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+import * as utils from './utils'
 import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
@@ -110,8 +111,7 @@ export const getEthBalanceUSD = createSelector(
   getEthRate,
   (balance, ethRate) => {
     if (!balance || !ethRate) return '0'
-    const usdValue = parseFloat(Web3.utils.fromWei(balance)) * ethRate
-    return usdValue.toFixed(usdValue > 1 ? 2 : 6)
+    return utils.getUSDequivalent(balance, ethRate)
   }
 )
 
@@ -139,10 +139,8 @@ export const getAuctionPriceUSD = createSelector(
   getAuctionStatus,
   getEthRate,
   (auctionStatus, ethRate) => {
-    if (!auctionStatus || !ethRate) return '0'
-    const usdValue =
-      parseFloat(Web3.utils.fromWei(auctionStatus.currentPrice)) * ethRate
-    return usdValue.toFixed(usdValue > 1 ? 2 : 6)
+    if (!auctionStatus || !ethRate) return '$0.00 (USD)'
+    return utils.getUSDequivalent(auctionStatus.currentPrice, ethRate)
   }
 )
 
@@ -162,10 +160,8 @@ export const getConverterPriceUSD = createSelector(
   getConverterStatus,
   getEthRate,
   (converterStatus, ethRate) => {
-    if (!converterStatus || !ethRate) return '0'
-    const usdValue =
-      parseFloat(Web3.utils.fromWei(converterStatus.currentPrice)) * ethRate
-    return usdValue.toFixed(usdValue > 1 ? 2 : 6)
+    if (!converterStatus || !ethRate) return '$0.00 (USD)'
+    return utils.getUSDequivalent(converterStatus.currentPrice, ethRate)
   }
 )
 

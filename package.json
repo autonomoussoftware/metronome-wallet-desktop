@@ -3,14 +3,29 @@
   "version": "0.9.0",
   "private": true,
   "author": {
-    "name": "Bloq Labs",
-    "email": "labs@bloq.com",
-    "url": "http://bloq.com/"
+    "name": "Autonomous Software",
+    "email": "info@autonomous.sh",
+    "url": "https://autonomous.sh"
   },
-  "description": "Metronome Wallet for desktop",
+  "description": "Metronome Wallet for desktop devices",
   "repository": {
     "type": "git",
     "url": "git@github.com:MetronomeToken/metronome-desktop-wallet.git"
+  },
+  "homepage": "./",
+  "main": "public/electron.js",
+  "copyright": "Copyright © 2018 ${author}",
+  "scripts": {
+    "start": "react-scripts start",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "prettier": "prettier --write ./**/*.js",
+    "pack": "build --c.extraMetadata.main=build/electron.js",
+    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
+    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
+    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always"
   },
   "dependencies": {
     "7zip-bin": "^3.1.0",
@@ -33,7 +48,6 @@
     "electron-unhandled": "^1.0.0",
     "electron-updater": "^2.20.1",
     "ethereumjs-tx": "^1.3.3",
-    "ethereumjs-util": "^5.1.3",
     "ethereumjs-wallet": "^0.6.0",
     "fast-password-entropy": "^1.0.0",
     "human-standard-token-abi": "^1.0.2",
@@ -55,7 +69,7 @@
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.0",
+    "react-scripts": "1.1.4",
     "react-toastify": "^3.3.2",
     "react-transition-group": "^2.2.1",
     "react-virtualized": "^9.18.5",
@@ -67,13 +81,34 @@
     "styled-components": "^3.0.2",
     "supports-color": "^5.3.0",
     "tough-cookie": "^2.3.4",
-    "web3": "1.0.0-beta.33"
+    "web3": "1.0.0-beta.34"
   },
-  "homepage": "./",
-  "main": "public/electron.js",
-  "copyright": "Copyright © 2018 ${author}",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "devtron": "^1.4.0",
+    "electron": "^1.7.11",
+    "electron-builder": "^20.5.1",
+    "electron-devtools-installer": "^2.2.3",
+    "electron-is-dev": "^0.3.0",
+    "eslint": "^4.19.1",
+    "eslint-config-bloq": "^1.2.2",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsdoc": "^3.5.0",
+    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prefer-arrow": "^1.1.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "expect": "^22.4.3",
+    "prettier": "^1.10.2",
+    "proxyquire": "^1.8.0",
+    "react-testing-library": "^1.9.2",
+    "wait-on": "^2.1.0"
+  },
   "build": {
-    "appId": "com.bloq.metronome.wallet.desktop",
+    "appId": "sh.autonomous.metronome.wallet.desktop",
     "productName": "Metronome Wallet",
     "files": [
       "build/**/*",
@@ -122,42 +157,5 @@
   },
   "config": {
     "cra_dev_serv": "http://localhost:3000"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "prettier": "prettier --write ./**/*.js",
-    "pack": "build --c.extraMetadata.main=build/electron.js",
-    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
-    "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
-    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE",
-    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always",
-    "postinstall": "electron-builder install-app-deps"
-  },
-  "devDependencies": {
-    "concurrently": "^3.5.1",
-    "devtron": "^1.4.0",
-    "electron": "^1.7.11",
-    "electron-builder": "^20.5.1",
-    "electron-devtools-installer": "^2.2.3",
-    "electron-is-dev": "^0.3.0",
-    "eslint": "^4.19.1",
-    "eslint-config-bloq": "^1.2.2",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.10.0",
-    "eslint-plugin-jsdoc": "^3.5.0",
-    "eslint-plugin-mocha": "^5.0.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-prefer-arrow": "^1.1.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "expect": "^22.4.3",
-    "prettier": "^1.10.2",
-    "proxyquire": "^1.8.0",
-    "react-testing-library": "^1.9.2",
-    "wait-on": "^2.1.0"
   }
 }

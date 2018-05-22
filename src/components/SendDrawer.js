@@ -20,18 +20,21 @@ class SendDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  initialState = {
-    activeTab:
-      this.props.sendMetFeatureStatus !== 'ok'
-        ? 'eth'
-        : this.props.defaultTab === 'eth' ? 'eth' : 'met'
+  constructor(props) {
+    super(props)
+    this.state = this.getInitialState(props)
   }
 
-  state = this.initialState
+  getInitialState = props => ({
+    activeTab:
+      props.sendMetFeatureStatus !== 'ok'
+        ? 'eth'
+        : props.defaultTab === 'eth' ? 'eth' : 'met'
+  })
 
   componentWillReceiveProps(newProps) {
     if (newProps.isOpen && newProps.isOpen !== this.props.isOpen) {
-      this.setState(this.initialState)
+      this.setState(this.getInitialState(newProps))
     }
   }
 

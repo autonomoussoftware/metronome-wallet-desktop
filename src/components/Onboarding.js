@@ -297,7 +297,7 @@ export default class Onboarding extends React.Component {
                     value={
                       (useOwnMnemonic ? userMnemonic : mnemonicAgain) || ''
                     }
-                    rows={2}
+                    rows={3}
                     id={useOwnMnemonic ? 'userMnemonic' : 'mnemonicAgain'}
                   />
                 ) : (

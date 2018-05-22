@@ -102,7 +102,7 @@ const Label = styled.div`
   line-height: 4rem;
   font-size: 2.4rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-right: 2em;
+  margin-right: 1.6rem;
   white-space: nowrap;
 `
 
@@ -270,7 +270,7 @@ class Auction extends React.Component {
                             />
                           </Price>
                         </Flex.Row>
-                        <USDPrice>${auctionPriceUSD}</USDPrice>
+                        <USDPrice>{auctionPriceUSD}</USDPrice>
                       </Flex.Column>
                     </Flex.Row>
                   </Sp>
