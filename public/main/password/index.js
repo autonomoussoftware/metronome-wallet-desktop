@@ -1,3 +1,5 @@
+'use strict'
+
 const logger = require('electron-log')
 
 const { getPasswordHash, setPasswordHash } = require('../settings')

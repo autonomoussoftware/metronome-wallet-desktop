@@ -17,6 +17,7 @@
   "root": true,
   "rules": {
     "arrow-body-style": "off",
-    "complexity": ["error", 10]
+    "complexity": ["error", 10],
+    "max-params": ["error", 4]
   }
 }

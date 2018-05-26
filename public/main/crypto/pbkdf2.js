@@ -1,3 +1,5 @@
+'use strict'
+
 const credential = require('credential-plus')
 const pbkdf2 = require('credential-plus-pbkdf2')
 

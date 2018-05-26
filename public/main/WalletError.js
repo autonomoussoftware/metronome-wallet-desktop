@@ -1,3 +1,5 @@
+'use strict'
+
 function WalletError (message, data) {
   this.name = 'WalletError'
   this.message = message || 'Unknown error'

@@ -16,16 +16,16 @@
   "main": "public/electron.js",
   "copyright": "Copyright © 2018 ${author}",
   "scripts": {
+    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
+    "eject": "react-scripts eject",
+    "lint": "eslint public && eslint src"
+    "pack": "build --c.extraMetadata.main=build/electron.js",
+    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
+    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always",
     "start": "react-scripts start",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "prettier": "prettier --write ./**/*.js",
-    "pack": "build --c.extraMetadata.main=build/electron.js",
-    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
-    "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
-    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
-    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always"
   },
   "dependencies": {
     "7zip-bin": "^3.1.0",
