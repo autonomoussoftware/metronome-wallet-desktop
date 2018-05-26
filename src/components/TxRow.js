@@ -147,6 +147,7 @@ class TxRow extends React.Component {
     return this.props.confirmations < 6
   }
 
+  // eslint-disable-next-line complexity
   render() {
     const { confirmations, parsed: tx, ...other } = this.props
     const isFailed =

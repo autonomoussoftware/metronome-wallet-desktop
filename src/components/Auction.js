@@ -174,6 +174,7 @@ class Auction extends React.Component {
 
   onCloseModal = () => this.setState({ activeModal: null })
 
+  // eslint-disable-next-line complexity
   render() {
     const { buyFeatureStatus, auctionPriceUSD, auctionStatus } = this.props
 

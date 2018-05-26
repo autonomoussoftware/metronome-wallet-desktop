@@ -166,6 +166,7 @@ export default class Onboarding extends React.Component {
       )
   }
 
+  // eslint-disable-next-line complexity
   render() {
     const {
       passwordWasDefined,

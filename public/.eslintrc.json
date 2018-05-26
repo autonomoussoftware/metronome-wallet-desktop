@@ -1,6 +1,5 @@
 {
   "env": {
-    "mocha": false,
     "node": true
   },
   "extends": [

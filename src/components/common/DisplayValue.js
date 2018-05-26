@@ -39,7 +39,7 @@ class DisplayValue extends React.Component {
   }
 
   round(value) {
-    let n = Number.parseFloat(Web3.utils.fromWei(value), 10)
+    const n = Number.parseFloat(Web3.utils.fromWei(value), 10)
     let decimals = -Math.log10(n) + 10
     if (decimals < 2) {
       decimals = 2

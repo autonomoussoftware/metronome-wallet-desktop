@@ -4,6 +4,7 @@ import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
+// eslint-disable-next-line complexity
 function getTxType(meta, tokenData, transaction, address) {
   if (_.get(meta, 'metronome.auction')) {
     return 'auction'
@@ -195,6 +196,7 @@ export const getActiveWalletTransactions = createSelector(
         ? activeWallet.addresses[addresses[0]].transactions || []
         : []
 
+    // eslint-disable-next-line complexity
     function parseTx({ transaction, receipt, meta }) {
       const tokenData = Object.values(meta.tokens || {})[0] || null
 
@@ -317,6 +319,7 @@ export const hasEnoughData = createSelector(
   getMetTransferAllowed,
   getBlockHeight,
   getEthRate,
+  // eslint-disable-next-line max-params
   (ethBalance, mtnBalance, metTransferAllowed, blockHeight, ethRate) =>
     metTransferAllowed !== null &&
     blockHeight !== null &&
