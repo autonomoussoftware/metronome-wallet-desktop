@@ -85,7 +85,7 @@ export function getUSDequivalent(amount, rate) {
     ? '$0.00 (USD)'
     : weiUSDvalue.lt(Web3.utils.toBN(Web3.utils.toWei('0.01')))
       ? '< $0.01 (USD)'
-      : `$${new BigNumber(Web3.utils.fromWei(weiUSDvalue))
+      : `$${new BigNumber(Web3.utils.fromWei(weiUSDvalue.toString()))
           .dp(2)
           .toString(10)} (USD)`
 }
@@ -108,7 +108,9 @@ export function toUSD(amount, rate, errorValue, smallValue) {
       ? '0'
       : weiUSDvalue.lt(Web3.utils.toBN(Web3.utils.toWei('0.01')))
         ? smallValue
-        : new BigNumber(Web3.utils.fromWei(weiUSDvalue)).dp(2).toString(10)
+        : new BigNumber(Web3.utils.fromWei(weiUSDvalue.toString()))
+          .dp(2)
+          .toString(10)
     : errorValue
 
   return expectedUSDamount
