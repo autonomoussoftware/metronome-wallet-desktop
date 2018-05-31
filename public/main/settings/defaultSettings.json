@@ -7,7 +7,7 @@
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
     "indexerApiUrl": "https://indexer.met.bloqrock.net",
-    "tracerApiUrl": "https://tracer.met.bloqrock.net"
+    "tracerApiUrl": "http://18.236.157.235:3000"
   },
   "coincap": {
     "ethPriceEmitRate": 5
@@ -26,5 +26,5 @@
       "symbol": "MET"
     }
   },
-  "settingsVersion": 6
+  "settingsVersion": 8
 }

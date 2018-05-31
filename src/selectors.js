@@ -228,7 +228,7 @@ export const getActiveWalletTransactions = createSelector(
         txType === 'auction' && meta
           ? Web3.utils
               .toBN(transaction.value)
-              .sub(Web3.utils.toBN(meta.returnedValue))
+              .sub(Web3.utils.toBN(meta.returnedValue || 0))
               .toString(10)
           : null
 
