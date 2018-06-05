@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import QRCode from 'qrcode.react'
 import React from 'react'
+import Web3 from 'web3'
 const { clipboard } = window.require('electron')
 
 const Body = styled.div`
@@ -153,8 +154,11 @@ class ReceiveDrawer extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  address: selectors.getActiveWalletAddresses(state)[0]
-})
+const mapStateToProps = state => {
+  const address = selectors.getActiveWalletAddresses(state)[0]
+  return {
+    address: address ? Web3.utils.toChecksumAddress(address) : address
+  }
+}
 
 export default connect(mapStateToProps)(ReceiveDrawer)
