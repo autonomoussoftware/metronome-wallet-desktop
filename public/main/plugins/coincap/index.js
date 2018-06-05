@@ -35,6 +35,10 @@ function start (pluginEmitter) {
       return
     }
 
+    if (typeof number !== 'number') {
+      return logger.warn(`Retrieved ETH price is not a valid format`)
+    }
+
     throttledEmit(price)
   })
 
