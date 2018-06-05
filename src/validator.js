@@ -1,4 +1,4 @@
-import { isWeiable, isHexable, gweiToWei } from './utils'
+import { isWeiable, isHexable, gweiToWei, weiToGwei } from './utils'
 import stringEntropy from 'fast-password-entropy'
 import bip39 from 'bip39'
 import Web3 from 'web3'
@@ -40,7 +40,8 @@ export function validateToAddress(toAddress, errors = {}) {
 }
 
 export function validateGasLimit(gasLimit, min, errors = {}) {
-  const value = parseFloat((gasLimit || '').replace(',', '.'), 10)
+  gasLimit = (gasLimit || '').replace(/,/g, '.')
+  const value = parseFloat(gasLimit, 10)
 
   if (gasLimit === null || gasLimit === '') {
     errors.gasLimit = 'Gas limit is required'
@@ -50,25 +51,30 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
     errors.gasLimit = 'Gas limit must be an integer'
   } else if (value <= 0) {
     errors.gasLimit = 'Gas limit must be greater than 0'
-  } else if (!isHexable(value)) {
+  } else if (!isHexable(value.toString())) {
     errors.gasLimit = 'Invalid value'
   }
 
   return errors
 }
 
-export function validateGasPrice(gasPrice, errors = {}) {
-  const value = parseFloat((gasPrice || '').replace(',', '.'), 10)
+export function validateGasPrice(gasPrice, max, errors = {}) {
+  gasPrice = (gasPrice || '').replace(/,/g, '.')
+  const value = parseFloat(gasPrice, 10)
+
+  max = weiToGwei(max)
 
   if (gasPrice === null || gasPrice === '') {
     errors.gasPrice = 'Gas price is required'
   } else if (Number.isNaN(value)) {
     errors.gasPrice = 'Invalid value'
-  } else if (value <= 0) {
-    errors.gasPrice = 'Gas price must be greater than 0'
-  } else if (!isWeiable(gasPrice, 'gwei')) {
+  } else if (value < 1) {
+    errors.gasPrice = 'Gas price must be greater than 1'
+  } else if (value > parseFloat(max)) {
+    errors.gasPrice = `Gas price must be lower than ${max}`
+  } else if (!isWeiable(value.toString(), 'gwei')) {
     errors.gasPrice = 'Invalid value'
-  } else if (!isHexable(gweiToWei(gasPrice))) {
+  } else if (!isHexable(gweiToWei(value.toString()))) {
     errors.gasPrice = 'Invalid value'
   }
 
@@ -79,7 +85,7 @@ export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
   if (!mnemonic) {
     errors[propName] = 'The phrase is required'
   } else if (!bip39.validateMnemonic(mnemonic)) {
-    errors[propName] = "These words don't look like a valid recovery phrase"
+    errors[propName] = 'These words don\'t look like a valid recovery phrase'
   }
 
   return errors

@@ -42,15 +42,19 @@ class GasEditor extends React.Component {
     this.props.onChange({
       target: { id: 'gasPrice', value: weiToGwei(this.props.networkGasPrice) }
     })
+
     // But also fetch current gas price in background
     sendToMainProcess('get-gas-price', {})
       .then(({ gasPrice }) => {
+        gasPrice = parseFloat(gasPrice) < config.DEFAULT_GAS_PRICE
+          ? config.DEFAULT_GAS_PRICE : gasPrice
+
         this.props.dispatch({ type: 'gas-price-updated', payload: gasPrice })
         this.props.onChange({
           target: { id: 'gasPrice', value: weiToGwei(gasPrice) }
         })
       })
-      .catch(err => console.warn('Gas price request failed', err))
+      .catch(err => console.warn('Gas price request failed', err)) // eslint-disable-line no-console
   }
 
   onGasToggle = () => {

@@ -9,6 +9,7 @@ import * as utils from '../utils'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -101,7 +102,7 @@ class BuyMETDrawer extends React.Component {
     const max = Web3.utils.fromWei(this.props.availableETH)
     const errors = {
       ...validators.validateEthAmount(ethAmount, max),
-      ...validators.validateGasPrice(gasPrice),
+      ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
       ...validators.validateGasLimit(gasLimit)
     }
     const hasErrors = Object.keys(errors).length > 0

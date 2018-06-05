@@ -73,7 +73,7 @@ class SendMETForm extends React.Component {
       to: toAddress
     })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err))
+      .catch(err => console.warn('Gas estimation failed', err)) // eslint-disable-line no-console
   }, 500)
 
   validate = () => {
@@ -82,7 +82,7 @@ class SendMETForm extends React.Component {
     const errors = {
       ...validators.validateToAddress(toAddress),
       ...validators.validateMetAmount(metAmount, max),
-      ...validators.validateGasPrice(gasPrice),
+      ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
       ...validators.validateGasLimit(gasLimit)
     }
     const hasErrors = Object.keys(errors).length > 0
