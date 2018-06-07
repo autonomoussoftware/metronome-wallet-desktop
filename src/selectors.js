@@ -80,7 +80,7 @@ export const getActiveWalletMtnBalance = createSelector(
             'addresses',
             addresses[0],
             'token',
-            config.MTN_TOKEN_ADDR,
+            config.MET_TOKEN_ADDR,
             'balance'
           ],
           null

@@ -53,6 +53,7 @@
     "fast-password-entropy": "^1.0.0",
     "human-standard-token-abi": "^1.0.2",
     "lodash": "^4.17.5",
+    "metronome-contracts": "1.1.1",
     "moment": "^2.20.1",
     "moment-precise-range-plugin": "^1.3.0",
     "nedb": "^1.8.0",

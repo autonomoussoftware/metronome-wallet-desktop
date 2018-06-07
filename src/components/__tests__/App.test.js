@@ -62,7 +62,7 @@ describe('<App/>', () => {
         foo: {
           addresses: {
             '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: '1' } },
+              token: { [config.MET_TOKEN_ADDR]: { balance: '1' } },
               balance: '1'
             }
           }

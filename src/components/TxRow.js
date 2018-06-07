@@ -300,7 +300,7 @@ class TxRow extends React.Component {
                         : tx.isCancelApproval
                           ? 'Allowance cancelled for'
                           : 'Sent to'}{' '}
-                    {tx.to === config.MTN_TOKEN_ADDR ? (
+                    {tx.to === config.MET_TOKEN_ADDR ? (
                       'MET TOKEN CONTRACT'
                     ) : tx.to === config.CONVERTER_ADDR ? (
                       'CONVERTER CONTRACT'

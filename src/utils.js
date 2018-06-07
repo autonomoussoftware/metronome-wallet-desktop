@@ -207,7 +207,7 @@ export function smartRound(weiAmount) {
  */
 export function messageParser(str) {
   const replacements = [
-    { search: config.MTN_TOKEN_ADDR, replaceWith: 'MET TOKEN CONTRACT' },
+    { search: config.MET_TOKEN_ADDR, replaceWith: 'MET TOKEN CONTRACT' },
     { search: config.CONVERTER_ADDR, replaceWith: 'CONVERTER CONTRACT' },
     {
       search: /(.*Insufficient\sfunds.*Required\s)(\d+)(\sand\sgot:\s)(\d+)(.*)/gim,

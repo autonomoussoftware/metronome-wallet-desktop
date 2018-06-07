@@ -164,7 +164,7 @@ function getInitialState({
         foo: {
           addresses: {
             [ACTIVE_ADDRESS]: {
-              token: { [config.MTN_TOKEN_ADDR]: { balance: metBalance } },
+              token: { [config.MET_TOKEN_ADDR]: { balance: metBalance } },
               balance: ethBalance,
               transactions
             }

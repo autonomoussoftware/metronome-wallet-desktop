@@ -68,7 +68,7 @@ class SendMETForm extends React.Component {
 
     sendToMainProcess('tokens-get-gas-limit', {
       value: Web3.utils.toWei(metAmount.replace(',', '.')),
-      token: config.MTN_TOKEN_ADDR,
+      token: config.MET_TOKEN_ADDR,
       from: this.props.from,
       to: toAddress
     })
@@ -106,7 +106,7 @@ class SendMETForm extends React.Component {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
-      token: config.MTN_TOKEN_ADDR,
+      token: config.MET_TOKEN_ADDR,
       value: Web3.utils.toWei(this.state.metAmount.replace(',', '.')),
       from: this.props.from,
       to: this.state.toAddress
