@@ -221,7 +221,7 @@ class Sidebar extends Component {
             <IconWrapper>
               <WalletIcon />
             </IconWrapper>
-            <BtnText>Wallets</BtnText>
+            <BtnText>Wallet</BtnText>
           </Button>
           <Button
             activeClassName="active"
