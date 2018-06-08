@@ -46,9 +46,7 @@ class GasEditor extends React.Component {
     // But also fetch current gas price in background
     sendToMainProcess('get-gas-price', {})
       .then(({ gasPrice }) => {
-        console.log(gasPrice)
-        gasPrice =
-          parseFloat(gasPrice) < config.DEFAULT_GAS_PRICE
+        gasPrice = parseFloat(gasPrice) < config.DEFAULT_GAS_PRICE
             ? config.DEFAULT_GAS_PRICE
             : gasPrice
 
