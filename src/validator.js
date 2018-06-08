@@ -40,8 +40,8 @@ export function validateToAddress(toAddress, errors = {}) {
 }
 
 export function validateGasLimit(gasLimit, min, errors = {}) {
-  gasLimit = (gasLimit || '').replace(/,/g, '.')
-  const value = parseFloat(gasLimit, 10)
+  gasLimit = (gasLimit || '').replace(',', '.')
+  const value = Number(gasLimit)
 
   if (gasLimit === null || gasLimit === '') {
     errors.gasLimit = 'Gas limit is required'
@@ -59,8 +59,8 @@ export function validateGasLimit(gasLimit, min, errors = {}) {
 }
 
 export function validateGasPrice(gasPrice, max, errors = {}) {
-  gasPrice = (gasPrice || '').replace(/,/g, '.')
-  const value = parseFloat(gasPrice, 10)
+  gasPrice = (gasPrice || '').replace(',', '.')
+  const value = Number(gasPrice)
 
   max = weiToGwei(max)
 
@@ -69,7 +69,7 @@ export function validateGasPrice(gasPrice, max, errors = {}) {
   } else if (Number.isNaN(value)) {
     errors.gasPrice = 'Invalid value'
   } else if (value < 1) {
-    errors.gasPrice = 'Gas price must be greater than 1'
+    errors.gasPrice = 'Gas price can not be lower than 1'
   } else if (value > parseFloat(max)) {
     errors.gasPrice = `Gas price must be lower than ${max}`
   } else if (!isWeiable(value.toString(), 'gwei')) {
@@ -85,7 +85,7 @@ export function validateMnemonic(mnemonic, propName = 'mnemonic', errors = {}) {
   if (!mnemonic) {
     errors[propName] = 'The phrase is required'
   } else if (!bip39.validateMnemonic(mnemonic)) {
-    errors[propName] = 'These words don\'t look like a valid recovery phrase'
+    errors[propName] = "These words don't look like a valid recovery phrase"
   }
 
   return errors

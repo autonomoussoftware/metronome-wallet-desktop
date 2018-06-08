@@ -102,6 +102,7 @@ class SendMETForm extends React.Component {
   }
 
   onWizardSubmit = password => {
+    console.log(this.state.gasLimit, this.state.gasPrice)
     return sendToMainProcess('send-token', {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
