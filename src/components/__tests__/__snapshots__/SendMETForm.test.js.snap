@@ -189,7 +189,7 @@ exports[`<SendMETForm/> should match its snapshot 1`] = `
                 class="sc-kEYyzF ekxbwv"
               >
                 Gas Limit: 
-                2000000
+                250000
                 (Units)
               </span>
               <span

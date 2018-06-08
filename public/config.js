@@ -1,3 +1,5 @@
+'use strict'
+
 // TODO: check better way to handle env vars for packaged version
 
 const config = {

@@ -32,3 +32,6 @@ ppa/app/debian/metronome-desktop-wallet/
 ppa/app/opt/
 ppa/app/usr/
 ppa/metronome-desktop-walle*
+
+# ESLint
+.eslintcache

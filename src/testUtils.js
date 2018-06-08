@@ -141,7 +141,7 @@ export function getInitialState(overrides = {}) {
           addresses: {
             '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: {
-                [config.MTN_TOKEN_ADDR]: { balance: '5000000000000000000000' }
+                [config.MET_TOKEN_ADDR]: { balance: '5000000000000000000000' }
               },
               balance: '5000000000000000000000',
               transactions: []
@@ -162,7 +162,7 @@ export function getDummyTransaction() {
     meta: {
       metronome: {},
       tokens: {
-        [config.MTN_TOKEN_ADDR]: {
+        [config.MET_TOKEN_ADDR]: {
           event: 'Transfer',
           processing: false,
           value:

@@ -150,6 +150,7 @@ export default class ConfirmationWizard extends React.Component {
 
   onPasswordChange = ev => this.setState({ password: ev.target.value })
 
+  // eslint-disable-next-line complexity
   render() {
     const { password, errors, status, error } = this.state
 

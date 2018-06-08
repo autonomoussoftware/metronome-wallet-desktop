@@ -113,7 +113,7 @@ function getInitialState({
           addresses: {
             '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: {
-                [config.MTN_TOKEN_ADDR]: { balance: metBalance }
+                [config.MET_TOKEN_ADDR]: { balance: metBalance }
               },
               balance: '5000000000000000000000'
             }

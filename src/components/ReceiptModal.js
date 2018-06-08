@@ -127,6 +127,7 @@ class ReceiptModal extends React.Component {
     )
   }
 
+  // eslint-disable-next-line complexity
   render() {
     const { onRequestClose, isOpen, tx, confirmations, isPending } = this.props
 

@@ -75,21 +75,12 @@ export function runValidateTests(element, initialState, formTestId) {
     })
   })
 
-  it('displays an error if GAS PRICE is negative', () => {
+  it('displays an error if GAS PRICE is lower than 1', () => {
     const { getByTestId } = testUtils.reduxRender(element, initialState)
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
-      formData: { 'gas-price-field': '-1' },
-      errors: { 'gas-price-field': 'Gas price must be greater than 0' }
-    })
-  })
-
-  it('displays an error if GAS PRICE is not weiable', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
-    Simulate.click(getByTestId('edit-gas-btn'))
-    testUtils.testValidation(getByTestId, formTestId, {
-      formData: { 'gas-price-field': '0.0000000000000000000000000000001' },
-      errors: { 'gas-price-field': 'Invalid value' }
+      formData: { 'gas-price-field': '0' },
+      errors: { 'gas-price-field': 'Gas price can not be lower than 1' }
     })
   })
 }

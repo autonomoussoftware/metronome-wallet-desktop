@@ -147,6 +147,7 @@ class TxRow extends React.Component {
     return this.props.confirmations < 6
   }
 
+  // eslint-disable-next-line complexity
   render() {
     const { confirmations, parsed: tx, ...other } = this.props
     const isFailed =
@@ -299,7 +300,7 @@ class TxRow extends React.Component {
                         : tx.isCancelApproval
                           ? 'Allowance cancelled for'
                           : 'Sent to'}{' '}
-                    {tx.to === config.MTN_TOKEN_ADDR ? (
+                    {tx.to === config.MET_TOKEN_ADDR ? (
                       'MET TOKEN CONTRACT'
                     ) : tx.to === config.CONVERTER_ADDR ? (
                       'CONVERTER CONTRACT'

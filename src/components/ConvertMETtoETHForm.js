@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
 
@@ -70,7 +71,7 @@ class ConvertMETtoETHForm extends React.Component {
       from: this.props.from
     })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err))
+      .catch(err => console.warn('Gas estimation failed', err)) // eslint-disable-line no-console
   }, 500)
 
   validate = () => {
@@ -78,7 +79,7 @@ class ConvertMETtoETHForm extends React.Component {
     const max = Web3.utils.fromWei(this.props.availableMTN)
     const errors = {
       ...validators.validateMetAmount(metAmount, max),
-      ...validators.validateGasPrice(gasPrice),
+      ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
       ...validators.validateGasLimit(gasLimit)
     }
     const hasErrors = Object.keys(errors).length > 0

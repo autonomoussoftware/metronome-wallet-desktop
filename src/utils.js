@@ -188,7 +188,7 @@ export function gweiToWei(amount) {
 }
 
 export function smartRound(weiAmount) {
-  let n = Number.parseFloat(Web3.utils.fromWei(weiAmount), 10)
+  const n = Number.parseFloat(Web3.utils.fromWei(weiAmount), 10)
   let decimals = -Math.log10(n) + 10
   if (decimals < 2) {
     decimals = 2
@@ -207,10 +207,11 @@ export function smartRound(weiAmount) {
  */
 export function messageParser(str) {
   const replacements = [
-    { search: config.MTN_TOKEN_ADDR, replaceWith: 'MET TOKEN CONTRACT' },
+    { search: config.MET_TOKEN_ADDR, replaceWith: 'MET TOKEN CONTRACT' },
     { search: config.CONVERTER_ADDR, replaceWith: 'CONVERTER CONTRACT' },
     {
       search: /(.*Insufficient\sfunds.*Required\s)(\d+)(\sand\sgot:\s)(\d+)(.*)/gim,
+      // eslint-disable-next-line max-params
       replaceWith: (match, p1, p2, p3, p4, p5) =>
         [p1, smartRound(p2), ' ETH', p3, smartRound(p4), ' ETH', p5].join('')
     }

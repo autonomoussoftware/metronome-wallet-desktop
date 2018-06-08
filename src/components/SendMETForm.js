@@ -68,12 +68,12 @@ class SendMETForm extends React.Component {
 
     sendToMainProcess('tokens-get-gas-limit', {
       value: Web3.utils.toWei(metAmount.replace(',', '.')),
-      token: config.MTN_TOKEN_ADDR,
+      token: config.MET_TOKEN_ADDR,
       from: this.props.from,
       to: toAddress
     })
       .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err))
+      .catch(err => console.warn('Gas estimation failed', err)) // eslint-disable-line no-console
   }, 500)
 
   validate = () => {
@@ -82,7 +82,7 @@ class SendMETForm extends React.Component {
     const errors = {
       ...validators.validateToAddress(toAddress),
       ...validators.validateMetAmount(metAmount, max),
-      ...validators.validateGasPrice(gasPrice),
+      ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
       ...validators.validateGasLimit(gasLimit)
     }
     const hasErrors = Object.keys(errors).length > 0
@@ -106,7 +106,7 @@ class SendMETForm extends React.Component {
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
-      token: config.MTN_TOKEN_ADDR,
+      token: config.MET_TOKEN_ADDR,
       value: Web3.utils.toWei(this.state.metAmount.replace(',', '.')),
       from: this.props.from,
       to: this.state.toAddress
