@@ -19,10 +19,6 @@ describe('<Router/>', () => {
     clickAndExpect('tools-nav-btn', 'tools-container')
   })
 
-  test('navigates to HELP screen when clicking HELP sidebar button', () => {
-    clickAndExpect('help-nav-btn', 'help-container')
-  })
-
   test('redirects to WALLET route for / route', () => {
     const { queryByTestId } = testUtils.routerRender(
       element,
