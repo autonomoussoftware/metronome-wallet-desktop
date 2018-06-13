@@ -27,6 +27,10 @@ const Message = styled.div`
   }
 `
 
+const PasswordMessage = styled(Message)`
+  text-align: center;
+`
+
 const Green = styled.div`
   display: inline-block;
   color: ${p => p.theme.colors.success};
@@ -274,10 +278,10 @@ export default class Onboarding extends React.Component {
         {termsWereAccepted &&
           !passwordWasDefined && (
             <form onSubmit={this.onPasswordSubmitted} data-testid="pass-form">
-              <Message>
+              <PasswordMessage>
                 Enter a strong password until the meter turns{' '}
                 <Green>green</Green>.
-              </Message>
+              </PasswordMessage>
               <Sp mt={2}>
                 <TextInput
                   data-testid="pass-field"
