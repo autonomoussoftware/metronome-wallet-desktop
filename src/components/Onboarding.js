@@ -14,10 +14,14 @@ const Message = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
   line-height: 1.5;
-  text-align: center;
 
   & span {
+    font-size: 13px;
+  }
+
+  & a {
     text-decoration: underline;
+    font-size: 13px;
     cursor: pointer;
     color: ${p => p.theme.colors.success};
   }
@@ -50,6 +54,23 @@ const ErrorMsg = styled.div`
   text-align: center;
 `
 
+const DisclaimerWarning = styled.div`
+  text-align: center;
+  font-size: 16px;
+  margin-top: 16px;
+`
+
+const DisclaimerMessge = styled.div`
+  width: 288px;
+  height: 130px;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  font-size: 12px;
+  padding: 10px 16px 0 16px;
+  margin: 16px 0;
+`
+
 export default class Onboarding extends React.Component {
   static propTypes = {
     onOnboardingCompleted: PropTypes.func.isRequired
@@ -58,6 +79,8 @@ export default class Onboarding extends React.Component {
   state = {
     passwordWasDefined: false,
     termsWereAccepted: false,
+    licenseIsChecked: false,
+    termsIsChecked: false,
     mnemonicWasCopied: false,
     useOwnMnemonic: false,
     passwordAgain: null,
@@ -70,6 +93,9 @@ export default class Onboarding extends React.Component {
   }
 
   onTermsAccepted = () => this.setState({ termsWereAccepted: true })
+
+  onTermsChange = e => this.setState({ termsIsChecked: !this.state.termsIsChecked })
+  onLinceseChange = e => this.setState({ licenseIsChecked: !this.state.licenseIsChecked })
 
   onInputChanged = e => {
     const { id, value } = e.target
@@ -171,6 +197,8 @@ export default class Onboarding extends React.Component {
     const {
       passwordWasDefined,
       termsWereAccepted,
+      termsIsChecked,
+      licenseIsChecked,
       mnemonicWasCopied,
       useOwnMnemonic,
       passwordAgain,
@@ -200,11 +228,34 @@ export default class Onboarding extends React.Component {
       <AltLayout title={title} data-testid="onboarding-container">
         {!termsWereAccepted && (
           <React.Fragment>
+            <DisclaimerWarning>Please read and accept these terms and permissions.</DisclaimerWarning>
+            <DisclaimerMessge>
+              <p>Copyright 2018 Autonomous Software</p>
+
+              <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+              <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+              <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+              <p>ADDITIONAL TERMS REGARDING SOFTWARE USE</p>
+
+              <p>The Software represents cryptocurrency wallet software (the "Wallet").  IF YOU LOSE ACCESS TO YOUR WALLET OR YOUR ENCRYPTED PRIVATE KEYS AND YOU HAVE NOT SEPARATELY STORED A BACKUP OF YOUR WALLET AND CORRESPONDING PASSWORD, ANY AMOUNTS YOU HAVE STORED WITHIN WALLET WILL BECOME INACCESSIBLE.  Autonomous Software cannot retrieve your private keys or passwords if you lose or forget them.  Autonomous Software does not control any of the protocols that govern any cryptocurrency and cannot confirm any transaction</p>
+
+              <p>Transactions with cryptocurrencies carry inherent risks.   Cryptocurrency values may involve risk of capital loss from unfavorable fluctuation in cryptocurrency values, technical defects inherent in cryptocurrencies, exchange-related risks, policy risks, regulatory risks, liquidity, and market price fluctuation and demand. The value of any cryptocurrency is not ensured. The worth of any amount of cryptocurrency and may lose all worth at any moment of time due to the risky nature of cryptocurrencies. Virtual currency is not legal tender, is not backed by the government, and accounts and value balances are not subject to FDIC or SIPC protections, among others.  You are solely responsible for any such losses and the management of the cryptocurrencies in your Wallet. There may be an increased risk of loss of cryptocurrency due to cyber-attacks. Autonomous Software shall not be liable for any losses to your Wallet you may suffer as a result of a security breach, fraudulent activity or hacking event.</p>
+            </DisclaimerMessge>
             <Message>
-              By clicking “Accept”, you confirm you have read and agreed to our{' '}
-              <span onClick={() => shell.openExternal('http://metronome.io')}>
-                software license
-              </span>.
+              <div>
+                <input type="checkbox" onChange={this.onTermsChange}/>
+                <span>I have read and accept these terms</span>
+              </div>
+              <div>
+                <input type="checkbox"onChange={this.onLinceseChange}/>
+                <span>I have read and accept the </span>
+                <a onClick={() => shell.openExternal('http://metronome.io')}>
+                  software license
+                </a>.
+              </div>
             </Message>
 
             <Sp mt={6}>
@@ -212,6 +263,7 @@ export default class Onboarding extends React.Component {
                 data-testid="accept-terms-btn"
                 autoFocus
                 onClick={this.onTermsAccepted}
+                disabled={!termsIsChecked || !licenseIsChecked}
                 block
               >
                 Accept
