@@ -192,6 +192,8 @@ describe('<Onboarding/>', () => {
 })
 
 function acceptTerms(getByTestId) {
+  Simulate.change(getByTestId('accept-terms-chb'))
+  Simulate.change(getByTestId('accept-license-chb'))
   Simulate.click(getByTestId('accept-terms-btn'))
 }
 

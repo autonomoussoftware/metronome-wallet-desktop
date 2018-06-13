@@ -250,11 +250,11 @@ export default class Onboarding extends React.Component {
             </DisclaimerMessge>
             <Message>
               <div>
-                <input type="checkbox" onChange={this.onTermsChange}/>
+                <input data-testid="accept-terms-chb" type="checkbox" onChange={this.onTermsChange}/>
                 <span>I have read and accept these terms</span>
               </div>
               <div>
-                <input type="checkbox"onChange={this.onLinceseChange}/>
+                <input data-testid="accept-license-chb" type="checkbox"onChange={this.onLinceseChange}/>
                 <span>I have read and accept the </span>
                 <a onClick={() => shell.openExternal('http://metronome.io')}>
                   software license
