@@ -2,6 +2,7 @@
 
 const { shell, Menu } = require('electron')
 const APP_NAME = 'Metronome Wallet'
+const pck = require('../package')
 
 const template = [
   {
@@ -94,7 +95,7 @@ if (process.platform === 'darwin') {
 
   if (help) {
     help.submenu.unshift({ type: 'separator' })
-    help.submenu.unshift({ role: 'about', label: `About ${APP_NAME}` })
+    help.submenu.unshift({ role: 'about', label: `${APP_NAME} v${pck.version}`, enabled: false })
   }
 }
 
