@@ -256,7 +256,7 @@ export default class Onboarding extends React.Component {
               <div>
                 <input data-testid="accept-license-chb" type="checkbox"onChange={this.onLinceseChange}/>
                 <span>I have read and accept the </span>
-                <a onClick={() => shell.openExternal('http://metronome.io')}>
+                <a onClick={() => shell.openExternal('https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE')}>
                   software license
                 </a>.
               </div>

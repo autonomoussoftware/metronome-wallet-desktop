@@ -5,6 +5,8 @@ import CogIcon from './common/CogIcon'
 import styled from 'styled-components'
 import Logo from './Logo'
 
+const { shell } = window.require('electron')
+
 const Container = styled.div`
   background: ${p => p.theme.colors.bg.darkGradient};
   width: 64px;
@@ -124,7 +126,76 @@ const BtnText = styled.span`
   }
 `
 
+// TODO: Reuse SecondaryLink & SecondaryBtn styles
 const SecondaryBtn = styled(NavLink)`
+  display: block;
+  text-decoration: none;
+  color: ${p => p.theme.colors.light};
+  padding: 0.8rem 1.6rem;
+  line-height: 2rem;
+  opacity: 0;
+  transition: all 600ms, opacity 200ms, transform 800ms;
+  position: relative;
+  &[disabled] {
+    pointer-events: none;
+  }
+  &:focus {
+    outline: none;
+  }
+  &.active {
+    padding-left: 3.2rem;
+  }
+  &:before {
+    transition: 0.4s;
+    transition-delay: 0.2s;
+    opacity: 0;
+    content: '';
+    display: block;
+    background-color: ${p => p.theme.colors.primary};
+    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+    left: 1.6rem;
+  }
+  &.active:before {
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+  }
+
+  &:nth-child(1) {
+    transform: translateY(9.6rem);
+  }
+
+  &:nth-child(2) {
+    transform: translateY(6rem);
+  }
+
+  ${Container}:hover & {
+    transform: translateY(0);
+    opacity: 0.5;
+    transition: all 600ms, opacity 400ms, transform 400ms;
+    transition-delay: 0s, 100ms, 0s;
+
+    &.active {
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 800px) {
+    ${Container} & {
+      transform: translateY(0);
+    }
+    opacity: 0.5;
+    &.active {
+      opacity: 1;
+    }
+  }
+`
+
+const SecondaryLink = styled.a`
+  cursor: pointer;
   display: block;
   text-decoration: none;
   color: ${p => p.theme.colors.light};
@@ -252,14 +323,13 @@ class Sidebar extends Component {
           >
             Tools
           </SecondaryBtn>
-          <SecondaryBtn
+          <SecondaryLink
             activeClassName="active"
-            disabled
-            to="/help"
+            onClick={() => shell.openExternal('https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq')}
             data-testid="help-nav-btn"
           >
             Help
-          </SecondaryBtn>
+          </SecondaryLink>
           <SecondaryNavIcon>
             <CogIcon size="2.4rem" />
           </SecondaryNavIcon>
