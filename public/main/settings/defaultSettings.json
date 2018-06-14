@@ -2,29 +2,29 @@
   "app": {
     "bestBlock": 0,
     "node": {
-      "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
+      "jsonRpcApiUrl": "https://eth.wallet.metronome.io:8545",
+      "websocketApiUrl": "wss://eth.wallet.metronome.io:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
-    "indexerApiUrl": "https://indexer.met.bloqrock.net",
-    "tracerApiUrl": "https://tracer.met.bloqrock.net"
+    "indexerApiUrl": "https://indexer.metronome.io",
+    "tracerApiUrl": "https://tracer.metronome.io"
   },
   "coincap": {
     "ethPriceEmitRate": 5
   },
   "metronome": {
     "contracts": {
-      "auctions": "0x767182c6ef62398993099e5542ab43c2456a8aba",
-      "converter": "0x638e84db864aa345266e1aee13873b860afe82e7",
-      "token": "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3"
+      "auctions": "0x9d9BcDd249E439AAaB545F59a33812E39A8e3072",
+      "converter": "0x686e5ac50D9236A9b7406791256e47feDDB26AbA",
+      "token": "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e"
     }
   },
   "tokens": {
-    "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
+    "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e": {
       "decimals": 18,
       "name": "Metronome",
       "symbol": "MET"
     }
   },
-  "settingsVersion": 10
+  "settingsVersion": 11
 }

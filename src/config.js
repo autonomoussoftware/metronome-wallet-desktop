@@ -1,7 +1,7 @@
 import MetronomeContracts from 'metronome-contracts'
 
-const addresses = MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN || 'ropsten']
-const defaultExplorerUrl = 'https://explorer.met.bloqrock.net'
+const addresses = MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN || 'main']
+const defaultExplorerUrl = 'https://explorer.metronome.io'
 
 export default {
   MET_TOKEN_ADDR: addresses.metToken.toLowerCase(),
