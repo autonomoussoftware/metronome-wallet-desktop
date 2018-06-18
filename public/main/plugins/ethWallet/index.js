@@ -1,7 +1,7 @@
 'use strict'
 
 const { defaultTo, get } = require('lodash/fp')
-const { groupBy, isArray, mergeWith, throttle } = require('lodash')
+const { groupBy, isArray, isNull, mergeWith, throttle } = require('lodash')
 const bip39 = require('bip39')
 // TODO hdkey uses deprecated coinstring and shall use bs58check
 const hdkey = require('ethereumjs-wallet/hdkey')
@@ -32,6 +32,13 @@ const transactionParser = require('./transactionParser')
 const concatArrays = (objValue, srcValue) =>
   isArray(objValue) ? objValue.concat(srcValue) : undefined
 
+const throwIfNull = err => function (obj) {
+  if (isNull(obj)) {
+    throw err
+  }
+  return obj
+}
+
 const createSendTransaction = bus => function (args, resolveToReceipt) {
   const deferred = pDefer()
 
@@ -47,6 +54,7 @@ const createSendTransaction = bus => function (args, resolveToReceipt) {
 
           pRetry(
             () => getWeb3().eth.getTransaction(hash)
+              .then(throwIfNull(new Error('Transaction not found')))
               .then(function (transaction) {
                 bus.emit('unconfirmed-tx', transaction)
               }),
