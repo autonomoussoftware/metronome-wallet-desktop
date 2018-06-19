@@ -35,3 +35,6 @@ ppa/metronome-desktop-walle*
 
 # ESLint
 .eslintcache
+
+# Certificates
+*.p12
