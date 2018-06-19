@@ -10,7 +10,7 @@
   "description": "Metronome Wallet for desktop devices",
   "repository": {
     "type": "git",
-    "url": "git@github.com:MetronomeToken/metronome-desktop-wallet.git"
+    "url": "git@github.com:autonomoussoftware/metronome-wallet-desktop.git"
   },
   "homepage": "./",
   "main": "public/electron.js",

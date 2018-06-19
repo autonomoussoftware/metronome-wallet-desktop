@@ -48,10 +48,10 @@ app.on('window-all-closed', function () {
   }
 })
 
-const { createWindow } = require(path.join(__dirname, './main/mainWindow.js'))
+const { createWindow } = require(path.join(__dirname, './main/main-window.js'))
 createWindow()
 
-const { initMainWorker } = require(path.join(__dirname, './main/mainWorker.js'))
+const { initMainWorker } = require(path.join(__dirname, './main/main-worker.js'))
 
 app.on('ready', function () {
   logger.info('App ready, initializing...')
