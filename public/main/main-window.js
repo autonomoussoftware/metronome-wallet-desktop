@@ -1,7 +1,7 @@
 'use strict'
 
 const { app, BrowserWindow } = require('electron')
-const autoUpdater = require('electron-updater').autoUpdater
+const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const notifier = require('node-notifier')
@@ -34,7 +34,7 @@ function showUpdateNotification (info = {}) {
 
 function initAutoUpdate () {
   if (isDev) { return }
-  if (process.platform === 'linux') { return }
+  if (process.platform === 'linux' || process.platform === 'windows') { return }
 
   autoUpdater.checkForUpdates()
   autoUpdater.on('checking-for-update', () => logger.info('Checking for update...'))
