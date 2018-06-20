@@ -3,7 +3,7 @@ import { Simulate } from 'react-testing-library'
 import Converter from '../Converter'
 import React from 'react'
 
-describe('<Converter/>', () => {
+describe.skip('<Converter/>', () => {
   it('displays a "waiting..." message until the first converter status is received', () => {
     const { queryByTestId, store } = testUtils.reduxRender(<Converter />)
     expect(queryByTestId('waiting')).not.toBeNull()
