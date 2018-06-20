@@ -456,8 +456,7 @@ function parseUnconfirmedTransaction (subscriptions, transaction) {
 
 function parseNewTransaction (subscriptions, { walletId, txid }) {
   const web3 = getWeb3()
-
-  getTransactionAndReceipt({ web3, hash: txid })
+  getTransactionAndReceipt({ web3, hash: txid, waitForReceipt: true })
     .then(({ transaction, receipt }) =>
       Promise.all(subscriptions.map(s =>
         parseTransaction(Object.assign({
