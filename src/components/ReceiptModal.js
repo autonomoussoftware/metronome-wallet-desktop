@@ -121,9 +121,7 @@ class ReceiptModal extends React.Component {
 
   onExplorerLink = () => {
     shell.openExternal(
-      `${config.MTN_EXPLORER_URL}/transactions/${
-        this.props.tx.transaction.hash
-      }`
+      `${config.MET_EXPLORER_URL}/transactions/${this.props.tx.transaction.hash}`
     )
   }
 
