@@ -6,7 +6,7 @@ const defaultExplorerUrl = 'https://explorer.met.bloqrock.net'
 export default {
   MET_TOKEN_ADDR: addresses.metToken.toLowerCase(),
   CONVERTER_ADDR: addresses.autonomousConverter.toLowerCase(),
-  MET_EXPLORER_URL: process.env.REACT_APP_MTN_EXPLORER_URL || defaultExplorerUrl,
+  MET_EXPLORER_URL: process.env.REACT_APP_MET_EXPLORER_URL || defaultExplorerUrl,
   SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN,
   ETH_DEFAULT_GAS_LIMIT: '21000',
   MET_DEFAULT_GAS_LIMIT: '250000',
