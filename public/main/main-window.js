@@ -1,10 +1,9 @@
 'use strict'
 
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Notification } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
 const logger = require('electron-log')
-const notifier = require('node-notifier')
 const path = require('path')
 
 const restart = require('./electron-restart')
@@ -12,24 +11,18 @@ const restart = require('./electron-restart')
 let mainWindow
 
 function showUpdateNotification (info = {}) {
-  const restartNowAction = 'Restart now'
+  if (!Notification.isSupported()) { return }
 
   const versionLabel = info.label
     ? `Version ${info.version}`
     : 'The latest version'
 
-  notifier.notify({
-    title: 'A new update is ready to install.',
-    wait: true,
-    sound: true,
-    message: `${versionLabel} will be automatically installed after restart.`,
-    closeLabel: 'Ok',
-    actions: restartNowAction
-  },
-  function (err) {
-    if (err) { throw err }
-    autoUpdater.quitAndInstall()
+  const notification = new Notification({
+    title: `${versionLabel} was installed`,
+    body: `Metronome Wallet will be automatically updated after restart.`
   })
+
+  notification.show()
 }
 
 function initAutoUpdate () {
@@ -80,8 +73,6 @@ function loadWindow () {
 
   mainWindow.loadURL(appUrl)
 
-  initAutoUpdate()
-
   mainWindow.webContents.on('crashed', function (ev, killed) {
     logger.error('Crashed', ev.sender.id, killed)
   })
@@ -95,6 +86,7 @@ function loadWindow () {
   })
 
   mainWindow.once('ready-to-show', function () {
+    initAutoUpdate()
     mainWindow.show()
   })
 }
