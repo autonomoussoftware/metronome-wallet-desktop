@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 const Container = styled.svg`
-  display: block;
+  display: ${p => (p.display || 'block')};
   width: ${p => (p.size ? p.size : '2.4rem')};
   fill: ${p => (p.color ? p.color : p.theme.colors.light)};
 `

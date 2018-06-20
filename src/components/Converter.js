@@ -13,6 +13,7 @@ import {
   Btn,
   Sp
 } from './common'
+import ConverterIcon from './common/ConverterIcon'
 
 const Container = styled.div`
   padding: 3.2rem 2.4rem;
@@ -111,6 +112,19 @@ const AvailableAmount = styled.div`
   }
 `
 
+const Title = styled.h1`
+  margin: 0;
+  line-height: 3rem;
+  font-size: 2.4rem;
+`
+
+const SmallText = styled.span`
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  line-height: 2.5rem;
+  font-size: 1.6rem;
+  font-weight: normal;
+`
+
 class Converter extends React.Component {
   static propTypes = {
     convertFeatureStatus: PropTypes.oneOf([
@@ -146,7 +160,7 @@ class Converter extends React.Component {
         data-testid="converter-container"
         title="Autonomous Converter"
       >
-        {converterStatus ? (
+        {converterStatus ? (convertFeatureStatus === 'ok' ? (
           <Container>
             <StatsContainer data-testid="stats">
               <Sp p={2}>
@@ -218,7 +232,20 @@ class Converter extends React.Component {
               isOpen={this.state.activeModal === 'convert'}
             />
           </Container>
-        ) : (
+        ) : <Sp p={6}>
+          <LoadingContainer data-testid="waiting">
+            <Sp py={4}>
+              <ConverterIcon display='inline' size='69.5px' />
+            </Sp>
+            <Title>Coming Soon</Title>
+            <Sp py={2}>
+              <SmallText>
+                The Autonomous Converter will become avialble after the initial
+                auction has ended.
+              </SmallText>
+            </Sp>
+          </LoadingContainer>
+        </Sp>) : (
           <Sp p={6}>
             <LoadingContainer data-testid="waiting">
               <Text>Waiting for converter status...</Text>
