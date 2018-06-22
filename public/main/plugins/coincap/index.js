@@ -5,6 +5,7 @@ const settings = require('electron-settings')
 const throttle = require('lodash/throttle')
 const logger = require('electron-log')
 
+const { getDb } = require('../../database')
 const createBasePlugin = require('../../base-plugin')
 
 function emitPrice (webContents, price) {
@@ -16,9 +17,16 @@ function emitPrice (webContents, price) {
 
   logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
 
-  settings.set('coincap.ETH_USD', price)
-
-  logger.verbose('Cached ETH price updated', price)
+  const query = { type: 'coincap-eth-usd' }
+  const update = Object.assign(query, { price })
+  getDb().collection('state')
+    .updateAsync(query, update, { upsert: true })
+    .then(function () {
+      logger.verbose('Cached ETH price updated', price)
+    })
+    .catch(function (err) {
+      logger.warn('Could not save ETH price', err)
+    })
 }
 
 function start (pluginEmitter) {
@@ -49,15 +57,19 @@ function start (pluginEmitter) {
 }
 
 function sendCachedPrice (webContents) {
-  const cachedPrice = settings.get('coincap.ETH_USD')
+  getDb().collection('state')
+    .findOneAsync({ type: 'coincap-eth-usd' })
+    .then(function (doc) {
+      if (!doc) {
+        return
+      }
 
-  if (!cachedPrice) {
-    return
-  }
-
-  logger.debug('Sending cached ETH price')
-
-  emitPrice(webContents, cachedPrice)
+      logger.debug('Sending cached ETH price')
+      emitPrice(webContents, doc.price)
+    })
+    .catch(function (err) {
+      logger.warn('Could not get ETH price', err)
+    })
 }
 
 function broadcastEthPrice (subscriptions, price) {
