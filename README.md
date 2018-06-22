@@ -25,23 +25,23 @@
 
 ```bash
 # Install dependencies
-$ npm i
+npm i
 
 # Run dev mode
-$ npm run dev
+npm run dev
 
 # Run test cases
-$ npm test
+npm test
 ```
 
 ## Prod Setup
 
 ```bash
 # Run build process
-$ npm run dist
+npm run dist
 
 # Run build process and publish to GitHub release
-$ npm run release
+npm run release
 ```
 
 ## Logs
@@ -60,13 +60,15 @@ To remove app settings and start over again:
 
 * **Linux**:
   ```bash
-  $ rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
+  rm ~/.config/metronome-desktop-wallet/Settings
   ```
 * **macOS**:
   ```bash
+  rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
   ```
 * **Windows**:
-  ```bash
+  ```bat
+  del %APPDATA%\\metronome-desktop-wallet\\Settings
   ```
 
 
