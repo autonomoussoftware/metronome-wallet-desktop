@@ -88,6 +88,8 @@ const start = eventsBus => function (pluginEmitter) {
 
 function broadcastConnectivityState (subscriptions, state) {
   subscriptions.forEach(function ({ webContents }) {
+    if (webContents.isDestroyed()) { return }
+
     webContents.send('connectivity-state-changed', {
       ok: state === 'connected',
       reason: `Connection to indexer is ${state}`,

@@ -10,7 +10,9 @@ const createBasePlugin = require('../../base-plugin')
 function emitPrice (webContents, price) {
   const priceData = { token: 'ETH', currency: 'USD', price }
 
-  webContents.send('eth-price-updated', priceData)
+  if (!webContents.isDestroyed()) {
+    webContents.send('eth-price-updated', priceData)
+  }
 
   logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
 
