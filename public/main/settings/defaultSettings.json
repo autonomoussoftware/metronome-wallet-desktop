@@ -1,6 +1,5 @@
 {
   "app": {
-    "bestBlock": 0,
     "node": {
       "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
       "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
