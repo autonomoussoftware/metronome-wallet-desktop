@@ -240,7 +240,7 @@ class Converter extends React.Component {
             <Title>Coming Soon</Title>
             <Sp py={2}>
               <SmallText>
-                The Autonomous Converter will become avialble after the initial
+                The Autonomous Converter will become available after the initial
                 auction has ended.
               </SmallText>
             </Sp>
