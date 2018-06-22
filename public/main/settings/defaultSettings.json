@@ -1,6 +1,5 @@
 {
   "app": {
-    "bestBlock": 0,
     "node": {
       "jsonRpcApiUrl": "https://eth.wallet.metronome.io:8545",
       "websocketApiUrl": "wss://eth.wallet.metronome.io:8546"

@@ -29,25 +29,24 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
         .call()
         .then(function (balance) {
           setTokenBalance({ walletId, address, contractAddress, balance })
+          logger.verbose(`<-- ${symbol} ${address} ${balance}`)
+
+          if (webContents.isDestroyed()) { return }
 
           webContents.send('wallet-state-changed', {
             [walletId]: {
               addresses: {
                 [address]: {
-                  token: {
-                    [contractAddress]: {
-                      symbol,
-                      balance
-                    }
-                  }
+                  token: { [contractAddress]: { symbol, balance } }
                 }
               }
             }
           })
-          logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
         .catch(function (err) {
           logger.warn('Could not get token balance', symbol, err.message)
+
+          if (webContents.isDestroyed()) { return }
 
           // TODO retry before notifying
           webContents.send('connectivity-state-changed', {
@@ -65,11 +64,7 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
                   token: {
                     [contractAddress]: {
                       symbol,
-                      balance: getTokenBalance({
-                        walletId,
-                        address,
-                        contractAddress
-                      })
+                      balance: getTokenBalance({ walletId, address, contractAddress })
                     }
                   }
                 }

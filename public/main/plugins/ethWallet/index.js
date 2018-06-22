@@ -176,10 +176,10 @@ function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
 }
 
 function sendError ({ webContents, walletId, message, err }) {
-  webContents.send('error', {
-    error: new WalletError(message, err)
-  })
   logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
+
+  if (webContents.isDestroyed()) { return }
+  webContents.send('error', { error: new WalletError(message, err) })
 }
 
 function sendBalances ({ walletId, webContents }) {
@@ -282,8 +282,10 @@ const getBestBlock = () => getDatabase().state
 function sendBestBlock ({ webContents }) {
   getBestBlock()
     .then(function (bestBlock) {
-      webContents.send('eth-block', bestBlock)
       logger.verbose('<-- Current best block', bestBlock)
+
+      if (webContents.isDestroyed()) { return }
+      webContents.send('eth-block', bestBlock)
     })
     .catch(function (err) {
       logger.warn('Could not read best block from db', err.message)
@@ -393,9 +395,11 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
               ])
             })
             .then(function () {
-              webContents.send('eth-block', { number: indexed })
-              logger.verbose('<-- New best block', { number: indexed })
+              if (!webContents.isDestroyed()) {
+                webContents.send('eth-block', { number: indexed })
+              }
 
+              logger.verbose('<-- New best block', { number: indexed })
               return setBestBlock({ number: indexed })
             })
         })
@@ -444,12 +448,14 @@ function parseUnconfirmedTransaction (subscriptions, transaction) {
   subscriptions.forEach(function (s) {
     pRetry(
       () => parseTransaction(Object.assign({ transaction }, s, s.meta)),
-      { retries: 5, minTimeout: 250 }
+      { retries: 5, minTimeout: 500 }
     )
       .catch(function (err) {
-        logger.warn(
-          'Could not parse transaction', transaction.hash, err.message
-        )
+        const msg = transaction
+          ? `Could not parse transaction: ${transaction.hash}`
+          : 'Could not parse latest transaction'
+
+        logger.warn(msg, err.message)
       })
   })
 }
@@ -476,9 +482,11 @@ function parseNewTransaction (subscriptions, { walletId, txid }) {
 
 function broadcastNewBlock (subscriptions, data) {
   Promise.all(subscriptions.map(function (s) {
-    s.webContents.send('eth-block', data)
-    logger.verbose('<-- New best block', data)
+    if (!s.webContents.isDestroyed()) {
+      s.webContents.send('eth-block', data)
+    }
 
+    logger.verbose('<-- New best block', data)
     return setBestBlock(data)
   }))
     .catch(function (err) {

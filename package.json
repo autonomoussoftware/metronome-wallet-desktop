@@ -19,6 +19,7 @@
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
+    "dist:mac": "./sign/mac.sh",
     "eject": "react-scripts eject",
     "lint": "eslint --cache public && eslint --cache src",
     "pack": "build --c.extraMetadata.main=build/electron.js",

@@ -34,11 +34,6 @@ function presetDefaults () {
 
   // Overwrite old settings and clear db if settings file version changed
   if (defaultSettings.settingsVersion > currentSettingsVersion) {
-    if (currentSettings.app) {
-      logger.verbose('Clearing best block cache')
-      delete currentSettings.app.bestBlock
-    }
-
     logger.verbose('Clearing database cache')
     const db = getDb()
     db.collection('transactions')
