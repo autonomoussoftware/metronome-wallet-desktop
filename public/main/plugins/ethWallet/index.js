@@ -176,9 +176,7 @@ function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
 }
 
 function sendError ({ webContents, walletId, message, err }) {
-  webContents.send('error', {
-    error: new WalletError(message, err)
-  })
+  webContents.send('error', { error: new WalletError(message, err) })
   logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
@@ -444,12 +442,14 @@ function parseUnconfirmedTransaction (subscriptions, transaction) {
   subscriptions.forEach(function (s) {
     pRetry(
       () => parseTransaction(Object.assign({ transaction }, s, s.meta)),
-      { retries: 5, minTimeout: 250 }
+      { retries: 5, minTimeout: 500 }
     )
       .catch(function (err) {
-        logger.warn(
-          'Could not parse transaction', transaction.hash, err.message
-        )
+        const msg = transaction
+          ? `Could not parse transaction: ${transaction.hash}`
+          : 'Could not parse latest transaction'
+
+        logger.warn(msg, err.message)
       })
   })
 }
