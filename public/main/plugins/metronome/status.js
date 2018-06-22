@@ -34,21 +34,20 @@ function sendStatus (ethWallet, webContents) {
         auctionStatus, converterStatus, tokenStatus
       )
 
+      if (webContents.isDestroyed()) { return }
+
       webContents.send('auction-status-updated', auctionStatus)
       webContents.send('mtn-converter-status-updated', converterStatus)
       webContents.send('metronome-token-status-updated', tokenStatus)
     })
     .catch(function (err) {
       logger.warn('Could not get metronome status', err.message)
+      if (webContents.isDestroyed()) { return }
 
       // Send token status anyway to allow the UI to start
-      webContents.send(
-        'metronome-token-status-updated',
-        { transferAllowed: false }
-      )
+      webContents.send('metronome-token-status-updated', { transferAllowed: false })
 
       // TODO retry before notifying
-
       webContents.send('connectivity-state-changed', {
         ok: false,
         reason: 'Connection to Ethereum node failed',
