@@ -1,8 +1,7 @@
 'use strict'
 
-const { shell, Menu } = require('electron')
+const { app, shell, Menu } = require('electron')
 const APP_NAME = 'Metronome Wallet'
-const pck = require('../package')
 
 const template = [
   {
@@ -95,7 +94,7 @@ if (process.platform === 'darwin') {
 
   if (help) {
     help.submenu.unshift({ type: 'separator' })
-    help.submenu.unshift({ role: 'about', label: `${APP_NAME} v${pck.version}`, enabled: false })
+    help.submenu.unshift({ role: 'about', label: `${APP_NAME} v${app.getVersion()}`, enabled: false })
   }
 }
 
