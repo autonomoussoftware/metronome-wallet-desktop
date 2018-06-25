@@ -1,14 +1,17 @@
 'use strict'
 
+const MetronomeContracts = require('metronome-contracts')
 const settings = require('electron-settings')
 
+const chain = settings.get('app.chain') || 'mainnet'
+
 const getAuctionAddress = () =>
-  settings.get('metronome.contracts.auctions').toLowerCase()
+  MetronomeContracts.addresses[chain].auctions.toLowerCase()
 
 const getConverterAddress = () =>
-  settings.get('metronome.contracts.converter').toLowerCase()
+  MetronomeContracts.addresses[chain].autonomousConverter.toLowerCase()
 
 const getTokenAddress = () =>
-  settings.get('metronome.contracts.token').toLowerCase()
+  MetronomeContracts.addresses[chain].metToken.toLowerCase()
 
 module.exports = { getAuctionAddress, getConverterAddress, getTokenAddress }
