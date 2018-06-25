@@ -2,6 +2,7 @@ import { sendToMainProcess, isWeiable } from '../utils'
 import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
+import MinReturnCheckbox from './MinReturnCheckbox'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
 import AmountFields from './AmountFields'
@@ -42,6 +43,7 @@ class ConvertETHtoMETForm extends React.Component {
   state = {
     ...AmountFields.initialState,
     ...GasEditor.initialState('MET'),
+    useMinimum: true,
     estimate: null,
     errors: {}
   }
@@ -60,6 +62,12 @@ class ConvertETHtoMETForm extends React.Component {
     // Estimate gas limit again if parameters changed
     if (['ethAmount'].includes(id)) this.getGasEstimate()
   }
+
+  onUseMinimumToggle = () =>
+    this.setState(state => ({
+      ...state,
+      useMinimum: !state.useMinimum
+    }))
 
   getGasEstimate = debounce(() => {
     const { ethAmount } = this.state
@@ -89,6 +97,10 @@ class ConvertETHtoMETForm extends React.Component {
 
   onWizardSubmit = password => {
     return sendToMainProcess('mtn-convert-eth', {
+      minReturn:
+        this.state.useMinimum && typeof this.state.estimate === 'string'
+          ? this.state.estimate
+          : undefined,
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
@@ -143,10 +155,22 @@ class ConvertETHtoMETForm extends React.Component {
               onChange={this.onInputChange}
               amount={this.state.ethAmount}
             />
+            {this.state.estimate && (
+              <MinReturnCheckbox
+                useMinimum={this.state.useMinimum}
+                onToggle={this.onUseMinimumToggle}
+                label="Get expected MET amount or cancel"
+              />
+            )}
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm">
+          <Btn
+            disabled={this.state.estimate === null}
+            submit
+            block
+            form="convertForm"
+          >
             Review Convert
           </Btn>
         </Footer>

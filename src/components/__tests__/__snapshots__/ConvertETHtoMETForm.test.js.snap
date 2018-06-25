@@ -156,14 +156,14 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
               class="sc-jKJlTe jGctBw"
             >
               <span
-                class="sc-jDwBTQ hbGHwK"
+                class="sc-jlyJG gJKmdQ"
               >
                 Gas Limit: 
                 250000
                 (Units)
               </span>
               <span
-                class="sc-jDwBTQ hbGHwK"
+                class="sc-jlyJG gJKmdQ"
               >
                 Gas Price: 
                 1
@@ -183,11 +183,12 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
       </form>
     </div>
     <div
-      class="sc-iRbamj ifTpSj"
+      class="sc-csuQGl gUwZNY"
     >
       <button
         type="submit"
         class="sc-bwzfXH gAMukr"
+        disabled=""
         form="convertForm"
       >
         Review Convert
