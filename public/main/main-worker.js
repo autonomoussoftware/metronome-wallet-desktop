@@ -25,18 +25,15 @@ function onRendererEvent (eventName, listener) {
     const result = Promise.resolve(listener(data, event.sender))
 
     result
-      .then(res => res.error ? Promise.reject(res.error) : res)
       .then(function (res) {
+        if (event.sender.isDestroyed()) {
+          return
+        }
         event.sender.send(eventName, { id, data: res })
-        return res
+        logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
       })
       .catch(function (err) {
-        const error = new WalletError(err.message)
-        event.sender.send(eventName, { id, data: { error } })
-        return { error }
-      })
-      .then(function (res) {
-        logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
+        logger.warn(`Could not send message to renderer: ${err.message}`)
       })
   })
 }
