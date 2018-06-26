@@ -2,6 +2,7 @@ import { sendToMainProcess, isWeiable } from '../utils'
 import { DisplayValue, Flex, Btn, Sp } from './common'
 import ConfirmationWizard from './ConfirmationWizard'
 import ConverterEstimates from './ConverterEstimates'
+import MinReturnCheckbox from './MinReturnCheckbox'
 import * as validators from '../validator'
 import * as selectors from '../selectors'
 import AmountFields from './AmountFields'
@@ -42,6 +43,7 @@ class ConvertETHtoMETForm extends React.Component {
   state = {
     ...AmountFields.initialState,
     ...GasEditor.initialState('MET'),
+    useMinimum: true,
     estimate: null,
     errors: {}
   }
@@ -53,13 +55,28 @@ class ConvertETHtoMETForm extends React.Component {
     this.setState(state => ({
       ...state,
       ...AmountFields.onInputChange(state, ETHprice, id, value),
-      errors: { ...state.errors, [id]: null },
+      errors: {
+        ...state.errors,
+        [id]: null,
+        useMinimum:
+          id === 'estimate' && value !== null ? null : state.errors.useMinimum
+      },
       [id]: value
     }))
 
     // Estimate gas limit again if parameters changed
     if (['ethAmount'].includes(id)) this.getGasEstimate()
   }
+
+  onUseMinimumToggle = () =>
+    this.setState(state => ({
+      ...state,
+      useMinimum: !state.useMinimum,
+      errors: {
+        ...state.errors,
+        useMinimum: null
+      }
+    }))
 
   getGasEstimate = debounce(() => {
     const { ethAmount } = this.state
@@ -75,12 +92,13 @@ class ConvertETHtoMETForm extends React.Component {
   }, 500)
 
   validate = () => {
-    const { ethAmount, gasPrice, gasLimit } = this.state
+    const { ethAmount, gasPrice, gasLimit, estimate, useMinimum } = this.state
     const max = Web3.utils.fromWei(this.props.availableETH)
     const errors = {
       ...validators.validateEthAmount(ethAmount, max),
       ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
-      ...validators.validateGasLimit(gasLimit)
+      ...validators.validateGasLimit(gasLimit),
+      ...validators.validateUseMinimum(useMinimum, estimate)
     }
     const hasErrors = Object.keys(errors).length > 0
     if (hasErrors) this.setState({ errors })
@@ -89,6 +107,10 @@ class ConvertETHtoMETForm extends React.Component {
 
   onWizardSubmit = password => {
     return sendToMainProcess('mtn-convert-eth', {
+      minReturn:
+        this.state.useMinimum && typeof this.state.estimate === 'string'
+          ? this.state.estimate
+          : undefined,
       gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
@@ -102,7 +124,11 @@ class ConvertETHtoMETForm extends React.Component {
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
-        <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
+        <DisplayValue
+          inline
+          value={Web3.utils.toWei(ethAmount.replace(',', '.'))}
+          post=" ETH"
+        />{' '}
         (${usdAmount}) and get approximately{' '}
         <DisplayValue value={estimate} post=" MTN" inline />.
       </ConfirmationContainer>
@@ -143,10 +169,16 @@ class ConvertETHtoMETForm extends React.Component {
               onChange={this.onInputChange}
               amount={this.state.ethAmount}
             />
+            <MinReturnCheckbox
+              useMinimum={this.state.useMinimum}
+              onToggle={this.onUseMinimumToggle}
+              label="Get expected MET amount or cancel"
+              error={this.state.errors.useMinimum}
+            />
           </form>
         </Sp>
         <Footer>
-          <Btn block submit form="convertForm">
+          <Btn submit block form="convertForm">
             Review Convert
           </Btn>
         </Footer>

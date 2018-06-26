@@ -20,7 +20,10 @@ const Container = styled.div`
   animation: 0.5s ${trans};
   animation-fill-mode: forwards;
   background-color: ${p =>
-    p.negative ? p.theme.colors.primary : p.theme.colors.dark};
+    p.negative
+      ? p.theme.colors.primary
+      : p.darker ? p.theme.colors.bg.darker : p.theme.colors.dark};
+  max-width: ${p => p.maxWidth || 'auto'};
   font-size: 1.3rem;
   padding: 8px 12px;
   border-radius: 4px;
@@ -43,13 +46,20 @@ const Container = styled.div`
     z-index: 1;
     border-bottom: none;
     border-top-color: ${p =>
-      p.negative ? p.theme.colors.primary : p.theme.colors.dark};
+      p.negative
+        ? p.theme.colors.primary
+        : p.darker ? p.theme.colors.bg.darker : p.theme.colors.dark};
   }
 `
 
 const onRenderContent = (target, content) => {
   return (
-    <Container data-testid="tooltip" negative={target.dataset.rhNegative}>
+    <Container
+      data-testid="tooltip"
+      negative={target.dataset.rhNegative}
+      maxWidth={target.dataset.rhWidth}
+      darker={target.dataset.rhDarker}
+    >
       {content}
     </Container>
   )

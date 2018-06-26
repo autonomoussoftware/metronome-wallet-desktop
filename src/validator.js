@@ -32,7 +32,10 @@ export function validateToAddress(toAddress, errors = {}) {
   } else if (!Web3.utils.isAddress(toAddress.toLowerCase())) {
     errors.toAddress = 'Invalid address'
     // Specifically check address checksum (if is not in lower case)
-  } else if (toAddress !== toAddress.toLowerCase() && !Web3.utils.checkAddressChecksum(toAddress)) {
+  } else if (
+    toAddress !== toAddress.toLowerCase() &&
+    !Web3.utils.checkAddressChecksum(toAddress)
+  ) {
     errors.toAddress = 'Address checksum is invalid'
   }
 
@@ -104,6 +107,14 @@ export function validatePasswordCreation(password, errors = {}) {
     errors.password = 'Password is required'
   } else if (stringEntropy(password) < 72) {
     errors.password = 'Password is not strong enough'
+  }
+
+  return errors
+}
+
+export function validateUseMinimum(useMinimum, estimate, errors = {}) {
+  if (useMinimum && !estimate) {
+    errors.useMinimum = 'No estimated return. Try again.'
   }
 
   return errors
