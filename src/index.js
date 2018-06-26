@@ -14,7 +14,9 @@ import React from 'react'
 import App from './components/App'
 
 if (config.SENTRY_DSN) {
-  Raven.config(config.SENTRY_DSN).install()
+  Raven.config(config.SENTRY_DSN, {
+    release: window.require('electron').remote.app.getVersion()
+  }).install()
   window.addEventListener('unhandledrejection', e =>
     Raven.captureException(e.reason)
   )
