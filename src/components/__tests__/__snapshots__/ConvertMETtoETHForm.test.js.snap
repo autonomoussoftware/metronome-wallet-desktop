@@ -117,14 +117,14 @@ exports[`<ConvertMETtoETHForm/> should match its snapshot 1`] = `
                 class="sc-jKJlTe jGctBw"
               >
                 <span
-                  class="sc-jlyJG gJKmdQ"
+                  class="sc-csuQGl izFJpS"
                 >
                   Gas Limit: 
                   250000
                   (Units)
                 </span>
                 <span
-                  class="sc-jlyJG gJKmdQ"
+                  class="sc-csuQGl izFJpS"
                 >
                   Gas Price: 
                   1
@@ -141,16 +141,55 @@ exports[`<ConvertMETtoETHForm/> should match its snapshot 1`] = `
               </button>
             </div>
           </div>
+          <div
+            class="sc-cMljjf bXskYr"
+          >
+            Enter a valid amount to get a conversion estimate.
+          </div>
+          <div>
+            <label
+              class="sc-jDwBTQ eiQZdA"
+            >
+              <input
+                type="checkbox"
+                class="sc-gPEVay hXTYYH"
+                data-testid="useMinimum-cb"
+                id="useMinimum"
+              />
+              <span
+                class="sc-iRbamj cArvmr"
+              >
+                Get expected ETH amount or cancel
+              </span>
+              <span
+                class="sc-jlyJG cDmJhB"
+                data-rh-darker="true"
+                data-rh-width="400px"
+                data-rh="This option will cancel the conversion if there is a change in price after you submit the transaction and the expected conversion amount is not met.  Gas will be consumed regardless."
+              >
+                <svg
+                  width="14px"
+                  height="14px"
+                  viewBox="0 0 14 14"
+                >
+                  <path
+                    stroke="none"
+                    fill="white"
+                    d="M6.33333333,10.3333333 L7.66666667,10.3333333 L7.66666667,6.33333333 L6.33333333,6.33333333 L6.33333333,10.3333333 L6.33333333,10.3333333 Z M7,0.333333333 C3.32,0.333333333 0.333333333,3.32 0.333333333,7 C0.333333333,10.68 3.32,13.6666667 7,13.6666667 C10.68,13.6666667 13.6666667,10.68 13.6666667,7 C13.6666667,3.32 10.68,0.333333333 7,0.333333333 L7,0.333333333 Z M7,12.3333333 C4.06,12.3333333 1.66666667,9.94 1.66666667,7 C1.66666667,4.06 4.06,1.66666667 7,1.66666667 C9.94,1.66666667 12.3333333,4.06 12.3333333,7 C12.3333333,9.94 9.94,12.3333333 7,12.3333333 L7,12.3333333 Z M6.33333333,5 L7.66666667,5 L7.66666667,3.66666667 L6.33333333,3.66666667 L6.33333333,5 L6.33333333,5 Z"
+                  />
+                </svg>
+              </span>
+            </label>
+          </div>
         </div>
       </form>
     </div>
     <div
-      class="sc-csuQGl gUwZNY"
+      class="sc-bRBYWo ebOYwZ"
     >
       <button
         type="submit"
         class="sc-bwzfXH gAMukr"
-        disabled=""
         form="convertForm"
       >
         Review Convert

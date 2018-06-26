@@ -14,6 +14,7 @@ const Container = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  opacity: ${p => (p.weak ? 0.5 : 1)};
 `
 
 const ErrorMsg = styled.div`
@@ -29,13 +30,14 @@ class ConverterEstimates extends React.Component {
     amount: PropTypes.string
   }
 
-  state = { error: null }
+  state = { error: null, status: 'init' }
 
   getEstimate = debounce(() => {
     const { convertTo, amount } = this.props
     if (!isWeiable(amount) || !isGreaterThanZero(amount)) {
       return this.props.onChange({ target: { id: 'estimate', value: null } })
     }
+    this.setState({ error: null, status: 'pending' })
     sendToMainProcess(
       convertTo === 'MET'
         ? 'metronome-estimate-eth-to-met'
@@ -45,11 +47,11 @@ class ConverterEstimates extends React.Component {
       }
     )
       .then(({ result }) => {
-        this.setState({ error: null })
+        this.setState({ error: null, status: 'success' })
         this.props.onChange({ target: { id: 'estimate', value: result } })
       })
       .catch(err => {
-        this.setState({ error: err.message })
+        this.setState({ error: err.message, status: 'failure' })
         this.props.onChange({ target: { id: 'estimate', value: null } })
       })
   }, 500)
@@ -66,9 +68,9 @@ class ConverterEstimates extends React.Component {
 
   render() {
     const { estimate, convertTo } = this.props
-    const { error } = this.state
+    const { error, status: estimateStatus } = this.state
 
-    if (estimate) {
+    if (['success', 'init'].includes(estimateStatus) && estimate) {
       return (
         <Container>
           <DisplayValue
@@ -80,13 +82,17 @@ class ConverterEstimates extends React.Component {
         </Container>
       )
     }
-    if (error)
+    if (estimateStatus === 'failure' && error)
       return (
         <Container>
           <ErrorMsg>{error}</ErrorMsg>
         </Container>
       )
-    return null
+    if (estimateStatus === 'pending')
+      return <Container weak>Getting conversion estimate...</Container>
+    return (
+      <Container>Enter a valid amount to get a conversion estimate.</Container>
+    )
   }
 }
 

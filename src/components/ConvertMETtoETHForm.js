@@ -56,7 +56,12 @@ class ConvertMETtoETHForm extends React.Component {
     this.setState(state => ({
       ...state,
       [id]: value,
-      errors: { ...state.errors, [id]: null }
+      errors: {
+        ...state.errors,
+        [id]: null,
+        useMinimum:
+          id === 'estimate' && value !== null ? null : state.errors.useMinimum
+      }
     }))
 
     // Estimate gas limit again if parameters changed
@@ -66,7 +71,11 @@ class ConvertMETtoETHForm extends React.Component {
   onUseMinimumToggle = () =>
     this.setState(state => ({
       ...state,
-      useMinimum: !state.useMinimum
+      useMinimum: !state.useMinimum,
+      errors: {
+        ...state.errors,
+        useMinimum: null
+      }
     }))
 
   getGasEstimate = debounce(() => {
@@ -83,12 +92,13 @@ class ConvertMETtoETHForm extends React.Component {
   }, 500)
 
   validate = () => {
-    const { metAmount, gasPrice, gasLimit } = this.state
+    const { metAmount, gasPrice, gasLimit, estimate, useMinimum } = this.state
     const max = Web3.utils.fromWei(this.props.availableMTN)
     const errors = {
       ...validators.validateMetAmount(metAmount, max),
       ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
-      ...validators.validateGasLimit(gasLimit)
+      ...validators.validateGasLimit(gasLimit),
+      ...validators.validateUseMinimum(useMinimum, estimate)
     }
     const hasErrors = Object.keys(errors).length > 0
     if (hasErrors) this.setState({ errors })
@@ -118,7 +128,11 @@ class ConvertMETtoETHForm extends React.Component {
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
-        <DisplayValue value={Web3.utils.toWei(metAmount)} post=" MET" inline />{' '}
+        <DisplayValue
+          inline
+          value={Web3.utils.toWei(metAmount.replace(',', '.'))}
+          post=" MET"
+        />{' '}
         and get approximately{' '}
         <DisplayValue value={estimate} post=" ETH" inline />.
       </ConfirmationContainer>
@@ -170,23 +184,17 @@ class ConvertMETtoETHForm extends React.Component {
                 onChange={this.onInputChange}
                 amount={this.state.metAmount}
               />
-              {this.state.estimate && (
-                <MinReturnCheckbox
-                  useMinimum={this.state.useMinimum}
-                  onToggle={this.onUseMinimumToggle}
-                  label="Get expected ETH amount or cancel"
-                />
-              )}
+              <MinReturnCheckbox
+                useMinimum={this.state.useMinimum}
+                onToggle={this.onUseMinimumToggle}
+                label="Get expected ETH amount or cancel"
+                error={this.state.errors.useMinimum}
+              />
             </div>
           </form>
         </Sp>
         <Footer>
-          <Btn
-            disabled={this.state.estimate === null}
-            submit
-            block
-            form="convertForm"
-          >
+          <Btn submit block form="convertForm">
             Review Convert
           </Btn>
         </Footer>
