@@ -1,8 +1,7 @@
 'use strict'
 
 const logger = require('electron-log')
-
-const tokenAbi = require('./contracts/MTNToken')
+const tokenAbi = require('metronome-contracts/src/abis/METToken')
 
 const contracts = {}
 

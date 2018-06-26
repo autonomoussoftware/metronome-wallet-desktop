@@ -1,5 +1,6 @@
 {
   "app": {
+    "chain": "ropsten",
     "node": {
       "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
       "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
@@ -11,13 +12,6 @@
   "coincap": {
     "ethPriceEmitRate": 5
   },
-  "metronome": {
-    "contracts": {
-      "auctions": "0x767182c6ef62398993099e5542ab43c2456a8aba",
-      "converter": "0x638e84db864aa345266e1aee13873b860afe82e7",
-      "token": "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3"
-    }
-  },
   "tokens": {
     "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
       "decimals": 18,
@@ -25,5 +19,5 @@
       "symbol": "MET"
     }
   },
-  "settingsVersion": 10
+  "settingsVersion": 12
 }
