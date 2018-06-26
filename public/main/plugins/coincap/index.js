@@ -13,9 +13,8 @@ function emitPrice (webContents, price) {
 
   if (!webContents.isDestroyed()) {
     webContents.send('eth-price-updated', priceData)
+    logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
   }
-
-  logger.verbose(`<-- eth-price-updated ${JSON.stringify(price)}`)
 
   const query = { type: 'coincap-eth-usd' }
   const update = Object.assign(query, { price })

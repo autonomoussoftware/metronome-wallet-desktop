@@ -29,7 +29,6 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
         .call()
         .then(function (balance) {
           setTokenBalance({ walletId, address, contractAddress, balance })
-          logger.verbose(`<-- ${symbol} ${address} ${balance}`)
 
           if (webContents.isDestroyed()) { return }
 
@@ -42,6 +41,7 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
               }
             }
           })
+          logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
         .catch(function (err) {
           logger.warn('Could not get token balance', symbol, err.message)
