@@ -1,6 +1,6 @@
 {
   "app": {
-    "chain": "ropsten",
+    "chain": "mainnet",
     "node": {
       "jsonRpcApiUrl": "https://eth.wallet.metronome.io:8545",
       "websocketApiUrl": "wss://eth.wallet.metronome.io:8546"
