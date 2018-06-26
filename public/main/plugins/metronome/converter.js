@@ -1,9 +1,8 @@
 'use strict'
 
+const abi = require('metronome-contracts/src/abis/AutonomousConverter')
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
-
-const abi = require('./contracts/AutonomousConverter')
 
 function getConverterStatus ({ web3, address }) {
   const converter = new web3.eth.Contract(abi, address)

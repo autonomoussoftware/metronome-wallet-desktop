@@ -1,9 +1,8 @@
 'use strict'
 
+const auctionsAbi = require('metronome-contracts/src/abis/Auctions')
 const logger = require('electron-log')
 const promiseAllProps = require('promise-all-props')
-
-const auctionsAbi = require('./contracts/Auctions')
 
 function parseAuctionStatus (status) {
   const {

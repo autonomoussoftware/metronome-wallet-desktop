@@ -145,6 +145,8 @@ function mergeAndSendPendingWalletStateChanges () {
   Object.values(byWebContent).forEach(function (group) {
     const merged = mergeWith({}, ...group, concatArrays)
 
+    if (merged.webContents.isDestroyed()) { return }
+
     merged.webContents.send('wallet-state-changed', merged.data)
     logger.verbose(`<-- ${merged.log.join(', ')}`, merged.data)
   })
@@ -176,10 +178,10 @@ function sendWalletStateChange ({ webContents, walletId, address, data, log }) {
 }
 
 function sendError ({ webContents, walletId, message, err }) {
-  logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
-
   if (webContents.isDestroyed()) { return }
+
   webContents.send('error', { error: new WalletError(message, err) })
+  logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
 function sendBalances ({ walletId, webContents }) {
@@ -282,10 +284,10 @@ const getBestBlock = () => getDatabase().state
 function sendBestBlock ({ webContents }) {
   getBestBlock()
     .then(function (bestBlock) {
-      logger.verbose('<-- Current best block', bestBlock)
-
       if (webContents.isDestroyed()) { return }
+
       webContents.send('eth-block', bestBlock)
+      logger.verbose('<-- Current best block', bestBlock)
     })
     .catch(function (err) {
       logger.warn('Could not read best block from db', err.message)
@@ -397,9 +399,9 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
             .then(function () {
               if (!webContents.isDestroyed()) {
                 webContents.send('eth-block', { number: indexed })
+                logger.verbose('<-- New best block', { number: indexed })
               }
 
-              logger.verbose('<-- New best block', { number: indexed })
               return setBestBlock({ number: indexed })
             })
         })
@@ -484,9 +486,9 @@ function broadcastNewBlock (subscriptions, data) {
   Promise.all(subscriptions.map(function (s) {
     if (!s.webContents.isDestroyed()) {
       s.webContents.send('eth-block', data)
+      logger.verbose('<-- New best block', data)
     }
 
-    logger.verbose('<-- New best block', data)
     return setBestBlock(data)
   }))
     .catch(function (err) {

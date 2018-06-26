@@ -31,10 +31,10 @@ function createApi ({ ethWallet, tokens }) {
     })
   }
 
-  function onConvertEthToMtn ({ password, from, value, gasLimit, gasPrice }) {
+  function onConvertEthToMtn ({ password, from, value, minReturn, gasLimit, gasPrice }) {
     const web3 = ethWallet.getWeb3()
     const address = getConverterAddress()
-    const data = encodeConvertEthToMtn({ web3, address, value })
+    const data = encodeConvertEthToMtn({ web3, address, value, minReturn })
 
     logger.verbose('Converting ETH to MET', { from, value, address })
 
@@ -49,7 +49,7 @@ function createApi ({ ethWallet, tokens }) {
     })
   }
 
-  function onConvertMtnToEth ({ password, from, value, gasPrice, gasLimit }) {
+  function onConvertMtnToEth ({ password, from, value, minReturn, gasPrice, gasLimit }) {
     const token = getTokenAddress()
     const address = getConverterAddress()
 
@@ -78,7 +78,7 @@ function createApi ({ ethWallet, tokens }) {
         )
           .then(function () {
             const web3 = ethWallet.getWeb3()
-            const data = encodeConvertMtnToEth({ web3, address, value })
+            const data = encodeConvertMtnToEth({ web3, address, value, minReturn })
 
             logger.verbose('Converting MET to ETH', { from, value, address })
 

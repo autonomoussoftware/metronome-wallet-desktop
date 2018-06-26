@@ -41,8 +41,11 @@ describe('<ConvertMETtoETHForm/>', () => {
       )
       expect(queryByTestId('confirmation')).toBeNull()
       const amountField = getByTestId('metAmount-field')
+      const useMinimum = getByTestId('useMinimum-cb')
       amountField.value = '1'
+      useMinimum.checked = false
       Simulate.change(amountField)
+      Simulate.change(useMinimum)
       Simulate.submit(getByTestId('metToEth-form'))
       expect(queryByTestId('confirmation')).not.toBeNull()
     })

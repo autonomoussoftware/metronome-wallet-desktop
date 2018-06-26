@@ -1,5 +1,6 @@
 {
   "app": {
+    "chain": "ropsten",
     "node": {
       "jsonRpcApiUrl": "https://eth.wallet.metronome.io:8545",
       "websocketApiUrl": "wss://eth.wallet.metronome.io:8546"
@@ -11,13 +12,6 @@
   "coincap": {
     "ethPriceEmitRate": 5
   },
-  "metronome": {
-    "contracts": {
-      "auctions": "0x9d9BcDd249E439AAaB545F59a33812E39A8e3072",
-      "converter": "0x686e5ac50D9236A9b7406791256e47feDDB26AbA",
-      "token": "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e"
-    }
-  },
   "tokens": {
     "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e": {
       "decimals": 18,
@@ -25,5 +19,5 @@
       "symbol": "MET"
     }
   },
-  "settingsVersion": 11
+  "settingsVersion": 12
 }

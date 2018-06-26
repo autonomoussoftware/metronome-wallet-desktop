@@ -15,6 +15,7 @@ export default {
     // BACKGROUNDS
     bg: {
       primary: '#7e61f8',
+      darker: '#1d1d1d',
       dark: '#323232',
       medium: '#f4f4f4',
       light: '#ededed',

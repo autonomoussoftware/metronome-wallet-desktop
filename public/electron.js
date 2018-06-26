@@ -31,6 +31,7 @@ if (isDev) {
   if (config.sentryDsn) {
     Raven.config(config.sentryDsn, {
       captureUnhandledRejections: true,
+      release: app.getVersion(),
       tags: {
         process: process.type,
         electron: process.versions.electron,
