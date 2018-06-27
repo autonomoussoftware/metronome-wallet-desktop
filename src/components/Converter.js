@@ -160,92 +160,96 @@ class Converter extends React.Component {
         data-testid="converter-container"
         title="Autonomous Converter"
       >
-        {converterStatus ? (convertFeatureStatus === 'ok' ? (
-          <Container>
-            <StatsContainer data-testid="stats">
-              <Sp p={2}>
-                <Flex.Row justify="space-between" align="baseline">
-                  <Label>Current Price</Label>
-                  <Flex.Column>
-                    <Flex.Row align="baseline">
-                      <Badge>1 MET</Badge>
-                      <Price>
-                        <DisplayValue
-                          maxSize="inherit"
-                          pre=" = "
-                          value={converterStatus.currentPrice}
-                          post=" ETH"
-                        />
-                      </Price>
-                    </Flex.Row>
-                    <USDPrice>{converterPriceUSD}</USDPrice>
-                  </Flex.Column>
-                </Flex.Row>
-              </Sp>
-              <Sp p={2}>
-                <Flex.Row justify="space-between" align="baseline">
-                  <Label>Available MET</Label>
-                  <AvailableAmount>
-                    <DisplayValue
-                      maxSize="inherit"
-                      value={converterStatus.availableMtn}
-                      post=" MET"
-                    />
-                  </AvailableAmount>
-                </Flex.Row>
-              </Sp>
-              <Sp p={2}>
-                <Flex.Row justify="space-between" align="baseline">
-                  <Label>Available ETH</Label>
-                  <AvailableAmount>
-                    <DisplayValue
-                      maxSize="inherit"
-                      value={converterStatus.availableEth}
-                      post=" ETH"
-                    />
-                  </AvailableAmount>
-                </Flex.Row>
-              </Sp>
-            </StatsContainer>
+        {converterStatus ? (
+          convertFeatureStatus !== 'transfer-disabled' ? (
+            <Container>
+              <StatsContainer data-testid="stats">
+                <Sp p={2}>
+                  <Flex.Row justify="space-between" align="baseline">
+                    <Label>Current Price</Label>
+                    <Flex.Column>
+                      <Flex.Row align="baseline">
+                        <Badge>1 MET</Badge>
+                        <Price>
+                          <DisplayValue
+                            maxSize="inherit"
+                            pre=" = "
+                            value={converterStatus.currentPrice}
+                            post=" ETH"
+                          />
+                        </Price>
+                      </Flex.Row>
+                      <USDPrice>{converterPriceUSD}</USDPrice>
+                    </Flex.Column>
+                  </Flex.Row>
+                </Sp>
+                <Sp p={2}>
+                  <Flex.Row justify="space-between" align="baseline">
+                    <Label>Available MET</Label>
+                    <AvailableAmount>
+                      <DisplayValue
+                        maxSize="inherit"
+                        value={converterStatus.availableMtn}
+                        post=" MET"
+                      />
+                    </AvailableAmount>
+                  </Flex.Row>
+                </Sp>
+                <Sp p={2}>
+                  <Flex.Row justify="space-between" align="baseline">
+                    <Label>Available ETH</Label>
+                    <AvailableAmount>
+                      <DisplayValue
+                        maxSize="inherit"
+                        value={converterStatus.availableEth}
+                        post=" ETH"
+                      />
+                    </AvailableAmount>
+                  </Flex.Row>
+                </Sp>
+              </StatsContainer>
 
-            <ConvertBtn
-              data-disabled={convertFeatureStatus !== 'ok' ? true : null}
-              data-rh-negative
-              data-rh={
-                convertFeatureStatus === 'offline'
-                  ? "Can't convert while offline"
-                  : convertFeatureStatus === 'in-initial-auction'
-                    ? 'Conversions are disabled during Initial Auction'
-                    : convertFeatureStatus === 'transfer-disabled'
-                      ? 'MET conversions not enabled yet'
+              <ConvertBtn
+                data-disabled={convertFeatureStatus !== 'ok' ? true : null}
+                data-rh-negative
+                data-rh={
+                  convertFeatureStatus === 'offline'
+                    ? "Can't convert while offline"
+                    : convertFeatureStatus === 'in-initial-auction'
+                      ? 'Conversions are disabled during Initial Auction'
                       : null
-              }
-              data-modal="convert"
-              data-testid="convert-btn"
-              onClick={convertFeatureStatus === 'ok' ? this.onOpenModal : null}
-            >
-              Convert
-            </ConvertBtn>
+                }
+                data-modal="convert"
+                data-testid="convert-btn"
+                onClick={
+                  convertFeatureStatus === 'ok' ? this.onOpenModal : null
+                }
+              >
+                Convert
+              </ConvertBtn>
 
-            <ConvertDrawer
-              onRequestClose={this.onCloseModal}
-              isOpen={this.state.activeModal === 'convert'}
-            />
-          </Container>
-        ) : <Sp p={6}>
-          <LoadingContainer data-testid="waiting">
-            <Sp py={4}>
-              <ConverterIcon display='inline' size='69.5px' />
+              <ConvertDrawer
+                onRequestClose={this.onCloseModal}
+                isOpen={this.state.activeModal === 'convert'}
+              />
+            </Container>
+          ) : (
+            <Sp p={6}>
+              <LoadingContainer data-testid="waiting">
+                <Sp py={4}>
+                  <ConverterIcon display="inline" size="69.5px" />
+                </Sp>
+                <Title>Coming Soon</Title>
+                <Sp py={2}>
+                  <SmallText>
+                    The Autonomous Converter will become available after the
+                    initial auction has ended.
+                  </SmallText>
+                </Sp>
+              </LoadingContainer>
             </Sp>
-            <Title>Coming Soon</Title>
-            <Sp py={2}>
-              <SmallText>
-                The Autonomous Converter will become available after the initial
-                auction has ended.
-              </SmallText>
-            </Sp>
-          </LoadingContainer>
-        </Sp>) : (
+          )
+        ) : (
           <Sp p={6}>
             <LoadingContainer data-testid="waiting">
               <Text>Waiting for converter status...</Text>
