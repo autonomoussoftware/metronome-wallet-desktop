@@ -1,19 +1,19 @@
 {
   "app": {
-    "chain": "ropsten",
+    "chain": "mainnet",
     "node": {
-      "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
+      "jsonRpcApiUrl": "https://eth.wallet.metronome.io:8545",
+      "websocketApiUrl": "wss://eth.wallet.metronome.io:8546"
     },
     "defaultDerivationPath": "m/44'/60'/0'/0",
-    "indexerApiUrl": "https://indexer.met.bloqrock.net",
-    "tracerApiUrl": "https://tracer.met.bloqrock.net"
+    "indexerApiUrl": "https://indexer.metronome.io",
+    "tracerApiUrl": "https://tracer.metronome.io"
   },
   "coincap": {
     "ethPriceEmitRate": 5
   },
   "tokens": {
-    "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
+    "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e": {
       "decimals": 18,
       "name": "Metronome",
       "symbol": "MET"
