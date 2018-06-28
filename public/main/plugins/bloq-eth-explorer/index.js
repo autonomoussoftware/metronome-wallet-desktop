@@ -13,8 +13,6 @@ const api = require('./api')
 
 axiosCookieJarSupport(axios)
 
-let socket
-
 const baseURL = getIndexerApiUrl()
 
 const jar = new CookieJar()
@@ -23,33 +21,36 @@ const setTimeoutAsync = timeout => new Promise(function (resolve) {
   setTimeout(resolve, timeout)
 })
 
-const getCookie = () => axios.get(baseURL, { jar, withCredentials: true })
-  .then(function () {
-    socket = io(`${baseURL}/v1`, {
-      autoConnect: false,
-      extraHeaders: {
-        Cookie: jar.getCookiesSync(baseURL).join(';')
-      }
+const getSocket = () =>
+  axios.get(baseURL, { jar, withCredentials: true })
+    .then(function () {
+      return io(`${baseURL}/v1`, {
+        autoConnect: false,
+        extraHeaders: {
+          Cookie: jar.getCookiesSync(baseURL).join(';')
+        }
+      })
     })
-  })
-  .catch(function (err) {
-    logger.warn('Failed to get subscription cookie', err.message)
+    .catch(function (err) {
+      logger.warn('Failed to get subscription cookie', err.message)
 
-    return setTimeoutAsync(5000)
-      .then(getCookie)
-  })
+      return setTimeoutAsync(5000)
+        .then(getSocket)
+    })
 
-const initialized = getCookie()
+const initialized = getSocket()
 
 function subscribeBlocks (eventsBus) {
-  initialized.then(function () {
-    socket.emit('subscribe', { type: 'blocks' }, function (err) {
-      if (err) {
-        logger.warn('Blocks subscription failed', err)
-        return
-      }
+  initialized.then(function (socket) {
+    socket.on('connect', function () {
+      socket.emit('subscribe', { type: 'blocks' }, function (err) {
+        if (err) {
+          logger.warn('Blocks subscription failed', err)
+          return
+        }
 
-      logger.debug('Blocks subscription successfull')
+        logger.debug('Blocks subscription successfull')
+      })
     })
 
     socket.on('block', function (data) {
@@ -61,7 +62,7 @@ function subscribeBlocks (eventsBus) {
 }
 
 const start = eventsBus => function (pluginEmitter) {
-  initialized.then(function () {
+  initialized.then(function (socket) {
     socket.on('error', function (err) {
       logger.warn('Connection error', err.message)
 
@@ -72,8 +73,6 @@ const start = eventsBus => function (pluginEmitter) {
       logger.debug('Client connected')
 
       pluginEmitter.emit('connection-state-changed', 'connected')
-
-      subscribeBlocks(eventsBus)
     })
 
     socket.on('disconnect', function (reason) {
@@ -81,6 +80,8 @@ const start = eventsBus => function (pluginEmitter) {
 
       pluginEmitter.emit('connection-state-changed', 'disconnected')
     })
+
+    subscribeBlocks(eventsBus)
 
     socket.open()
   })
@@ -99,45 +100,46 @@ function broadcastConnectivityState (subscriptions, state) {
 }
 
 function stop () {
-  initialized.then(function () {
+  initialized.then(function (socket) {
     socket.removeAllListeners('error')
-
     socket.removeAllListeners('connect')
-
     socket.removeAllListeners('disconnect')
 
+    socket.removeAllListeners('block')
+    socket.removeAllListeners('tx')
+
     socket.close()
+
+    logger.debug('Block and tx listeners stopped')
   })
 }
 
-function subscribeAddresses ({ eventsBus, walletId, addresses }) {
-  initialized.then(function () {
-    socket.emit('subscribe', { type: 'txs', addresses }, function (err) {
-      if (err) {
-        logger.warn('Subscription failed', walletId, err)
-        return
-      }
+function subscribeAddresses (socket, walletId, addresses) {
+  socket.emit('subscribe', { type: 'txs', addresses }, function (err) {
+    if (err) {
+      logger.warn('Subscription failed', walletId, err)
+      return
+    }
 
-      logger.debug('Addresses subscription successfull', addresses, walletId)
-    })
-
-    socket.on('tx', function (data) {
-      const { type, txid, status, meta } = data
-
-      logger.verbose('New transaction received', { walletId, data })
-
-      eventsBus.emit(`${type}-tx-${status}`, { walletId, txid, meta })
-    })
+    logger.debug('Addresses subscription successfull', addresses, walletId)
   })
 }
 
 function attachToEvents (eventsBus) {
   eventsBus.on('wallet-opened', function ({ walletId, addresses }) {
-    initialized.then(function () {
-      subscribeAddresses({ eventsBus, walletId, addresses })
+    initialized.then(function (socket) {
+      socket.on('tx', function (data) {
+        const { type, txid, status, meta } = data
+
+        logger.verbose('New transaction received', { walletId, data })
+
+        eventsBus.emit(`${type}-tx-${status}`, { walletId, txid, meta })
+      })
+
+      subscribeAddresses(socket, walletId, addresses)
 
       socket.on('connect', function () {
-        subscribeAddresses({ eventsBus, walletId, addresses })
+        subscribeAddresses(socket, walletId, addresses)
       })
     })
   })
