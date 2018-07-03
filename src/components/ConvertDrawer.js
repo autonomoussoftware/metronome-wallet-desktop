@@ -1,6 +1,8 @@
 import ConvertETHtoMETForm from './ConvertETHtoMETForm'
 import ConvertMETtoETHForm from './ConvertMETtoETHForm'
 import { Drawer, Tabs } from './common'
+import * as selectors from '../selectors'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -14,8 +16,11 @@ const Arrow = styled.span`
   display: inline-block;
 `
 
-export default class ConvertDrawer extends React.Component {
+class ConvertDrawer extends React.Component {
   static propTypes = {
+    convertMetFeatureStatus: PropTypes.oneOf(['no-eth', 'no-met', 'ok'])
+      .isRequired,
+    convertEthFeatureStatus: PropTypes.oneOf(['no-eth', 'ok']).isRequired,
     onRequestClose: PropTypes.func.isRequired,
     defaultTab: PropTypes.oneOf(['ethToMet', 'metToEth']),
     isOpen: PropTypes.bool.isRequired
@@ -53,7 +58,12 @@ export default class ConvertDrawer extends React.Component {
               <React.Fragment>
                 ETH<Arrow>&rarr;</Arrow>MET
               </React.Fragment>
-            )
+            ),
+            disabled: this.props.convertEthFeatureStatus !== 'ok',
+            'data-rh':
+              this.props.convertEthFeatureStatus === 'no-eth'
+                ? 'You have no ETH to convert'
+                : null
           },
           {
             id: 'metToEth',
@@ -61,7 +71,14 @@ export default class ConvertDrawer extends React.Component {
               <React.Fragment>
                 MET<Arrow>&rarr;</Arrow>ETH
               </React.Fragment>
-            )
+            ),
+            disabled: this.props.convertMetFeatureStatus !== 'ok',
+            'data-rh':
+              this.props.convertMetFeatureStatus === 'no-met'
+                ? 'You have no MET to convert'
+                : this.props.convertMetFeatureStatus === 'no-eth'
+                  ? 'You have no ETH to pay for gas'
+                  : null
           }
         ]}
       />
@@ -80,3 +97,10 @@ export default class ConvertDrawer extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  convertEthFeatureStatus: selectors.convertEthFeatureStatus(state),
+  convertMetFeatureStatus: selectors.convertMetFeatureStatus(state)
+})
+
+export default connect(mapStateToProps)(ConvertDrawer)
