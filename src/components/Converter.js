@@ -131,6 +131,7 @@ class Converter extends React.Component {
       'in-initial-auction',
       'transfer-disabled',
       'offline',
+      'no-eth',
       'ok'
     ]).isRequired,
     converterPriceUSD: PropTypes.string.isRequired,
@@ -217,7 +218,9 @@ class Converter extends React.Component {
                     ? "Can't convert while offline"
                     : convertFeatureStatus === 'in-initial-auction'
                       ? 'Conversions are disabled during Initial Auction'
-                      : null
+                      : convertFeatureStatus === 'no-eth'
+                        ? 'You need some ETH to pay for conversion gas'
+                        : null
                 }
                 data-modal="convert"
                 data-testid="convert-btn"
