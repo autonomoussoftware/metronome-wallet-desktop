@@ -20,7 +20,7 @@ function transactionParser ({ transaction, receipt, walletId }) {
   }
 
   meta.contractCallFailed = receipt &&
-    (receipt.status === 0 || // byzantium fork
+    (receipt.status === false || // byzantium fork
     (input !== '0x' && gas === receipt.gasUsed && !receipt.logs.length))
 
   if (meta.ours) {
