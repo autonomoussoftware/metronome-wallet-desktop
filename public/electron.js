@@ -11,6 +11,8 @@ const config = require('./config')
 const initMenu = require('./menu')
 const initContextMenu = require('./contextMenu')
 
+require('./analytics')
+
 if (isDev) {
   require('dotenv').config()
 
