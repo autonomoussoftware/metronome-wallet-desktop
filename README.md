@@ -66,7 +66,7 @@ Modify the `Settings` file replacing the following properties:
 }
 ```
 
-The, start the wallet setting the proper environment variable:
+Then, start the wallet setting the proper environment variable as follows:
 
 ```bash
 REACT_APP_ETH_CHAIN=ropsten npm run dev
