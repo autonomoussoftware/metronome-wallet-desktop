@@ -1,6 +1,7 @@
 'use strict'
 
 const logger = require('electron-log')
+const analytics = require('./../../../analytics')
 
 const {
   getAuctionGasLimit
@@ -25,10 +26,19 @@ function createApi ({ ethWallet, tokens }) {
     logger.verbose('Buying MET in auction', {
       from, value, address, gasLimit, gasPrice
     })
+    analytics.event({ ec: 'Buy', ea: 'Buy MET in auction initiated' })
 
     return ethWallet.sendTransaction({
       password, from, to: address, value, gasLimit, gasPrice
     })
+      .then(function (response) {
+        analytics.event({ ec: 'Buy', ea: 'Buy MET in auction succeeded' })
+        return response
+      })
+      .catch(function (err) {
+        analytics.event({ ec: 'Buy', ea: 'Buy MET in auction failed' })
+        throw err
+      })
   }
 
   function onConvertEthToMtn ({ password, from, value, minReturn, gasLimit, gasPrice }) {
@@ -37,6 +47,7 @@ function createApi ({ ethWallet, tokens }) {
     const data = encodeConvertEthToMtn({ web3, address, value, minReturn })
 
     logger.verbose('Converting ETH to MET', { from, value, address })
+    analytics.event({ ec: 'Convert', ea: 'Convert ETH to MET initiated' })
 
     return ethWallet.sendTransaction({
       password,
@@ -47,11 +58,21 @@ function createApi ({ ethWallet, tokens }) {
       gasLimit,
       gasPrice
     })
+      .then(function (response) {
+        analytics.event({ ec: 'Convert', ea: 'Convert ETH to MET succeeded' })
+        return response
+      })
+      .catch(function (err) {
+        analytics.event({ ec: 'Convert', ea: 'Convert ETH to MET failed' })
+        throw err
+      })
   }
 
   function onConvertMtnToEth ({ password, from, value, minReturn, gasPrice, gasLimit }) {
     const token = getTokenAddress()
     const address = getConverterAddress()
+
+    analytics.event({ ec: 'Convert', ea: 'Convert MET to ETH initiated' })
 
     return tokens.getAllowance({ token, from, to: address })
       .then(function (allowance) {
@@ -85,6 +106,10 @@ function createApi ({ ethWallet, tokens }) {
             return ethWallet.sendTransaction({
               password, from, to: address, data, gasPrice, gasLimit
             })
+              .then(function (response) {
+                analytics.event({ ec: 'Convert', ea: 'Convert MET to ETH succeeded' })
+                return response
+              })
           })
           .catch(function (err) {
             logger.warn('Conversion failed - removing approval')
@@ -103,6 +128,7 @@ function createApi ({ ethWallet, tokens }) {
           })
       })
       .catch(function (err) {
+        analytics.event({ ec: 'Convert', ea: 'Convert MET to ETH failed' })
         throw err
       })
   }

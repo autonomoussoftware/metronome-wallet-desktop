@@ -4,6 +4,8 @@ import config from './config'
 import Web3 from 'web3'
 import _ from 'lodash'
 
+const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
+
 // eslint-disable-next-line complexity
 function getTxType(meta, tokenData, transaction, address) {
   if (_.get(meta, 'metronome.auction')) {
@@ -333,7 +335,6 @@ export const sendFeatureStatus = createSelector(
   getActiveWalletMtnBalance,
   getIsOnline,
   (ethBalance, mtnBalance, isOnline) => {
-    const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
     return !isOnline
       ? 'offline'
       : !hasFunds(ethBalance) && !hasFunds(mtnBalance) ? 'no-funds' : 'ok'
@@ -346,7 +347,6 @@ export const sendMetFeatureStatus = createSelector(
   getIsInitialAuction,
   getIsOnline,
   (mtnBalance, metTransferAllowed, isInitialAuction, isOnline) => {
-    const hasFunds = val => val && Web3.utils.toBN(val).gt(Web3.utils.toBN(0))
     return !isOnline
       ? 'offline'
       : !hasFunds(mtnBalance)
@@ -369,15 +369,38 @@ export const buyFeatureStatus = createSelector(
   }
 )
 
+// Returns the converter status in general. Useful for disabling "Convert" modal
 export const convertFeatureStatus = createSelector(
+  getActiveWalletEthBalance,
   getMetTransferAllowed,
   getIsInitialAuction,
   getIsOnline,
-  (metTransferAllowed, isInitialAuction, isOnline) => {
+  (ethBalance, metTransferAllowed, isInitialAuction, isOnline) => {
     return !isOnline
       ? 'offline'
       : isInitialAuction
         ? 'in-initial-auction'
-        : !metTransferAllowed ? 'transfer-disabled' : 'ok'
+        : !metTransferAllowed
+          ? 'transfer-disabled'
+          : !hasFunds(ethBalance) ? 'no-eth' : 'ok'
+  }
+)
+
+// Returns the conversion from ETH status. Useful for disabling "ETH -> MET" tab
+export const convertEthFeatureStatus = createSelector(
+  getActiveWalletEthBalance,
+  ethBalance => {
+    return hasFunds(ethBalance) ? 'ok' : 'no-eth'
+  }
+)
+
+// Returns the conversion from MET status. Useful for disabling "MET -> ETH" tab
+export const convertMetFeatureStatus = createSelector(
+  getActiveWalletEthBalance,
+  getActiveWalletMtnBalance,
+  (ethBalance, metBalance) => {
+    return !hasFunds(ethBalance)
+      ? 'no-eth'
+      : !hasFunds(metBalance) ? 'no-met' : 'ok'
   }
 )

@@ -2,26 +2,18 @@
   <img src="./public/images/banner.png" alt="Metronome Wallet Desktop" width="50%">
 </h1>
 
-💻💰 Metronome wallet for desktop devices
+💻💰 Metronome Wallet for desktop computers
 
-[![Build Status](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet.svg?token=zFtwnjoHbEAEPUQyswR1&branch=master)](https://travis-ci.com/MetronomeToken/metronome-desktop-wallet)
+[![Build Status](https://travis-ci.com/autonomoussoftware/metronome-wallet-desktop.svg?branch=master)](https://travis-ci.com/autonomoussoftware/metronome-wallet-desktop)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Index
+## Development 
 
-1.  [Requirements](#requirements)
-1.  [Configuration](#configuration)
-1.  [Dev Setup](#dev-Setup)
-1.  [Prod Setup](#prod-setup)
-1.  [Logs](#logs)
-1.  [Development Notes](#development-notes)
-1.  [License](#license)
+### Requirements
 
-## Requirements
+* [Node.js](https://nodejs.org) LTS (v8)
 
-* [Node.js](https://nodejs.org) v8 (or greater)
-
-## Dev Setup
+### Launch
 
 ```bash
 # Install dependencies
@@ -29,49 +21,71 @@ npm i
 
 # Run dev mode
 npm run dev
-
-# Run test cases
-npm test
 ```
 
-## Prod Setup
+### Logs
+
+The log output is in the next directories:
+
+* **Linux:** `~/.config/<app name>/log.log`
+* **macOS:** `~/Library/Logs/<app name>/log.log`
+* **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
+
+More info [github.com/megahertz/electron-log](https://github.com/megahertz/electron-log)
+
+### Settings
+
+* **Linux**: `~/.config/metronome-desktop-wallet/Settings`
+* **macOS**: `~/Library/Application Support/metronome-desktop-wallet/Settings`
+* **Windows**: `%APPDATA%\\metronome-desktop-wallet\\Settings`
+
+To completely remove the application and start over, remove the settings file too.
+
+### Run in Ropsten Testnet
+
+Modify the `Settings` file replacing the following properties:
+
+```json
+{
+  "app": {
+    "chain": "ropsten",
+    "node": {
+      "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
+      "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
+    },
+    "indexerApiUrl": "https://indexer.met.bloqrock.net",
+    "tracerApiUrl": "https://tracer.met.bloqrock.net"
+  },
+  "tokens": {
+    "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
+      "decimals": 18,
+      "name": "Metronome",
+      "symbol": "MET"
+    }
+  }
+}
+```
+
+Then, start the wallet setting the proper environment variable as follows:
+
+```bash
+REACT_APP_ETH_CHAIN=ropsten npm run dev
+```
+
+Alternatively, a `.env` file can also be used to set the chain variable.
+
+### Production Build
 
 ```bash
 # Run build process
 npm run dist
 
-# Run build process and publish to GitHub release
+# Run build process and publish to GitHub releases
 npm run release
 ```
 
-## Logs
-
-The log output is in the next directories:
-
- * **Linux:** `~/.config/<app name>/log.log`
- * **macOS:** `~/Library/Logs/<app name>/log.log`
- * **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
-
-> More info [github.com/megahertz/electron-log](https://github.com/megahertz/electron-log)
-
-## Development Notes
-
-To remove app settings and start over again:
-
-* **Linux**:
-  ```bash
-  rm ~/.config/metronome-desktop-wallet/Settings
-  ```
-* **macOS**:
-  ```bash
-  rm ~/Library/Application\ Support/metronome-desktop-wallet/Settings
-  ```
-* **Windows**:
-  ```bat
-  del %APPDATA%\\metronome-desktop-wallet\\Settings
-  ```
-
+To sign the macOS installers, execute `npm run dist:mac`. The signing certificate shall be in the root folder and be named `met.p12`. The certificate password will be required before signing.
 
 ## LICENSE
 
-[MIT License](https://github.com/MetronomeToken/metronome-desktop-wallet/blob/develop/LICENSE).
+MIT
