@@ -84,6 +84,7 @@
     "styled-components": "^3.0.2",
     "supports-color": "^5.3.0",
     "tough-cookie": "^2.3.4",
+    "universal-analytics": "0.4.17",
     "web3": "1.0.0-beta.34"
   },
   "devDependencies": {
