@@ -6,12 +6,13 @@ const Raven = require('raven')
 const { app } = require('electron')
 const isDev = require('electron-is-dev')
 
+const analytics = require('./analytics')
 const logger = require('./logger')
 const config = require('./config')
 const initMenu = require('./menu')
 const initContextMenu = require('./contextMenu')
 
-require('./analytics')
+analytics.init()
 
 if (isDev) {
   require('dotenv').config()

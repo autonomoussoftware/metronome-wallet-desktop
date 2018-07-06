@@ -2,9 +2,9 @@
 
 const { app } = require('electron')
 const ua = require('universal-analytics')
-const config = require('./config')
+const settings = require('electron-settings')
 
-const visitor = ua(config.googleAnalyticsAccountId)
+const visitor = ua(settings.get('app.trackingId'))
 const analytics = {}
 
 visitor.set('ds', 'app')
@@ -19,8 +19,8 @@ analytics.event = function (...args) {
   visitor.event(...args).send()
 }
 
-analytics.event('Main Process', 'App Initialized')
-
-global.analytics = analytics
+analytics.init = function () {
+  analytics.event('App', 'App initiated')
+}
 
 module.exports = analytics

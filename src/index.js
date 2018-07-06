@@ -13,10 +13,6 @@ import theme from './theme'
 import React from 'react'
 import App from './components/App'
 
-const analytics = window.require('electron').remote.getGlobal('analytics')
-
-analytics.event('Renderer Process', 'App Rendered')
-
 if (config.SENTRY_DSN) {
   Raven.config(config.SENTRY_DSN, {
     release: window.require('electron').remote.app.getVersion()
