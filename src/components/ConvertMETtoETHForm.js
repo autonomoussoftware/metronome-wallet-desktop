@@ -113,7 +113,10 @@ class ConvertMETtoETHForm extends React.Component {
           this.state.useMinimum && typeof this.state.estimate === 'string'
             ? this.state.estimate
             : undefined,
-        gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+        gasPrice: Web3.utils.toWei(
+          this.state.gasPrice.replace(',', '.'),
+          'gwei'
+        ),
         gasLimit: this.state.gasLimit,
         password,
         value: Web3.utils.toWei(this.state.metAmount.replace(',', '.')),

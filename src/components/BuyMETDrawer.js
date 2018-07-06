@@ -89,7 +89,7 @@ class BuyMETDrawer extends React.Component {
 
   onWizardSubmit = password => {
     return utils.sendToMainProcess('metronome-buy', {
-      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+      gasPrice: Web3.utils.toWei(this.state.gasPrice.replace(',', '.'), 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
       value: Web3.utils.toWei(this.state.ethAmount.replace(',', '.')),

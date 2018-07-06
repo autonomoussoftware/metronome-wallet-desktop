@@ -103,7 +103,7 @@ class SendMETForm extends React.Component {
 
   onWizardSubmit = password => {
     return sendToMainProcess('send-token', {
-      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+      gasPrice: Web3.utils.toWei(this.state.gasPrice.replace(',', '.'), 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
       token: config.MET_TOKEN_ADDR,
