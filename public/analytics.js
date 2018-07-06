@@ -2,13 +2,15 @@
 
 const { app } = require('electron')
 const ua = require('universal-analytics')
+const { noop } = require('lodash')
 const settings = require('electron-settings')
+const isDev = require('electron-is-dev')
 
 const visitor = ua(settings.get('app.trackingId'))
 const analytics = {}
 
 visitor.set('ds', 'app')
-visitor.set('an', 'Metronome Wallet')
+visitor.set('an', app.getName())
 visitor.set('av', app.getVersion())
 
 analytics.screenview = function (...args) {
@@ -23,4 +25,10 @@ analytics.init = function () {
   analytics.event('App', 'App initiated')
 }
 
-module.exports = analytics
+const analyticsDev = {
+  init: noop,
+  event: noop,
+  screenview: noop
+}
+
+module.exports = isDev ? analyticsDev : analytics
