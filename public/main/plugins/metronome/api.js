@@ -32,7 +32,7 @@ function createApi ({ ethWallet, tokens }) {
       password, from, to: address, value, gasLimit, gasPrice
     })
       .then(function (response) {
-        analytics.event({ ec: 'Buy', ea: 'Buy MET in auction succeed' })
+        analytics.event({ ec: 'Buy', ea: 'Buy MET in auction succeeded' })
         return response
       })
       .catch(function (err) {
@@ -59,7 +59,7 @@ function createApi ({ ethWallet, tokens }) {
       gasPrice
     })
       .then(function (response) {
-        analytics.event({ ec: 'Convert', ea: 'Convert ETH to MET succeed' })
+        analytics.event({ ec: 'Convert', ea: 'Convert ETH to MET succeeded' })
         return response
       })
       .catch(function (err) {
@@ -107,7 +107,7 @@ function createApi ({ ethWallet, tokens }) {
               password, from, to: address, data, gasPrice, gasLimit
             })
               .then(function (response) {
-                analytics.event({ ec: 'Convert', ea: 'Convert MET to ETH succeed' })
+                analytics.event({ ec: 'Convert', ea: 'Convert MET to ETH succeeded' })
                 return response
               })
           })
