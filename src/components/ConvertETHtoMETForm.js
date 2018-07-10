@@ -130,7 +130,7 @@ class ConvertETHtoMETForm extends React.Component {
           post=" ETH"
         />{' '}
         (${usdAmount}) and get approximately{' '}
-        <DisplayValue value={estimate} post=" MTN" inline />.
+        <DisplayValue value={estimate} post=" MET" inline />.
       </ConfirmationContainer>
     )
   }
