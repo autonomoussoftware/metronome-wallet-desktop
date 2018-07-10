@@ -89,7 +89,7 @@ class SendETHForm extends React.Component {
 
   onWizardSubmit = password => {
     return sendToMainProcess('send-eth', {
-      gasPrice: Web3.utils.toWei(this.state.gasPrice, 'gwei'),
+      gasPrice: Web3.utils.toWei(this.state.gasPrice.replace(',', '.'), 'gwei'),
       gasLimit: this.state.gasLimit,
       password,
       value: Web3.utils.toWei(this.state.ethAmount.replace(',', '.')),
