@@ -8,7 +8,7 @@ const logger = require('electron-log')
 const { getDb } = require('../../database')
 const createBasePlugin = require('../../base-plugin')
 
-function emitPrice (webContents, price) {
+function emitAndCachePrice (webContents, price) {
   const priceData = { token: 'ETH', currency: 'USD', price }
 
   if (!webContents.isDestroyed()) {
@@ -60,11 +60,16 @@ function sendCachedPrice (webContents) {
     .findOneAsync({ type: 'coincap-eth-usd' })
     .then(function (doc) {
       if (!doc) {
-        return
+        logger.debug('Getting ETH price')
+        return coincap.coin('ETH')
       }
 
-      logger.debug('Sending cached ETH price')
-      emitPrice(webContents, doc.price)
+      logger.debug('Using cached ETH price')
+      return doc
+    })
+    .then(function ({ price }) {
+      logger.debug('Sending ETH price')
+      emitAndCachePrice(webContents, price)
     })
     .catch(function (err) {
       logger.warn('Could not get ETH price', err)
@@ -73,7 +78,7 @@ function sendCachedPrice (webContents) {
 
 function broadcastEthPrice (subscriptions, price) {
   subscriptions.forEach(function ({ webContents }) {
-    emitPrice(webContents, price)
+    emitAndCachePrice(webContents, price)
   })
 }
 
