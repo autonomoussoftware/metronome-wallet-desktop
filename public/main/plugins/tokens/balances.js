@@ -5,9 +5,11 @@ const logger = require('electron-log')
 
 const {
   getTokenBalance,
-  getTokenContractAddresses,
-  getTokenSymbol,
   setTokenBalance
+} = require('./db')
+const {
+  getTokenContractAddresses,
+  getTokenSymbol
 } = require('./settings')
 
 function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
@@ -24,12 +26,19 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
 
   addresses.map(a => a.toLowerCase()).forEach(function (address) {
     contracts.forEach(function ({ contractAddress, contract, symbol }) {
-      contract.methods
-        .balanceOf(address)
-        .call()
+      contract.methods.balanceOf(address).call()
         .then(function (balance) {
-          setTokenBalance({ walletId, address, contractAddress, balance })
+          logger.verbose('Caching token balance', symbol)
 
+          return setTokenBalance({ address, contractAddress, balance })
+            .then(() => balance)
+        })
+        .catch(function (err) {
+          logger.warn('Could not get token balance', symbol, err.message)
+
+          return getTokenBalance({ address, contractAddress })
+        })
+        .then(function (balance) {
           if (webContents.isDestroyed()) { return }
 
           webContents.send('wallet-state-changed', {
@@ -44,32 +53,15 @@ function sendBalances ({ ethWallet, walletId, addresses, webContents }) {
           logger.verbose(`<-- ${symbol} ${address} ${balance}`)
         })
         .catch(function (err) {
-          logger.warn('Could not get token balance', symbol, err.message)
+          logger.warn('Could not send token balance', symbol, err.message)
 
           if (webContents.isDestroyed()) { return }
 
-          // TODO retry before notifying
           webContents.send('connectivity-state-changed', {
             ok: false,
             reason: 'Connection to Ethereum node failed',
             plugin: 'tokens',
             err: err.message
-          })
-
-          // Send cached balance
-          webContents.send('wallet-state-changed', {
-            [walletId]: {
-              addresses: {
-                [address]: {
-                  token: {
-                    [contractAddress]: {
-                      symbol,
-                      balance: getTokenBalance({ walletId, address, contractAddress })
-                    }
-                  }
-                }
-              }
-            }
           })
         })
     })
