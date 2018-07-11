@@ -2,11 +2,10 @@
 
 const { getDb } = require('../../database')
 
-const balances = getDb().collection('balances')
+const balances = getDb().collection('tokenBalances')
 
 function getTokenBalance ({ address, contractAddress }) {
   const query = {
-    type: 'token',
     address: address.toLowerCase(),
     token: contractAddress.toLowerCase()
   }
@@ -17,7 +16,6 @@ function getTokenBalance ({ address, contractAddress }) {
 
 function setTokenBalance ({ address, contractAddress, balance }) {
   const query = {
-    type: 'token',
     address: address.toLowerCase(),
     token: contractAddress.toLowerCase()
   }
