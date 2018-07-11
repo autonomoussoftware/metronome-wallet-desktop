@@ -10,19 +10,6 @@ function getWalletAddresses (walletId) {
   return Object.keys(settings.get(addressesPath)).map(toLowerCase)
 }
 
-function setAddressBalance ({ walletId, address, balance }) {
-  const _address = address.toLowerCase()
-  const addressPath = `user.wallets.${walletId}.addresses.${_address}.balance`
-  settings.set(addressPath, balance)
-  logger.debug('ETH balance updated', { address, balance })
-}
-
-function getAddressBalance ({ walletId, address }) {
-  const _address = address.toLowerCase()
-  const addressPath = `user.wallets.${walletId}.addresses.${_address}.balance`
-  return settings.get(addressPath)
-}
-
 function findWalletId (address) {
   const _address = address.toLowerCase()
   const walletIds = Object.keys(settings.get('user.wallets'))
@@ -64,7 +51,6 @@ function getJsonRpcApiUrl () {
 
 module.exports = {
   findWalletId,
-  getAddressBalance,
   getJsonRpcApiUrl,
   getTracerApiUrl,
   getWallet,
@@ -72,6 +58,5 @@ module.exports = {
   getWalletAddressIndex,
   getWebsocketApiUrl,
   isAddressInWallet,
-  setAddressBalance,
   setWalletEncryptedSeed
 }
