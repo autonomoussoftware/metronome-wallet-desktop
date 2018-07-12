@@ -21,7 +21,8 @@ analytics.event = function (...args) {
   visitor.event(...args).send()
 }
 
-analytics.init = function () {
+analytics.init = function (userAgent) {
+  visitor.set('ua', userAgent)
   analytics.event('App', 'App initiated')
 }
 
