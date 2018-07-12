@@ -20,9 +20,12 @@ const WalletError = require('../../WalletError')
 const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
-const { getDatabase, clearDatabase } = require('./db')
 const {
   getAddressBalance,
+  getDatabase,
+  clearDatabase
+} = require('./db')
+const {
   getWalletAddresses,
   isAddressInWallet
 } = require('./settings')
@@ -206,14 +209,21 @@ function sendBalances ({ walletId, webContents }) {
       })
 
       // Send cached balances
-      getWalletAddresses(walletId).map(function (address) {
-        sendWalletStateChange({
-          webContents,
-          walletId,
-          address,
-          data: { balance: getAddressBalance({ walletId, address }) },
-          log: 'Balance'
-        })
+      getWalletAddresses(walletId).forEach(function (address) {
+        getAddressBalance({ address })
+          .then(function (balance) {
+            sendWalletStateChange({
+              webContents,
+              walletId,
+              address,
+              data: { balance },
+              log: 'Balance'
+            })
+          })
+          // eslint-disable-next-line no-shadow
+          .catch(function (err) {
+            logger.warn(`Could not get balance for ${address}: ${err.message}`)
+          })
       })
     })
 }
