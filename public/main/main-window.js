@@ -6,6 +6,7 @@ const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const path = require('path')
 
+const analytics = require('../analytics')
 const restart = require('./electron-restart')
 
 let mainWindow
@@ -65,6 +66,8 @@ function loadWindow () {
     minHeight: 578,
     useContentSize: true
   })
+
+  analytics.init(mainWindow.webContents.getUserAgent())
 
   const appUrl = isDev
     ? process.env.ELECTRON_START_URL
