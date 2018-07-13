@@ -12,7 +12,12 @@ const getTokenSymbol = address =>
 
 const getRescanBalance = () => settings.get('app.rescanBalance')
 
+function addTokenContract (address, meta) {
+  settings.set(`tokens.${address.toLowerCase()}`, meta)
+}
+
 module.exports = {
+  addTokenContract,
   getRescanBalance,
   getTokenContractAddresses,
   getTokenSymbol

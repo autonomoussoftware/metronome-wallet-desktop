@@ -105,7 +105,6 @@ function sendBalances (params) {
   const web3 = ethWallet.getWeb3()
 
   const contracts = getTokenContractAddresses()
-    .map(a => a.toLowerCase())
     .map(address => ({
       contractAddress: address,
       contract: new web3.eth.Contract(abi, address),

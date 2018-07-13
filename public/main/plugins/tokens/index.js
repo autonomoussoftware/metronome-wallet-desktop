@@ -53,6 +53,7 @@ function init ({ plugins, eventsBus }) {
     approveToken,
     getAllowance,
     getGasLimit,
+    registerToken,
     sendToken
   } = createApi(ethWallet)
 
@@ -66,7 +67,8 @@ function init ({ plugins, eventsBus }) {
   plugin.name = 'tokens'
   plugin.api = {
     approveToken,
-    getAllowance
+    getAllowance,
+    registerToken
   }
   plugin.dependencies = ['ethWallet']
   plugin.uiHooks.push(...[
