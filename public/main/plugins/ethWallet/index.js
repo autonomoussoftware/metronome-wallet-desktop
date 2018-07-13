@@ -187,8 +187,8 @@ function sendError ({ webContents, walletId, message, err }) {
   logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
-function sendBalances ({ walletId, webContents }) {
-  getWalletBalances(walletId)
+function sendBalances ({ shouldChange, walletId, webContents }) {
+  getWalletBalances(walletId, shouldChange)
     .then(function (balances) {
       balances.forEach(function ({ address, balance }) {
         sendWalletStateChange({
@@ -482,7 +482,11 @@ function parseNewTransaction (subscriptions, { walletId, txid }) {
           receipt,
           walletId
         }, s))
-          .then(() => sendBalances({ walletId, webContents: s.webContents }))
+          .then(() => sendBalances({
+            shouldChange: true,
+            walletId,
+            webContents: s.webContents
+          }))
       ))
     )
     .catch(function (err) {
