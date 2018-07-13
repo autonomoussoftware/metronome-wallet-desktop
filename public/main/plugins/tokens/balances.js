@@ -84,7 +84,7 @@ const getTokenBalanceOfAddress = shouldChange => function (params) {
       if (current === cached && shouldChange) {
         // Balance should have changed but did not. Let's wait and try again.
         return setTimeoutAsync(rescanTime)
-          .then(() => getTokenBalance({ address, contractAddress }))
+          .then(() => contract.methods.balanceOf(address).call())
           .then(function (newBalance) {
             cacheTokenBalance({ address, balance: newBalance, contractAddress })
             return newBalance

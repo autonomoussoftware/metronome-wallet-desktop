@@ -10,7 +10,10 @@ const getTokenContractAddresses = () =>
 const getTokenSymbol = address =>
   settings.get(`tokens.${address.toLowerCase()}.symbol`)
 
+const getRescanBalance = () => settings.get('app.rescanBalance')
+
 module.exports = {
+  getRescanBalance,
   getTokenContractAddresses,
   getTokenSymbol
 }
