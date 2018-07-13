@@ -34,7 +34,13 @@ const broadcastBalances = ethWallet => function (subscriptions) {
   subscriptions.forEach(function ({ webContents, meta }) {
     const { walletId, addresses } = meta
 
-    sendBalances({ ethWallet, walletId, addresses, webContents })
+    sendBalances({
+      addresses,
+      ethWallet,
+      shouldChange: true,
+      walletId,
+      webContents
+    })
   })
 }
 
