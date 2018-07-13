@@ -3,8 +3,10 @@
 const logger = require('electron-log')
 
 const { getAddressBalance } = require('./eth')
-const { getWalletAddresses } = require('./settings')
+const { getRescanBalance, getWalletAddresses } = require('./settings')
 const db = require('./db')
+
+const rescanTime = getRescanBalance()
 
 // util.promisify(setTimeout) is not yet possible in Electron 1.8.4
 // See https://github.com/electron/electron/issues/13654
@@ -20,9 +22,8 @@ function getWalletBalances (walletId, shouldChange) {
     ])
       .then(function ([balance, cached]) {
         if (balance === cached && shouldChange) {
-          // Balance should have changed but did not, yet...
-          // Let's wait 15 sec and try again.
-          return setTimeoutAsync(15000)
+          // Balance should have changed but did not. Let's wait and try again.
+          return setTimeoutAsync(rescanTime)
             .then(() => getAddressBalance(address))
             .then(newBalance => ({ balance: newBalance, cached }))
         }

@@ -4,7 +4,13 @@ const abi = require('human-standard-token-abi')
 const logger = require('electron-log')
 
 const { getTokenBalance, setTokenBalance } = require('./db')
-const { getTokenContractAddresses, getTokenSymbol } = require('./settings')
+const {
+  getRescanBalance,
+  getTokenContractAddresses,
+  getTokenSymbol
+} = require('./settings')
+
+const rescanTime = getRescanBalance()
 
 // util.promisify(setTimeout) is not yet possible in Electron 1.8.4
 // See https://github.com/electron/electron/issues/13654
@@ -76,9 +82,8 @@ const getTokenBalanceOfAddress = shouldChange => function (params) {
       }
 
       if (current === cached && shouldChange) {
-        // Balance should have changed but did not, yet...
-        // Let's wait 15 sec and try again.
-        return setTimeoutAsync(15000)
+        // Balance should have changed but did not. Let's wait and try again.
+        return setTimeoutAsync(rescanTime)
           .then(() => getTokenBalance({ address, contractAddress }))
           .then(function (newBalance) {
             cacheTokenBalance({ address, balance: newBalance, contractAddress })

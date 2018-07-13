@@ -49,9 +49,12 @@ function getJsonRpcApiUrl () {
   return settings.get('app.node.jsonRpcApiUrl')
 }
 
+const getRescanBalance = () => settings.get('app.rescanBalance')
+
 module.exports = {
   findWalletId,
   getJsonRpcApiUrl,
+  getRescanBalance,
   getTracerApiUrl,
   getWallet,
   getWalletAddresses,
