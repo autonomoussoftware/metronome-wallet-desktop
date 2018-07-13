@@ -488,13 +488,13 @@ function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
       })
     })
     .then(function () {
-      startInterval(function () {
-        const id = parseUnconfirmedTransactions(walletId, webContents)
-
-        bus.on('stop-searching-unconfirmed-txs', function () {
-          clearInterval(id)
-        })
+      const id = startInterval(function () {
+        parseUnconfirmedTransactions(walletId, webContents)
       }, rescanTime)
+
+      bus.on('stop-searching-unconfirmed-txs', function () {
+        clearInterval(id)
+      })
     })
 }
 
