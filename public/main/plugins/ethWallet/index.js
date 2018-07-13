@@ -10,6 +10,7 @@ const pDefer = require('p-defer')
 const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
+const startInterval = require('startinterval2')
 
 const { encrypt } = require('../../crypto/aes256cbcIv')
 const createBasePlugin = require('../../base-plugin')
@@ -26,6 +27,7 @@ const {
   clearDatabase
 } = require('./db')
 const {
+  getRescanUnconfirmedTxs,
   getWalletAddresses,
   isAddressInWallet
 } = require('./settings')
@@ -427,8 +429,43 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
     })
 }
 
+const getUnconfirmedTransactions = (projection = { 'transaction.hash': 1 }) =>
+  new Promise(function (resolve, reject) {
+    getDatabase().transactions
+      .find({ 'transaction.blockNumber': null }, projection)
+      .exec(function (err, transactions) {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(transactions.map(t => t.transaction))
+      })
+  })
+
+function parseUnconfirmedTransactions (walletId, webContents) {
+  const web3 = getWeb3()
+
+  getUnconfirmedTransactions()
+    .then(transactions => transactions.map(t => t.hash))
+    .then(hashes =>
+      Promise.all(hashes.map(hash =>
+        getTransactionAndReceipt({ web3, hash })
+      ))
+    )
+    .then(fullTransactions =>
+      Promise.all(fullTransactions.map(t =>
+        parseTransaction(Object.assign({ walletId, webContents }, t))
+      ))
+    )
+    .catch(function (err) {
+      logger.warn(`Could not reparse unconfirmed transactions: ${err.message}`)
+    })
+}
+
 function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
   const { bloqEthExplorer } = plugins
+
+  const rescanTime = getRescanUnconfirmedTxs()
 
   sendWalletOpen(bus, webContents, walletId)
 
@@ -450,10 +487,20 @@ function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
         bus.removeListener('new-best-block', emitNewBlock)
       })
     })
+    .then(function () {
+      startInterval(function () {
+        const id = parseUnconfirmedTransactions(walletId, webContents)
+
+        bus.on('stop-searching-unconfirmed-txs', function () {
+          clearInterval(id)
+        })
+      }, rescanTime)
+    })
 }
 
 const stop = eventsBus => function () {
   eventsBus.emit('stop-updating-best-block')
+  eventsBus.emit('stop-searching-unconfirmed-txs')
 }
 
 function parseUnconfirmedTransaction (subscriptions, transaction) {
