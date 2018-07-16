@@ -8,17 +8,12 @@
     "defaultDerivationPath": "m/44'/60'/0'/0",
     "indexerApiUrl": "https://indexer.metronome.io",
     "tracerApiUrl": "https://tracer.metronome.io",
-    "trackingId": "UA-116275666-6"
+    "trackingId": "UA-116275666-6",
+    "rescanBalance": 15000,
+    "rescanUnconfirmedTxs": 600000
   },
   "coincap": {
     "ethPriceEmitRate": 5
   },
-  "tokens": {
-    "0xa3d58c4E56fedCae3a7c43A725aeE9A71F0ece4e": {
-      "decimals": 18,
-      "name": "Metronome",
-      "symbol": "MET"
-    }
-  },
-  "settingsVersion": 14
+  "settingsVersion": 15
 }

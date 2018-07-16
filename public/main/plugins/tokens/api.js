@@ -5,7 +5,11 @@ const logger = require('electron-log')
 
 const WalletError = require('../../WalletError')
 
-const { getTokenSymbol } = require('./settings')
+const {
+  addTokenContract,
+  getTokenContractAddresses,
+  getTokenSymbol
+} = require('./settings')
 const erc20Events = require('./erc20-events')
 const topicToAddress = require('./topic-to-address')
 
@@ -88,11 +92,20 @@ function createApi (ethWallet) {
     })
   }
 
+  function registerToken (address, meta) {
+    if (getTokenContractAddresses().includes(address)) {
+      return
+    }
+
+    addTokenContract(address, meta)
+  }
+
   return {
     approveToken,
     getAllowance,
-    sendToken,
-    getGasLimit
+    getGasLimit,
+    registerToken,
+    sendToken
   }
 }
 

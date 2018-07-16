@@ -34,7 +34,13 @@ const broadcastBalances = ethWallet => function (subscriptions) {
   subscriptions.forEach(function ({ webContents, meta }) {
     const { walletId, addresses } = meta
 
-    sendBalances({ ethWallet, walletId, addresses, webContents })
+    sendBalances({
+      addresses,
+      ethWallet,
+      shouldChange: true,
+      walletId,
+      webContents
+    })
   })
 }
 
@@ -47,6 +53,7 @@ function init ({ plugins, eventsBus }) {
     approveToken,
     getAllowance,
     getGasLimit,
+    registerToken,
     sendToken
   } = createApi(ethWallet)
 
@@ -60,7 +67,8 @@ function init ({ plugins, eventsBus }) {
   plugin.name = 'tokens'
   plugin.api = {
     approveToken,
-    getAllowance
+    getAllowance,
+    registerToken
   }
   plugin.dependencies = ['ethWallet']
   plugin.uiHooks.push(...[

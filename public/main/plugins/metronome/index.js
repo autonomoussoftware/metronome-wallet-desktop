@@ -2,6 +2,7 @@
 
 const createBasePlugin = require('../../base-plugin')
 
+const { getTokenAddress } = require('./settings')
 const createApi = require('./api')
 const sendStatus = require('./status')
 const transactionParser = require('./transactionParser')
@@ -27,7 +28,7 @@ const broadcastStatus = ethWallet => function (subscriptions) {
 }
 
 function init ({ plugins, eventsBus }) {
-  const { ethWallet } = plugins
+  const { ethWallet, tokens } = plugins
 
   ethWallet.registerTxParser(transactionParser(ethWallet))
 
@@ -62,6 +63,12 @@ function init ({ plugins, eventsBus }) {
   ])
 
   attachToEvents(eventsBus, plugins, plugin)
+
+  tokens.registerToken(getTokenAddress(), {
+    decimals: 18,
+    name: 'Metronome',
+    symbol: 'MET'
+  })
 
   return plugin
 }
