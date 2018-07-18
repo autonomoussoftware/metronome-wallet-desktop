@@ -24,12 +24,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (ETH)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>
@@ -56,12 +56,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (USD)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>
@@ -104,12 +104,12 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
                 Amount (ETH)
               </label>
               <input
-                type="text"
                 class="sc-iwsKbI kZiHEX"
-                value=""
+                type="text"
                 id="ethAmount"
                 data-testid="ethAmount-field"
                 placeholder="0.00"
+                value=""
               />
             </div>
           </div>
@@ -136,12 +136,12 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
                 Amount (USD)
               </label>
               <input
-                type="text"
                 class="sc-iwsKbI kZiHEX"
-                value=""
+                type="text"
                 id="usdAmount"
                 data-testid="usdAmount-field"
                 placeholder="0.00"
+                value=""
               />
             </div>
           </div>
@@ -190,9 +190,9 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
             class="sc-jDwBTQ eiQZdA"
           >
             <input
-              type="checkbox"
               class="sc-gPEVay hXTYYH"
               data-testid="useMinimum-cb"
+              type="checkbox"
               id="useMinimum"
             />
             <span
@@ -253,11 +253,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Limit (Units)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="21000"
+          type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
+          value="21000"
         />
       </div>
     </div>
@@ -275,11 +275,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Price (Gwei)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="1"
+          type="text"
           id="gasPrice"
           data-testid="gas-price-field"
+          value="1"
         />
       </div>
     </div>

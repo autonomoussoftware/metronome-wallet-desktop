@@ -74,7 +74,6 @@ class ConverterEstimates extends React.Component {
       return (
         <Container>
           <DisplayValue
-            maxSize="inherit"
             value={estimate}
             pre="You would get approximately "
             post={` ${convertTo}.`}
