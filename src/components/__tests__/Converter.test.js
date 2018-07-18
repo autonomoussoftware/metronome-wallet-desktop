@@ -3,45 +3,22 @@ import { Simulate } from 'react-testing-library'
 import Converter from '../Converter'
 import React from 'react'
 
-describe.skip('<Converter/>', () => {
+describe('<Converter/>', () => {
+  it('displays a "coming soon..." before initial auction has ended', () => {
+    const { queryByTestId, store } = testUtils.reduxRender(
+      <Converter />,
+      getInitialState(dummyStatus(), inDailyAuction(), false)
+    )
+    expect(queryByTestId('commingsoon')).not.toBeNull()
+    store.dispatch(transferAllowed(true))
+    expect(queryByTestId('commingsoon')).toBeNull()
+  })
+
   it('displays a "waiting..." message until the first converter status is received', () => {
     const { queryByTestId, store } = testUtils.reduxRender(<Converter />)
     expect(queryByTestId('waiting')).not.toBeNull()
     store.dispatch(converterStatusUpdated(dummyStatus()))
     expect(queryByTestId('waiting')).toBeNull()
-  })
-
-  describe('If MET conversions are NOT ALLOWED yet', () => {
-    it('displays stats', () => {
-      const { queryByTestId } = testUtils.reduxRender(
-        <Converter />,
-        getInitialState(dummyStatus(), inInitialAuction(), false)
-      )
-      expect(queryByTestId('stats')).not.toBeNull()
-    })
-
-    it('Convert button is disabled', () => {
-      const { getByTestId, queryByTestId } = testUtils.reduxRender(
-        <Converter />,
-        getInitialState(dummyStatus(), inDailyAuction(), false)
-      )
-      const btn = testUtils.withDataset(getByTestId('convert-btn'), 'modal')
-      expect(queryByTestId('convert-drawer')).toBeNull()
-      Simulate.click(btn)
-      expect(queryByTestId('convert-drawer')).toBeNull()
-    })
-
-    it('Convert button shows a tooltip when hovered', () => {
-      const { getByTestId, store } = testUtils.reduxRender(
-        <Converter />,
-        getInitialState(dummyStatus(), inDailyAuction())
-      )
-      expect(getByTestId('convert-btn').getAttribute('data-rh')).toBeNull()
-      store.dispatch(transferAllowed(false))
-      expect(getByTestId('convert-btn').getAttribute('data-rh')).toBe(
-        'MET conversions not enabled yet'
-      )
-    })
   })
 
   describe('If MET conversions ARE ALLOWED', () => {

@@ -238,7 +238,7 @@ class Converter extends React.Component {
             </Container>
           ) : (
             <Sp p={6}>
-              <LoadingContainer data-testid="waiting">
+              <LoadingContainer data-testid="commingsoon">
                 <Sp py={4}>
                   <ConverterIcon display="inline" size="69.5px" />
                 </Sp>
