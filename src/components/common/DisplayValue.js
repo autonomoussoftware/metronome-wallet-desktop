@@ -1,18 +1,13 @@
-import BigNumber from 'bignumber.js'
+import smartRounder from 'smart-round'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Web3 from 'web3'
 
-const format = {
-  decimalSeparator: '.',
-  groupSeparator: ',',
-  groupSize: 3
-}
-
-BigNumber.config({ FORMAT: format })
-
 class DisplayValue extends React.Component {
   static propTypes = {
+    shouldFormat: PropTypes.bool,
+    maxPrecision: PropTypes.number,
+    minDecimals: PropTypes.number,
     maxDecimals: PropTypes.number,
     maxSize: PropTypes.string,
     inline: PropTypes.bool,
@@ -22,33 +17,18 @@ class DisplayValue extends React.Component {
   }
 
   static defaultProps = {
-    maxDecimals: 18,
+    shouldFormat: true,
+    maxPrecision: 6,
+    minDecimals: 0,
+    maxDecimals: 6,
     maxSize: 'inherit'
   }
 
-  altRound(value) {
-    const valBN = new BigNumber(Web3.utils.fromWei(value))
-
-    const decimalPlaces = valBN.isGreaterThanOrEqualTo(BigNumber('100'))
-      ? 2
-      : valBN.isGreaterThanOrEqualTo(BigNumber('0.000001'))
-        ? 7
-        : this.props.maxDecimals
-
-    return valBN.toFormat(decimalPlaces)
-  }
-
-  round(value) {
-    const n = Number.parseFloat(Web3.utils.fromWei(value), 10)
-    let decimals = -Math.log10(n) + 10
-    if (decimals < 2) {
-      decimals = 2
-    } else if (decimals >= 18) {
-      decimals = 18
-    }
-    // round extra decimals and remove trailing zeroes
-    return new BigNumber(n.toFixed(Math.ceil(decimals))).toString(10)
-  }
+  round = smartRounder(
+    this.props.maxPrecision,
+    this.props.minDecimals,
+    this.props.maxDecimals
+  )
 
   render() {
     const { value, post, pre, maxSize, inline } = this.props
@@ -56,7 +36,7 @@ class DisplayValue extends React.Component {
     let formattedValue
 
     try {
-      formattedValue = this.round(value)
+      formattedValue = this.round(Web3.utils.fromWei(value), true)
     } catch (e) {
       formattedValue = null
     }

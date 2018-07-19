@@ -173,7 +173,6 @@ class Converter extends React.Component {
                         <Badge>1 MET</Badge>
                         <Price>
                           <DisplayValue
-                            maxSize="inherit"
                             pre=" = "
                             value={converterStatus.currentPrice}
                             post=" ETH"
@@ -189,7 +188,6 @@ class Converter extends React.Component {
                     <Label>Available MET</Label>
                     <AvailableAmount>
                       <DisplayValue
-                        maxSize="inherit"
                         value={converterStatus.availableMtn}
                         post=" MET"
                       />
@@ -201,7 +199,6 @@ class Converter extends React.Component {
                     <Label>Available ETH</Label>
                     <AvailableAmount>
                       <DisplayValue
-                        maxSize="inherit"
                         value={converterStatus.availableEth}
                         post=" ETH"
                       />
@@ -238,7 +235,7 @@ class Converter extends React.Component {
             </Container>
           ) : (
             <Sp p={6}>
-              <LoadingContainer data-testid="waiting">
+              <LoadingContainer data-testid="commingsoon">
                 <Sp py={4}>
                   <ConverterIcon display="inline" size="69.5px" />
                 </Sp>

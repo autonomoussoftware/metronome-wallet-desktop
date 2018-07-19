@@ -74,7 +74,9 @@ const Amount = styled.div`
   color: ${p =>
     p.isPending
       ? p.theme.colors.copy
-      : p.isFailed ? p.theme.colors.danger : p.theme.colors.primary};
+      : p.isFailed
+        ? p.theme.colors.danger
+        : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
   font-size: 2.3vw;
@@ -203,20 +205,12 @@ class TxRow extends React.Component {
           >
             {tx.txType === 'auction' ? (
               <React.Fragment>
-                <DisplayValue
-                  maxSize="inherit"
-                  value={tx.ethSpentInAuction}
-                  post=" ETH"
-                />
+                <DisplayValue value={tx.ethSpentInAuction} post=" ETH" />
 
                 {tx.mtnBoughtInAuction && (
                   <React.Fragment>
                     <Arrow>&rarr;</Arrow>
-                    <DisplayValue
-                      maxSize="inherit"
-                      value={tx.mtnBoughtInAuction}
-                      post=" MET"
-                    />
+                    <DisplayValue value={tx.mtnBoughtInAuction} post=" MET" />
                   </React.Fragment>
                 )}
               </React.Fragment>
@@ -224,7 +218,6 @@ class TxRow extends React.Component {
               <React.Fragment>
                 {tx.fromValue ? (
                   <DisplayValue
-                    maxSize="inherit"
                     value={tx.fromValue}
                     post={tx.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
                   />
@@ -237,7 +230,6 @@ class TxRow extends React.Component {
                     <React.Fragment>
                       <Arrow>&rarr;</Arrow>
                       <DisplayValue
-                        maxSize="inherit"
                         value={tx.toValue}
                         post={tx.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
                       />
@@ -247,11 +239,7 @@ class TxRow extends React.Component {
             ) : tx.txType === 'unknown' || tx.isProcessing ? (
               <div>New transaction</div>
             ) : (
-              <DisplayValue
-                maxSize="inherit"
-                value={tx.value}
-                post={` ${tx.symbol}`}
-              />
+              <DisplayValue value={tx.value} post={` ${tx.symbol}`} />
             )}
           </Amount>
 

@@ -24,12 +24,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (ETH)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>
@@ -56,12 +56,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (USD)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>

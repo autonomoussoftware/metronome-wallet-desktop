@@ -264,7 +264,6 @@ class Auction extends React.Component {
                           <Badge>1 MET</Badge>
                           <Price>
                             <DisplayValue
-                              maxSize="inherit"
                               pre=" = "
                               value={auctionStatus.currentPrice}
                               post=" ETH"
@@ -280,7 +279,6 @@ class Auction extends React.Component {
                       <Label>Available</Label>
                       <AvailableAmount>
                         <DisplayValue
-                          maxSize="inherit"
                           value={auctionStatus.tokenRemaining}
                           post=" MET"
                         />

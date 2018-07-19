@@ -99,7 +99,7 @@ class BalanceBlock extends React.Component {
         <Balance>
           <CoinSymbol>MET</CoinSymbol>
           <Value data-testid="met-balance" large>
-            <DisplayValue maxSize="inherit" value={mtnBalanceWei} />
+            <DisplayValue value={mtnBalanceWei} />
           </Value>
           <USDValue data-testid="met-balance-usd" hide>
             ${mtnBalanceUSD} (USD)
@@ -108,7 +108,7 @@ class BalanceBlock extends React.Component {
         <Balance>
           <CoinSymbol>ETH</CoinSymbol>
           <Value data-testid="eth-balance">
-            <DisplayValue maxSize="inherit" value={ethBalanceWei} />
+            <DisplayValue value={ethBalanceWei} />
           </Value>
           <USDValue data-testid="eth-balance-usd">{ethBalanceUSD}</USDValue>
         </Balance>

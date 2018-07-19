@@ -10,19 +10,6 @@ function getWalletAddresses (walletId) {
   return Object.keys(settings.get(addressesPath)).map(toLowerCase)
 }
 
-function setAddressBalance ({ walletId, address, balance }) {
-  const _address = address.toLowerCase()
-  const addressPath = `user.wallets.${walletId}.addresses.${_address}.balance`
-  settings.set(addressPath, balance)
-  logger.debug('ETH balance updated', { address, balance })
-}
-
-function getAddressBalance ({ walletId, address }) {
-  const _address = address.toLowerCase()
-  const addressPath = `user.wallets.${walletId}.addresses.${_address}.balance`
-  return settings.get(addressPath)
-}
-
 function findWalletId (address) {
   const _address = address.toLowerCase()
   const walletIds = Object.keys(settings.get('user.wallets'))
@@ -62,16 +49,20 @@ function getJsonRpcApiUrl () {
   return settings.get('app.node.jsonRpcApiUrl')
 }
 
+const getRescanBalance = () => settings.get('app.rescanBalance')
+
+const getRescanUnconfirmedTxs = () => settings.get('app.rescanUnconfirmedTxs')
+
 module.exports = {
   findWalletId,
-  getAddressBalance,
   getJsonRpcApiUrl,
+  getRescanBalance,
+  getRescanUnconfirmedTxs,
   getTracerApiUrl,
   getWallet,
   getWalletAddresses,
   getWalletAddressIndex,
   getWebsocketApiUrl,
   isAddressInWallet,
-  setAddressBalance,
   setWalletEncryptedSeed
 }

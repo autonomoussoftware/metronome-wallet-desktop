@@ -1,7 +1,6 @@
 'use strict'
 
 const settings = require('electron-settings')
-const logger = require('electron-log')
 
 const toLowerCase = str => str.toLowerCase()
 
@@ -11,26 +10,15 @@ const getTokenContractAddresses = () =>
 const getTokenSymbol = address =>
   settings.get(`tokens.${address.toLowerCase()}.symbol`)
 
-function setTokenBalance ({ walletId, address, contractAddress, balance }) {
-  const _address = address.toLowerCase()
-  const token = contractAddress.toLowerCase()
-  const addressPath =
-    `user.wallets.${walletId}.addresses.${_address}.tokens.${token}.balance`
-  settings.set(addressPath, balance)
-  logger.debug('Token balance updated', { address, token, balance })
-}
+const getRescanBalance = () => settings.get('app.rescanBalance')
 
-function getTokenBalance ({ walletId, address, contractAddress }) {
-  const _address = address.toLowerCase()
-  const token = contractAddress.toLowerCase()
-  const addressPath =
-    `user.wallets.${walletId}.addresses.${_address}.tokens.${token}.balance`
-  return settings.get(addressPath)
+function addTokenContract (address, meta) {
+  settings.set(`tokens.${address.toLowerCase()}`, meta)
 }
 
 module.exports = {
-  getTokenBalance,
+  addTokenContract,
+  getRescanBalance,
   getTokenContractAddresses,
-  getTokenSymbol,
-  setTokenBalance
+  getTokenSymbol
 }

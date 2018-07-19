@@ -10,6 +10,7 @@ const pDefer = require('p-defer')
 const pRetry = require('p-retry')
 const promiseAllProps = require('promise-all-props')
 const settings = require('electron-settings')
+const startInterval = require('startinterval2')
 
 const { encrypt } = require('../../crypto/aes256cbcIv')
 const createBasePlugin = require('../../base-plugin')
@@ -20,9 +21,13 @@ const WalletError = require('../../WalletError')
 const { getWalletBalances } = require('./wallet')
 const { signAndSendTransaction } = require('./send')
 const { getTransactionAndReceipt } = require('./block')
-const { getDatabase, clearDatabase } = require('./db')
 const {
   getAddressBalance,
+  getDatabase,
+  clearDatabase
+} = require('./db')
+const {
+  getRescanUnconfirmedTxs,
   getWalletAddresses,
   isAddressInWallet
 } = require('./settings')
@@ -184,8 +189,8 @@ function sendError ({ webContents, walletId, message, err }) {
   logger.warn(`<-- Error: ${message}`, { walletId, errMessage: err.message })
 }
 
-function sendBalances ({ walletId, webContents }) {
-  getWalletBalances(walletId)
+function sendBalances ({ shouldChange, walletId, webContents }) {
+  getWalletBalances(walletId, shouldChange)
     .then(function (balances) {
       balances.forEach(function ({ address, balance }) {
         sendWalletStateChange({
@@ -206,14 +211,21 @@ function sendBalances ({ walletId, webContents }) {
       })
 
       // Send cached balances
-      getWalletAddresses(walletId).map(function (address) {
-        sendWalletStateChange({
-          webContents,
-          walletId,
-          address,
-          data: { balance: getAddressBalance({ walletId, address }) },
-          log: 'Balance'
-        })
+      getWalletAddresses(walletId).forEach(function (address) {
+        getAddressBalance({ address })
+          .then(function (balance) {
+            sendWalletStateChange({
+              webContents,
+              walletId,
+              address,
+              data: { balance },
+              log: 'Balance'
+            })
+          })
+          // eslint-disable-next-line no-shadow
+          .catch(function (err) {
+            logger.warn(`Could not get balance for ${address}: ${err.message}`)
+          })
       })
     })
 }
@@ -417,8 +429,43 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
     })
 }
 
+const getUnconfirmedTransactions = (projection = { 'transaction.hash': 1 }) =>
+  new Promise(function (resolve, reject) {
+    getDatabase().transactions
+      .find({ 'transaction.blockNumber': null }, projection)
+      .exec(function (err, transactions) {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(transactions.map(t => t.transaction))
+      })
+  })
+
+function parseUnconfirmedTransactions (walletId, webContents) {
+  const web3 = getWeb3()
+
+  getUnconfirmedTransactions()
+    .then(transactions => transactions.map(t => t.hash))
+    .then(hashes =>
+      Promise.all(hashes.map(hash =>
+        getTransactionAndReceipt({ web3, hash })
+      ))
+    )
+    .then(fullTransactions =>
+      Promise.all(fullTransactions.map(t =>
+        parseTransaction(Object.assign({ walletId, webContents }, t))
+      ))
+    )
+    .catch(function (err) {
+      logger.warn(`Could not reparse unconfirmed transactions: ${err.message}`)
+    })
+}
+
 function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
   const { bloqEthExplorer } = plugins
+
+  const rescanTime = getRescanUnconfirmedTxs()
 
   sendWalletOpen(bus, webContents, walletId)
 
@@ -440,10 +487,20 @@ function openWallet ({ bus, webContents, walletId, plugins, plugin }) {
         bus.removeListener('new-best-block', emitNewBlock)
       })
     })
+    .then(function () {
+      const id = startInterval(function () {
+        parseUnconfirmedTransactions(walletId, webContents)
+      }, rescanTime)
+
+      bus.on('stop-searching-unconfirmed-txs', function () {
+        clearInterval(id)
+      })
+    })
 }
 
 const stop = eventsBus => function () {
   eventsBus.emit('stop-updating-best-block')
+  eventsBus.emit('stop-searching-unconfirmed-txs')
 }
 
 function parseUnconfirmedTransaction (subscriptions, transaction) {
@@ -472,7 +529,11 @@ function parseNewTransaction (subscriptions, { walletId, txid }) {
           receipt,
           walletId
         }, s))
-          .then(() => sendBalances({ walletId, webContents: s.webContents }))
+          .then(() => sendBalances({
+            shouldChange: true,
+            walletId,
+            webContents: s.webContents
+          }))
       ))
     )
     .catch(function (err) {
