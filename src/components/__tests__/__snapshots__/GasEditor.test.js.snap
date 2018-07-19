@@ -16,11 +16,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Limit (Units)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="21000"
+          type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
+          value="21000"
         />
       </div>
     </div>
@@ -38,11 +38,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Price (Gwei)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="1"
+          type="text"
           id="gasPrice"
           data-testid="gas-price-field"
+          value="1"
         />
       </div>
     </div>

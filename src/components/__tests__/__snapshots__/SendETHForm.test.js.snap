@@ -24,12 +24,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (ETH)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>
@@ -56,12 +56,12 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
           Amount (USD)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value=""
+          type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
           placeholder="0.00"
+          value=""
         />
       </div>
     </div>
@@ -85,11 +85,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Limit (Units)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="21000"
+          type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
+          value="21000"
         />
       </div>
     </div>
@@ -107,11 +107,11 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
           Gas Price (Gwei)
         </label>
         <input
-          type="text"
           class="sc-iwsKbI kZiHEX"
-          value="1"
+          type="text"
           id="gasPrice"
           data-testid="gas-price-field"
+          value="1"
         />
       </div>
     </div>
@@ -140,12 +140,12 @@ exports[`<SendETHForm/> should match its snapshot 1`] = `
             Send to Address
           </label>
           <input
-            type="text"
             class="sc-iwsKbI kZiHEX"
-            value=""
+            type="text"
             id="toAddress"
             placeholder="e.g. 0x2345678998765434567"
             data-testid="toAddress-field"
+            value=""
           />
         </div>
         <div
@@ -173,12 +173,12 @@ exports[`<SendETHForm/> should match its snapshot 1`] = `
                   Amount (ETH)
                 </label>
                 <input
-                  type="text"
                   class="sc-iwsKbI kZiHEX"
-                  value=""
+                  type="text"
                   id="ethAmount"
                   data-testid="ethAmount-field"
                   placeholder="0.00"
+                  value=""
                 />
               </div>
             </div>
@@ -205,12 +205,12 @@ exports[`<SendETHForm/> should match its snapshot 1`] = `
                   Amount (USD)
                 </label>
                 <input
-                  type="text"
                   class="sc-iwsKbI kZiHEX"
-                  value=""
+                  type="text"
                   id="usdAmount"
                   data-testid="usdAmount-field"
                   placeholder="0.00"
+                  value=""
                 />
               </div>
             </div>
