@@ -17,13 +17,12 @@ cache:
 install:
   - ps: Install-Product node LTS x64
   - npm i --global --production windows-build-tools
-  - yarn
 
 platform:
   - x64
 
 build_script:
-  - yarn dist
+  - npm run dist
 
 test: off
 
@@ -35,4 +34,4 @@ for:
 
   configuration: Release
   build_script:
-    - yarn release
+    - npm run release
