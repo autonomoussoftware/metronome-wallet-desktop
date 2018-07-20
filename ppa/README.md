@@ -6,12 +6,12 @@ To post a `.deb` on Launchpad for Ubuntu a debian source package needs to be mad
 
 For compatibility purposes it is best to do this on Ubuntu 16.04/Xenial (the oldest system we are distributing for).
 
-You must have the variables `DEBFULLNAME` and `DEBEMAIL` set in your shell for `yarn ppa` to work properly.  The email must have a gpg key associated with it if you plan on signing the files.
+You must have the variables `DEBFULLNAME` and `DEBEMAIL` set in your shell for `npm run ppa` to work properly.  The email must have a gpg key associated with it if you plan on signing the files.
 
 ```
-yarn install
-yarn dist
-yarn ppa
+npm i
+npm run dist
+npm run ppa
 VER=0.8.0
 cd ppa
 debsign *.changes *.dsc

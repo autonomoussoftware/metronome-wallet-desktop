@@ -24,7 +24,6 @@ matrix:
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
 cache:
-  yarn: true
   directories:
   - node_modules
   - $HOME/.cache/electron
@@ -39,7 +38,7 @@ before_install:
     fi
 
 install:
-  - yarn install
+  - npm i
 
 before_script:
   - git lfs pull
@@ -47,9 +46,9 @@ before_script:
 script:
   - |
     if [ "$TRAVIS_BRANCH" == "develop" ]; then
-      yarn test && yarn dist
+      npm test && npm run dist
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
-      yarn test && yarn release
+      npm test && npm run release
     fi
 
 before_cache:
