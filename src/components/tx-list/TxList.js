@@ -1,6 +1,9 @@
 import { List as RVList, AutoSizer, WindowScroller } from 'react-virtualized'
-import { ItemFilter, LogoIcon } from './common'
-import * as selectors from '../selectors'
+import { ItemFilter, LogoIcon, Flex } from '../common'
+import ScanningTxPlaceholder from './ScanningTxPlaceholder'
+import NoTxPlaceholder from './NoTxPlaceholder'
+import * as selectors from '../../selectors'
+import ScanIndicator from './ScanIndicator'
 import ReceiptModal from './ReceiptModal'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -16,7 +19,7 @@ const Container = styled.div`
   }
 `
 
-const ListHeader = styled.div`
+const Header = styled.div`
   position: sticky;
   background: ${p => p.theme.colors.bg.primary};
   top: 4.8rem;
@@ -26,19 +29,28 @@ const ListHeader = styled.div`
   margin: 0 -4.8rem;
   padding: 0 4.8rem;
 
-  @media (min-width: 960px) {
+  @media (min-width: 1140px) {
     top: 7.1rem;
     display: flex;
     align-items: baseline;
   }
 `
 
-const ListTitle = styled.div`
-  flex-grow: 1;
+const Title = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  margin-bottom: 2px;
+  margin-right: 2.4rem;
+
+  @media (min-width: 1140px) {
+    margin-right: 0.8rem;
+  }
+
+  @media (min-width: 1200px) {
+    margin-right: 1.6rem;
+  }
 `
 
 const TabsContainer = styled.div`
@@ -74,10 +86,16 @@ const Tab = styled.button`
   }
 `
 
-const List = styled.div`
+const ListContainer = styled.div`
   border-radius: 2px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px 0 ${p => p.theme.colors.darkShade};
+`
+
+const TxRowContainer = styled.div`
+  &:hover {
+    background-color: rgba(126, 97, 248, 0.1);
+  }
 `
 
 const FooterLogo = styled.div`
@@ -88,6 +106,7 @@ const FooterLogo = styled.div`
 
 class TxList extends React.Component {
   static propTypes = {
+    isScanningTx: PropTypes.bool.isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
         transaction: PropTypes.shape({
@@ -126,26 +145,33 @@ class TxList extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   rowRenderer = items => ({ key, style, index }) => (
-    <div style={style} key={`${key}-${items[index].transaction.hash}`}>
+    <TxRowContainer
+      style={style}
+      key={`${key}-${items[index].transaction.hash}`}
+    >
       <TxRow
         data-testid="tx-row"
         data-hash={items[index].transaction.hash}
         onClick={this.onTxClicked}
         {...items[index]}
       />
-    </div>
+    </TxRowContainer>
   )
 
   render() {
-    const { items } = this.props
+    const { isScanningTx, items } = this.props
     if (!this.state.isReady) return null
     return (
       <Container data-testid="tx-list">
         <ItemFilter extractValue={tx => tx.parsed.txType} items={items}>
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
-              <ListHeader>
-                <ListTitle>Transactions</ListTitle>
+              <Header>
+                <Flex.Row grow="1">
+                  <Title>Transactions</Title>
+                  {(items.length > 0 || !isScanningTx) && <ScanIndicator />}
+                </Flex.Row>
+
                 <TabsContainer>
                   <Tab
                     isActive={activeFilter === ''}
@@ -178,9 +204,15 @@ class TxList extends React.Component {
                     Converted
                   </Tab>
                 </TabsContainer>
-              </ListHeader>
+              </Header>
 
-              <List>
+              <ListContainer>
+                {items.length === 0 &&
+                  (isScanningTx ? (
+                    <ScanningTxPlaceholder />
+                  ) : (
+                    <NoTxPlaceholder />
+                  ))}
                 <WindowScroller
                   // WindowScroller is required to sync window scroll with virtualized list scroll.
                   // scrollElement is required because in our layout we're scrolling a div, not window
@@ -211,7 +243,7 @@ class TxList extends React.Component {
                 <FooterLogo>
                   <LogoIcon />
                 </FooterLogo>
-              </List>
+              </ListContainer>
             </React.Fragment>
           )}
         </ItemFilter>
@@ -226,6 +258,7 @@ class TxList extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isScanningTx: selectors.getIsScanningTx(state),
   items: selectors.getActiveWalletTransactions(state)
 })
 

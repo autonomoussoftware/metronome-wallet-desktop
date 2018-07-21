@@ -404,3 +404,5 @@ export const convertMetFeatureStatus = createSelector(
       : !hasFunds(metBalance) ? 'no-met' : 'ok'
   }
 )
+
+export const getIsScanningTx = state => state.wallets.isScanningTx

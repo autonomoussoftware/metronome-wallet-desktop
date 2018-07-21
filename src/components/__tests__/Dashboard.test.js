@@ -140,7 +140,7 @@ describe('<Dashboard/>', () => {
         <Dashboard />,
         getInitialState()
       )
-      expect(getByTestId('notx-msg')).toBeInTheDOM()
+      expect(getByTestId('no-tx-placeholder')).toBeInTheDOM()
     })
   })
 })

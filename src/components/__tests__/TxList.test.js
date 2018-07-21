@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import TxList from '../TxList'
+import TxList from '../tx-list/TxList'
 import React from 'react'
 import 'react-testing-library/extend-expect'
 

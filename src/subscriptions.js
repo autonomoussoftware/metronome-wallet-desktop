@@ -10,6 +10,8 @@ export const subscribeToMainProcessMessages = store => {
     'metronome-token-status-updated',
     'mtn-converter-status-updated',
     'connectivity-state-changed',
+    'transactions-scan-finished',
+    'transactions-scan-started',
     'auction-status-updated',
     'wallet-state-changed',
     'eth-price-updated',

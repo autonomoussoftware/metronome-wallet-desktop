@@ -1,11 +1,11 @@
-import { ConverterIcon, DisplayValue, AuctionIcon, TxIcon } from './common'
-import * as selectors from '../selectors'
+import { ConverterIcon, DisplayValue, AuctionIcon, TxIcon } from '../common'
+import * as selectors from '../../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
+import config from '../../config'
 import React from 'react'
-import theme from '../theme'
+import theme from '../../theme'
 import Web3 from 'web3'
 
 const Container = styled.div`

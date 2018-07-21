@@ -1,9 +1,9 @@
-import { DisplayValue, Modal, Btn } from './common'
-import * as selectors from '../selectors'
+import { DisplayValue, Modal, Btn } from '../common'
+import * as selectors from '../../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
+import config from '../../config'
 import React from 'react'
 import Web3 from 'web3'
 const { shell } = window.require('electron')
@@ -121,7 +121,9 @@ class ReceiptModal extends React.Component {
 
   onExplorerLink = () => {
     shell.openExternal(
-      `${config.MET_EXPLORER_URL}/transactions/${this.props.tx.transaction.hash}`
+      `${config.MET_EXPLORER_URL}/transactions/${
+        this.props.tx.transaction.hash
+      }`
     )
   }
 
@@ -196,7 +198,9 @@ class ReceiptModal extends React.Component {
             <Type>
               {tx.parsed.isCancelApproval
                 ? 'Allowance canceled'
-                : tx.parsed.isApproval ? 'Allowance set' : tx.parsed.txType}
+                : tx.parsed.isApproval
+                  ? 'Allowance set'
+                  : tx.parsed.txType}
             </Type>
           </Row>
 
