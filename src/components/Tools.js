@@ -2,6 +2,7 @@ import { DarkLayout, Btn, Sp, TextInput, Flex } from './common'
 import { validateMnemonic } from '../validator'
 import ConfirmationWizard from './ConfirmationWizard'
 import { withRouter } from 'react-router-dom'
+import ConfirmModal from './ConfirmModal'
 import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -27,11 +28,18 @@ class Tools extends React.Component {
   }
 
   state = {
+    activeModal: null,
     mnemonic: null,
     errors: {}
   }
 
-  onRescanTransactionsClick = e => {
+  onCloseModal = () => this.setState({ activeModal: null })
+
+  onRescanTransactionsClick = () => {
+    this.setState({ activeModal: 'confirm-rescan' })
+  }
+
+  onConfirmRescan = e => {
     e.preventDefault()
     utils
       .sendToMainProcess('cache-clear')
@@ -118,6 +126,11 @@ class Tools extends React.Component {
           <Btn onClick={this.onRescanTransactionsClick}>
             Rescan Transactions
           </Btn>
+          <ConfirmModal
+            onRequestClose={this.onCloseModal}
+            onConfirm={this.onConfirmRescan}
+            isOpen={this.state.activeModal === 'confirm-rescan'}
+          />
         </Sp>
       </Sp>
     )
