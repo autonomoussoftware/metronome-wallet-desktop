@@ -49,10 +49,6 @@ describe('<App/>', () => {
       payload: { walletIds: ['foo'], activeWallet: 'foo' }
     })
     store.dispatch({
-      type: 'metronome-token-status-updated',
-      payload: { transferAllowed: true }
-    })
-    store.dispatch({
       type: 'eth-price-updated',
       payload: { token: 'ETH', price: 1 }
     })

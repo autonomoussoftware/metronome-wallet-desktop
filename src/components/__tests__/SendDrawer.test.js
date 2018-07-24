@@ -33,19 +33,6 @@ describe('<SendDrawer/>', () => {
   })
 
   describe('SEND MET tab is disabled and displays tooltip', () => {
-    it('if MET TRANSFERS ARE DISABLED ', () => {
-      const { queryByTestId, getByTestId } = testUtils.reduxRender(
-        getElement('eth'),
-        getInitialState({ transferAllowed: false })
-      )
-      Simulate.click(testUtils.withDataset(getByTestId('met-tab'), 'tab'))
-      expect(queryByTestId('sendMet-form')).not.toBeInTheDOM()
-      expect(getByTestId('met-tab').getAttribute('data-rh')).not.toBeNull()
-      expect(getByTestId('met-tab').getAttribute('data-rh')).toBe(
-        'MET transactions not enabled yet'
-      )
-    })
-
     it('if we are on the INITIAL AUCTION ', () => {
       const { queryByTestId, getByTestId } = testUtils.reduxRender(
         getElement('eth'),
@@ -97,12 +84,10 @@ function goOffline() {
 }
 
 function getInitialState({
-  transferAllowed = true,
   isInitialAuction = false,
   metBalance = '5000000000000000000000'
 } = {}) {
   return testUtils.getInitialState({
-    metronome: { transferAllowed },
     auction: { status: { currentAuction: isInitialAuction ? '0' : '1' } },
     rates: { ETH: { token: 'ETH', price: 250 } },
     wallets: {

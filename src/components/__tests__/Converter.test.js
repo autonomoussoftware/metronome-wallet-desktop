@@ -4,16 +4,6 @@ import Converter from '../Converter'
 import React from 'react'
 
 describe('<Converter/>', () => {
-  it('displays a "coming soon..." before initial auction has ended', () => {
-    const { queryByTestId, store } = testUtils.reduxRender(
-      <Converter />,
-      getInitialState(dummyStatus(), inDailyAuction(), false)
-    )
-    expect(queryByTestId('commingsoon')).not.toBeNull()
-    store.dispatch(transferAllowed(true))
-    expect(queryByTestId('commingsoon')).toBeNull()
-  })
-
   it('displays a "waiting..." message until the first converter status is received', () => {
     const { queryByTestId, store } = testUtils.reduxRender(<Converter />)
     expect(queryByTestId('waiting')).not.toBeNull()
@@ -92,13 +82,6 @@ describe('<Converter/>', () => {
   })
 })
 
-function transferAllowed(value) {
-  return {
-    type: 'metronome-token-status-updated',
-    payload: { transferAllowed: value }
-  }
-}
-
 function converterStatusUpdated(payload = {}) {
   return {
     type: 'mtn-converter-status-updated',
@@ -138,13 +121,8 @@ const inDailyAuction = (overrides = {}) => ({
   ...overrides
 })
 
-function getInitialState(
-  converterStatus = null,
-  auctionStatus = null,
-  transferAllowed = true
-) {
+function getInitialState(converterStatus = null, auctionStatus = null) {
   return testUtils.getInitialState({
-    metronome: { transferAllowed },
     converter: { status: converterStatus },
     auction: { status: auctionStatus }
   })
