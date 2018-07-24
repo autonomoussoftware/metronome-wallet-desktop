@@ -214,12 +214,16 @@ export const getActiveWalletTransactions = createSelector(
       const from =
         txType === 'received' && tokenData && tokenData.from
           ? tokenData.from.toLowerCase()
-          : transaction.from ? transaction.from.toLowerCase() : null
+          : transaction.from
+            ? transaction.from.toLowerCase()
+            : null
 
       const to =
         txType === 'sent' && tokenData && tokenData.to
           ? tokenData.to.toLowerCase()
-          : transaction.to ? transaction.to.toLowerCase() : null
+          : transaction.to
+            ? transaction.to.toLowerCase()
+            : null
 
       const value =
         ['received', 'sent'].includes(txType) && tokenData && tokenData.value
@@ -240,25 +244,33 @@ export const getActiveWalletTransactions = createSelector(
           : null
 
       const symbol = ['received', 'sent'].includes(txType)
-        ? tokenData ? 'MET' : 'ETH'
+        ? tokenData
+          ? 'MET'
+          : 'ETH'
         : null
 
       const contractCallFailed = meta.contractCallFailed || false
 
       const convertedFrom =
         txType === 'converted'
-          ? Web3.utils.toBN(transaction.value).isZero() ? 'MET' : 'ETH'
+          ? Web3.utils.toBN(transaction.value).isZero()
+            ? 'MET'
+            : 'ETH'
           : null
 
       const fromValue = convertedFrom
         ? convertedFrom === 'ETH'
           ? transaction.value
-          : tokenData ? tokenData.value : null
+          : tokenData
+            ? tokenData.value
+            : null
         : null
 
       const toValue =
         convertedFrom && tokenData && meta
-          ? convertedFrom === 'ETH' ? tokenData.value : meta.returnedValue
+          ? convertedFrom === 'ETH'
+            ? tokenData.value
+            : meta.returnedValue
           : null
 
       const isApproval =
@@ -309,21 +321,14 @@ export const getActiveWalletTransactions = createSelector(
 
 export const metronomeStatus = state => state.metronome
 
-export const getMetTransferAllowed = createSelector(
-  metronomeStatus,
-  metronomeStatus => metronomeStatus.transferAllowed
-)
-
 // Returns true if Main Process has sent enough data to render dashboard
 export const hasEnoughData = createSelector(
   getActiveWalletEthBalance,
   getActiveWalletMtnBalance,
-  getMetTransferAllowed,
   getBlockHeight,
   getEthRate,
   // eslint-disable-next-line max-params
-  (ethBalance, mtnBalance, metTransferAllowed, blockHeight, ethRate) =>
-    metTransferAllowed !== null &&
+  (ethBalance, mtnBalance, blockHeight, ethRate) =>
     blockHeight !== null &&
     ethBalance !== null &&
     mtnBalance !== null &&
@@ -337,23 +342,24 @@ export const sendFeatureStatus = createSelector(
   (ethBalance, mtnBalance, isOnline) => {
     return !isOnline
       ? 'offline'
-      : !hasFunds(ethBalance) && !hasFunds(mtnBalance) ? 'no-funds' : 'ok'
+      : !hasFunds(ethBalance) && !hasFunds(mtnBalance)
+        ? 'no-funds'
+        : 'ok'
   }
 )
 
 export const sendMetFeatureStatus = createSelector(
   getActiveWalletMtnBalance,
-  getMetTransferAllowed,
   getIsInitialAuction,
   getIsOnline,
-  (mtnBalance, metTransferAllowed, isInitialAuction, isOnline) => {
+  (mtnBalance, isInitialAuction, isOnline) => {
     return !isOnline
       ? 'offline'
       : !hasFunds(mtnBalance)
         ? 'no-funds'
         : isInitialAuction
           ? 'in-initial-auction'
-          : !metTransferAllowed ? 'transfer-disabled' : 'ok'
+          : 'ok'
   }
 )
 
@@ -372,17 +378,16 @@ export const buyFeatureStatus = createSelector(
 // Returns the converter status in general. Useful for disabling "Convert" modal
 export const convertFeatureStatus = createSelector(
   getActiveWalletEthBalance,
-  getMetTransferAllowed,
   getIsInitialAuction,
   getIsOnline,
-  (ethBalance, metTransferAllowed, isInitialAuction, isOnline) => {
+  (ethBalance, isInitialAuction, isOnline) => {
     return !isOnline
       ? 'offline'
       : isInitialAuction
         ? 'in-initial-auction'
-        : !metTransferAllowed
-          ? 'transfer-disabled'
-          : !hasFunds(ethBalance) ? 'no-eth' : 'ok'
+        : !hasFunds(ethBalance)
+          ? 'no-eth'
+          : 'ok'
   }
 )
 
@@ -401,6 +406,8 @@ export const convertMetFeatureStatus = createSelector(
   (ethBalance, metBalance) => {
     return !hasFunds(ethBalance)
       ? 'no-eth'
-      : !hasFunds(metBalance) ? 'no-met' : 'ok'
+      : !hasFunds(metBalance)
+        ? 'no-met'
+        : 'ok'
   }
 )

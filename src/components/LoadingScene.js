@@ -9,6 +9,7 @@ import React from 'react'
 
 const Checklist = styled.div`
   margin-top: 3.2rem;
+  padding-left: 4.8rem;
 `
 
 class LoadingScene extends React.Component {
@@ -16,18 +17,17 @@ class LoadingScene extends React.Component {
     hasBlockHeight: PropTypes.bool.isRequired,
     hasEthBalance: PropTypes.bool.isRequired,
     hasMetBalance: PropTypes.bool.isRequired,
-    hasMetStatus: PropTypes.bool.isRequired,
     hasEthRate: PropTypes.bool.isRequired
   }
 
   render() {
     return (
-      <AltLayout title="Contacting Network..." data-testid="loading-scene">
+      <AltLayout title="Gathering Information..." data-testid="loading-scene">
         <LoadingBar />
         <Checklist>
           <ChecklistItem
             isActive={this.props.hasBlockHeight}
-            text="Latest block"
+            text="Blockchain status"
           />
           <ChecklistItem
             isActive={this.props.hasEthRate}
@@ -41,10 +41,6 @@ class LoadingScene extends React.Component {
             isActive={this.props.hasMetBalance}
             text="MET balance"
           />
-          <ChecklistItem
-            isActive={this.props.hasMetStatus}
-            text="MET token status"
-          />
         </Checklist>
       </AltLayout>
     )
@@ -55,7 +51,6 @@ const mapStateToProps = state => ({
   hasBlockHeight: selectors.getBlockHeight(state) !== null,
   hasEthBalance: selectors.getActiveWalletEthBalance(state) !== null,
   hasMetBalance: selectors.getActiveWalletMtnBalance(state) !== null,
-  hasMetStatus: selectors.getMetTransferAllowed(state) !== null,
   hasEthRate: selectors.getEthRate(state) !== null
 })
 
