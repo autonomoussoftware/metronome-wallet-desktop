@@ -411,3 +411,5 @@ export const convertMetFeatureStatus = createSelector(
         : 'ok'
   }
 )
+
+export const getIsScanningTx = state => state.wallets.isScanningTx

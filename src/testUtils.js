@@ -133,6 +133,7 @@ export function getInitialState(overrides = {}) {
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: 1 } },
     wallets: {
+      isScanningTx: false,
       active: 'foo',
       allIds: ['foo'],
       byId: {
