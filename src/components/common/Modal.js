@@ -26,6 +26,8 @@ const Container = styled(ReactModal)`
 const Header = styled.header`
   padding: 1.6rem;
   display: flex;
+  background-color: ${p =>
+    p.variant === 'primary' ? p.theme.colors.primary : 'transparent'};
   justify-content: ${p => (p.hasTitle ? 'space-between' : 'flex-end')};
   flex-shrink: 0;
 `
@@ -34,7 +36,8 @@ const Title = styled.h1`
   font-size: 1.8rem;
   line-height: 2.4rem;
   font-weight: normal;
-  color: ${p => p.theme.colors.copy};
+  color: ${p =>
+    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
   margin: 0;
 `
 
@@ -44,6 +47,8 @@ const CloseButton = styled.button`
   padding: 0;
   outline: none;
   cursor: pointer;
+  color: ${p =>
+    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
   &:hover {
     opacity: 0.5;
   }
@@ -53,12 +58,21 @@ export default class Modal extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     children: PropTypes.node.isRequired,
+    variant: PropTypes.oneOf(['primary']),
     isOpen: PropTypes.bool.isRequired,
     title: PropTypes.string
   }
 
   render() {
-    const { onRequestClose, children, isOpen, title, ...other } = this.props
+    const {
+      onRequestClose,
+      styleOverrides,
+      children,
+      variant,
+      isOpen,
+      title,
+      ...other
+    } = this.props
 
     return (
       <Container
@@ -86,15 +100,20 @@ export default class Modal extends React.Component {
             width: '420px',
             right: 'auto',
             left: '50%',
-            top: '10rem'
+            top: '10rem',
+            ...styleOverrides
           }
         }}
         {...other}
       >
-        <Header hasTitle={!!title}>
-          {title && <Title>{title}</Title>}
-          <CloseButton onClick={onRequestClose}>
-            <CloseIcon color={theme.colors.copy} />
+        <Header hasTitle={!!title} variant={variant}>
+          {title && <Title variant={variant}>{title}</Title>}
+          <CloseButton onClick={onRequestClose} variant={variant}>
+            <CloseIcon
+              color={
+                variant === 'primary' ? theme.colors.light : theme.colors.copy
+              }
+            />
           </CloseButton>
         </Header>
         {children}
