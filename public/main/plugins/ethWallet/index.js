@@ -422,6 +422,9 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
       )
     })
     .catch(function (err) {
+      if (!webContents.isDestroyed()) {
+        webContents.send('transactions-scan-finished', {})
+      }
       sendError({
         webContents,
         walletId,

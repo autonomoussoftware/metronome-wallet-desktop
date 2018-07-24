@@ -46,8 +46,9 @@ const reducer = handleActions(
 
     'transactions-scan-finished': (state, { payload }) => ({
       ...state,
-      isScanningTx:
-        payload.address === Object.keys(state.byId[state.active].addresses)[0]
+      isScanningTx: !payload.address
+        ? false
+        : payload.address === Object.keys(state.byId[state.active].addresses)[0]
           ? false
           : state.isScanningTx
     })
