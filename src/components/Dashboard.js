@@ -7,7 +7,7 @@ import SendDrawer from './SendDrawer'
 import PropTypes from 'prop-types'
 import { Btn } from './common'
 import styled from 'styled-components'
-import TxList from './TxList'
+import TxList from './tx-list/TxList'
 import React from 'react'
 
 const Container = styled.div`
@@ -75,17 +75,9 @@ const ReceiveBtn = Btn.extend`
   }
 `
 
-const NoTx = styled.div`
-  font-size: 1.6rem;
-  margin-top: 4.8rem;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-`
-
 class Dashboard extends React.Component {
   static propTypes = {
-    sendFeatureStatus: PropTypes.oneOf(['offline', 'no-funds', 'ok'])
-      .isRequired,
-    hasTransactions: PropTypes.bool.isRequired
+    sendFeatureStatus: PropTypes.oneOf(['offline', 'no-funds', 'ok']).isRequired
   }
 
   state = {
@@ -97,7 +89,7 @@ class Dashboard extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { sendFeatureStatus, hasTransactions } = this.props
+    const { sendFeatureStatus } = this.props
 
     return (
       <Container data-testid="dashboard-container">
@@ -138,11 +130,7 @@ class Dashboard extends React.Component {
           </Right>
         </Hero>
 
-        {hasTransactions ? (
-          <TxList />
-        ) : (
-          <NoTx data-testid="notx-msg">No transactions to show yet.</NoTx>
-        )}
+        <TxList />
 
         <ReceiveDrawer
           onRequestClose={this.onCloseModal}
@@ -158,8 +146,7 @@ class Dashboard extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  sendFeatureStatus: selectors.sendFeatureStatus(state),
-  hasTransactions: selectors.getActiveWalletTransactions(state).length > 0
+  sendFeatureStatus: selectors.sendFeatureStatus(state)
 })
 
 export default connect(mapStateToProps)(Dashboard)

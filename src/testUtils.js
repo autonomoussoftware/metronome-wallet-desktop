@@ -114,7 +114,6 @@ export function getInitialState(overrides = {}) {
   const baseState = {
     connectivity: { isOnline: true },
     blockchain: { height: 1, gasPrice: config.DEFAULT_GAS_PRICE },
-    metronome: { transferAllowed: true },
     converter: {
       status: {
         availableEth: '100',
@@ -134,6 +133,7 @@ export function getInitialState(overrides = {}) {
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: 1 } },
     wallets: {
+      isScanningTx: false,
       active: 'foo',
       allIds: ['foo'],
       byId: {

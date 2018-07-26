@@ -363,6 +363,7 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
       logger.debug('Syncing', addresses, indexed)
       return Promise.all(
         addresses.map(function (address) {
+          webContents.send('transactions-scan-started', { address })
           const from = bestBlock + 1
           const to = indexed
           return promiseAllProps({
@@ -410,6 +411,7 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
             })
             .then(function () {
               if (!webContents.isDestroyed()) {
+                webContents.send('transactions-scan-finished', { address })
                 webContents.send('eth-block', { number: indexed })
                 logger.verbose('<-- New best block', { number: indexed })
               }
@@ -420,6 +422,9 @@ function syncTransactions ({ number, walletId, webContents, bloqEthExplorer }) {
       )
     })
     .catch(function (err) {
+      if (!webContents.isDestroyed()) {
+        webContents.send('transactions-scan-finished', {})
+      }
       sendError({
         webContents,
         walletId,
