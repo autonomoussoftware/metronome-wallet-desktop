@@ -17,7 +17,7 @@ const Icon = styled.svg`
 `
 
 const Label = styled.span`
-  transition: opacity 0.6s;
+  transition: opacity 0.3s;
   opacity: ${p => (p.isActive ? 1 : 0.5)};
 `
 
