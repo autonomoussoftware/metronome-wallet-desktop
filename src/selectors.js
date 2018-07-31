@@ -321,19 +321,7 @@ export const getActiveWalletTransactions = createSelector(
 
 export const metronomeStatus = state => state.metronome
 
-// Returns true if Main Process has sent enough data to render dashboard
-export const hasEnoughData = createSelector(
-  getActiveWalletEthBalance,
-  getActiveWalletMtnBalance,
-  getBlockHeight,
-  getEthRate,
-  // eslint-disable-next-line max-params
-  (ethBalance, mtnBalance, blockHeight, ethRate) =>
-    blockHeight !== null &&
-    ethBalance !== null &&
-    mtnBalance !== null &&
-    ethRate !== null
-)
+export const hasEnoughData = state => state.session.hasEnoughData
 
 export const sendFeatureStatus = createSelector(
   getActiveWalletEthBalance,
