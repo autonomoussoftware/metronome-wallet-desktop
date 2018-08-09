@@ -7,7 +7,9 @@
 [![Build Status](https://travis-ci.com/autonomoussoftware/metronome-wallet-desktop.svg?branch=master)](https://travis-ci.com/autonomoussoftware/metronome-wallet-desktop)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Development 
+![Metronome Desktop Wallet](https://metronome.io/images/metronome-apps-demo@2x.png)
+
+## Development
 
 ### Requirements
 
