@@ -43,7 +43,8 @@ class ConvertMETtoETHForm extends React.Component {
     useMinimum: true,
     metAmount: null,
     estimate: null,
-    errors: {}
+    errors: {},
+    rate: null
   }
 
   onMaxClick = () => {
@@ -186,6 +187,7 @@ class ConvertMETtoETHForm extends React.Component {
                 estimate={this.state.estimate}
                 onChange={this.onInputChange}
                 amount={this.state.metAmount}
+                rate={this.state.rate}
               />
               <MinReturnCheckbox
                 useMinimum={this.state.useMinimum}

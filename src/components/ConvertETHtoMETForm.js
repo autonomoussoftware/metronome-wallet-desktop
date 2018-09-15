@@ -45,7 +45,8 @@ class ConvertETHtoMETForm extends React.Component {
     ...GasEditor.initialState('MET'),
     useMinimum: true,
     estimate: null,
-    errors: {}
+    errors: {},
+    rate: null
   }
 
   onInputChange = e => {
@@ -168,6 +169,7 @@ class ConvertETHtoMETForm extends React.Component {
               estimate={this.state.estimate}
               onChange={this.onInputChange}
               amount={this.state.ethAmount}
+              rate={this.state.rate}
             />
             <MinReturnCheckbox
               useMinimum={this.state.useMinimum}

@@ -1,4 +1,3 @@
-import { sendToMainProcess, isWeiable, isGreaterThanZero } from '../utils'
 import { DisplayValue } from './common'
 import * as selectors from '../selectors'
 import { debounce } from 'lodash'
@@ -7,6 +6,12 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+import {
+  sendToMainProcess,
+  isGreaterThanZero,
+  getConversionRate,
+  isWeiable
+} from '../utils'
 
 const Container = styled.div`
   margin-top: 1.6rem;
@@ -27,7 +32,8 @@ class ConverterEstimates extends React.Component {
     convertTo: PropTypes.oneOf(['ETH', 'MET']).isRequired,
     onChange: PropTypes.func.isRequired,
     estimate: PropTypes.string,
-    amount: PropTypes.string
+    amount: PropTypes.string,
+    rate: PropTypes.string
   }
 
   state = { error: null, status: 'init' }
@@ -47,8 +53,10 @@ class ConverterEstimates extends React.Component {
       }
     )
       .then(({ result }) => {
+        const rate = getConversionRate(amount, result)
         this.setState({ error: null, status: 'success' })
         this.props.onChange({ target: { id: 'estimate', value: result } })
+        this.props.onChange({ target: { id: 'rate', value: rate } })
       })
       .catch(err => {
         this.setState({ error: err.message, status: 'failure' })
@@ -67,28 +75,37 @@ class ConverterEstimates extends React.Component {
   }
 
   render() {
-    const { estimate, convertTo } = this.props
+    const { estimate, convertTo, rate } = this.props
     const { error, status: estimateStatus } = this.state
 
     if (['success', 'init'].includes(estimateStatus) && estimate) {
       return (
         <Container>
           <DisplayValue
+            inline
             value={estimate}
             pre="You would get approximately "
-            post={` ${convertTo}.`}
+            post={` ${convertTo}, `}
+          />
+          <DisplayValue
+            inline
+            value={rate}
+            pre="which means a rate of "
+            post={` ${convertTo}/${convertTo === 'ETH' ? 'MET' : 'ETH'}.`}
           />
         </Container>
       )
     }
-    if (estimateStatus === 'failure' && error)
+    if (estimateStatus === 'failure' && error) {
       return (
         <Container>
           <ErrorMsg>{error}</ErrorMsg>
         </Container>
       )
-    if (estimateStatus === 'pending')
+    }
+    if (estimateStatus === 'pending') {
       return <Container weak>Getting conversion estimate...</Container>
+    }
     return (
       <Container>Enter a valid amount to get a conversion estimate.</Container>
     )
