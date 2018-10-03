@@ -95,7 +95,11 @@ class SendMETForm extends React.Component {
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will send{' '}
-        <DisplayValue value={Web3.utils.toWei(metAmount)} post=" MET" inline />{' '}
+        <DisplayValue
+          inline
+          value={Web3.utils.toWei(metAmount.replace(',', '.'))}
+          post=" MET"
+        />{' '}
         to the address {toAddress}.
       </ConfirmationContainer>
     )
