@@ -103,7 +103,11 @@ class SendETHForm extends React.Component {
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will send{' '}
-        <DisplayValue value={Web3.utils.toWei(ethAmount)} post=" ETH" inline />{' '}
+        <DisplayValue
+          inline
+          value={Web3.utils.toWei(ethAmount).replace(',', '.')}
+          post=" ETH"
+        />{' '}
         (${usdAmount}) to the address {toAddress}.
       </ConfirmationContainer>
     )
