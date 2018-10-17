@@ -10,6 +10,8 @@ import React from 'react'
  *   ratio === 0 -> red
  *   ratio  <  1 -> orange
  *   ratio >=  1 -> green
+ *
+ *   @param {number} ratio passwordEntropy / targetEntropy ratio
  */
 function getHue(ratio) {
   // Hues are adapted to match the theme's success and danger colors
@@ -53,7 +55,9 @@ const Message = styled.div`
   color: ${p =>
     p.ratio >= 1
       ? p.theme.colors.success
-      : p.ratio >= 0.75 ? 'hsla(40, 100%, 50%, 0.75)' : p.theme.colors.danger};
+      : p.ratio >= 0.75
+        ? 'hsla(40, 100%, 50%, 0.75)'
+        : p.theme.colors.danger};
   text-shadow: ${p => p.theme.textShadow};
   text-align: right;
   margin-bottom: -18px;
@@ -69,7 +73,7 @@ export default class EntropyMeter extends React.Component {
     return string ? stringEntropy(string) : 0
   }
 
-  getString(ratio) {
+  getMessage(ratio) {
     if (ratio > 0 && ratio < 0.75) return 'Too weak'
     if (ratio >= 0.75 && ratio < 1) return 'Almost there...'
     if (ratio >= 1 && ratio < 1.5) return 'Strong'
@@ -81,7 +85,8 @@ export default class EntropyMeter extends React.Component {
     const { targetEntropy, password } = this.props
     const passwordEntropy = this.getEntropy(password)
     const ratio = passwordEntropy / targetEntropy
-    const message = this.getString(ratio)
+    const message = this.getMessage(ratio)
+
     return (
       <Container>
         <Bar ratio={ratio} />

@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { LoadingBar } from './common'
+import { LoadingBar, AltLayout } from './common'
 import ChecklistItem from './common/ChecklistItem'
-import AltLayout from './AltLayout'
 
 const Checklist = styled.div`
   margin-top: 3.2rem;

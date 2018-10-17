@@ -9,6 +9,7 @@ import WalletIcon from './WalletIcon'
 import CloseIcon from './CloseIcon'
 import CheckIcon from './CheckIcon'
 import TextInput from './TextInput'
+import AltLayout from './AltLayout'
 import Tooltips from './Tooltips'
 import CopyIcon from './CopyIcon'
 import LogoIcon from './LogoIcon'
@@ -31,6 +32,7 @@ export {
   CloseIcon,
   CheckIcon,
   TextInput,
+  AltLayout,
   Tooltips,
   CopyIcon,
   LogoIcon,

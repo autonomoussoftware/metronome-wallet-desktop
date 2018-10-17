@@ -1,8 +1,10 @@
-import { Flex, Sp } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import Banner from './Banner'
 import React from 'react'
+
+import Banner from './Banner'
+import Flex from './Flex'
+import Sp from './Spacing'
 
 const Container = styled(Flex.Column)`
   min-height: 100vh;

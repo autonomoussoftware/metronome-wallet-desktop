@@ -12,7 +12,7 @@ import Root from 'metronome-wallet-ui-logic/src/components/Root'
 import { subscribeToMainProcessMessages } from './subscriptions'
 import { Tooltips } from './components/common'
 import createClient from './dummy-client' // replace with real client!
-import Onboarding from './components/Onboarding'
+import Onboarding from './components/onboarding/Onboarding'
 import Loading from './components/Loading'
 import Router from './components/Router'
 import config from './config'
