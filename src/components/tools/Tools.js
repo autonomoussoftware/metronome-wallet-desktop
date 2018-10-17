@@ -1,12 +1,12 @@
-import { DarkLayout, Btn, Sp, TextInput, Flex } from './common'
-import { validateMnemonic } from '../validator'
-import ConfirmationWizard from './ConfirmationWizard'
+import withToolsState from 'metronome-wallet-ui-logic/src/hocs/withToolsState'
 import { withRouter } from 'react-router-dom'
-import ConfirmModal from './ConfirmModal'
-import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
+
+import { DarkLayout, Btn, Sp, TextInput, Flex } from '../common'
+import ConfirmationWizard from '../ConfirmationWizard'
+import ConfirmModal from '../ConfirmModal'
 
 const Confirmation = styled.div`
   color: ${p => p.theme.colors.danger};
@@ -22,68 +22,46 @@ const ValidationMsg = styled.div`
 
 class Tools extends React.Component {
   static propTypes = {
+    onRescanTransactions: PropTypes.func.isRequired,
+    isRecoverEnabled: PropTypes.bool.isRequired,
+    onInputChange: PropTypes.func.isRequired,
+    validate: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    mnemonic: PropTypes.string,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
+    }).isRequired,
+    errors: PropTypes.shape({
+      mnemonic: PropTypes.string
     }).isRequired
   }
 
   state = {
-    activeModal: null,
-    mnemonic: null,
-    errors: {}
+    activeModal: null
   }
 
-  onCloseModal = () => this.setState({ activeModal: null })
+  onCloseModal = () => {
+    this.setState({ activeModal: null })
+  }
 
   onRescanTransactionsClick = () => {
     this.setState({ activeModal: 'confirm-rescan' })
   }
 
-  onConfirmRescan = e => {
-    e.preventDefault()
-    utils
-      .sendToMainProcess('cache-clear')
-      .then(console.log)
-      .catch(console.warn)
-  }
-
-  validate = () => {
-    const errors = validateMnemonic(utils.sanitizeMnemonic(this.state.mnemonic))
-    const hasErrors = Object.keys(errors).length > 0
-    if (hasErrors) this.setState({ errors })
-    return !hasErrors
-  }
-
-  onInputChanged = e => {
-    const { id, value } = e.target
-    this.setState(state => ({
-      ...state,
-      [id]: value,
-      errors: { ...state.errors, [id]: null }
-    }))
-  }
-
-  onWizardSubmit = password => {
-    return utils
-      .sendToMainProcess('create-wallet', {
-        mnemonic: utils.sanitizeMnemonic(this.state.mnemonic),
-        password
-      })
+  onWizardSubmit = password =>
+    this.props
+      .onSubmit(password)
       .then(() => this.props.history.push('/wallets'))
-  }
 
-  renderConfirmation = () => {
-    return (
-      <Confirmation data-testid="confirmation">
-        <h3>Are you sure?</h3>
-        <p>This operation will overwrite and restart the current wallet!</p>
-      </Confirmation>
-    )
-  }
+  renderConfirmation = () => (
+    <Confirmation data-testid="confirmation">
+      <h3>Are you sure?</h3>
+      <p>This operation will overwrite and restart the current wallet!</p>
+    </Confirmation>
+  )
 
   renderForm = goToReview => {
-    const { mnemonic, errors } = this.state
-    const wordsAmount = utils.sanitizeMnemonic(mnemonic || '').split(' ').length
+    const { onInputChange, mnemonic, errors } = this.props
 
     return (
       <Sp mt={-2}>
@@ -96,7 +74,7 @@ class Tools extends React.Component {
           <TextInput
             data-testid="mnemonic-field"
             autoFocus
-            onChange={this.onInputChanged}
+            onChange={onInputChange}
             label="Recovery phrase"
             error={errors.mnemonic}
             value={mnemonic || ''}
@@ -105,10 +83,10 @@ class Tools extends React.Component {
           />
           <Sp mt={4}>
             <Flex.Row align="center">
-              <Btn disabled={wordsAmount !== 12} submit>
+              <Btn disabled={!this.props.isRecoverEnabled} submit>
                 Recover
               </Btn>
-              {wordsAmount !== 12 && (
+              {!this.props.isRecoverEnabled && (
                 <ValidationMsg>
                   A recovery phrase must have exactly 12 words
                 </ValidationMsg>
@@ -128,7 +106,7 @@ class Tools extends React.Component {
           </Btn>
           <ConfirmModal
             onRequestClose={this.onCloseModal}
-            onConfirm={this.onConfirmRescan}
+            onConfirm={this.props.onRescanTransactions}
             isOpen={this.state.activeModal === 'confirm-rescan'}
           />
         </Sp>
@@ -147,7 +125,7 @@ class Tools extends React.Component {
             pendingTitle="Recovering..."
             successText="Wallet successfully recovered"
             renderForm={this.renderForm}
-            validate={this.validate}
+            validate={this.props.validate}
             noCancel
             styles={{
               confirmation: {
@@ -167,4 +145,4 @@ class Tools extends React.Component {
   }
 }
 
-export default withRouter(Tools)
+export default withToolsState(withRouter(Tools))

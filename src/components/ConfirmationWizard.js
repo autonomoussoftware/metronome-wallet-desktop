@@ -3,18 +3,11 @@ import styled from 'styled-components'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
+import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './common'
 import { validatePassword } from '../validator'
 import * as utils from '../utils'
-import {
-  LoadingBar,
-  TextInput,
-  CheckIcon,
-  CloseIcon,
-  BaseBtn,
-  Flex,
-  Btn,
-  Sp
-} from './common'
+import CheckIcon from './icons/CheckIcon'
+import CloseIcon from './icons/CloseIcon'
 
 const ConfirmationTitle = styled.h1`
   font-size: 1.6rem;
@@ -149,7 +142,7 @@ export default class ConfirmationWizard extends React.Component {
     return !hasErrors
   }
 
-  onPasswordChange = ev => this.setState({ password: ev.target.value })
+  onPasswordChange = ({ value }) => this.setState({ password: value })
 
   // eslint-disable-next-line complexity
   render() {

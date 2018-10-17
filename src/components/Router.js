@@ -7,7 +7,7 @@ import Dashboard from './Dashboard'
 import Converter from './Converter'
 import Sidebar from './sidebar/Sidebar'
 import Auction from './Auction'
-import Tools from './Tools'
+import Tools from './tools/Tools'
 
 const fadeIn = keyframes`
   from {
