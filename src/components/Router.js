@@ -1,13 +1,13 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import React, { Component } from 'react'
+
 import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
 import Sidebar from './Sidebar'
 import Auction from './Auction'
 import Tools from './Tools'
-import Help from './Help'
 
 const fadeIn = keyframes`
   from {
@@ -50,7 +50,6 @@ export const layout = (
         <Route path="/auction" component={Auction} />
         <Route path="/converter" component={Converter} />
         <Route path="/tools" component={Tools} />
-        <Route component={Help} path="/help" />
       </Switch>
     </Main>
     <OfflineWarning />

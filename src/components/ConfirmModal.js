@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 const Container = styled.div`
-  background-color: ${p => p.theme.colors.bg.white};
+  background-color: ${p => p.theme.colors.light};
   padding: 2.4rem 1.6rem 1.6rem 1.6rem;
 `
 
@@ -16,7 +16,7 @@ const Message = styled.div`
 `
 
 const Button = styled(BaseBtn)`
-  background-color: ${p => p.theme.colors.bg.primary};
+  background-color: ${p => p.theme.colors.primary};
   border-radius: 12px;
   display: block;
   line-height: 1.6rem;

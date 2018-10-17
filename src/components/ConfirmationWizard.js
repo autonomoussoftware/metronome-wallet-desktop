@@ -1,9 +1,10 @@
-import { validatePassword } from '../validator'
-import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import theme from '../theme'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
+
+import { validatePassword } from '../validator'
+import * as utils from '../utils'
 import {
   LoadingBar,
   TextInput,

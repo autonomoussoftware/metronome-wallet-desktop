@@ -8,7 +8,7 @@ import Logo from './Logo'
 const { shell } = window.require('electron')
 
 const Container = styled.div`
-  background: ${p => p.theme.colors.bg.darkGradient};
+  background: ${p => p.theme.colors.darkGradient};
   width: 64px;
   display: flex;
   flex-direction: column;
@@ -325,7 +325,11 @@ class Sidebar extends Component {
           </SecondaryBtn>
           <SecondaryLink
             activeClassName="active"
-            onClick={() => shell.openExternal('https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq')}
+            onClick={() =>
+              shell.openExternal(
+                'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
+              )
+            }
             data-testid="help-nav-btn"
           >
             Help

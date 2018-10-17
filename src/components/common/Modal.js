@@ -1,9 +1,10 @@
 import ReactModal from 'react-modal'
-import CloseIcon from './CloseIcon'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import theme from '../../theme'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
+
+import CloseIcon from './CloseIcon'
 
 const Container = styled(ReactModal)`
   &.ReactModal__Content {
@@ -86,7 +87,7 @@ export default class Modal extends React.Component {
             zIndex: '3'
           },
           content: {
-            background: theme.colors.bg.white,
+            background: theme.colors.light,
             flexDirection: 'column',
             marginBottom: '1.6rem',
             borderRadius: '0',

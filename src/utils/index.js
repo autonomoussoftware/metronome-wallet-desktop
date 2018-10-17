@@ -1,12 +1,32 @@
 import BigNumber from 'bignumber.js'
-import Deferred from './lib/Deferred'
-import config from './config'
+import PropTypes from 'prop-types'
 import cuid from 'cuid'
 import Web3 from 'web3'
 
+import Deferred from '../lib/Deferred'
+import config from '../config'
+
+export const errorPropTypes = (...fields) => {
+  const shape = fields.reduce((acc, fieldName) => {
+    acc[fieldName] = PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.string
+    ])
+    return acc
+  }, {})
+  return PropTypes.shape(shape).isRequired
+}
+
+export const statusPropTypes = PropTypes.oneOf([
+  'init',
+  'pending',
+  'success',
+  'failure'
+]).isRequired
+
 const { ipcRenderer } = window.require('electron')
 
-/**
+/*
  * Sends a message to Main Process and returns a Promise.
  *
  * This makes it easier to handle IPC inside components
@@ -204,6 +224,8 @@ export function smartRound(weiAmount) {
  * Each replacement is defined by an object of shape { search, replaceWith }
  * 'search' and 'replaceWith' are used as first and second argument of
  * String.prototype.replace() so the same specs apply.
+ *
+ * @param {string} str A message string.
  */
 export function messageParser(str) {
   const replacements = [

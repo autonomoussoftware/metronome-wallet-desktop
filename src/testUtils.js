@@ -1,12 +1,12 @@
+import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { render, Simulate } from 'react-testing-library'
 import { ThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router'
-import { Provider } from 'react-redux'
-import createStore from './createStore'
 import { merge } from 'lodash'
-import config from './config'
-import theme from './theme'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
+
+import config from './config'
 
 /**
  * The same render method of 'react-testing-library' but wrapped with

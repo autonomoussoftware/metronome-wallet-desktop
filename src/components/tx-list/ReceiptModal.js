@@ -9,7 +9,7 @@ import Web3 from 'web3'
 const { shell } = window.require('electron')
 
 const Container = styled.div`
-  background-color: ${p => p.theme.colors.bg.medium};
+  background-color: ${p => p.theme.colors.medium};
 `
 
 const Row = styled.div`

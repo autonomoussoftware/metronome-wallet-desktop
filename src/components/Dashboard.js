@@ -11,7 +11,7 @@ import TxList from './tx-list/TxList'
 import React from 'react'
 
 const Container = styled.div`
-  background-color: ${p => p.theme.colors.bg.primary};
+  background-color: ${p => p.theme.colors.primary};
   padding: 0 2.4rem 2.4rem;
   min-height: 100%;
   position: relative;
@@ -22,7 +22,7 @@ const Container = styled.div`
 `
 
 const FixedContainer = styled.div`
-  background-color: ${p => p.theme.colors.bg.primary};
+  background-color: ${p => p.theme.colors.primary};
   position: sticky;
   padding: 0 1.6rem;
   margin: 0 -1.6rem;

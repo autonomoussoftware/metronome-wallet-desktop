@@ -7,8 +7,8 @@ import React from 'react'
 const Container = styled(Flex.Column)`
   min-height: 100vh;
   padding: 3.2rem;
-  background: ${p => p.theme.colors.bg.dark} url('./images/pattern.png')
-    repeat-x top center;
+  background: ${p => p.theme.colors.dark} url('./images/pattern.png') repeat-x
+    top center;
 `
 
 const Body = styled.div`

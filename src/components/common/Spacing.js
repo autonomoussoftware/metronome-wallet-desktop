@@ -3,20 +3,20 @@ import styled from 'styled-components'
 
 // eslint-disable-next-line complexity
 function getMargin({ m, mt, mb, my, ml, mr, mx, theme: { spacing } }) {
-  const marginBottom = `${spacing * (m || mb || my || 0)}rem`
-  const marginRight = `${spacing * (m || mr || mx || 0)}rem`
-  const marginLeft = `${spacing * (m || ml || mx || 0)}rem`
-  const marginTop = `${spacing * (m || mt || my || 0)}rem`
+  const marginBottom = `${0.1 * spacing(m || mb || my || 0)}rem`
+  const marginRight = `${0.1 * spacing(m || mr || mx || 0)}rem`
+  const marginLeft = `${0.1 * spacing(m || ml || mx || 0)}rem`
+  const marginTop = `${0.1 * spacing(m || mt || my || 0)}rem`
 
   return `${marginTop} ${marginRight} ${marginBottom} ${marginLeft}`
 }
 
 // eslint-disable-next-line complexity
 function getPadding({ p, pt, pb, py, pl, pr, px, theme: { spacing } }) {
-  const paddingBottom = `${spacing * (p || pb || py || 0)}rem`
-  const paddingRight = `${spacing * (p || pr || px || 0)}rem`
-  const paddingLeft = `${spacing * (p || pl || px || 0)}rem`
-  const paddingTop = `${spacing * (p || pt || py || 0)}rem`
+  const paddingBottom = `${0.1 * spacing(p || pb || py || 0)}rem`
+  const paddingRight = `${0.1 * spacing(p || pr || px || 0)}rem`
+  const paddingLeft = `${0.1 * spacing(p || pl || px || 0)}rem`
+  const paddingTop = `${0.1 * spacing(p || pt || py || 0)}rem`
 
   return `${paddingTop} ${paddingRight} ${paddingBottom} ${paddingLeft}`
 }

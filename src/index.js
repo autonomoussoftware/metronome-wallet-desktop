@@ -1,17 +1,24 @@
-import { subscribeToMainProcessMessages } from './subscriptions'
-import { sendToMainProcess } from './utils'
+import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { ToastContainer } from 'react-toastify'
 import { ThemeProvider } from 'styled-components'
-import { Tooltips } from './components/common'
-import { Provider } from 'react-redux'
-import createStore from './createStore'
 import ReactDOM from 'react-dom'
-import config from './config'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import Modal from 'react-modal'
 import Raven from 'raven-js'
-import theme from './theme'
 import React from 'react'
-import App from './components/App'
+import Root from 'metronome-wallet-ui-logic/src/components/Root'
+
+import { subscribeToMainProcessMessages } from './subscriptions'
+import { Tooltips } from './components/common'
+import createClient from './dummy-client' // replace with real client!
+import Onboarding from './components/Onboarding'
+import Loading from './components/Loading'
+import Router from './components/Router'
+import config from './config'
+import Login from './components/Login'
+// import { sendToMainProcess } from './utils'
+// import App from './components/App'
 
 if (config.SENTRY_DSN) {
   Raven.config(config.SENTRY_DSN, {
@@ -22,22 +29,29 @@ if (config.SENTRY_DSN) {
   )
 }
 
-// We could pass some initial state to createStore()
-const store = createStore()
+const client = createClient(config, createStore)
 
 // Initialize all the Main Process subscriptions
-subscribeToMainProcessMessages(store)
+subscribeToMainProcessMessages(client.store)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <React.Fragment>
-        <App onMount={() => sendToMainProcess('ui-ready')} />
-        <Tooltips />
-        <ToastContainer position="top-center" hideProgressBar />
-      </React.Fragment>
-    </ThemeProvider>
-  </Provider>,
+  <ClientProvider value={client}>
+    <Provider store={client.store}>
+      <ThemeProvider theme={theme}>
+        <React.Fragment>
+          {/* <App onMount={() => sendToMainProcess('ui-ready')} /> */}
+          <Root
+            OnboardingComponent={Onboarding}
+            LoadingComponent={Loading}
+            RouterComponent={Router}
+            LoginComponent={Login}
+          />
+          <Tooltips />
+          <ToastContainer position="top-center" hideProgressBar />
+        </React.Fragment>
+      </ThemeProvider>
+    </Provider>
+  </ClientProvider>,
   document.getElementById('root')
 )
 

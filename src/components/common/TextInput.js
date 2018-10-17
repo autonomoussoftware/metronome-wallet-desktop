@@ -74,12 +74,15 @@ export default class TextInput extends React.Component {
     id: PropTypes.string.isRequired
   }
 
-  InputControl = this.props.rows || this.props.cols
-    ? Input.withComponent('textarea')
-    : Input
+  InputControl =
+    this.props.rows || this.props.cols ? Input.withComponent('textarea') : Input
+
+  onChange = e => {
+    this.props.onChange({ id: this.props.id, value: e.target.value })
+  }
 
   render() {
-    const { label, value, type, id, error, ...other } = this.props
+    const { onChange, label, value, type, id, error, ...other } = this.props
 
     const hasErrors = error && error.length > 0
 
@@ -90,6 +93,7 @@ export default class TextInput extends React.Component {
         </Label>
         <this.InputControl
           hasErrors={hasErrors}
+          onChange={this.onChange}
           value={value || ''}
           type={type || 'text'}
           id={id}

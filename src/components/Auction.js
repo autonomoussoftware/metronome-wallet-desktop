@@ -110,7 +110,7 @@ const Badge = styled.div`
   display: inline-block;
   line-height: 2.5rem;
   border-radius: 1.4rem;
-  background-color: ${p => p.theme.colors.bg.primary};
+  background-color: ${p => p.theme.colors.primary};
   font-size: 1.6rem;
   font-weight: 600;
   text-align: center;

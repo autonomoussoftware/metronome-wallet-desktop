@@ -28,11 +28,11 @@ export const Btn = BaseBtn.extend`
   font-weight: 600;
   color: ${p => p.theme.colors.primary};
   border-radius: 12px;
-  background-color: ${p => p.theme.colors.bg.light};
+  background-color: ${p => p.theme.colors.lightBG};
   background-image: linear-gradient(
     to top,
     transparent,
-    ${p => p.theme.colors.bg.white}
+    ${p => p.theme.colors.light}
   );
   box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.1);
   padding: 1.6rem;
@@ -40,7 +40,7 @@ export const Btn = BaseBtn.extend`
   &:not([disabled], [data-disabled]):hover,
   &:not([disabled], [data-disabled]):focus,
   &:not([disabled], [data-disabled]):active {
-    background-color: ${p => p.theme.colors.bg.white};
+    background-color: ${p => p.theme.colors.light};
     box-shadow: 0 2px 8px 0 ${p => p.theme.colors.darkShade};
   }
 `

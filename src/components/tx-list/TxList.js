@@ -21,7 +21,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   position: sticky;
-  background: ${p => p.theme.colors.bg.primary};
+  background: ${p => p.theme.colors.primary};
   top: 4.8rem;
   left: 0;
   right: 0;
