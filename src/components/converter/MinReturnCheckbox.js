@@ -42,6 +42,7 @@ const ErrorMsg = styled.div`
 
 export default class MinReturnCheckbox extends React.Component {
   static propTypes = {
+    'data-testid': PropTypes.string,
     useMinimum: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
