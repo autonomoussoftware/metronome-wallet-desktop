@@ -3,10 +3,10 @@ import styled, { keyframes } from 'styled-components'
 import React from 'react'
 
 import OfflineWarning from './OfflineWarning'
-import Dashboard from './Dashboard'
-import Converter from './Converter'
+import Dashboard from './dashboard/Dashboard'
+import Converter from './converter/Converter'
 import Sidebar from './sidebar/Sidebar'
-import Auction from './Auction'
+import Auction from './auction/Auction'
 import Tools from './tools/Tools'
 
 const fadeIn = keyframes`

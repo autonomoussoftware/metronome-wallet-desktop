@@ -4,6 +4,7 @@ const addresses = MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN |
 const defaultExplorerUrl = 'https://explorer.metronome.io'
 
 export default {
+  MTN_TOKEN_ADDR: addresses.metToken.toLowerCase(),
   MET_TOKEN_ADDR: addresses.metToken.toLowerCase(),
   CONVERTER_ADDR: addresses.autonomousConverter.toLowerCase(),
   MET_EXPLORER_URL: process.env.REACT_APP_MET_EXPLORER_URL || defaultExplorerUrl,

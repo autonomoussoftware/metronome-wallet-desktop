@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
-import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './common'
-import { validatePassword } from '../validator'
-import * as utils from '../utils'
-import CheckIcon from './icons/CheckIcon'
-import CloseIcon from './icons/CloseIcon'
+import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './index'
+import { validatePassword } from '../../validator'
+import * as utils from '../../utils'
+import CheckIcon from '../icons/CheckIcon'
+import CloseIcon from '../icons/CloseIcon'
 
 const ConfirmationTitle = styled.h1`
   font-size: 1.6rem;
