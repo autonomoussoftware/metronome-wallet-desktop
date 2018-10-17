@@ -1,15 +1,17 @@
 import { List as RVList, AutoSizer, WindowScroller } from 'react-virtualized'
-import { ItemFilter, LogoIcon, Flex } from '../common'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+
 import ScanningTxPlaceholder from './ScanningTxPlaceholder'
+import { ItemFilter, Flex } from '../common'
 import NoTxPlaceholder from './NoTxPlaceholder'
 import * as selectors from '../../selectors'
 import ScanIndicator from './ScanIndicator'
 import ReceiptModal from './ReceiptModal'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import LogoIcon from '../icons/LogoIcon'
 import TxRow from './TxRow'
-import React from 'react'
 
 const Container = styled.div`
   margin-top: 2.4rem;

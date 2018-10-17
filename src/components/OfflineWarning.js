@@ -1,9 +1,11 @@
-import * as selectors from '../selectors'
 import { connect } from 'react-redux'
-import { BaseBtn, CloseIcon } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
+
+import * as selectors from '../selectors'
+import { BaseBtn } from './common'
+import CloseIcon from './icons/CloseIcon'
 
 const Container = styled.div`
   position: fixed;

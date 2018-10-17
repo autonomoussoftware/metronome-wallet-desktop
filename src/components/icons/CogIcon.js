@@ -1,5 +1,6 @@
-import BaseIcon from './BaseIcon'
 import React from 'react'
+
+import BaseIcon from './BaseIcon'
 
 const CogIcon = props => (
   <BaseIcon viewBox="0 0 64 64" {...props}>

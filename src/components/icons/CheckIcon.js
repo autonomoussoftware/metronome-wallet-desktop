@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
-import BaseIcon from './BaseIcon'
 import React from 'react'
+
+import BaseIcon from './BaseIcon'
 
 const CheckIcon = ({ size, ...other }) => (
   <BaseIcon size={size || '4.8rem'} viewBox="0 0 48 48" {...other}>

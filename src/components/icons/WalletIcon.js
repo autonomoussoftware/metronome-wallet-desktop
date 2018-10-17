@@ -1,5 +1,6 @@
-import BaseIcon from './BaseIcon'
 import React from 'react'
+
+import BaseIcon from './BaseIcon'
 
 const WalletIcon = props => (
   <BaseIcon {...props}>

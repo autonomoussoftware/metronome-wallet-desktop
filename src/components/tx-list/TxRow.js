@@ -5,8 +5,11 @@ import React from 'react'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import Web3 from 'web3'
 
-import { ConverterIcon, DisplayValue, AuctionIcon, TxIcon } from '../common'
+import { DisplayValue } from '../common'
 import * as selectors from '../../selectors'
+import ConverterIcon from '../icons/ConverterIcon'
+import AuctionIcon from '../icons/AuctionIcon'
+import TxIcon from '../icons/TxIcon'
 import config from '../../config'
 
 const Container = styled.div`

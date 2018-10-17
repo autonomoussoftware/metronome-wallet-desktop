@@ -1,8 +1,10 @@
-import { TextInput, FieldBtn, TxIcon, Flex, Sp } from './common'
-import * as utils from '../utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Web3 from 'web3'
+
+import { TextInput, FieldBtn, Flex, Sp } from './common'
+import * as utils from '../utils'
+import TxIcon from './icons/TxIcon'
 
 export default class AmountFields extends React.Component {
   static propTypes = {

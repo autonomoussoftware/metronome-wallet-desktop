@@ -1,11 +1,16 @@
-import { ConverterIcon, AuctionIcon, WalletIcon, LogoIcon, Sp } from './common'
-import React, { Component } from 'react'
+import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
 import { NavLink } from 'react-router-dom'
-import CogIcon from './common/CogIcon'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import Logo from './Logo'
+import React from 'react'
 
-const { shell } = window.require('electron')
+import ConverterIcon from '../icons/ConverterIcon'
+import AuctionIcon from '../icons/AuctionIcon'
+import WalletIcon from '../icons/WalletIcon'
+import LogoIcon from '../icons/LogoIcon'
+import CogIcon from '../icons/CogIcon'
+import { Sp } from '../common'
+import Logo from './Logo'
 
 const Container = styled.div`
   background: ${p => p.theme.colors.darkGradient};
@@ -272,7 +277,13 @@ const Footer = styled.div`
   }
 `
 
-class Sidebar extends Component {
+class Sidebar extends React.Component {
+  static propTypes = {
+    client: PropTypes.shape({
+      onHelpLinkClick: PropTypes.func.isRequired
+    }).isRequired
+  }
+
   render() {
     return (
       <Container>
@@ -318,19 +329,15 @@ class Sidebar extends Component {
         <Sp mt={2}>
           <SecondaryBtn
             activeClassName="active"
-            to="/tools"
             data-testid="tools-nav-btn"
+            to="/tools"
           >
             Tools
           </SecondaryBtn>
           <SecondaryLink
             activeClassName="active"
-            onClick={() =>
-              shell.openExternal(
-                'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
-              )
-            }
             data-testid="help-nav-btn"
+            onClick={this.props.client.onHelpLinkClick}
           >
             Help
           </SecondaryLink>
@@ -346,4 +353,4 @@ class Sidebar extends Component {
   }
 }
 
-export default Sidebar
+export default withClient(Sidebar)

@@ -1,11 +1,14 @@
-import { CopyIcon, BaseBtn, Drawer, Flex } from './common'
-import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import QRCode from 'qrcode.react'
 import React from 'react'
 import Web3 from 'web3'
+
+import { BaseBtn, Drawer, Flex } from './common'
+import * as selectors from '../selectors'
+import CopyIcon from './icons/CopyIcon'
+
 const { clipboard } = window.require('electron')
 
 const Body = styled.div`

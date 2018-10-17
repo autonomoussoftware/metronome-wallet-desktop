@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
-import CloseIcon from './CloseIcon'
+import CloseIcon from '../icons/CloseIcon'
 
 const Container = styled(ReactModal)`
   &.ReactModal__Content {

@@ -1,8 +1,9 @@
-import { default as styled, injectGlobal } from 'styled-components'
-import CloseIcon from './CloseIcon'
+import styled, { injectGlobal } from 'styled-components'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import React from 'react'
+
+import CloseIcon from '../icons/CloseIcon'
 
 /**
  * There's no other way to override overlay states styles

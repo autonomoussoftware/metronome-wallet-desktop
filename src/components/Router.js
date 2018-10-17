@@ -1,11 +1,11 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
-import React, { Component } from 'react'
+import React from 'react'
 
 import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
-import Sidebar from './Sidebar'
+import Sidebar from './sidebar/Sidebar'
 import Auction from './Auction'
 import Tools from './Tools'
 
@@ -56,7 +56,7 @@ export const layout = (
   </Container>
 )
 
-export default class Router extends Component {
+export default class Router extends React.Component {
   render() {
     return <HashRouter>{layout}</HashRouter>
   }
