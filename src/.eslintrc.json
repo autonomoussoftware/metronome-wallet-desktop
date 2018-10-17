@@ -2,8 +2,11 @@
   "env": {
     "browser": true
   },
+  "plugins": ["import", "react"],
   "extends": [
     "bloq",
+    "plugin:import/recommended",
+    "plugin:react/recommended",
     "prettier",
     "react-app"
   ],
@@ -15,11 +18,15 @@
     "sourceType": "module"
   },
   "root": true,
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "16.4.1"
+    }
+  },
   "rules": {
-    "arrow-body-style": "off",
-    "complexity": ["error", 10],
-    "max-params": ["error", 4],
     "no-console": "warn",
-    "no-shadow": "warn"
+    "arrow-body-style": ["error", "as-needed"],
+    "complexity": ["error", { "max": 10 }]
   }
 }

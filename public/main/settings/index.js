@@ -75,10 +75,10 @@ function attachSync (ipcMain) {
   })
 }
 
-const getPasswordHash = () => getKey(`user.passwordHash`)
+const getPasswordHash = () => getKey('user.passwordHash')
 
 function setPasswordHash (hash) {
-  setKey(`user.passwordHash`, hash)
+  setKey('user.passwordHash', hash)
 }
 
 module.exports = {

@@ -43,7 +43,7 @@ function start (pluginEmitter) {
     }
 
     if (typeof price !== 'number') {
-      logger.warn(`Retrieved ETH price is not a valid format`)
+      logger.warn('Retrieved ETH price is not a valid format')
       return
     }
 

@@ -20,7 +20,7 @@ function showUpdateNotification (info = {}) {
 
   const notification = new Notification({
     title: `${versionLabel} was installed`,
-    body: `Metronome Wallet will be automatically updated after restart.`
+    body: 'Metronome Wallet will be automatically updated after restart.'
   })
 
   notification.show()
