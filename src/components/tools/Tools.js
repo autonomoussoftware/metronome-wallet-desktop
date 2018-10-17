@@ -4,9 +4,15 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DarkLayout, Btn, Sp, TextInput, Flex } from '../common'
-import ConfirmationWizard from '../ConfirmationWizard'
-import ConfirmModal from '../ConfirmModal'
+import ConfirmModal from './ConfirmModal'
+import {
+  ConfirmationWizard,
+  DarkLayout,
+  TextInput,
+  Flex,
+  Btn,
+  Sp
+} from '../common'
 
 const Confirmation = styled.div`
   color: ${p => p.theme.colors.danger};

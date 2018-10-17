@@ -1,16 +1,17 @@
-import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable } from '../utils'
-import ConfirmationWizard from './ConfirmationWizard'
-import * as validators from '../validator'
-import * as selectors from '../selectors'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
-import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
+
+import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from '../common'
+import { sendToMainProcess, isWeiable } from '../../utils'
+import ConfirmationWizard from '../common/ConfirmationWizard'
+import * as validators from '../../validator'
+import * as selectors from '../../selectors'
+import GasEditor from '../common/GasEditor'
+import config from '../../config'
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -160,8 +161,8 @@ class SendMETForm extends React.Component {
 
             <Sp mt={3}>
               <GasEditor
+                onInputChange={this.onInputChange}
                 useCustomGas={this.state.useCustomGas}
-                onChange={this.onInputChange}
                 gasPrice={this.state.gasPrice}
                 gasLimit={this.state.gasLimit}
                 errors={this.state.errors}

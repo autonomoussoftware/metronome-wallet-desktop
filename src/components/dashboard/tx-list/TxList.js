@@ -5,12 +5,12 @@ import styled from 'styled-components'
 import React from 'react'
 
 import ScanningTxPlaceholder from './ScanningTxPlaceholder'
-import { ItemFilter, Flex } from '../common'
+import { ItemFilter, Flex } from '../../common'
 import NoTxPlaceholder from './NoTxPlaceholder'
-import * as selectors from '../../selectors'
+import * as selectors from '../../../selectors'
 import ScanIndicator from './ScanIndicator'
 import ReceiptModal from './ReceiptModal'
-import LogoIcon from '../icons/LogoIcon'
+import LogoIcon from '../../icons/LogoIcon'
 import TxRow from './TxRow'
 
 const Container = styled.div`
@@ -24,7 +24,7 @@ const Container = styled.div`
 const Header = styled.div`
   position: sticky;
   background: ${p => p.theme.colors.primary};
-  top: 4.8rem;
+  top: 4.1rem;
   left: 0;
   right: 0;
   z-index: 1;
@@ -32,7 +32,7 @@ const Header = styled.div`
   padding: 0 4.8rem;
 
   @media (min-width: 1140px) {
-    top: 7.1rem;
+    top: 6.8rem;
     display: flex;
     align-items: baseline;
   }

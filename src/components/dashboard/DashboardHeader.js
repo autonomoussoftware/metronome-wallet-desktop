@@ -1,11 +1,13 @@
-import * as selectors from '../selectors'
 import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
 import PropTypes from 'prop-types'
-import { Btn } from './common'
 import styled from 'styled-components'
 import React from 'react'
 import Web3 from 'web3'
+
+import * as selectors from '../../selectors'
+import { Btn } from '../common'
+
 const { clipboard } = window.require('electron')
 
 const Container = styled.header`

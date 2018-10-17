@@ -1,11 +1,13 @@
-import { DisplayValue, Modal, Btn } from '../common'
-import * as selectors from '../../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../../config'
 import React from 'react'
 import Web3 from 'web3'
+
+import { DisplayValue, Modal, Btn } from '../../common'
+import * as selectors from '../../../selectors'
+import config from '../../../config'
+
 const { shell } = window.require('electron')
 
 const Container = styled.div`

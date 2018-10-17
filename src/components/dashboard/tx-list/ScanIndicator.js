@@ -1,9 +1,10 @@
-import * as selectors from '../../selectors'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import Spinner from '../common/Spinner'
 import styled from 'styled-components'
 import React from 'react'
+
+import * as selectors from '../../../selectors'
+import Spinner from '../../common/Spinner'
 
 const Container = styled.div`
   display: flex;

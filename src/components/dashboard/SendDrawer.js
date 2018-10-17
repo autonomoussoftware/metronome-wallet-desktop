@@ -1,10 +1,11 @@
-import { Drawer, Tabs } from './common'
-import * as selectors from '../selectors'
 import SendMETForm from './SendMETForm'
 import SendETHForm from './SendETHForm'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import React from 'react'
+
+import { Drawer, Tabs } from '../common'
+import * as selectors from '../../selectors'
 
 class SendDrawer extends React.Component {
   static propTypes = {
@@ -29,7 +30,9 @@ class SendDrawer extends React.Component {
     activeTab:
       props.sendMetFeatureStatus !== 'ok'
         ? 'eth'
-        : props.defaultTab === 'eth' ? 'eth' : 'met'
+        : props.defaultTab === 'eth'
+          ? 'eth'
+          : 'met'
   })
 
   componentWillReceiveProps(newProps) {

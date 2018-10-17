@@ -1,7 +1,8 @@
-import { Modal, BaseBtn } from './common'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
+
+import { Modal, BaseBtn } from '../common'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.light};

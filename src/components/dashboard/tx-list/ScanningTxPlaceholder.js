@@ -1,6 +1,7 @@
-import Spinner from '../common/Spinner'
 import styled from 'styled-components'
 import React from 'react'
+
+import Spinner from '../../common/Spinner'
 
 const Container = styled.div`
   text-align: center;

@@ -1,14 +1,15 @@
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import React from 'react'
+
 import DashboardHeader from './DashboardHeader'
-import * as selectors from '../selectors'
+import * as selectors from '../../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
 import BalanceBlock from './BalanceBlock'
-import { connect } from 'react-redux'
 import SendDrawer from './SendDrawer'
-import PropTypes from 'prop-types'
-import { Btn } from './common'
-import styled from 'styled-components'
+import { Btn } from '../common'
 import TxList from './tx-list/TxList'
-import React from 'react'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.primary};

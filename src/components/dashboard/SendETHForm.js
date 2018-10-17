@@ -1,17 +1,24 @@
-import { DisplayValue, TextInput, Flex, Btn, Sp } from './common'
-import { sendToMainProcess, isWeiable } from '../utils'
-import ConfirmationWizard from './ConfirmationWizard'
-import * as validators from '../validator'
-import * as selectors from '../selectors'
-import AmountFields from './AmountFields'
 import { debounce } from 'lodash'
 import { connect } from 'react-redux'
-import GasEditor from './GasEditor'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import config from '../config'
 import React from 'react'
 import Web3 from 'web3'
+
+import { sendToMainProcess, isWeiable } from '../../utils'
+import * as validators from '../../validator'
+import * as selectors from '../../selectors'
+import config from '../../config'
+import {
+  ConfirmationWizard,
+  AmountFields,
+  DisplayValue,
+  GasEditor,
+  TextInput,
+  Flex,
+  Btn,
+  Sp
+} from '../common'
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -108,7 +115,8 @@ class SendETHForm extends React.Component {
           value={Web3.utils.toWei(ethAmount).replace(',', '.')}
           post=" ETH"
         />{' '}
-        (${usdAmount}) to the address {toAddress}.
+        ($
+        {usdAmount}) to the address {toAddress}.
       </ConfirmationContainer>
     )
   }
@@ -145,8 +153,8 @@ class SendETHForm extends React.Component {
             </Sp>
             <Sp mt={3}>
               <GasEditor
+                onInputChange={this.onInputChange}
                 useCustomGas={this.state.useCustomGas}
-                onChange={this.onInputChange}
                 gasPrice={this.state.gasPrice}
                 gasLimit={this.state.gasLimit}
                 errors={this.state.errors}

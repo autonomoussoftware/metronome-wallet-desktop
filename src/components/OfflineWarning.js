@@ -38,15 +38,15 @@ class OfflineWarning extends React.Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.isOnline) {
+  componentDidUpdate(prevProps) {
+    if (this.props.isOnline) {
       this.setState({ isVisible: false })
-    } else if (newProps.isOnline !== this.props.isOnline) {
+    } else if (prevProps.isOnline !== this.props.isOnline) {
       this.setState({ isVisible: true })
     }
   }
 
-  onDismissClick = () => this.setState({ isVisible: false })
+  handleDismissClick = () => this.setState({ isVisible: false })
 
   render() {
     const { isVisible } = this.state
@@ -56,7 +56,7 @@ class OfflineWarning extends React.Component {
         <Container>
           Your wallet is not connected to the network. Check your internet
           connection.{' '}
-          <DismissBtn onClick={this.onDismissClick}>
+          <DismissBtn onClick={this.handleDismissClick}>
             <CloseIcon size="1.2rem" />
           </DismissBtn>
         </Container>
