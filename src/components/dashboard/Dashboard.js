@@ -1,10 +1,9 @@
-import { connect } from 'react-redux'
+import withDashboardState from 'metronome-wallet-ui-logic/src/hocs/withDashboardState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
 import DashboardHeader from './DashboardHeader'
-import * as selectors from '../../selectors'
 import ReceiveDrawer from './ReceiveDrawer'
 import BalanceBlock from './BalanceBlock'
 import SendDrawer from './SendDrawer'
@@ -78,7 +77,9 @@ const ReceiveBtn = Btn.extend`
 
 class Dashboard extends React.Component {
   static propTypes = {
-    sendFeatureStatus: PropTypes.oneOf(['offline', 'no-funds', 'ok']).isRequired
+    sendDisabledReason: PropTypes.string,
+    sendDisabled: PropTypes.bool.isRequired,
+    address: PropTypes.string.isRequired
   }
 
   state = {
@@ -90,12 +91,10 @@ class Dashboard extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   render() {
-    const { sendFeatureStatus } = this.props
-
     return (
       <Container data-testid="dashboard-container">
         <FixedContainer>
-          <DashboardHeader />
+          <DashboardHeader address={this.props.address} />
         </FixedContainer>
 
         <Hero>
@@ -104,17 +103,11 @@ class Dashboard extends React.Component {
           </Left>
           <Right>
             <Btn
-              data-disabled={sendFeatureStatus !== 'ok' ? true : null}
+              data-disabled={this.props.sendDisabled}
               data-testid="send-btn"
-              data-rh={
-                sendFeatureStatus === 'offline'
-                  ? "Can't send while offline"
-                  : sendFeatureStatus === 'no-funds'
-                    ? 'You need some funds to send'
-                    : null
-              }
               data-modal="send"
-              onClick={sendFeatureStatus === 'ok' ? this.onOpenModal : null}
+              onClick={this.props.sendDisabled ? null : this.onOpenModal}
+              data-rh={this.props.sendDisabledReason}
               block
             >
               Send
@@ -146,8 +139,4 @@ class Dashboard extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  sendFeatureStatus: selectors.sendFeatureStatus(state)
-})
-
-export default connect(mapStateToProps)(Dashboard)
+export default withDashboardState(Dashboard)

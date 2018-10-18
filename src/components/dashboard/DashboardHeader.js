@@ -1,11 +1,8 @@
-import { connect } from 'react-redux'
 import { toast } from 'react-toastify'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
-import Web3 from 'web3'
 
-import * as selectors from '../../selectors'
 import { Btn } from '../common'
 
 const { clipboard } = window.require('electron')
@@ -75,7 +72,7 @@ const CopyBtn = Btn.extend`
   text-transform: uppercase;
 `
 
-class DashboardHeader extends React.Component {
+export default class DashboardHeader extends React.Component {
   static propTypes = {
     address: PropTypes.string.isRequired
   }
@@ -107,12 +104,3 @@ class DashboardHeader extends React.Component {
     )
   }
 }
-
-const mapStateToProps = state => {
-  const address = selectors.getActiveWalletAddresses(state)[0]
-  return {
-    address: address ? Web3.utils.toChecksumAddress(address) : address
-  }
-}
-
-export default connect(mapStateToProps)(DashboardHeader)

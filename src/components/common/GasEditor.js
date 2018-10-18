@@ -3,7 +3,10 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { TextInput, FieldBtn, Flex, Sp } from './index'
+import { FieldBtn } from './Btn'
+import TextInput from './TextInput'
+import Flex from './Flex'
+import Sp from './Spacing'
 
 const GasLabel = styled.span`
   opacity: 0.5;

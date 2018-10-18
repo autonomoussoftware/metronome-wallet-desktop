@@ -1,15 +1,11 @@
-import { connect } from 'react-redux'
+import withReceiveDrawerState from 'metronome-wallet-ui-logic/src/hocs/withReceiveDrawerState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import QRCode from 'qrcode.react'
 import React from 'react'
-import Web3 from 'web3'
 
 import { BaseBtn, Drawer, Flex } from '../common'
-import * as selectors from '../../selectors'
 import CopyIcon from '../icons/CopyIcon'
-
-const { clipboard } = window.require('electron')
 
 const Body = styled.div`
   padding: 3.2rem 1.6rem;
@@ -101,53 +97,43 @@ const QRmsg = styled.div`
 
 class ReceiveDrawer extends React.Component {
   static propTypes = {
+    copyToClipboard: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func.isRequired,
+    copyBtnLabel: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
 
-  state = {
-    copyStatus: 'init'
-  }
-
-  onCopyToClipboardClick = () => {
-    clipboard.writeText(this.props.address)
-    this.setState({ copyStatus: 'copied' })
-  }
-
   render() {
-    const { onRequestClose, address, isOpen } = this.props
-    const { copyStatus } = this.state
-
     return (
       <Drawer
-        onRequestClose={onRequestClose}
+        onRequestClose={this.props.onRequestClose}
         data-testid="receive-drawer"
-        isOpen={isOpen}
+        isOpen={this.props.isOpen}
         title="Receive Transaction"
       >
         <Flex.Column grow="1">
           <Body>
             <Flex.Column align="center">
               <Title>Your address</Title>
-              <Address data-testid="address">{address}</Address>
+              <Address data-testid="address">{this.props.address}</Address>
               <CopyBtn
                 data-testid="copy-btn"
-                onClick={this.onCopyToClipboardClick}
+                onClick={this.props.copyToClipboard}
               >
                 <CopyIcon />
               </CopyBtn>
               <BtnLabel
                 data-testid="btn-label"
-                isCopied={copyStatus !== 'init'}
+                isCopied={this.props.copyBtnLabel !== 'Copy to clipboard'}
               >
-                {copyStatus === 'init' ? 'Copy' : 'Copied to clipboard!'}
+                {this.props.copyBtnLabel}
               </BtnLabel>
             </Flex.Column>
           </Body>
           <Footer>
             <QRContainer>
-              <QRCode value={address} />
+              <QRCode value={this.props.address} />
               <QRmsg>Scan address</QRmsg>
             </QRContainer>
           </Footer>
@@ -157,11 +143,4 @@ class ReceiveDrawer extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  const address = selectors.getActiveWalletAddresses(state)[0]
-  return {
-    address: address ? Web3.utils.toChecksumAddress(address) : address
-  }
-}
-
-export default connect(mapStateToProps)(ReceiveDrawer)
+export default withReceiveDrawerState(ReceiveDrawer)

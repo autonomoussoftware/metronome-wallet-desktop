@@ -1,4 +1,4 @@
-import { default as styled, injectGlobal, keyframes } from 'styled-components'
+import styled, { injectGlobal, keyframes } from 'styled-components'
 import ReactHintFactory from 'react-hint'
 import React from 'react'
 import 'react-hint/css/index.css'

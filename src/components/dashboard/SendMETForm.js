@@ -1,17 +1,18 @@
-import { debounce } from 'lodash'
-import { connect } from 'react-redux'
+import withSendMETFormState from 'metronome-wallet-ui-logic/src/hocs/withSendMETFormState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
-import Web3 from 'web3'
 
-import { DisplayValue, FieldBtn, TextInput, Flex, Btn, Sp } from '../common'
-import { sendToMainProcess, isWeiable } from '../../utils'
-import ConfirmationWizard from '../common/ConfirmationWizard'
-import * as validators from '../../validator'
-import * as selectors from '../../selectors'
-import GasEditor from '../common/GasEditor'
-import config from '../../config'
+import {
+  ConfirmationWizard,
+  DisplayValue,
+  GasEditor,
+  TextInput,
+  FieldBtn,
+  Flex,
+  Btn,
+  Sp
+} from '../common'
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -32,168 +33,102 @@ const Footer = styled.div`
 
 class SendMETForm extends React.Component {
   static propTypes = {
-    availableMET: PropTypes.string.isRequired,
-    from: PropTypes.string.isRequired,
-    tabs: PropTypes.node
+    gasEstimateError: PropTypes.bool,
+    metPlaceholder: PropTypes.string,
+    onInputChange: PropTypes.func.isRequired,
+    useCustomGas: PropTypes.bool.isRequired,
+    onMaxClick: PropTypes.func.isRequired,
+    metAmount: PropTypes.string,
+    toAddress: PropTypes.string,
+    onSubmit: PropTypes.func.isRequired,
+    validate: PropTypes.func.isRequired,
+    gasPrice: PropTypes.string,
+    gasLimit: PropTypes.string,
+    errors: PropTypes.shape({
+      metAmount: PropTypes.string,
+      toAddress: PropTypes.string
+    }).isRequired,
+    tabs: PropTypes.node.isRequired
   }
 
-  state = {
-    ...GasEditor.initialState('MET'),
-    toAddress: null,
-    metAmount: null,
-    errors: {}
-  }
+  renderConfirmation = () => (
+    <ConfirmationContainer data-testid="confirmation">
+      You will send{' '}
+      <DisplayValue inline value={this.props.metAmount} toWei post=" MET" /> to
+      the address {this.props.toAddress}.
+    </ConfirmationContainer>
+  )
 
-  onMaxClick = () => {
-    const metAmount = Web3.utils.fromWei(this.props.availableMET)
-    this.setState({ metAmount })
-  }
-
-  onInputChange = e => {
-    const { id, value } = e.target
-
-    this.setState(state => ({
-      ...state,
-      [id]: value,
-      errors: { ...state.errors, [id]: null }
-    }))
-
-    // Estimate gas limit again if parameters changed
-    if (['toAddress', 'metAmount'].includes(id)) this.getGasEstimate()
-  }
-
-  getGasEstimate = debounce(() => {
-    const { metAmount, toAddress } = this.state
-
-    if (!isWeiable(metAmount) || !Web3.utils.isAddress(toAddress)) return
-
-    sendToMainProcess('tokens-get-gas-limit', {
-      value: Web3.utils.toWei(metAmount.replace(',', '.')),
-      token: config.MET_TOKEN_ADDR,
-      from: this.props.from,
-      to: toAddress
-    })
-      .then(({ gasLimit }) => this.setState({ gasLimit: gasLimit.toString() }))
-      .catch(err => console.warn('Gas estimation failed', err)) // eslint-disable-line no-console
-  }, 500)
-
-  validate = () => {
-    const { toAddress, metAmount, gasLimit, gasPrice } = this.state
-    const max = Web3.utils.fromWei(this.props.availableMET)
-    const errors = {
-      ...validators.validateToAddress(toAddress),
-      ...validators.validateMetAmount(metAmount, max),
-      ...validators.validateGasPrice(gasPrice, config.MAX_GAS_PRICE),
-      ...validators.validateGasLimit(gasLimit)
-    }
-    const hasErrors = Object.keys(errors).length > 0
-    if (hasErrors) this.setState({ errors })
-    return !hasErrors
-  }
-
-  renderConfirmation = () => {
-    const { metAmount, toAddress } = this.state
-    return (
-      <ConfirmationContainer data-testid="confirmation">
-        You will send{' '}
-        <DisplayValue
-          inline
-          value={Web3.utils.toWei(metAmount.replace(',', '.'))}
-          post=" MET"
-        />{' '}
-        to the address {toAddress}.
-      </ConfirmationContainer>
-    )
-  }
-
-  onWizardSubmit = password => {
-    return sendToMainProcess('send-token', {
-      gasPrice: Web3.utils.toWei(this.state.gasPrice.replace(',', '.'), 'gwei'),
-      gasLimit: this.state.gasLimit,
-      password,
-      token: config.MET_TOKEN_ADDR,
-      value: Web3.utils.toWei(this.state.metAmount.replace(',', '.')),
-      from: this.props.from,
-      to: this.state.toAddress
-    })
-  }
-
-  renderForm = goToReview => {
-    return (
-      <Flex.Column grow="1">
-        {this.props.tabs}
-        <Sp py={4} px={3}>
-          <form
-            data-testid="sendMet-form"
-            noValidate
-            onSubmit={goToReview}
-            id="sendForm"
-          >
+  renderForm = goToReview => (
+    <Flex.Column grow="1">
+      {this.props.tabs}
+      <Sp py={4} px={3}>
+        <form
+          data-testid="sendMet-form"
+          noValidate
+          onSubmit={goToReview}
+          id="sendForm"
+        >
+          <TextInput
+            placeholder="e.g. 0x2345678998765434567"
+            data-testid="toAddress-field"
+            autoFocus
+            onChange={this.props.onInputChange}
+            error={this.props.errors.toAddress}
+            label="Send to Address"
+            value={this.props.toAddress}
+            id="toAddress"
+          />
+          <Sp mt={3}>
+            <FieldBtn
+              data-testid="max-btn"
+              tabIndex="-1"
+              onClick={this.props.onMaxClick}
+              float
+            >
+              MAX
+            </FieldBtn>
             <TextInput
-              placeholder="e.g. 0x2345678998765434567"
-              data-testid="toAddress-field"
-              autoFocus
-              onChange={this.onInputChange}
-              error={this.state.errors.toAddress}
-              label="Send to Address"
-              value={this.state.toAddress}
-              id="toAddress"
+              placeholder={this.props.metPlaceholder}
+              data-testid="metAmount-field"
+              onChange={this.props.onInputChange}
+              error={this.props.errors.metAmount}
+              label="Amount (MET)"
+              value={this.props.metAmount}
+              id="metAmount"
             />
-            <Sp mt={3}>
-              <FieldBtn
-                data-testid="max-btn"
-                tabIndex="-1"
-                onClick={this.onMaxClick}
-                float
-              >
-                MAX
-              </FieldBtn>
-              <TextInput
-                placeholder="0.00"
-                data-testid="metAmount-field"
-                onChange={this.onInputChange}
-                error={this.state.errors.metAmount}
-                label="Amount (MET)"
-                value={this.state.metAmount}
-                id="metAmount"
-              />
-            </Sp>
+          </Sp>
 
-            <Sp mt={3}>
-              <GasEditor
-                onInputChange={this.onInputChange}
-                useCustomGas={this.state.useCustomGas}
-                gasPrice={this.state.gasPrice}
-                gasLimit={this.state.gasLimit}
-                errors={this.state.errors}
-              />
-            </Sp>
-          </form>
-        </Sp>
-        <Footer>
-          <Btn block submit form="sendForm">
-            Review Send
-          </Btn>
-        </Footer>
-      </Flex.Column>
-    )
-  }
+          <Sp mt={3}>
+            <GasEditor
+              gasEstimateError={this.props.gasEstimateError}
+              onInputChange={this.props.onInputChange}
+              useCustomGas={this.props.useCustomGas}
+              gasLimit={this.props.gasLimit}
+              gasPrice={this.props.gasPrice}
+              errors={this.props.errors}
+            />
+          </Sp>
+        </form>
+      </Sp>
+      <Footer>
+        <Btn block submit form="sendForm">
+          Review Send
+        </Btn>
+      </Footer>
+    </Flex.Column>
+  )
 
   render() {
     return (
       <ConfirmationWizard
         renderConfirmation={this.renderConfirmation}
-        onWizardSubmit={this.onWizardSubmit}
+        onWizardSubmit={this.props.onSubmit}
         renderForm={this.renderForm}
-        validate={this.validate}
+        validate={this.props.validate}
       />
     )
   }
 }
 
-const mapStateToProps = state => ({
-  availableMET: selectors.getMtnBalanceWei(state),
-  from: selectors.getActiveWalletAddresses(state)[0]
-})
-
-export default connect(mapStateToProps)(SendMETForm)
+export default withSendMETFormState(SendMETForm)

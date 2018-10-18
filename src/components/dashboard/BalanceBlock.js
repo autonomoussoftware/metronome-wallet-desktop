@@ -1,10 +1,9 @@
-import { connect } from 'react-redux'
+import withBalanceBlockState from 'metronome-wallet-ui-logic/src/hocs/withBalanceBlockState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
 import { DisplayValue } from '../common'
-import * as selectors from '../../selectors'
 
 const relSize = ratio => `calc(100vw / ${ratio})`
 
@@ -82,18 +81,12 @@ const USDValue = styled.div`
 class BalanceBlock extends React.Component {
   static propTypes = {
     mtnBalanceWei: PropTypes.string.isRequired,
-    mtnBalanceUSD: PropTypes.string.isRequired,
     ethBalanceWei: PropTypes.string.isRequired,
     ethBalanceUSD: PropTypes.string.isRequired
   }
 
   render() {
-    const {
-      mtnBalanceWei,
-      mtnBalanceUSD,
-      ethBalanceWei,
-      ethBalanceUSD
-    } = this.props
+    const { mtnBalanceWei, ethBalanceWei, ethBalanceUSD } = this.props
 
     return (
       <React.Fragment>
@@ -103,7 +96,7 @@ class BalanceBlock extends React.Component {
             <DisplayValue value={mtnBalanceWei} />
           </Value>
           <USDValue data-testid="met-balance-usd" hide>
-            ${mtnBalanceUSD} (USD)
+            N/A
           </USDValue>
         </Balance>
         <Balance>
@@ -111,18 +104,13 @@ class BalanceBlock extends React.Component {
           <Value data-testid="eth-balance">
             <DisplayValue value={ethBalanceWei} />
           </Value>
-          <USDValue data-testid="eth-balance-usd">{ethBalanceUSD}</USDValue>
+          <USDValue data-testid="eth-balance-usd">
+            ${ethBalanceUSD} (USD)
+          </USDValue>
         </Balance>
       </React.Fragment>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  mtnBalanceWei: selectors.getMtnBalanceWei(state),
-  mtnBalanceUSD: selectors.getMtnBalanceUSD(state),
-  ethBalanceWei: selectors.getEthBalanceWei(state),
-  ethBalanceUSD: selectors.getEthBalanceUSD(state)
-})
-
-export default connect(mapStateToProps)(BalanceBlock)
+export default withBalanceBlockState(BalanceBlock)
