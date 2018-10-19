@@ -22,11 +22,10 @@ export default class ItemFilter extends React.Component {
     }
   }
 
-  filterItems = (filterValue, items) => {
-    return filterValue
+  filterItems = (filterValue, items) =>
+    filterValue
       ? items.filter(item => this.props.extractValue(item) === filterValue)
       : items
-  }
 
   onFilterChange = filterValue => {
     if (typeof filterValue !== 'undefined') {
@@ -35,10 +34,11 @@ export default class ItemFilter extends React.Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.items.length === this.props.items.length) return
     const filteredItems = this.filterItems(
       this.state.activeFilter,
-      newProps.items
+      this.props.items
     )
     this.setState({ filteredItems })
   }

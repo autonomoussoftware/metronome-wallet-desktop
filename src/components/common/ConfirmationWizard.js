@@ -1,13 +1,14 @@
+import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
 import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './index'
-import { validatePassword } from '../../validator'
-import * as utils from '../../utils'
 import CheckIcon from '../icons/CheckIcon'
 import CloseIcon from '../icons/CloseIcon'
+import config from '../../config'
 
 const ConfirmationTitle = styled.h1`
   font-size: 1.6rem;
@@ -71,7 +72,7 @@ const Focusable = styled.div.attrs({
   }
 `
 
-export default class ConfirmationWizard extends React.Component {
+class ConfirmationWizard extends React.Component {
   static propTypes = {
     renderConfirmation: PropTypes.func.isRequired,
     confirmationTitle: PropTypes.string,
@@ -86,7 +87,10 @@ export default class ConfirmationWizard extends React.Component {
     editLabel: PropTypes.string,
     noCancel: PropTypes.bool,
     validate: PropTypes.func,
-    styles: PropTypes.object
+    styles: PropTypes.object,
+    client: PropTypes.shape({
+      validatePassword: PropTypes.func.isRequired
+    }).isRequired
   }
 
   static defaultProps = {
@@ -136,7 +140,7 @@ export default class ConfirmationWizard extends React.Component {
   }
 
   validateConfirmation = () => {
-    const errors = validatePassword(this.state.password)
+    const errors = this.props.client.validatePassword(this.state.password)
     const hasErrors = Object.keys(errors).length > 0
     if (hasErrors) this.setState({ errors })
     return !hasErrors
@@ -213,7 +217,7 @@ export default class ConfirmationWizard extends React.Component {
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
-            {error && <Message>{utils.messageParser(error)}</Message>}
+            {error && <Message>{utils.messageParser(config, error)}</Message>}
             <TryAgainBtn
               data-testid="try-again-btn"
               onClick={this.onCancelClick}
@@ -244,3 +248,5 @@ export default class ConfirmationWizard extends React.Component {
     )
   }
 }
+
+export default withClient(ConfirmationWizard)

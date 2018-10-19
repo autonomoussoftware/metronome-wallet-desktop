@@ -1,9 +1,8 @@
-import { connect } from 'react-redux'
+import withScanIndicatorState from 'metronome-wallet-ui-logic/src/hocs/withScanIndicatorState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import * as selectors from '../../../selectors'
 import Spinner from '../../common/Spinner'
 
 const Container = styled.div`
@@ -40,19 +39,17 @@ class ScanIndicator extends React.Component {
   }
 
   render() {
-    const { isScanning, isOnline } = this.props
-
     return (
       <Container>
-        {isOnline && isScanning ? (
+        {this.props.isOnline && this.props.isScanning ? (
           <Spinner />
         ) : (
-          <GreenLight isOnline={isOnline} />
+          <GreenLight isOnline={this.props.isOnline} />
         )}
         <Label>
-          {!isOnline
+          {!this.props.isOnline
             ? 'Offline'
-            : isScanning
+            : this.props.isScanning
               ? 'Fetching your transactions…'
               : 'Up-to-date'}
         </Label>
@@ -61,9 +58,4 @@ class ScanIndicator extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  isScanning: selectors.getIsScanningTx(state),
-  isOnline: selectors.getIsOnline(state)
-})
-
-export default connect(mapStateToProps)(ScanIndicator)
+export default withScanIndicatorState(ScanIndicator)

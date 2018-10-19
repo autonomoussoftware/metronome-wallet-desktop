@@ -1,90 +1,22 @@
 import { List as RVList, AutoSizer, WindowScroller } from 'react-virtualized'
-import { connect } from 'react-redux'
+import withTxListState from 'metronome-wallet-ui-logic/src/hocs/withTxListState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
 import ScanningTxPlaceholder from './ScanningTxPlaceholder'
-import { ItemFilter, Flex } from '../../common'
 import NoTxPlaceholder from './NoTxPlaceholder'
-import * as selectors from '../../../selectors'
-import ScanIndicator from './ScanIndicator'
-import ReceiptModal from './ReceiptModal'
+import { ItemFilter } from '../../common'
+import ReceiptModal from '../ReceiptModal'
 import LogoIcon from '../../icons/LogoIcon'
-import TxRow from './TxRow'
+import Header from './Header'
+import TxRow from './row/Row'
 
 const Container = styled.div`
   margin-top: 2.4rem;
 
   @media (min-width: 960px) {
     margin-top: 4.8rem;
-  }
-`
-
-const Header = styled.div`
-  position: sticky;
-  background: ${p => p.theme.colors.primary};
-  top: 4.1rem;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  margin: 0 -4.8rem;
-  padding: 0 4.8rem;
-
-  @media (min-width: 1140px) {
-    top: 6.8rem;
-    display: flex;
-    align-items: baseline;
-  }
-`
-
-const Title = styled.div`
-  line-height: 2.5rem;
-  font-size: 2rem;
-  font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  margin-bottom: 2px;
-  margin-right: 2.4rem;
-
-  @media (min-width: 1140px) {
-    margin-right: 0.8rem;
-  }
-
-  @media (min-width: 1200px) {
-    margin-right: 1.6rem;
-  }
-`
-
-const TabsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
-
-const Tab = styled.button`
-  font: inherit;
-  line-height: 1.8rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  opacity: ${p => (p.isActive ? '1' : '0.5')};
-  text-transform: uppercase;
-  padding: 1.6rem 0.8rem;
-  background: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-bottom: 2px solid ${p => (p.isActive ? 'white' : 'transparent')};
-  margin-bottom: 1px;
-  transition: 0.3s;
-  &:focus {
-    outline: none;
-  }
-
-  @media (min-width: 760px) {
-    font-size: 1.4rem;
-    padding: 1.6rem;
   }
 `
 
@@ -108,12 +40,12 @@ const FooterLogo = styled.div`
 
 class TxList extends React.Component {
   static propTypes = {
+    hasTransactions: PropTypes.bool.isRequired,
     isScanningTx: PropTypes.bool.isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
-        transaction: PropTypes.shape({
-          hash: PropTypes.string.isRequired
-        }).isRequired
+        txType: PropTypes.string.isRequired,
+        hash: PropTypes.string.isRequired
       })
     ).isRequired
   }
@@ -147,70 +79,33 @@ class TxList extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   rowRenderer = items => ({ key, style, index }) => (
-    <TxRowContainer
-      style={style}
-      key={`${key}-${items[index].transaction.hash}`}
-    >
+    <TxRowContainer style={style} key={`${key}-${items[index].hash}`}>
       <TxRow
         data-testid="tx-row"
-        data-hash={items[index].transaction.hash}
+        data-hash={items[index].hash}
         onClick={this.onTxClicked}
-        {...items[index]}
+        tx={items[index]}
       />
     </TxRowContainer>
   )
 
   render() {
-    const { isScanningTx, items } = this.props
     if (!this.state.isReady) return null
     return (
       <Container data-testid="tx-list">
-        <ItemFilter extractValue={tx => tx.parsed.txType} items={items}>
+        <ItemFilter extractValue={tx => tx.txType} items={this.props.items}>
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
-              <Header>
-                <Flex.Row grow="1">
-                  <Title>Transactions</Title>
-                  {(items.length > 0 || !isScanningTx) && <ScanIndicator />}
-                </Flex.Row>
-
-                <TabsContainer>
-                  <Tab
-                    isActive={activeFilter === ''}
-                    onClick={() => onFilterChange('')}
-                  >
-                    All
-                  </Tab>
-                  <Tab
-                    isActive={activeFilter === 'sent'}
-                    onClick={() => onFilterChange('sent')}
-                  >
-                    Sent
-                  </Tab>
-                  <Tab
-                    isActive={activeFilter === 'received'}
-                    onClick={() => onFilterChange('received')}
-                  >
-                    Received
-                  </Tab>
-                  <Tab
-                    isActive={activeFilter === 'auction'}
-                    onClick={() => onFilterChange('auction')}
-                  >
-                    Auction
-                  </Tab>
-                  <Tab
-                    isActive={activeFilter === 'converted'}
-                    onClick={() => onFilterChange('converted')}
-                  >
-                    Converted
-                  </Tab>
-                </TabsContainer>
-              </Header>
+              <Header
+                hasTransactions={this.props.hasTransactions}
+                onFilterChange={onFilterChange}
+                isScanningTx={this.props.isScanningTx}
+                activeFilter={activeFilter}
+              />
 
               <ListContainer>
-                {items.length === 0 &&
-                  (isScanningTx ? (
+                {!this.props.hasTransactions &&
+                  (this.props.isScanningTx ? (
                     <ScanningTxPlaceholder />
                   ) : (
                     <NoTxPlaceholder />
@@ -252,16 +147,11 @@ class TxList extends React.Component {
         <ReceiptModal
           onRequestClose={this.onCloseModal}
           isOpen={this.state.activeModal === 'receipt'}
-          tx={items.find(tx => tx.transaction.hash === this.state.selectedTx)}
+          hash={this.state.selectedTx}
         />
       </Container>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  isScanningTx: selectors.getIsScanningTx(state),
-  items: selectors.getActiveWalletTransactions(state)
-})
-
-export default connect(mapStateToProps)(TxList)
+export default withTxListState(TxList)

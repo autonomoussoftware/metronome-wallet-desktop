@@ -78,6 +78,8 @@ const ReceiveBtn = Btn.extend`
 class Dashboard extends React.Component {
   static propTypes = {
     sendDisabledReason: PropTypes.string,
+    hasTransactions: PropTypes.bool.isRequired,
+    isScanningTx: PropTypes.bool.isRequired,
     sendDisabled: PropTypes.bool.isRequired,
     address: PropTypes.string.isRequired
   }
@@ -124,7 +126,10 @@ class Dashboard extends React.Component {
           </Right>
         </Hero>
 
-        <TxList />
+        <TxList
+          hasTransactions={this.props.hasTransactions}
+          isScanningTx={this.props.isScanningTx}
+        />
 
         <ReceiveDrawer
           onRequestClose={this.onCloseModal}
