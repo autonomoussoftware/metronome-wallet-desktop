@@ -1,22 +1,21 @@
 import { Simulate, flushPromises } from 'react-testing-library'
-import ConfirmationWizard from '../ConfirmationWizard'
+import ConfirmationWizard from '../common/ConfirmationWizard'
 import * as testUtils from '../../testUtils'
 import React from 'react'
 
 const INVALID_PASSWORD = 'wrong!'
 const VALID_PASSWORD = 'foo'
 
-const onWizardSubmit = jest.fn(pass => {
-  return pass === VALID_PASSWORD
-    ? Promise.resolve()
-    : Promise.reject(new Error())
-})
+const onWizardSubmit = jest.fn(
+  pass =>
+    pass === VALID_PASSWORD ? Promise.resolve() : Promise.reject(new Error())
+)
 
 const failValidation = jest.fn(() => false)
 const passValidation = jest.fn(() => true)
 
 const renderForm = goToReview => (
-  <button onClick={goToReview} data-testid="review-btn" />
+  <button onClick={goToReview} type="button" data-testid="review-btn" />
 )
 
 const renderConfirmation = () => <div data-testid="confirmation" />

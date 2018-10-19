@@ -1,5 +1,5 @@
 import * as testUtils from '../../testUtils'
-import ConvertDrawer from '../ConvertDrawer'
+import ConvertDrawer from '../converter/ConvertDrawer'
 import { Simulate } from 'react-testing-library'
 import React from 'react'
 

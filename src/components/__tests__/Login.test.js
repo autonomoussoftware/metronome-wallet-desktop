@@ -1,20 +1,21 @@
 import { Simulate, flushPromises } from 'react-testing-library'
-import Passwordrequest from '../PasswordRequest'
 import * as testUtils from '../../testUtils'
+import Login from '../Login'
 import React from 'react'
 
 const INVALID_PASSWORD = 'wrong!'
 const VALID_PASSWORD = 'foo'
 
-const onLoginSubmit = jest.fn(({ password }) => {
-  return password === VALID_PASSWORD
-    ? Promise.resolve()
-    : Promise.reject(new Error())
-})
+const onLoginSubmit = jest.fn(
+  ({ password }) =>
+    password === VALID_PASSWORD
+      ? Promise.resolve()
+      : Promise.reject(new Error())
+)
 
-const element = <Passwordrequest onLoginSubmit={onLoginSubmit} />
+const element = <Login onLoginSubmit={onLoginSubmit} />
 
-describe('<Passwordrequest/>', () => {
+describe('<Login />', () => {
   describe('When submitting the password form', () => {
     it('displays an error if password is not provided', () => {
       const { getByTestId } = testUtils.reduxRender(element)

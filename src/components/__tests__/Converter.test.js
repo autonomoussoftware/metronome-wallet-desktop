@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Converter from '../Converter'
+import Converter from '../converter/Converter'
 import React from 'react'
 
 describe('<Converter/>', () => {

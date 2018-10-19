@@ -1,6 +1,6 @@
 import { Simulate } from 'react-testing-library'
 import * as testUtils from '../../testUtils'
-import AmountFields from '../AmountFields'
+import AmountFields from '../common/AmountFields'
 import React from 'react'
 
 const element = (
@@ -14,9 +14,9 @@ describe('<AmountFields/>', () => {
   })
 })
 
-export function runEditTests(element, initialState, rate) {
+export function runEditTests(el, initialState, rate) {
   it('updates the USD field when ETH field changes', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     const ethField = getByTestId('ethAmount-field')
     const usdField = getByTestId('usdAmount-field')
     expect(ethField.value).toBe('')
@@ -78,14 +78,15 @@ export function runEditTests(element, initialState, rate) {
   })
 }
 
+// eslint-disable-next-line max-params
 export function runValidateTests(
-  element,
+  el,
   initialState,
   formTestId,
   fieldTestId = 'ethAmount-field'
 ) {
   it('displays an error if AMOUNT is not provided', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '' },
       errors: { [fieldTestId]: 'Amount is required' }
@@ -93,7 +94,7 @@ export function runValidateTests(
   })
 
   it('displays an error if AMOUNT is negative', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '-1' },
       errors: { [fieldTestId]: 'Amount must be greater than 0' }
@@ -101,7 +102,7 @@ export function runValidateTests(
   })
 
   it('displays an error if AMOUNT is an invalid value', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: 'foo' },
       errors: { [fieldTestId]: 'Invalid amount' }
@@ -109,7 +110,7 @@ export function runValidateTests(
   })
 
   it('displays an error if AMOUNT is more than what we have', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '10000' },
       errors: { [fieldTestId]: 'Insufficient funds' }
@@ -117,7 +118,7 @@ export function runValidateTests(
   })
 
   it('displays an error if AMOUNT is not weiable', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '0.0000000000000000000000000000001' },
       errors: { [fieldTestId]: 'Invalid amount' }

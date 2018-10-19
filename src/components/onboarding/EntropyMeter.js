@@ -38,11 +38,8 @@ const Bar = styled.div`
     width: ${({ ratio }) => `${Math.min(ratio * 100, 100)}%`};
     height: 2px;
     transition: 0.5s;
-    box-shadow: ${({ ratio }) => {
-      return ratio >= 1
-        ? `0 0 10px hsla(${getHue(ratio)}, 100%, 50%, 1)`
-        : 'none'
-    }};
+    box-shadow: ${({ ratio }) =>
+      ratio >= 1 ? `0 0 10px hsla(${getHue(ratio)}, 100%, 50%, 1)` : 'none'};
   }
 `
 

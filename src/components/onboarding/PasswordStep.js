@@ -1,10 +1,10 @@
+import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
 import { TextInput, AltLayout, Btn, Sp } from '../common'
 import EntropyMeter from './EntropyMeter'
-import * as utils from '../../utils'
 import Message from './Message'
 
 const PasswordMessage = styled(Message)`

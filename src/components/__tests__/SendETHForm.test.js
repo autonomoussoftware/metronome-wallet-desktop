@@ -2,7 +2,7 @@ import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import SendETHForm from '../SendETHForm'
+import SendETHForm from '../dashboard/SendETHForm'
 import React from 'react'
 
 const element = <SendETHForm />

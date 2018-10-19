@@ -28,7 +28,7 @@ export const subscribeToMainProcessMessages = store => {
     }
   })
 
-  /**
+  /*
    * For more complex subscriptions you can do the following
    *
    * ipcRenderer.on(MSG_CHANNEL, (event, arg) => {

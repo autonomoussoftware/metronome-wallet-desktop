@@ -1,24 +1,19 @@
+import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import { TextInput, AltLayout, Btn, Sp } from '../common'
 import SecondaryBtn from './SecondaryBtn'
-import * as utils from '../../utils'
 import Message from './Message'
 
 export default class VerifyMnemonicStep extends React.Component {
   static propTypes = {
-    onUseUserMnemonicToggled: PropTypes.func.isRequired,
     onMnemonicCopiedToggled: PropTypes.func.isRequired,
-    requiredPasswordEntropy: PropTypes.number.isRequired,
     onMnemonicAccepted: PropTypes.func.isRequired,
     onInputChange: PropTypes.func.isRequired,
     mnemonicAgain: PropTypes.string,
-    userMnemonic: PropTypes.string,
     shouldSubmit: PropTypes.func.isRequired,
     getTooltip: PropTypes.func.isRequired,
-    mnemonic: PropTypes.string,
-    password: PropTypes.string,
     errors: utils.errorPropTypes('mnemonicAgain')
   }
 

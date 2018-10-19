@@ -56,18 +56,16 @@ const Container = styled.div`
   }
 `
 
-const onRenderContent = (target, content) => {
-  return (
-    <Container
-      data-testid="tooltip"
-      negative={target.dataset.rhNegative}
-      maxWidth={target.dataset.rhWidth}
-      darker={target.dataset.rhDarker}
-    >
-      {content}
-    </Container>
-  )
-}
+const onRenderContent = (target, content) => (
+  <Container
+    data-testid="tooltip"
+    negative={target.dataset.rhNegative}
+    maxWidth={target.dataset.rhWidth}
+    darker={target.dataset.rhDarker}
+  >
+    {content}
+  </Container>
+)
 
 const Tooltips = () => (
   <ReactHint events delay={100} onRenderContent={onRenderContent} />

@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Dashboard from '../Dashboard'
+import Dashboard from '../dashboard/Dashboard'
 import config from '../../config'
 import React from 'react'
 import 'react-testing-library/extend-expect'

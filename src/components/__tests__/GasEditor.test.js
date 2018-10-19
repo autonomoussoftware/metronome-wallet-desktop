@@ -1,6 +1,6 @@
 import { Simulate } from 'react-testing-library'
 import * as testUtils from '../../testUtils'
-import GasEditor from '../GasEditor'
+import GasEditor from '../common/GasEditor'
 import React from 'react'
 
 const element = (
@@ -20,9 +20,9 @@ describe('<GasEditor/>', () => {
   })
 })
 
-export function runValidateTests(element, initialState, formTestId) {
+export function runValidateTests(el, initialState, formTestId) {
   it('displays an error if GAS LIMIT is not provided', () => {
-    const { getByTestId } = testUtils.reduxRender(element, initialState)
+    const { getByTestId } = testUtils.reduxRender(el, initialState)
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-limit-field': '' },

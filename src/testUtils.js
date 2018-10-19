@@ -8,7 +8,7 @@ import React from 'react'
 
 import config from './config'
 
-/**
+/*
  * The same render method of 'react-testing-library' but wrapped with
  * Redux store Provider and 'styled-components' ThemeProvider.
  *
@@ -31,7 +31,7 @@ export function reduxRender(element, initialState) {
   return { ...renderResult, store }
 }
 
-/**
+/*
  * The same as reduxRender() above but also wrapped with 'react-router'
  * in order to test navigation flows.
  *
@@ -44,7 +44,7 @@ export function routerRender(element, initialState, initialRoute = '/') {
   )
 }
 
-/**
+/*
  * Declaratively test complex form validations
  *
  * getter   : function that receives a data-testid and returns an HTML element
@@ -71,7 +71,7 @@ export function testValidation(getter, formId, { formData, errors }) {
   })
 }
 
-/**
+/*
  * Add dataset property (data-foo attribute values) to nodes
  *
  * This hack is required because jsdom has no support for dataset yet
@@ -105,7 +105,7 @@ export const oneHourAgo = () => Date.now() / 1000 - 60 * 60
 export const inOneHour = () => Date.now() / 1000 + 60 * 60
 export const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7
 
-/**
+/*
  * Returns a common initial state for Redux store that is useful for most tests
  * Accepts an optional object with overrides that will be deeply merged with
  * the base state object.

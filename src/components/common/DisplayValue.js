@@ -5,7 +5,7 @@ import Web3 from 'web3'
 
 class DisplayValue extends React.Component {
   static propTypes = {
-    shouldFormat: PropTypes.bool,
+    // shouldFormat: PropTypes.bool,
     maxPrecision: PropTypes.number,
     minDecimals: PropTypes.number,
     maxDecimals: PropTypes.number,

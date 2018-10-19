@@ -19,7 +19,6 @@ export default class CopyMnemonicStep extends React.Component {
   static propTypes = {
     onUseUserMnemonicToggled: PropTypes.func.isRequired,
     onMnemonicCopiedToggled: PropTypes.func.isRequired,
-    userMnemonic: PropTypes.string,
     mnemonic: PropTypes.string
   }
 

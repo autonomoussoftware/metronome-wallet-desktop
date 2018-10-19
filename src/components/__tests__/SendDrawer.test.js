@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import SendDrawer from '../SendDrawer'
+import SendDrawer from '../dashboard/SendDrawer'
 import config from '../../config'
 import React from 'react'
 import 'react-testing-library/extend-expect'

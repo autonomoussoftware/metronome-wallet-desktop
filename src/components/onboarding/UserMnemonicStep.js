@@ -1,9 +1,9 @@
+import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import { TextInput, AltLayout, Btn, Sp } from '../common'
 import SecondaryBtn from './SecondaryBtn'
-import * as utils from '../../utils'
 import Message from './Message'
 
 export default class UserMnemonic extends React.Component {

@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Auction from '../Auction'
+import Auction from '../auction/Auction'
 import React from 'react'
 
 describe('<Auction/>', () => {

@@ -1,6 +1,6 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Tools from '../Tools'
+import Tools from '../tools/Tools'
 import React from 'react'
 import 'react-testing-library/extend-expect'
 

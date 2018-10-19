@@ -1,6 +1,6 @@
 import { reduxRender, testValidation } from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Onboarding from '../Onboarding'
+import Onboarding from '../onboarding/Onboarding'
 import React from 'react'
 
 const mockCallback = jest.fn(() => Promise.resolve())

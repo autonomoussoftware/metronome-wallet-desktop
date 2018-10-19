@@ -1,16 +1,16 @@
 import withLoginState from 'metronome-wallet-ui-logic/src/hocs/withLoginState'
+import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import { TextInput, AltLayout, Btn, Sp } from './common'
-import * as utils from '../utils'
 
 class Login extends React.Component {
   static propTypes = {
     onInputChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     password: PropTypes.string,
-    errors: utils.errorPropTypes(['password']),
+    errors: utils.errorPropTypes('password'),
     status: utils.statusPropTypes,
     error: PropTypes.string
   }

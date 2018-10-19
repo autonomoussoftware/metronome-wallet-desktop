@@ -1,5 +1,5 @@
 import * as testUtils from '../../testUtils'
-import ReceiveDrawer from '../ReceiveDrawer'
+import ReceiveDrawer from '../dashboard/ReceiveDrawer'
 import { Simulate } from 'react-testing-library'
 import React from 'react'
 import 'react-testing-library/extend-expect'

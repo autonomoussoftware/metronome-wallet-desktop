@@ -1,4 +1,4 @@
-import ConvertETHtoMETForm from '../ConvertETHtoMETForm'
+import ConvertETHtoMETForm from '../converter/ConvertETHtoMETForm'
 import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
