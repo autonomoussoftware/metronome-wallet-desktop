@@ -25,8 +25,14 @@
     }
   },
   "rules": {
+    "react/jsx-no-duplicate-props": ["error"],
+    "react/no-unused-prop-types": ["warn"],
+    "react/boolean-prop-naming": ["warn"],
+    "react/button-has-type": ["warn"],
+    "react/no-typos": ["error"],
+    "arrow-body-style": ["warn", "as-needed"],
+    "complexity": ["warn", { "max": 10 }],
     "no-console": "warn",
-    "arrow-body-style": ["error", "as-needed"],
-    "complexity": ["error", { "max": 10 }]
+    "no-shadow": ["error", { "allow": ["status", "Text"] }]
   }
 }
