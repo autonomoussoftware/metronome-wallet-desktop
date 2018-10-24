@@ -52,11 +52,11 @@ Modify the `Settings` file replacing the following properties:
   "app": {
     "chain": "ropsten",
     "node": {
-      "jsonRpcApiUrl": "https://eth.met.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.met.bloqrock.net:8546"
+      "jsonRpcApiUrl": "https://eth.bloqrock.net:8545",
+      "websocketApiUrl": "wss://eth.bloqrock.net:8546"
     },
-    "indexerApiUrl": "https://indexer.met.bloqrock.net",
-    "tracerApiUrl": "https://tracer.met.bloqrock.net"
+    "indexerApiUrl": "https://indexer.bloqrock.net",
+    "tracerApiUrl": "https://tracer.bloqrock.net"
   },
   "tokens": {
     "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
