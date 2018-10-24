@@ -61,14 +61,14 @@ class LoadingScene extends React.Component {
     if (this.props.hasBlockHeight && !hasBlockHeight) {
       return this.setState({ hasBlockHeight: true }, this.checkFinished)
     }
+    if (this.props.hasEthRate && !hasEthRate) {
+      return this.setState({ hasEthRate: true }, this.checkFinished)
+    }
     if (this.props.hasEthBalance && !hasEthBalance) {
       return this.setState({ hasEthBalance: true }, this.checkFinished)
     }
     if (this.props.hasMetBalance && !hasMetBalance) {
       return this.setState({ hasMetBalance: true }, this.checkFinished)
-    }
-    if (this.props.hasEthRate && !hasEthRate) {
-      return this.setState({ hasEthRate: true }, this.checkFinished)
     }
   }
 
