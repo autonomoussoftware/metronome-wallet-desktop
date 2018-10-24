@@ -236,9 +236,10 @@ export function sanitizeMnemonic(str) {
     .toLowerCase()
 }
 
-export function getConversionRate(amount, estimate) {
-  return new BigNumber(estimate)
-    .dividedBy(new BigNumber(amount))
+export function getConversionRate(metAmount, ethAmount) {
+  const compareAgainst = Web3.utils.fromWei(metAmount)
+  return new BigNumber(ethAmount)
+    .dividedBy(new BigNumber(compareAgainst))
     .integerValue()
     .toString(10)
 }

@@ -17,6 +17,7 @@ import Web3 from 'web3'
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
+  line-height: 1.8rem;
   font-weight: 600;
   letter-spacing: 0.5px;
 
@@ -121,7 +122,7 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   renderConfirmation = () => {
-    const { ethAmount, usdAmount, estimate } = this.state
+    const { ethAmount, usdAmount, estimate, rate } = this.state
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
@@ -131,7 +132,9 @@ class ConvertETHtoMETForm extends React.Component {
           post=" ETH"
         />{' '}
         (${usdAmount}) and get approximately{' '}
-        <DisplayValue value={estimate} post=" MET" inline />.
+        <DisplayValue value={estimate} post=" MET" inline />
+        {', which means a rate of '}
+        <DisplayValue inline value={rate} post=" ETH/MET" />.
       </ConfirmationContainer>
     )
   }
