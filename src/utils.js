@@ -109,8 +109,8 @@ export function toUSD(amount, rate, errorValue, smallValue) {
       : weiUSDvalue.lt(Web3.utils.toBN(Web3.utils.toWei('0.01')))
         ? smallValue
         : new BigNumber(Web3.utils.fromWei(weiUSDvalue.toString()))
-          .dp(2)
-          .toString(10)
+            .dp(2)
+            .toString(10)
     : errorValue
 
   return expectedUSDamount
@@ -226,10 +226,20 @@ export function messageParser(str) {
 /**
  * Removes extra spaces and converts to lowercase
  * Useful for sanitizing user input before recovering a wallet.
+ *
+ * @param {string} str The string to sanitize
  */
 export function sanitizeMnemonic(str) {
   return str
     .replace(/\s+/gi, ' ')
     .trim()
     .toLowerCase()
+}
+
+export function getConversionRate(metAmount, ethAmount) {
+  const compareAgainst = Web3.utils.fromWei(metAmount)
+  return new BigNumber(ethAmount)
+    .dividedBy(new BigNumber(compareAgainst))
+    .integerValue()
+    .toString(10)
 }

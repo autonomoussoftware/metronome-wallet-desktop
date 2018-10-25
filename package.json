@@ -75,7 +75,7 @@
     "react-redux": "5.0.7",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "1.1.5",
     "react-toastify": "3.4.3",
     "react-transition-group": "2.2.1",
     "react-virtualized": "9.20.1",
