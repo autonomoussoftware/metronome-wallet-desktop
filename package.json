@@ -95,7 +95,7 @@
   "devDependencies": {
     "concurrently": "3.6.0",
     "devtron": "1.4.0",
-    "electron": "1.8.7",
+    "electron": "1.8.8",
     "electron-builder": "20.22.0",
     "electron-devtools-installer": "2.2.4",
     "electron-is-dev": "0.3.0",
