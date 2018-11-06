@@ -181,7 +181,7 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
           </div>
         </div>
         <div
-          class="sc-cMljjf bXskYr"
+          class="sc-cMljjf jsYJaT"
         >
           Enter a valid amount to get a conversion estimate.
         </div>

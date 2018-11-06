@@ -1,18 +1,30 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
+import styled, { keyframes } from 'styled-components'
 import React, { Component } from 'react'
 import OfflineWarning from './OfflineWarning'
 import Dashboard from './Dashboard'
 import Converter from './Converter'
 import Sidebar from './Sidebar'
 import Auction from './Auction'
-import styled from 'styled-components'
 import Tools from './Tools'
 import Help from './Help'
+
+const fadeIn = keyframes`
+  from {
+    transform: scale(1.025);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`
 
 const Container = styled.div`
   display: flex;
   height: 100vh;
   padding-left: 64px;
+  animation: ${fadeIn} 0.3s linear;
 
   @media (min-width: 800px) {
     padding-left: 0;

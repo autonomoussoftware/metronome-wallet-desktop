@@ -140,9 +140,9 @@ class BuyMETDrawer extends React.Component {
           <React.Fragment>
             You will use{' '}
             <DisplayValue
-              value={Web3.utils.toWei(ethAmount)}
-              post=" ETH"
               inline
+              value={Web3.utils.toWei(ethAmount.replace(',', '.'))}
+              post=" ETH"
             />{' '}
             (${usdAmount}) to buy approximately{' '}
             <DisplayValue

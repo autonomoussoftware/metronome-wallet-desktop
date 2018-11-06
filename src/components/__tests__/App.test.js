@@ -40,7 +40,7 @@ describe('<App/>', () => {
     await flushPromises()
 
     // In order to display the inner screens of the wallet the Main Process
-    // MUST send 1) MET token status, 2) ETH price, 3) wallet balances
+    // MUST send 1) ETH price, 2) wallet balances 3) blockchain height
     expect(queryByTestId('router-container')).toBeNull()
     store.dispatch({ type: 'session-started' })
     store.dispatch({ type: 'eth-block', payload: { number: 1 } })
@@ -65,6 +65,7 @@ describe('<App/>', () => {
         }
       }
     })
+    store.dispatch({ type: 'required-data-gathered' })
     expect(queryByTestId('router-container')).not.toBeNull()
   })
 })
