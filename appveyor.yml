@@ -22,6 +22,7 @@ platform:
   - x64
 
 build_script:
+  - npm i
   - npm run dist
 
 test: off
