@@ -6,22 +6,24 @@ const { noop } = require('lodash')
 const settings = require('electron-settings')
 const isDev = require('electron-is-dev')
 
-const visitor = ua(settings.get('app.trackingId'))
+let visitor
 const analytics = {}
 
-visitor.set('ds', 'app')
-visitor.set('an', app.getName())
-visitor.set('av', app.getVersion())
-
 analytics.screenview = function (...args) {
+  if (!visitor) return
   visitor.screenview(...args).send()
 }
 
 analytics.event = function (...args) {
+  if (!visitor) return
   visitor.event(...args).send()
 }
 
 analytics.init = function (userAgent) {
+  visitor = ua(settings.get('app.trackingId'))
+  visitor.set('ds', 'app')
+  visitor.set('an', app.getName())
+  visitor.set('av', app.getVersion())
   visitor.set('ua', userAgent)
   analytics.event('App', 'App initiated')
 }
