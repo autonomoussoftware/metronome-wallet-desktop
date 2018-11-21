@@ -3,10 +3,10 @@
 exports[`<AmountFields/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <button
         type="button"
@@ -18,13 +18,13 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </button>
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="ethAmount"
         >
           Amount (ETH)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
@@ -34,7 +34,7 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs dnTKXF"
+      class="sc-dnqmqq bjegIR"
     >
       <svg
         class="sc-bxivhb hXQRLM"
@@ -46,17 +46,17 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </svg>
     </div>
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="usdAmount"
         >
           Amount (USD)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
@@ -72,16 +72,16 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
 exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
 <div>
   <header
-    class="sc-jTzLTM bbfTuz"
+    class="sc-kgoBCf jlTayU"
   >
     <h1
-      class="sc-fjdhpX gUwcgC"
+      class="sc-kGXeez ikaCfN"
       data-testid="drawer-title"
     >
       Buy Metronome
     </h1>
     <button
-      class="sc-jzJRlG fzwWXa"
+      class="sc-kpOJdX iNGVkk"
       data-testid="drawer-close-btn"
     >
       <svg
@@ -102,13 +102,13 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
       data-testid="buy-form"
     >
       <div
-        class="sc-hMqMXs dKMJsu"
+        class="sc-dnqmqq fShSQy"
       >
         <div
-          class="sc-jKJlTe fkNCah"
+          class="sc-hSdWYo RLebi"
         >
           <div
-            class="sc-ckVGcZ kvHIve"
+            class="sc-iAyFgw kFSVyG"
           >
             <button
               type="button"
@@ -120,13 +120,13 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
             </button>
             <div>
               <label
-                class="sc-dnqmqq ilsafR"
+                class="sc-fjdhpX ggenJw"
                 for="ethAmount"
               >
                 Amount (ETH)
               </label>
               <input
-                class="sc-iwsKbI kZiHEX"
+                class="sc-jzJRlG eYjBul"
                 type="text"
                 id="ethAmount"
                 data-testid="ethAmount-field"
@@ -136,7 +136,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
             </div>
           </div>
           <div
-            class="sc-hMqMXs dnTKXF"
+            class="sc-dnqmqq bjegIR"
           >
             <svg
               class="sc-bxivhb hXQRLM"
@@ -148,17 +148,17 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
             </svg>
           </div>
           <div
-            class="sc-ckVGcZ kvHIve"
+            class="sc-iAyFgw kFSVyG"
           >
             <div>
               <label
-                class="sc-dnqmqq ilsafR"
+                class="sc-fjdhpX ggenJw"
                 for="usdAmount"
               >
                 Amount (USD)
               </label>
               <input
-                class="sc-iwsKbI kZiHEX"
+                class="sc-jzJRlG eYjBul"
                 type="text"
                 id="usdAmount"
                 data-testid="usdAmount-field"
@@ -169,23 +169,23 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
           </div>
         </div>
         <div
-          class="sc-hMqMXs bQjXee"
+          class="sc-dnqmqq iqdELP"
         >
           <div
-            class="sc-jKJlTe kWLJKD"
+            class="sc-hSdWYo bDJzcK"
           >
             <div
-              class="sc-jKJlTe jGctBw"
+              class="sc-hSdWYo jGdHOj"
             >
               <span
-                class="sc-kEYyzF ekxbwv"
+                class="sc-cvbbAY ctQnZR"
               >
                 Gas Limit: 
                 250000
                 (Units)
               </span>
               <span
-                class="sc-kEYyzF ekxbwv"
+                class="sc-cvbbAY ctQnZR"
               >
                 Gas Price: 
                 1
@@ -204,7 +204,7 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
         </div>
       </div>
       <div
-        class="sc-gPEVay fwZOlX"
+        class="sc-Rmtcm dMTmkb"
       >
         <button
           type="submit"
@@ -221,20 +221,20 @@ exports[`<BuyMETDrawer/> should match its snapshot 1`] = `
 exports[`<GasEditor/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasLimit"
         >
           Gas Limit (Units)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
@@ -243,20 +243,20 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs keWZLk"
+      class="sc-dnqmqq cnSjSH"
     />
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasPrice"
         >
           Gas Price (Gwei)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasPrice"
           data-testid="gas-price-field"

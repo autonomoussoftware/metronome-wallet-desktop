@@ -3,10 +3,10 @@
 exports[`<AmountFields/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <button
         type="button"
@@ -18,13 +18,13 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </button>
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="ethAmount"
         >
           Amount (ETH)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
@@ -34,7 +34,7 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs dnTKXF"
+      class="sc-dnqmqq bjegIR"
     >
       <svg
         class="sc-bxivhb hXQRLM"
@@ -46,17 +46,17 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </svg>
     </div>
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="usdAmount"
         >
           Amount (USD)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
@@ -72,10 +72,10 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
 exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-eNQAEJ hdurla"
+    class="sc-eHgmQL AlcTC"
   >
     <div
-      class="sc-hMqMXs dKMJsu"
+      class="sc-dnqmqq fShSQy"
     >
       <form
         data-testid="ethToMet-form"
@@ -83,10 +83,10 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
         id="convertForm"
       >
         <div
-          class="sc-jKJlTe fkNCah"
+          class="sc-hSdWYo RLebi"
         >
           <div
-            class="sc-ckVGcZ kvHIve"
+            class="sc-iAyFgw kFSVyG"
           >
             <button
               type="button"
@@ -98,13 +98,13 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
             </button>
             <div>
               <label
-                class="sc-dnqmqq ilsafR"
+                class="sc-fjdhpX ggenJw"
                 for="ethAmount"
               >
                 Amount (ETH)
               </label>
               <input
-                class="sc-iwsKbI kZiHEX"
+                class="sc-jzJRlG eYjBul"
                 type="text"
                 id="ethAmount"
                 data-testid="ethAmount-field"
@@ -114,7 +114,7 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
             </div>
           </div>
           <div
-            class="sc-hMqMXs dnTKXF"
+            class="sc-dnqmqq bjegIR"
           >
             <svg
               class="sc-bxivhb hXQRLM"
@@ -126,17 +126,17 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
             </svg>
           </div>
           <div
-            class="sc-ckVGcZ kvHIve"
+            class="sc-iAyFgw kFSVyG"
           >
             <div>
               <label
-                class="sc-dnqmqq ilsafR"
+                class="sc-fjdhpX ggenJw"
                 for="usdAmount"
               >
                 Amount (USD)
               </label>
               <input
-                class="sc-iwsKbI kZiHEX"
+                class="sc-jzJRlG eYjBul"
                 type="text"
                 id="usdAmount"
                 data-testid="usdAmount-field"
@@ -147,23 +147,23 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
           </div>
         </div>
         <div
-          class="sc-hMqMXs bQjXee"
+          class="sc-dnqmqq iqdELP"
         >
           <div
-            class="sc-jKJlTe kWLJKD"
+            class="sc-hSdWYo bDJzcK"
           >
             <div
-              class="sc-jKJlTe jGctBw"
+              class="sc-hSdWYo jGdHOj"
             >
               <span
-                class="sc-csuQGl izFJpS"
+                class="sc-fBuWsC fuCHLA"
               >
                 Gas Limit: 
                 250000
                 (Units)
               </span>
               <span
-                class="sc-csuQGl izFJpS"
+                class="sc-fBuWsC fuCHLA"
               >
                 Gas Price: 
                 1
@@ -181,27 +181,27 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
           </div>
         </div>
         <div
-          class="sc-cMljjf jsYJaT"
+          class="sc-jlyJG jVVWRE"
         >
           Enter a valid amount to get a conversion estimate.
         </div>
         <div>
           <label
-            class="sc-jDwBTQ eiQZdA"
+            class="sc-csuQGl iTqZDX"
           >
             <input
-              class="sc-gPEVay hXTYYH"
+              class="sc-Rmtcm dzYtml"
               data-testid="useMinimum-cb"
               type="checkbox"
               id="useMinimum"
             />
             <span
-              class="sc-iRbamj cArvmr"
+              class="sc-bRBYWo cLbXcx"
             >
               Get expected MET amount or cancel
             </span>
             <span
-              class="sc-jlyJG cDmJhB"
+              class="sc-hzDkRC jIHVbb"
               data-rh-darker="true"
               data-rh-width="400px"
               data-rh="This option will cancel the conversion if there is a change in price after you submit the transaction and the expected conversion amount is not met.  Gas will be consumed regardless."
@@ -223,7 +223,7 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
       </form>
     </div>
     <div
-      class="sc-bRBYWo ebOYwZ"
+      class="sc-dVhcbM dchgFp"
     >
       <button
         type="submit"
@@ -240,20 +240,20 @@ exports[`<ConvertETHtoMETForm/> should match its snapshot 1`] = `
 exports[`<GasEditor/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasLimit"
         >
           Gas Limit (Units)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
@@ -262,20 +262,20 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs keWZLk"
+      class="sc-dnqmqq cnSjSH"
     />
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasPrice"
         >
           Gas Price (Gwei)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasPrice"
           data-testid="gas-price-field"

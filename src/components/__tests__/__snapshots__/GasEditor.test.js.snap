@@ -3,20 +3,20 @@
 exports[`<GasEditor/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasLimit"
         >
           Gas Limit (Units)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasLimit"
           data-testid="gas-limit-field"
@@ -25,20 +25,20 @@ exports[`<GasEditor/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs keWZLk"
+      class="sc-dnqmqq cnSjSH"
     />
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="gasPrice"
         >
           Gas Price (Gwei)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="gasPrice"
           data-testid="gas-price-field"

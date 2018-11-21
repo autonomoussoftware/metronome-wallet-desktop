@@ -3,10 +3,10 @@
 exports[`<AmountFields/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-hSdWYo RLebi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <button
         type="button"
@@ -18,13 +18,13 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </button>
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="ethAmount"
         >
           Amount (ETH)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="ethAmount"
           data-testid="ethAmount-field"
@@ -34,7 +34,7 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </div>
     </div>
     <div
-      class="sc-hMqMXs dnTKXF"
+      class="sc-dnqmqq bjegIR"
     >
       <svg
         class="sc-bxivhb hXQRLM"
@@ -46,17 +46,17 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </svg>
     </div>
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-iAyFgw kFSVyG"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-fjdhpX ggenJw"
           for="usdAmount"
         >
           Amount (USD)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
+          class="sc-jzJRlG eYjBul"
           type="text"
           id="usdAmount"
           data-testid="usdAmount-field"
