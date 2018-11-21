@@ -8,6 +8,7 @@ import LoadingBar from './LoadingBar'
 import WalletIcon from './WalletIcon'
 import CloseIcon from './CloseIcon'
 import CheckIcon from './CheckIcon'
+import ChartCard from './ChartCard'
 import TextInput from './TextInput'
 import Tooltips from './Tooltips'
 import CopyIcon from './CopyIcon'
@@ -30,6 +31,7 @@ export {
   WalletIcon,
   CloseIcon,
   CheckIcon,
+  ChartCard,
   TextInput,
   Tooltips,
   CopyIcon,

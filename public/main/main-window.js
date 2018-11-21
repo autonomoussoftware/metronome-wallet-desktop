@@ -61,7 +61,7 @@ function loadWindow () {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1140,
-    height: 700,
+    height: 750,
     minWidth: 640,
     minHeight: 578,
     useContentSize: true

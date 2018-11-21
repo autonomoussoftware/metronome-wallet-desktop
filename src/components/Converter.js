@@ -1,3 +1,4 @@
+import ConverterChartCard from './ConverterChartCard'
 import * as selectors from '../selectors'
 import ConvertDrawer from './ConvertDrawer'
 import { connect } from 'react-redux'
@@ -20,7 +21,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
 
-  @media (min-width: 1180px) {
+  @media (min-width: 1140px) {
     padding: 3.2rem 4.8rem;
     align-items: flex-start;
     flex-direction: row;
@@ -31,7 +32,7 @@ const ConvertBtn = styled(Btn)`
   margin-top: 3.2rem;
   min-width: 260px;
 
-  @media (min-width: 1180px) {
+  @media (min-width: 1140px) {
     min-width: 200px;
     margin-top: 0;
   }
@@ -50,7 +51,7 @@ const StatsContainer = styled.div`
   margin-right: 0;
   width: 100%;
 
-  @media (min-width: 1180px) {
+  @media (min-width: 1140px) {
     margin-right: 1.6rem;
     max-width: 660px;
   }
@@ -189,6 +190,7 @@ class Converter extends React.Component {
                   </AvailableAmount>
                 </Flex.Row>
               </Sp>
+              <ConverterChartCard />
             </StatsContainer>
 
             <ConvertBtn

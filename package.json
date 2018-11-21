@@ -84,6 +84,7 @@
     "redux-actions": "2.4.0",
     "reselect": "3.0.1",
     "safe-buffer": "5.1.2",
+    "shrink-array": "0.0.2",
     "smart-round": "1.0.0",
     "socket.io-client": "2.1.1",
     "startinterval2": "1.0.1",
@@ -91,6 +92,7 @@
     "supports-color": "5.4.0",
     "tough-cookie": "2.4.3",
     "universal-analytics": "0.4.17",
+    "victory": "0.27.0",
     "web3": "1.0.0-beta.34"
   },
   "devDependencies": {
