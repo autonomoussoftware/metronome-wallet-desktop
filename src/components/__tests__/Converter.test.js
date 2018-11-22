@@ -5,15 +5,18 @@ import React from 'react'
 
 describe('<Converter/>', () => {
   it('displays a "waiting..." message until the first converter status is received', () => {
-    const { queryByTestId, store } = testUtils.reduxRender(<Converter />)
+    const { queryByTestId, store, unmount } = testUtils.reduxRender(
+      <Converter />
+    )
     expect(queryByTestId('waiting')).not.toBeNull()
     store.dispatch(converterStatusUpdated(dummyStatus()))
     expect(queryByTestId('waiting')).toBeNull()
+    unmount()
   })
 
   describe('If MET conversions ARE ALLOWED', () => {
     it('opens Convert drawer when Convert button is clicked', () => {
-      const { queryByTestId, getByTestId } = testUtils.reduxRender(
+      const { queryByTestId, getByTestId, unmount } = testUtils.reduxRender(
         <Converter />,
         getInitialState(dummyStatus(), inDailyAuction())
       )
@@ -21,19 +24,21 @@ describe('<Converter/>', () => {
       expect(queryByTestId('convert-drawer')).toBeNull()
       Simulate.click(btn)
       expect(queryByTestId('convert-drawer')).not.toBeNull()
+      unmount()
     })
 
     describe('if we are on the INITIAL AUCTION', () => {
       it('displays stats', () => {
-        const { queryByTestId } = testUtils.reduxRender(
+        const { queryByTestId, unmount } = testUtils.reduxRender(
           <Converter />,
           getInitialState(dummyStatus(), inInitialAuction())
         )
         expect(queryByTestId('stats')).not.toBeNull()
+        unmount()
       })
 
       it('Convert button is disabled', () => {
-        const { getByTestId, queryByTestId } = testUtils.reduxRender(
+        const { getByTestId, queryByTestId, unmount } = testUtils.reduxRender(
           <Converter />,
           getInitialState(dummyStatus(), inInitialAuction())
         )
@@ -41,22 +46,29 @@ describe('<Converter/>', () => {
         expect(queryByTestId('convert-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('convert-drawer')).toBeNull()
+        unmount()
       })
 
       it('Convert button shows a tooltip when hovered', () => {
-        const { getByTestId } = testUtils.reduxRender(
+        const { getByTestId, unmount } = testUtils.reduxRender(
           <Converter />,
           getInitialState(dummyStatus(), inInitialAuction())
         )
         expect(getByTestId('convert-btn').getAttribute('data-rh')).toBe(
           'Conversions are disabled during Initial Auction'
         )
+        unmount()
       })
     })
 
     describe('if connectivity is lost', () => {
       it('Convert button is disabled', () => {
-        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
+        const {
+          queryByTestId,
+          getByTestId,
+          store,
+          unmount
+        } = testUtils.reduxRender(
           <Converter />,
           getInitialState(dummyStatus(), inDailyAuction())
         )
@@ -65,10 +77,11 @@ describe('<Converter/>', () => {
         expect(queryByTestId('convert-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('convert-drawer')).toBeNull()
+        unmount()
       })
 
       it('Convert button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { getByTestId, store, unmount } = testUtils.reduxRender(
           <Converter />,
           getInitialState(dummyStatus(), inDailyAuction())
         )
@@ -77,6 +90,7 @@ describe('<Converter/>', () => {
         expect(getByTestId('convert-btn').getAttribute('data-rh')).toBe(
           "Can't convert while offline"
         )
+        unmount()
       })
     })
   })

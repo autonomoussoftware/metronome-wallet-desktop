@@ -42,34 +42,37 @@ describe('<Auction/>', () => {
 
   describe('if we are on the INITIAL auction', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
       expect(queryByTestId('title').textContent).toBe(
         'Time Remaining in Initial Auction'
       )
+      unmount()
     })
 
     it('displays a time countdown until INITIAL auction ends', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
       expect(queryByTestId('countdown')).not.toBeNull()
+      unmount()
     })
 
     it('displays stats', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inInitialAuction())
       )
       expect(queryByTestId('stats')).not.toBeNull()
+      unmount()
     })
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { queryByTestId, getByTestId } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
@@ -77,12 +80,18 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).not.toBeNull()
+        unmount()
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
+        const {
+          queryByTestId,
+          getByTestId,
+          store,
+          unmount
+        } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
@@ -91,10 +100,11 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).toBeNull()
+        unmount()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { getByTestId, store, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction({ tokenRemaining: '100' }))
         )
@@ -103,12 +113,18 @@ describe('<Auction/>', () => {
         expect(getByTestId('buy-btn').getAttribute('data-rh')).toBe(
           'No MET remaining in current auction'
         )
+        unmount()
       })
     })
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
+        const {
+          queryByTestId,
+          getByTestId,
+          store,
+          unmount
+        } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction())
         )
@@ -117,10 +133,11 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).toBeNull()
+        unmount()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { getByTestId, store, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inInitialAuction())
         )
@@ -129,67 +146,74 @@ describe('<Auction/>', () => {
         expect(getByTestId('buy-btn').getAttribute('data-rh')).toBe(
           "Can't buy while offline"
         )
+        unmount()
       })
     })
   })
 
   describe('if we are IN BETWEEN auctions', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
       expect(queryByTestId('title').textContent).toBe('Initial Auction ended')
+      unmount()
     })
 
     it('do NOT display stats and Buy button', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
       expect(queryByTestId('stats')).toBeNull()
       expect(queryByTestId('buy-btn')).toBeNull()
+      unmount()
     })
 
     it('displays a "waiting..." message until the first daily auction starts', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inBetweenAuctions())
       )
       expect(queryByTestId('waiting-next')).not.toBeNull()
+      unmount()
     })
   })
 
   describe('if we are on a DAILY auction', () => {
     it('displays a suitable title', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
       expect(queryByTestId('title').textContent).toBe(
         'Time Remaining in Daily Auction'
       )
+      unmount()
     })
 
     it('displays a time countdown until current DAILY auction ends', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
       expect(queryByTestId('countdown')).not.toBeNull()
+      unmount()
     })
 
     it('displays stats', () => {
-      const { queryByTestId } = testUtils.reduxRender(
+      const { queryByTestId, unmount } = testUtils.reduxRender(
         <Auction />,
         getInitialState(inDailyAuction())
       )
       expect(queryByTestId('stats')).not.toBeNull()
+      unmount()
     })
 
     describe('if there are tokens available', () => {
       it('opens Buy drawer when Buy button is clicked', () => {
-        const { queryByTestId, getByTestId } = testUtils.reduxRender(
+        const { queryByTestId, getByTestId, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
@@ -197,12 +221,18 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).not.toBeNull()
+        unmount()
       })
     })
 
     describe('if auction is depleted', () => {
       it('Buy button is disabled', () => {
-        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
+        const {
+          queryByTestId,
+          getByTestId,
+          store,
+          unmount
+        } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
@@ -211,10 +241,11 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).toBeNull()
+        unmount()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { getByTestId, store, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction({ tokenRemaining: '100' }))
         )
@@ -223,12 +254,18 @@ describe('<Auction/>', () => {
         expect(getByTestId('buy-btn').getAttribute('data-rh')).toBe(
           'No MET remaining in current auction'
         )
+        unmount()
       })
     })
 
     describe('if connectivity is lost', () => {
       it('Buy button is disabled', () => {
-        const { queryByTestId, getByTestId, store } = testUtils.reduxRender(
+        const {
+          queryByTestId,
+          getByTestId,
+          store,
+          unmount
+        } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction())
         )
@@ -237,10 +274,11 @@ describe('<Auction/>', () => {
         expect(queryByTestId('buy-drawer')).toBeNull()
         Simulate.click(btn)
         expect(queryByTestId('buy-drawer')).toBeNull()
+        unmount()
       })
 
       it('Buy button shows a tooltip when hovered', () => {
-        const { getByTestId, store } = testUtils.reduxRender(
+        const { getByTestId, store, unmount } = testUtils.reduxRender(
           <Auction />,
           getInitialState(inDailyAuction())
         )
@@ -249,6 +287,7 @@ describe('<Auction/>', () => {
         expect(getByTestId('buy-btn').getAttribute('data-rh')).toBe(
           "Can't buy while offline"
         )
+        unmount()
       })
     })
   })

@@ -30,7 +30,7 @@ describe('<Router/>', () => {
 })
 
 function clickAndExpect(linkTestId, pageTestId, initialRoute) {
-  const { getByTestId, queryByTestId } = testUtils.routerRender(
+  const { getByTestId, queryByTestId, unmount } = testUtils.routerRender(
     element,
     testUtils.getInitialState(),
     initialRoute
@@ -38,4 +38,5 @@ function clickAndExpect(linkTestId, pageTestId, initialRoute) {
   expect(queryByTestId(pageTestId)).toBeNull()
   Simulate.click(getByTestId(linkTestId), { button: 0 })
   expect(queryByTestId(pageTestId)).not.toBeNull()
+  unmount()
 }
