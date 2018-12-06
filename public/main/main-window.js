@@ -7,7 +7,7 @@ const logger = require('electron-log')
 const path = require('path')
 
 const analytics = require('../analytics')
-const restart = require('./electron-restart')
+const restart = require('./client/electron-restart')
 
 let mainWindow
 

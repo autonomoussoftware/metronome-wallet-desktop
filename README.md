@@ -52,8 +52,8 @@ Modify the `Settings` file replacing the following properties:
   "app": {
     "chain": "ropsten",
     "node": {
-      "jsonRpcApiUrl": "https://eth.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.bloqrock.net:8546"
+      "jsonRpcApiUrl": "https://eth.wallet.bloqrock.net:8545",
+      "websocketApiUrl": "wss://eth.wallet.bloqrock.net:8546"
     },
     "indexerApiUrl": "https://indexer.bloqrock.net",
     "tracerApiUrl": "https://tracer.bloqrock.net"

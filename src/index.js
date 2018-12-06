@@ -11,14 +11,12 @@ import Root from 'metronome-wallet-ui-logic/src/components/Root'
 
 import { subscribeToMainProcessMessages } from './subscriptions'
 import { Tooltips } from './components/common'
-import createClient from './dummy-client' // replace with real client!
+import createClient from './client'
 import Onboarding from './components/onboarding/Onboarding'
 import Loading from './components/Loading'
 import Router from './components/Router'
 import config from './config'
 import Login from './components/Login'
-// import { sendToMainProcess } from './utils'
-// import App from './components/App'
 
 if (config.SENTRY_DSN) {
   Raven.config(config.SENTRY_DSN, {
@@ -39,7 +37,6 @@ ReactDOM.render(
     <Provider store={client.store}>
       <ThemeProvider theme={theme}>
         <React.Fragment>
-          {/* <App onMount={() => sendToMainProcess('ui-ready')} /> */}
           <Root
             OnboardingComponent={Onboarding}
             LoadingComponent={Loading}

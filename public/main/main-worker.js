@@ -5,8 +5,8 @@ const { ipcMain } = require('electron')
 const EventEmitter = require('events')
 const logger = require('electron-log')
 
-const { isValidPassword } = require('./password')
-const settings = require('./settings')
+const { isValidPassword } = require('./client/auth')
+const settings = require('./client/settings')
 const WalletError = require('./WalletError')
 
 function getLogData (data) {
@@ -132,14 +132,14 @@ function initMainWorker () {
     logger.error(args)
   })
 
-  createRendererEventsRouter()
-    .use(require('./plugins/onboarding'))
-    .use(require('./plugins/coincap'))
-    .use(require('./plugins/bloq-eth-explorer'))
-    .use(require('./plugins/ethWallet'))
-    .use(require('./plugins/tokens'))
-    .use(require('./plugins/metronome'))
-    .attachUiEvents()
+  // createRendererEventsRouter()
+  // .use(require('./plugins/onboarding'))
+  // .use(require('./plugins/coincap'))
+  // .use(require('./plugins/bloq-eth-explorer'))
+  // .use(require('./plugins/ethWallet'))
+  // .use(require('./plugins/tokens'))
+  // .use(require('./plugins/metronome'))
+  // .attachUiEvents()
 }
 
 module.exports = { initMainWorker }

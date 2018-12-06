@@ -2,8 +2,8 @@
 
 const logger = require('electron-log')
 
-const { getPasswordHash, setPasswordHash } = require('../settings')
-const { pbkdf2: { hash, verify }, sha256 } = require('../crypto')
+const { getPasswordHash, setPasswordHash } = require('./settings')
+const { pbkdf2: { hash, verify }, sha256 } = require('./crypto')
 
 function isValidPassword (password) {
   const passwordHash = getPasswordHash()

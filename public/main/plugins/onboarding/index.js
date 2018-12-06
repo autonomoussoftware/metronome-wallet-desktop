@@ -1,6 +1,6 @@
 'use strict'
 
-const { getPasswordHash } = require('../../settings')
+const { getPasswordHash } = require('../../client/settings')
 
 function onboardingStatus () {
   const onboardingComplete = !!getPasswordHash()

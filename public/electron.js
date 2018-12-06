@@ -54,9 +54,12 @@ createWindow()
 
 const { initMainWorker } = require(path.join(__dirname, './main/main-worker.js'))
 
+const { createClient } = require(path.join(__dirname, './main/client'))
+
 app.on('ready', function () {
   logger.info('App ready, initializing...')
   initMenu()
   initContextMenu()
   initMainWorker()
+  createClient()
 })
