@@ -19,7 +19,7 @@ function createClient(config, createStore) {
     sendToMainProcess('ui-ready')
 
   const onOnboardingCompleted = ({ mnemonic, password }) =>
-    sendToMainProcess('onbording-completed', { mnemonic, password })
+    sendToMainProcess('onboarding-completed', { mnemonic, password })
 
   const onTermsLinkClick = () => { }
 

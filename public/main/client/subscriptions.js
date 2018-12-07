@@ -52,7 +52,6 @@ const subscribeToRendererMessages = function (emitter, core) {
 
   function withCore (fn) {
     return function (data) {
-      logger.warn('acaaaa')
       return fn(data, emitter, core)
     }
   }
