@@ -58,8 +58,7 @@ const subscribeToRendererMessages = function (emitter, core) {
 
   subscribeTo({
     'onboarding-completed': withCore(handlers.onboardingCompleted),
-    'create-mnemonic': handlers.createMnemonic,
-    'validate-mnemonic': handlers.isValidMnemonic
+    'login-submit': withCore(handlers.onLoginSubmit)
   })
 }
 

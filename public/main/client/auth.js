@@ -5,22 +5,18 @@ const logger = require('electron-log')
 const { getPasswordHash, setPasswordHash } = require('./settings')
 const { pbkdf2: { hash, verify }, sha256 } = require('./crypto')
 
+function setPassword (password) {
+  const passwordHash = getPasswordHash()
+  if (!passwordHash) {
+    logger.info('No password set, using current as default')
+    return hash(password)
+      .then(setPasswordHash)
+  }
+}
+
 function isValidPassword (password) {
   const passwordHash = getPasswordHash()
 
-  // if no password has been ever set, use given password
-  if (!passwordHash) {
-    logger.info('No password set, using current as default')
-
-    return hash(password)
-      .then(function (newHash) {
-        setPasswordHash(newHash)
-
-        return true
-      })
-  }
-
-  // else, verify given password
   return verify(passwordHash, password)
     .then(function (isValid) {
       if (isValid) {
@@ -28,7 +24,6 @@ function isValidPassword (password) {
       } else {
         logger.warn('Supplied password is invalid')
       }
-
       return isValid
     })
     .catch(function (err) {
@@ -51,4 +46,4 @@ function isValidPassword (password) {
     })
 }
 
-module.exports = { isValidPassword }
+module.exports = { isValidPassword, setPassword }

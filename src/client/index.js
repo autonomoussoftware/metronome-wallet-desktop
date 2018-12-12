@@ -1,7 +1,9 @@
 import fastPasswordEntropy from 'fast-password-entropy'
 import { sendToMainProcess } from '../utils'
+import keys from './keys'
+import * as utils from './utils'
 
-// const { ipcRenderer } = window.require('electron')
+const { shell } = window.require('electron')
 
 function createClient(config, createStore) {
   const reduxDevtoolsOptions = {
@@ -21,26 +23,34 @@ function createClient(config, createStore) {
   const onOnboardingCompleted = ({ mnemonic, password }) =>
     sendToMainProcess('onboarding-completed', { mnemonic, password })
 
-  const onTermsLinkClick = () => { }
+  const onTermsLinkClick = () =>
+    shell.openExternal('https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE')
+
+  const onHelpLinkClick = () =>
+    shell.openExternal('https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq')
 
   const getStringEntropy = str =>
     fastPasswordEntropy(str)
 
-  const onLoginSubmit = () =>
-    Promise.resolve()
+  const onLoginSubmit = ({ password }) =>
+    sendToMainProcess('login-submit', { password })
 
-  const isValidMnemonic = (mnemonic) => sendToMainProcess('validate-mnemonic', { mnemonic })
+  const refreshAllTransactions = () => { }
 
-  const createMnemonic = () => sendToMainProcess('create-mnemonic')
+  const copyToClipboard = () => { }
 
   const api = {
-    isValidMnemonic,
-    createMnemonic,
-    onInit,
+    ...utils,
+    isValidMnemonic: keys.isValidMnemonic,
+    createMnemonic: keys.createMnemonic,
+    refreshAllTransactions,
     onOnboardingCompleted,
-    onLoginSubmit,
     onTermsLinkClick,
     getStringEntropy,
+    copyToClipboard,
+    onHelpLinkClick,
+    onLoginSubmit,
+    onInit,
     store
   }
 

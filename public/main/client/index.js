@@ -14,6 +14,8 @@ function createClient (config) {
 
   const eventName = 'ui-ready'
 
+  events.push('create-wallet', 'open-wallets')
+
   ipcMain.on(eventName, function (e, args) {
     events.forEach(event =>
       emitter.on(event, function (data) {

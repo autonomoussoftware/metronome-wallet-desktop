@@ -61,5 +61,5 @@ app.on('ready', function () {
   initMenu()
   initContextMenu()
   initMainWorker()
-  createClient()
+  createClient(config)
 })
