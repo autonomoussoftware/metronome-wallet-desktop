@@ -3,7 +3,7 @@ import { sendToMainProcess } from '../utils'
 import keys from './keys'
 import * as utils from './utils'
 
-const { shell } = window.require('electron')
+const { clipboard, shell } = window.require('electron')
 
 function createClient(config, createStore) {
   const reduxDevtoolsOptions = {
@@ -37,7 +37,7 @@ function createClient(config, createStore) {
 
   const refreshAllTransactions = () => { }
 
-  const copyToClipboard = () => { }
+  const copyToClipboard = text => clipboard.writeText(text)
 
   const api = {
     ...utils,
