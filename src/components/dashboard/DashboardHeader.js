@@ -5,8 +5,6 @@ import React from 'react'
 
 import { Btn } from '../common'
 
-const { clipboard } = window.require('electron')
-
 const Container = styled.header`
   border-bottom: 1px solid ${p => p.theme.colors.darkShade};
   padding: 1.8rem 0;
@@ -74,11 +72,12 @@ const CopyBtn = Btn.extend`
 
 export default class DashboardHeader extends React.Component {
   static propTypes = {
+    copyToClipboard: PropTypes.func.isRequired,
     address: PropTypes.string.isRequired
   }
 
   onCopyToClipboardClick = () => {
-    clipboard.writeText(this.props.address)
+    this.props.copyToClipboard(this.props.address)
     if (!toast.isActive(this.toastId)) {
       this.toastId = toast('Address copied to clipboard', {
         closeButton: false,

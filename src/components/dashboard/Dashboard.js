@@ -79,6 +79,7 @@ class Dashboard extends React.Component {
   static propTypes = {
     sendDisabledReason: PropTypes.string,
     hasTransactions: PropTypes.bool.isRequired,
+    copyToClipboard: PropTypes.func.isRequired,
     isScanningTx: PropTypes.bool.isRequired,
     sendDisabled: PropTypes.bool.isRequired,
     address: PropTypes.string.isRequired
@@ -96,7 +97,10 @@ class Dashboard extends React.Component {
     return (
       <Container data-testid="dashboard-container">
         <FixedContainer>
-          <DashboardHeader address={this.props.address} />
+          <DashboardHeader
+            copyToClipboard={this.props.copyToClipboard}
+            address={this.props.address}
+          />
         </FixedContainer>
 
         <Hero>
