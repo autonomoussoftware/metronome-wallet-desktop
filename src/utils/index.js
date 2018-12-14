@@ -26,6 +26,12 @@ export const statusPropTypes = PropTypes.oneOf([
 
 const { ipcRenderer } = window.require('electron')
 
+export function forwardToMainProcess(eventName) {
+  return function (data) {
+    return sendToMainProcess(eventName, data)
+  }
+}
+
 /*
  * Sends a message to Main Process and returns a Promise.
  *

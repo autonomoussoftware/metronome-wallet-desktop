@@ -39,13 +39,17 @@ function isAddressInWallet ({ walletId, address }) {
   return addresses.includes(address.toLowerCase())
 }
 
-const getSeed = (address, password) => {
-  const walletId = findWalletId(address)
+function getSeed (walletId, password) {
   if (!walletId) {
     return new Error('Origin address not found')
   }
-  const encryptedSeed = settings.get(`users.wallets.${walletId}.encryptedSeed`)
+  const encryptedSeed = settings.get(`user.wallets.${walletId}.encryptedSeed`)
   return aes256cbcIv.decrypt(password, encryptedSeed)
+}
+
+function getSeedByAddress (address, password) {
+  const walletId = findWalletId(address)
+  return getSeed(walletId, password)
 }
 
 const setAddressForWalletId = (walletId, address) =>
@@ -59,11 +63,12 @@ const getAddressesForWalletId = walletId =>
   getWalletAddresses(walletId)
 
 const setSeed = (seed, password) =>
-  Promise.resolve(settings.set(`user.wallets.${getWalletId(seed)}.encryptedSeed`, aes256cbcIv.encrypt(seed, password)))
+  Promise.resolve(settings.set(`user.wallets.${getWalletId(seed)}.encryptedSeed`, aes256cbcIv.encrypt(password, seed)))
 
 module.exports = {
   getAddressesForWalletId,
   setAddressForWalletId,
+  getSeedByAddress,
   getActiveWallet,
   findWalletId,
   getWalletId,

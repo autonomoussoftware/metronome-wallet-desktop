@@ -1,5 +1,5 @@
 import fastPasswordEntropy from 'fast-password-entropy'
-import { sendToMainProcess } from '../utils'
+import { forwardToMainProcess } from '../utils'
 import keys from './keys'
 import * as utils from './utils'
 
@@ -16,13 +16,6 @@ function createClient(config, createStore) {
     reduxDevtoolsOptions,
     { config }
   )
-
-  const onInit = () =>
-    sendToMainProcess('ui-ready')
-
-  const onOnboardingCompleted = ({ mnemonic, password }) =>
-    sendToMainProcess('onboarding-completed', { mnemonic, password })
-
   const onTermsLinkClick = () =>
     shell.openExternal('https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE')
 
@@ -32,25 +25,42 @@ function createClient(config, createStore) {
   const getStringEntropy = str =>
     fastPasswordEntropy(str)
 
-  const onLoginSubmit = ({ password }) =>
-    sendToMainProcess('login-submit', { password })
-
   const refreshAllTransactions = () => { }
 
-  const copyToClipboard = text => clipboard.writeText(text)
+  const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
+
+  const validatePassword = () => true
+
+  const forwardedMethods = {
+    onOnboardingCompleted: forwardToMainProcess('onboarding-completed'),
+    onLoginSubmit: forwardToMainProcess('login-submit'),
+    onInit: forwardToMainProcess('ui-ready'),
+    getGasLimit: forwardToMainProcess('get-gas-limit'),
+    getGasPrice: forwardToMainProcess('get-gas-price'),
+    sendEth: forwardToMainProcess('send-eth'),
+    sendMet: forwardToMainProcess('send-met'),
+    getTokensGasLimit: forwardToMainProcess('get-tokens-gas-limit'),
+    getAuctionGasLimit: forwardToMainProcess('get-auction-gas-limit'),
+    getConvertEthEstimate: forwardToMainProcess('get-convert-eth-estimate'),
+    getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
+    getConvertMetEstimate: forwardToMainProcess('get-convert-met-estimate'),
+    getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
+    buyMetronome: forwardToMainProcess('buy-metronome'),
+    convertEth: forwardToMainProcess('convert-eth'),
+    convertMet: forwardToMainProcess('convert-met'),
+  }
 
   const api = {
     ...utils,
+    ...forwardedMethods,
     isValidMnemonic: keys.isValidMnemonic,
     createMnemonic: keys.createMnemonic,
     refreshAllTransactions,
-    onOnboardingCompleted,
     onTermsLinkClick,
+    validatePassword,
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,
-    onLoginSubmit,
-    onInit,
     store
   }
 

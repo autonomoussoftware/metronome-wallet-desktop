@@ -13,8 +13,8 @@ function getLogData (data) {
   if (!data) { return '' }
   const logData = Object.assign({}, data)
 
-  const blackList = ['password']
-  blackList.forEach(w => delete logData[w])
+  // const blackList = ['password']
+  // blackList.forEach(w => delete logData[w])
 
   return JSON.stringify(logData)
 }

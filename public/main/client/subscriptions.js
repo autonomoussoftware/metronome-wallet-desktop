@@ -9,8 +9,8 @@ function getLogData (data) {
   if (!data) { return '' }
   const logData = Object.assign({}, data)
 
-  const blackList = ['password']
-  blackList.forEach(w => delete logData[w])
+  // const blackList = ['password']
+  // blackList.forEach(w => delete logData[w])
 
   return JSON.stringify(logData)
 }
@@ -18,10 +18,10 @@ function getLogData (data) {
 function onRendererEvent (eventName, handler) {
   ipcMain.on(eventName, function (event, { id, data }) {
     logger.verbose(`--> ${eventName}:${id} ${getLogData()}`)
-    const result = Promise.resolve(handler(data))
+    const result = handler(data)
 
     result
-      .then(res => res.error ? Promise.reject(res.error) : res)
+      // .then(res => res.error ? Promise.reject(res.error) : res)
       .then(function (res) {
         if (event.sender.isDestroyed()) {
           return
@@ -58,7 +58,20 @@ const subscribeToRendererMessages = function (emitter, core) {
 
   subscribeTo({
     'onboarding-completed': withCore(handlers.onboardingCompleted),
-    'login-submit': withCore(handlers.onLoginSubmit)
+    'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
+    'login-submit': withCore(handlers.onLoginSubmit),
+    'get-gas-limit': withCore(handlers.getGasLimit),
+    'get-gas-price': withCore(handlers.getGasPrice),
+    'send-eth': withCore(handlers.sendEth),
+    'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
+    'get-convert-eth-estimate': withCore(handlers.getConvertEthEstimate),
+    'get-convert-eth-gas-limit': withCore(handlers.getConvertEthGasLimit),
+    'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
+    'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
+    'buy-metronome': withCore(handlers.buyMetronome),
+    'convert-eht': withCore(handlers.convertEth),
+    'convert-met': withCore(handlers.convertMet),
+    'send-met': withCore(handlers.sendMet)
   })
 }
 
