@@ -1,7 +1,9 @@
+import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
 import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { render, Simulate } from 'react-testing-library'
 import { ThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router'
+import createClient from './dummy-client'
 import { merge } from 'lodash'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
@@ -19,16 +21,18 @@ import config from './config'
  * property useful for dispatching actions inside your tests.
  */
 export function reduxRender(element, initialState) {
-  const store = createStore(initialState)
+  const client = createClient(config, createStore, initialState)
 
   const renderResult = render(
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <React.Fragment>{element}</React.Fragment>
-      </ThemeProvider>
-    </Provider>
+    <ClientProvider value={client}>
+      <Provider store={client.store}>
+        <ThemeProvider theme={theme}>
+          <React.Fragment>{element}</React.Fragment>
+        </ThemeProvider>
+      </Provider>
+    </ClientProvider>
   )
-  return { ...renderResult, store }
+  return { ...renderResult, store: client.store }
 }
 
 /*
@@ -112,12 +116,13 @@ export const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7
  */
 export function getInitialState(overrides = {}) {
   const baseState = {
+    config,
     connectivity: { isOnline: true },
     blockchain: { height: 1, gasPrice: config.DEFAULT_GAS_PRICE },
     converter: {
       status: {
         availableEth: '100',
-        availableMtn: '100',
+        availableMet: '100',
         currentPrice: '10'
       }
     },
@@ -125,7 +130,7 @@ export function getInitialState(overrides = {}) {
       status: {
         nextAuctionStartTime: inOneHour(),
         tokenRemaining: '1',
-        currentAuction: '10',
+        currentAuction: 10,
         currentPrice: '33000000000',
         genesisTime: twoWeeksAgo()
       }

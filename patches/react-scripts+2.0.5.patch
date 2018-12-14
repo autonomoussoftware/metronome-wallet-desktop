@@ -21,3 +21,14 @@ patch-package
  
              loader: require.resolve('babel-loader'),
              options: {
+--- a/node_modules/react-scripts/scripts/utils/createJestConfig.js
++++ b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+@@ -51,7 +51,7 @@ module.exports = (resolve, rootDir, isEjecting) => {
+       '^(?!.*\\.(js|jsx|css|json)$)': resolve('config/jest/fileTransform.js'),
+     },
+     transformIgnorePatterns: [
+-      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
++      '[/\\\\]node_modules[/\\\\](?!(metronome-wallet-ui-logic)/).+\\.(js|jsx)$',
+       '^.+\\.module\\.(css|sass|scss)$',
+     ],
+     moduleNameMapper: {

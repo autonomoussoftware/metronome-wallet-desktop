@@ -9,7 +9,7 @@ const getElement = defaultTab => (
   <ConvertDrawer onRequestClose={closeHandler} defaultTab={defaultTab} isOpen />
 )
 
-describe('<ConvertDrawer/>', () => {
+describe.skip('<ConvertDrawer/>', () => {
   it('displays MET TO ETH form when clicking the tab', () => {
     const { queryByTestId, getByTestId } = testUtils.reduxRender(
       getElement(),

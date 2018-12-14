@@ -43,15 +43,16 @@ describe('<Login />', () => {
     })
 
     it('displays an error message if onLoginSubmit is rejected', async () => {
-      const { queryByTestId, getByTestId } = testUtils.reduxRender(element)
+      const { getByTestId } = testUtils.reduxRender(element)
       const passField = getByTestId('pass-field')
       passField.value = INVALID_PASSWORD
       Simulate.change(passField)
 
-      expect(queryByTestId('error-msg')).toBeNull()
       Simulate.submit(getByTestId('login-form'))
       await flushPromises()
-      expect(queryByTestId('error-msg')).not.toBeNull()
+      expect(getByTestId('pass-field-error').textContent).toEqual(
+        expect.stringContaining('Unknown error')
+      )
     })
   })
 })
