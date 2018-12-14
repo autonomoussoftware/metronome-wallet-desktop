@@ -58,7 +58,7 @@ class ConvertMETtoETHForm extends React.Component {
   }
 
   renderConfirmation = () => {
-    const { metAmount, estimate, rate } = this.state
+    const { metAmount, estimate, rate } = this.props
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will convert <DisplayValue inline value={metAmount} post=" MET" />{' '}
