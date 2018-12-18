@@ -6,14 +6,24 @@ const addresses =
   MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN || 'main']
 const defaultExplorerUrl = 'https://explorer.metronome.io'
 
-const env = {
+const testEnv = {
   ETH_CHAIN: 'ropsten',
   ETH_WS_API_URL: 'wss://eth.wallet.bloqrock.net:8546',
   EXPLORER_INDEXER_URL: 'https://indexer.bloqrock.net',
   MET_EXPLORER_URL: 'https://explorer.met.bloqrock.net',
   TRACKING_ID: null,
   SENTRY_DSN: null,
-  debug: false
+  debug: true
+}
+
+const env = {
+  ETH_CHAIN: 'mainnet',
+  ETH_WS_API_URL: 'wss://eth.wallet.metronome.io:8546',
+  EXPLORER_INDEXER_URL: 'https://indexer.metronome.io',
+  MET_EXPLORER_URL: 'https://explorer.metronome.io',
+  TRACKING_ID: null,
+  SENTRY_DSN: null,
+  debug: true
 }
 
 module.exports = {
@@ -29,7 +39,7 @@ module.exports = {
   MET_DEFAULT_GAS_LIMIT: '250000',
   DEFAULT_GAS_PRICE: '1000000000',
   MAX_GAS_PRICE: '20000000000000000', // ~= $12 USD
-  REQUIRED_PASSWORD_ENTROPY: 72,
+  REQUIRED_PASSWORD_ENTROPY: 1,
   eth: {
     chain: env.ETH_CHAIN,
     wsApiUrl: env.ETH_WS_API_URL

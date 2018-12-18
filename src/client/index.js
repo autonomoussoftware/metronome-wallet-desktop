@@ -7,7 +7,7 @@ const { clipboard, shell } = window.require('electron')
 
 function createClient(config, createStore) {
   const reduxDevtoolsOptions = {
-    // actionsBlacklist: ['price-updated$'],
+    actionsBlacklist: ['price-updated$'],
     features: { dispatch: true },
     maxAge: 100 // default: 50
   }
@@ -37,17 +37,17 @@ function createClient(config, createStore) {
     onInit: forwardToMainProcess('ui-ready'),
     getGasLimit: forwardToMainProcess('get-gas-limit'),
     getGasPrice: forwardToMainProcess('get-gas-price'),
-    sendEth: forwardToMainProcess('send-eth'),
-    sendMet: forwardToMainProcess('send-met'),
+    sendEth: forwardToMainProcess('send-eth', 60000),
+    sendMet: forwardToMainProcess('send-met', 60000),
     getTokensGasLimit: forwardToMainProcess('get-tokens-gas-limit'),
     getAuctionGasLimit: forwardToMainProcess('get-auction-gas-limit'),
     getConvertEthEstimate: forwardToMainProcess('get-convert-eth-estimate'),
     getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
     getConvertMetEstimate: forwardToMainProcess('get-convert-met-estimate'),
     getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
-    buyMetronome: forwardToMainProcess('buy-metronome'),
-    convertEth: forwardToMainProcess('convert-eth'),
-    convertMet: forwardToMainProcess('convert-met'),
+    buyMetronome: forwardToMainProcess('buy-metronome', 60000),
+    convertEth: forwardToMainProcess('convert-eth', 60000),
+    convertMet: forwardToMainProcess('convert-met', 60000),
   }
 
   const api = {

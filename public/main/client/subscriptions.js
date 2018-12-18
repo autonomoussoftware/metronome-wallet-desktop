@@ -9,8 +9,8 @@ function getLogData (data) {
   if (!data) { return '' }
   const logData = Object.assign({}, data)
 
-  // const blackList = ['password']
-  // blackList.forEach(w => delete logData[w])
+  const blackList = ['password']
+  blackList.forEach(w => delete logData[w])
 
   return JSON.stringify(logData)
 }
@@ -21,7 +21,6 @@ function onRendererEvent (eventName, handler) {
     const result = handler(data)
 
     result
-      // .then(res => res.error ? Promise.reject(res.error) : res)
       .then(function (res) {
         if (event.sender.isDestroyed()) {
           return
@@ -69,7 +68,7 @@ const subscribeToRendererMessages = function (emitter, core) {
     'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
     'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
     'buy-metronome': withCore(handlers.buyMetronome),
-    'convert-eht': withCore(handlers.convertEth),
+    'convert-eth': withCore(handlers.convertEth),
     'convert-met': withCore(handlers.convertMet),
     'send-met': withCore(handlers.sendMet)
   })

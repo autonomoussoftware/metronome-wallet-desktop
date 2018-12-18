@@ -22,6 +22,18 @@ function createClient (config) {
         e.sender.send(event, data)
       })
     )
+
+    emitter.on('open-wallets', function ({ address }) {
+      e.sender.send('transactions-scan-started', { data: {} })
+      coreApi.explorer.syncTransactions(0, address)
+        .then(function () {
+          e.sender.send('transactions-scan-finished', { data: {} })
+        })
+        .catch(function () {
+          e.sender.send('transactions-scan-finished', { data: {} })
+        })
+    })
+
     const onboardingComplete = !!getPasswordHash()
     e.sender.send(eventName, Object.assign({}, args, { data: { onboardingComplete } }))
   })

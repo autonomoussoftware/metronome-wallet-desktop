@@ -4,8 +4,6 @@ const { aes256cbcIv, sha256 } = require('./crypto')
 const logger = require('electron-log')
 const settings = require('electron-settings')
 
-const toLowerCase = str => str.toLowerCase()
-
 const getActiveWallet = () => settings.get('user.activeWallet')
 
 const getWallets = () => Object.keys(settings.get('user.wallets'))
@@ -14,7 +12,7 @@ const getWalletId = seed => 1 // sha256.hash(seed)
 
 function getWalletAddresses (walletId) {
   const addressesPath = `user.wallets.${walletId}.addresses`
-  return Object.keys(settings.get(addressesPath)).map(toLowerCase)
+  return Object.keys(settings.get(addressesPath))
 }
 
 function findWalletId (address) {

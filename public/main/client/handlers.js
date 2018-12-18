@@ -14,7 +14,7 @@ const withAuth = fn => function (data, _, core) {
   }
   return auth.isValidPassword(data.password)
     .then(() => wallet.getSeed(data.walletId, data.password))
-    .then(seed => core.wallet.createPrivateKey(seed))
+    .then(core.wallet.createPrivateKey)
     .then(privateKey => fn(privateKey, data))
 }
 
@@ -33,24 +33,21 @@ function onboardingCompleted (data, emitter, core) {
       activeWallet: walletId,
       address
     }))
-  // .then(() => core.explorer.syncTransactions(0, address))
 }
 
-const onLoginSubmit = (data, emitter /* , core */) =>
+const onLoginSubmit = (data, emitter) =>
   auth.isValidPassword(data.password)
     .then(function (isValid) {
       if (!isValid) {
         return { error: new WalletError('Invalid password') }
       }
       wallet.getWallets().forEach(walletId =>
-        wallet.getAddressesForWalletId(walletId).forEach(address => // {
+        wallet.getAddressesForWalletId(walletId).forEach(address =>
           emitter.emit('open-wallets', {
             walletIds: [walletId],
             activeWallet: walletId,
             address
           })
-          // core.explorer.syncTransactions(0, address)
-          //    }
         )
       )
       return isValid
@@ -60,7 +57,7 @@ const getGasLimit = (data, emitter, core) => core.wallet.getGasLimit(data)
 
 const getGasPrice = (data, emitter, core) => core.wallet.getGasPrice(data)
 
-const sendEth = (data, emitter, core) => withAuth(core.wallet.sendEth)(data)
+const sendEth = (data, emitter, core) => withAuth(core.wallet.sendEth)(data, emitter, core)
 
 const getTokensGasLimit = (data, emitter, core) => core.tokens.getTokensGasLimit(data)
 
@@ -68,25 +65,19 @@ const getAuctionGasLimit = (data, emitter, core) => core.metronome.getAuctionGas
 
 const getConvertEthEstimate = (data, emitter, core) => core.metronome.getConvertEthEstimate(data)
 
-const getConvertEthGasLimit = (data, emitter, core) => {
-  logger.debug(JSON.stringify(data))
-  return core.metronome.getConvertEthGasLimit(data)
-}
+const getConvertEthGasLimit = (data, emitter, core) => core.metronome.getConvertEthGasLimit(data)
 
 const getConvertMetEstimate = (data, emitter, core) => core.metronome.getConvertMetEstimate(data)
 
-const getConvertMetGasLimit = (data, emitter, core) => {
-  logger.debug(JSON.stringify(data))
-  return core.metronome.getConvertMetGasLimit(data)
-}
+const getConvertMetGasLimit = (data, emitter, core) => core.metronome.getConvertMetGasLimit(data)
 
-const buyMetronome = (data, emitter, core) => withAuth(core.metronome.buyMetronome)(data)
+const buyMetronome = (data, emitter, core) => withAuth(core.metronome.buyMetronome)(data, emitter, core)
 
-const convertEth = (data, emitter, core) => withAuth(core.metronome.convertEth)(data)
+const convertEth = (data, emitter, core) => withAuth(core.metronome.convertEth)(data, emitter, core)
 
-const convertMet = (data, emitter, core) => withAuth(core.metronome.convertMet)(data)
+const convertMet = (data, emitter, core) => withAuth(core.metronome.convertMet)(data, emitter, core)
 
-const sendMet = (data, emitter, core) => withAuth(core.metronome.sendMet)(data)
+const sendMet = (data, emitter, core) => withAuth(core.metronome.sendMet)(data, emitter, core)
 
 module.exports = {
   getConvertEthEstimate,
