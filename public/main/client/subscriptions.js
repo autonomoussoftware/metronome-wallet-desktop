@@ -56,20 +56,21 @@ const subscribeToRendererMessages = function (emitter, core) {
   }
 
   subscribeTo({
+    'get-convert-eth-gas-limit': withCore(handlers.getConvertEthGasLimit),
+    'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
+    'get-convert-eth-estimate': withCore(handlers.getConvertEthEstimate),
+    'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
+    'recover-from-mnemonic': withCore(handlers.recoverFromMnemonic),
     'onboarding-completed': withCore(handlers.onboardingCompleted),
+    'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
+    'buy-metronome': withCore(handlers.buyMetronome),
     'login-submit': withCore(handlers.onLoginSubmit),
     'get-gas-limit': withCore(handlers.getGasLimit),
     'get-gas-price': withCore(handlers.getGasPrice),
-    'send-eth': withCore(handlers.sendEth),
-    'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
-    'get-convert-eth-estimate': withCore(handlers.getConvertEthEstimate),
-    'get-convert-eth-gas-limit': withCore(handlers.getConvertEthGasLimit),
-    'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
-    'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
-    'buy-metronome': withCore(handlers.buyMetronome),
     'convert-eth': withCore(handlers.convertEth),
     'convert-met': withCore(handlers.convertMet),
+    'send-eth': withCore(handlers.sendEth),
     'send-met': withCore(handlers.sendMet)
   })
 }

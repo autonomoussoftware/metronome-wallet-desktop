@@ -4,6 +4,7 @@ const keys = require('./keys')
 const auth = require('./auth')
 const wallet = require('./wallet')
 const WalletError = require('../WalletError')
+const restart = require('./electron-restart')
 
 const logger = require('electron-log')
 
@@ -53,6 +54,19 @@ const onLoginSubmit = (data, emitter) =>
       return isValid
     })
 
+const recoverFromMnemonic = function (data, _, core) {
+  if (auth.isValidPassword(data.password)) {
+    const seed = keys.mnemonicToSeedHex(data.mnemonic)
+    const walletId = wallet.getWalletId(seed)
+    const address = core.wallet.createAddress(seed)
+    return Promise.all([
+      wallet.setSeed(seed, data.password),
+      wallet.setAddressForWalletId(walletId, address)
+    ])
+      .then(restart)
+  }
+}
+
 const getGasLimit = (data, emitter, core) => core.wallet.getGasLimit(data)
 
 const getGasPrice = (data, emitter, core) => core.wallet.getGasPrice(data)
@@ -85,6 +99,7 @@ module.exports = {
   getConvertMetEstimate,
   getConvertMetGasLimit,
   onboardingCompleted,
+  recoverFromMnemonic,
   getAuctionGasLimit,
   getTokensGasLimit,
   onLoginSubmit,
