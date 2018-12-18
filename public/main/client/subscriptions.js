@@ -71,7 +71,8 @@ const subscribeToRendererMessages = function (emitter, core) {
     'convert-eth': withCore(handlers.convertEth),
     'convert-met': withCore(handlers.convertMet),
     'send-eth': withCore(handlers.sendEth),
-    'send-met': withCore(handlers.sendMet)
+    'send-met': withCore(handlers.sendMet),
+    'clear-cache': handlers.clearCache
   })
 }
 

@@ -48,7 +48,8 @@ function createClient(config, createStore) {
     buyMetronome: forwardToMainProcess('buy-metronome', 60000),
     convertEth: forwardToMainProcess('convert-eth', 60000),
     convertMet: forwardToMainProcess('convert-met', 60000),
-    recoverFromMnemonic: forwardToMainProcess('recover-from-mnemonic')
+    recoverFromMnemonic: forwardToMainProcess('recover-from-mnemonic'),
+    clearCache: forwardToMainProcess('clear-cache')
   }
 
   const api = {
