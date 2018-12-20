@@ -22,34 +22,37 @@ function createClient(config, createStore) {
   const onHelpLinkClick = () =>
     shell.openExternal('https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq')
 
-  const getStringEntropy = str =>
-    fastPasswordEntropy(str)
+  const onExplorerLinkClick = (transactionHash) =>
+    shell.openExternal(`https://explorer.metronome.io/transactions/${transactionHash}`)
+
+  const getStringEntropy = fastPasswordEntropy
 
   const refreshAllTransactions = () => { }
 
+  const refreshTransaction = () => { }
+
   const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
 
-  const validatePassword = () => true
-
   const forwardedMethods = {
+    getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
+    getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
+    getConvertEthEstimate: forwardToMainProcess('get-convert-eth-estimate'),
+    getConvertMetEstimate: forwardToMainProcess('get-convert-met-estimate'),
     onOnboardingCompleted: forwardToMainProcess('onboarding-completed'),
+    recoverFromMnemonic: forwardToMainProcess('recover-from-mnemonic'),
+    getAuctionGasLimit: forwardToMainProcess('get-auction-gas-limit'),
+    getTokensGasLimit: forwardToMainProcess('get-tokens-gas-limit'),
+    validatePassword: forwardToMainProcess('validate-password'),
+    buyMetronome: forwardToMainProcess('buy-metronome', 60000),
+    convertEth: forwardToMainProcess('convert-eth', 60000),
+    convertMet: forwardToMainProcess('convert-met', 60000),
     onLoginSubmit: forwardToMainProcess('login-submit'),
-    onInit: forwardToMainProcess('ui-ready'),
     getGasLimit: forwardToMainProcess('get-gas-limit'),
     getGasPrice: forwardToMainProcess('get-gas-price'),
     sendEth: forwardToMainProcess('send-eth', 60000),
     sendMet: forwardToMainProcess('send-met', 60000),
-    getTokensGasLimit: forwardToMainProcess('get-tokens-gas-limit'),
-    getAuctionGasLimit: forwardToMainProcess('get-auction-gas-limit'),
-    getConvertEthEstimate: forwardToMainProcess('get-convert-eth-estimate'),
-    getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
-    getConvertMetEstimate: forwardToMainProcess('get-convert-met-estimate'),
-    getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
-    buyMetronome: forwardToMainProcess('buy-metronome', 60000),
-    convertEth: forwardToMainProcess('convert-eth', 60000),
-    convertMet: forwardToMainProcess('convert-met', 60000),
-    recoverFromMnemonic: forwardToMainProcess('recover-from-mnemonic'),
-    clearCache: forwardToMainProcess('clear-cache')
+    clearCache: forwardToMainProcess('clear-cache'),
+    onInit: forwardToMainProcess('ui-ready'),
   }
 
   const api = {
@@ -58,8 +61,9 @@ function createClient(config, createStore) {
     isValidMnemonic: keys.isValidMnemonic,
     createMnemonic: keys.createMnemonic,
     refreshAllTransactions,
+    onExplorerLinkClick,
+    refreshTransaction,
     onTermsLinkClick,
-    validatePassword,
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,

@@ -1,3 +1,4 @@
+import * as validators from 'metronome-wallet-ui-logic/src/validators'
 import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
 import * as utils from 'metronome-wallet-ui-logic/src/utils'
 import PropTypes from 'prop-types'
@@ -125,9 +126,29 @@ class ConfirmationWizard extends React.Component {
 
   onConfirmClick = ev => {
     ev.preventDefault()
-
-    if (!this.validateConfirmation()) return
-
+    this.validateConfirmation()
+      .then(isValid => {
+        if (isValid) return this.submitWizard()
+        this.setState({
+          errors: { password: 'Invalid password' }
+        })
+      })
+      .catch(err =>
+        this.setState({
+          errors: { password: err.message }
+        })
+      )
+  }
+  validateConfirmation = () => {
+    const errors = validators.validatePassword(this.state.password)
+    const hasErrors = Object.keys(errors).length > 0
+    if (hasErrors) {
+      this.setState({ errors })
+      return Promise.reject(new Error(errors.password))
+    }
+    return this.props.client.validatePassword(this.state.password)
+  }
+  submitWizard = () => {
     this.setState(
       { status: 'pending' },
       () => (this.focusable ? this.focusable.focus() : null)
@@ -139,14 +160,7 @@ class ConfirmationWizard extends React.Component {
       .catch(err => this.setState({ status: 'failure', error: err.message }))
   }
 
-  validateConfirmation = () => {
-    const errors = this.props.client.validatePassword(this.state.password)
-    const hasErrors = Object.keys(errors).length > 0
-    if (hasErrors) this.setState({ errors })
-    return !hasErrors
-  }
-
-  onPasswordChange = ({ value }) => this.setState({ password: value })
+  onPasswordChange = ({ value }) => this.setState({ password: value, errors: {} })
 
   // eslint-disable-next-line complexity
   render() {

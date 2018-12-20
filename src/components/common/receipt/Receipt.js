@@ -2,7 +2,7 @@ import withReceiptState from 'metronome-wallet-ui-logic/src/hocs/withReceiptStat
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
-import Web3 from 'web3'
+import { toChecksumAddress } from 'web3-utils'
 
 import AmountRow from './AmountRow'
 import TypeRow from './TypeRow'
@@ -93,7 +93,7 @@ class Receipt extends React.Component {
               <Label>
                 {this.props.isPending ? 'Pending' : 'Received'} from
               </Label>
-              <Address>{Web3.utils.toChecksumAddress(tx.from)}</Address>
+              <Address>{toChecksumAddress(tx.from)}</Address>
             </Row>
           )}
 
@@ -101,7 +101,7 @@ class Receipt extends React.Component {
           tx.to && (
             <Row>
               <Label>{this.props.isPending ? 'Pending' : 'Sent'} to</Label>
-              <Address>{Web3.utils.toChecksumAddress(tx.to)}</Address>
+              <Address>{toChecksumAddress(tx.to)}</Address>
             </Row>
           )}
 

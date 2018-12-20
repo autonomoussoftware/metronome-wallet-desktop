@@ -64,6 +64,7 @@ const subscribeToRendererMessages = function (emitter, core) {
     'onboarding-completed': withCore(handlers.onboardingCompleted),
     'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
+    'validate-password': handlers.validatePassword,
     'buy-metronome': withCore(handlers.buyMetronome),
     'login-submit': withCore(handlers.onLoginSubmit),
     'get-gas-limit': withCore(handlers.getGasLimit),

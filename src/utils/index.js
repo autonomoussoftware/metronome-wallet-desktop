@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import PropTypes from 'prop-types'
 import cuid from 'cuid'
-import Web3 from 'web3'
+import { fromWei, toBN, toWei, toHex } from 'web3-utils'
 
 import Deferred from '../lib/Deferred'
 import config from '../config'
@@ -74,7 +74,7 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
 export function isWeiable(amount, unit = 'ether') {
   let isValid
   try {
-    Web3.utils.toWei(amount.replace(',', '.'), unit)
+    toWei(amount.replace(',', '.'), unit)
     isValid = true
   } catch (e) {
     isValid = false
@@ -84,7 +84,7 @@ export function isWeiable(amount, unit = 'ether') {
 
 export function isHexable(amount) {
   try {
-    Web3.utils.toHex(amount)
+    toHex(amount)
     return true
   } catch (e) {
     return false
@@ -92,16 +92,16 @@ export function isHexable(amount) {
 }
 
 export function isGreaterThanZero(amount) {
-  const weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+  const weiAmount = new BigNumber(toWei(amount.replace(',', '.')))
   return weiAmount.gt(new BigNumber(0))
 }
 
 export function getWeiUSDvalue(amount, rate) {
-  const amountBN = Web3.utils.toBN(amount)
-  const rateBN = Web3.utils.toBN(
-    Web3.utils.toWei(typeof rate === 'string' ? rate : rate.toString())
+  const amountBN = toBN(amount)
+  const rateBN = toBN(
+    toWei(typeof rate === 'string' ? rate : rate.toString())
   )
-  return amountBN.mul(rateBN).div(Web3.utils.toBN(Web3.utils.toWei('1')))
+  return amountBN.mul(rateBN).div(toBN(toWei('1')))
 }
 
 export function getUSDequivalent(amount, rate) {
@@ -109,9 +109,9 @@ export function getUSDequivalent(amount, rate) {
 
   return weiUSDvalue.isZero()
     ? '$0.00 (USD)'
-    : weiUSDvalue.lt(Web3.utils.toBN(Web3.utils.toWei('0.01')))
+    : weiUSDvalue.lt(toBN(toWei('0.01')))
       ? '< $0.01 (USD)'
-      : `$${new BigNumber(Web3.utils.fromWei(weiUSDvalue.toString()))
+      : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
           .dp(2)
           .toString(10)} (USD)`
 }
@@ -121,10 +121,10 @@ export function toUSD(amount, rate, errorValue, smallValue) {
   let weiUSDvalue
   try {
     weiUSDvalue = getWeiUSDvalue(
-      Web3.utils.toWei(amount.replace(',', '.')),
+      toWei(amount.replace(',', '.')),
       rate
     )
-    isValidAmount = weiUSDvalue.gte(Web3.utils.toBN('0'))
+    isValidAmount = weiUSDvalue.gte(toBN('0'))
   } catch (e) {
     isValidAmount = false
   }
@@ -132,9 +132,9 @@ export function toUSD(amount, rate, errorValue, smallValue) {
   const expectedUSDamount = isValidAmount
     ? weiUSDvalue.isZero()
       ? '0'
-      : weiUSDvalue.lt(Web3.utils.toBN(Web3.utils.toWei('0.01')))
+      : weiUSDvalue.lt(toBN(toWei('0.01')))
         ? smallValue
-        : new BigNumber(Web3.utils.fromWei(weiUSDvalue.toString()))
+        : new BigNumber(fromWei(weiUSDvalue.toString()))
             .dp(2)
             .toString(10)
     : errorValue
@@ -146,7 +146,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
   let isValidAmount
   let weiAmount
   try {
-    weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+    weiAmount = new BigNumber(toWei(amount.replace(',', '.')))
     isValidAmount = weiAmount.gte(new BigNumber(0))
   } catch (e) {
     isValidAmount = false
@@ -154,7 +154,7 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
 
   const expectedETHamount = isValidAmount
     ? weiAmount
-        .dividedBy(new BigNumber(Web3.utils.toWei(String(rate))))
+        .dividedBy(new BigNumber(toWei(String(rate))))
         .decimalPlaces(18)
         .toString(10)
     : errorValue
@@ -166,14 +166,14 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
   let isValidAmount
   let weiAmount
   try {
-    weiAmount = new BigNumber(Web3.utils.toWei(amount.replace(',', '.')))
+    weiAmount = new BigNumber(toWei(amount.replace(',', '.')))
     isValidAmount = weiAmount.gte(new BigNumber(0))
   } catch (e) {
     isValidAmount = false
   }
 
   const expectedMETamount = isValidAmount
-    ? Web3.utils.toWei(
+    ? toWei(
         weiAmount
           .dividedBy(new BigNumber(rate))
           .decimalPlaces(18)
@@ -182,14 +182,14 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
     : errorValue
 
   const excedes = isValidAmount
-    ? Web3.utils.toBN(expectedMETamount).gte(Web3.utils.toBN(remaining))
+    ? toBN(expectedMETamount).gte(toBN(remaining))
     : null
 
   const usedETHAmount =
     isValidAmount && excedes
       ? new BigNumber(remaining)
           .multipliedBy(new BigNumber(rate))
-          .dividedBy(new BigNumber(Web3.utils.toWei('1')))
+          .dividedBy(new BigNumber(toWei('1')))
           .integerValue()
           .toString(10)
       : null
@@ -206,15 +206,15 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 }
 
 export function weiToGwei(amount) {
-  return Web3.utils.fromWei(amount, 'gwei')
+  return fromWei(amount, 'gwei')
 }
 
 export function gweiToWei(amount) {
-  return Web3.utils.toWei(amount, 'gwei')
+  return toWei(amount, 'gwei')
 }
 
 export function smartRound(weiAmount) {
-  const n = Number.parseFloat(Web3.utils.fromWei(weiAmount), 10)
+  const n = Number.parseFloat(fromWei(weiAmount), 10)
   let decimals = -Math.log10(n) + 10
   if (decimals < 2) {
     decimals = 2
@@ -265,7 +265,7 @@ export function sanitizeMnemonic(str) {
 }
 
 export function getConversionRate(metAmount, ethAmount) {
-  const compareAgainst = Web3.utils.fromWei(metAmount)
+  const compareAgainst = fromWei(metAmount)
   return new BigNumber(ethAmount)
     .dividedBy(new BigNumber(compareAgainst))
     .integerValue()

@@ -56,6 +56,8 @@ const onLoginSubmit = (data, emitter) =>
 
 const clearCache = () => Promise.resolve().then(restart)
 
+const validatePassword = data => auth.isValidPassword(data)
+
 const recoverFromMnemonic = function (data, _, core) {
   if (auth.isValidPassword(data.password)) {
     const seed = keys.mnemonicToSeedHex(data.mnemonic)
@@ -104,6 +106,7 @@ module.exports = {
   recoverFromMnemonic,
   getAuctionGasLimit,
   getTokensGasLimit,
+  validatePassword,
   onLoginSubmit,
   buyMetronome,
   getGasLimit,

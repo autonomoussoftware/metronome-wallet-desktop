@@ -89,7 +89,7 @@
     "supports-color": "5.4.0",
     "tough-cookie": "2.4.3",
     "universal-analytics": "0.4.20",
-    "web3": "1.0.0-beta.34"
+    "web3-utils": "1.0.0-beta.36"
   },
   "devDependencies": {
     "concurrently": "3.6.0",

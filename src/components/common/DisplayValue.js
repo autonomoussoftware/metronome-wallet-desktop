@@ -1,7 +1,7 @@
 import smartRounder from 'smart-round'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Web3 from 'web3'
+import { fromWei } from 'web3-utils'
 
 class DisplayValue extends React.Component {
   static propTypes = {
@@ -36,7 +36,7 @@ class DisplayValue extends React.Component {
     let formattedValue
 
     try {
-      formattedValue = this.round(Web3.utils.fromWei(value), true)
+      formattedValue = this.round(fromWei(value), true)
     } catch (e) {
       formattedValue = null
     }
