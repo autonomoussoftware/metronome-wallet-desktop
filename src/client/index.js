@@ -1,5 +1,5 @@
+import { forwardToMainProcess, sendToMainProcess } from '../utils'
 import fastPasswordEntropy from 'fast-password-entropy'
-import { forwardToMainProcess } from '../utils'
 import keys from './keys'
 import * as utils from './utils'
 
@@ -33,6 +33,25 @@ function createClient(config, createStore) {
 
   const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
 
+  const onInit = () => {
+    window.addEventListener('beforeunload', function() {
+      sendToMainProcess('ui-unload')
+    })
+    window.addEventListener('online', () => {
+      store.dispatch({
+        type: 'connectivity-state-changed',
+        payload: { ok: true }
+      })
+    })
+    window.addEventListener('offline', () => {
+      store.dispatch({
+        type: 'connectivity-state-changed',
+        payload: { ok: false }
+      })
+    })
+    return sendToMainProcess('ui-ready')
+  }
+
   const forwardedMethods = {
     getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
     getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
@@ -51,8 +70,7 @@ function createClient(config, createStore) {
     getGasPrice: forwardToMainProcess('get-gas-price'),
     sendEth: forwardToMainProcess('send-eth', 60000),
     sendMet: forwardToMainProcess('send-met', 60000),
-    clearCache: forwardToMainProcess('clear-cache'),
-    onInit: forwardToMainProcess('ui-ready'),
+    clearCache: forwardToMainProcess('clear-cache')
   }
 
   const api = {
@@ -67,6 +85,7 @@ function createClient(config, createStore) {
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,
+    onInit,
     store
   }
 
