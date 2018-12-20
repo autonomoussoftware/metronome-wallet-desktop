@@ -8,6 +8,7 @@ import ConverterIcon from '../icons/ConverterIcon'
 import AuctionIcon from '../icons/AuctionIcon'
 import WalletIcon from '../icons/WalletIcon'
 import LogoIcon from '../icons/LogoIcon'
+import PortIcon from '../icons/PortIcon'
 import CogIcon from '../icons/CogIcon'
 import { Sp } from '../common'
 import Logo from './Logo'
@@ -123,11 +124,35 @@ const IconWrapper = styled.div`
 
 const BtnText = styled.span`
   opacity: 0;
+  flex-grow: 1;
   ${Container}:hover & {
     opacity: 1;
   }
   @media (min-width: 800px) {
     opacity: 1;
+  }
+`
+
+const Badge = styled.div`
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.danger};
+  border-radius: 1.2rem;
+  font-size: 1.1rem;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  padding: 0 0.8rem;
+  letter-spacing: 1px;
+  min-width: 3.2rem;
+  text-align: center;
+  transform: translateX(-70px);
+
+  ${Container}:hover & {
+    background-color: ${({ theme }) => theme.colors.darkDanger};
+    transform: translateX(0px);
+  }
+  @media (min-width: 800px) {
+    background-color: ${({ theme }) => theme.colors.darkDanger};
+    transform: translateX(0px);
   }
 `
 
@@ -268,8 +293,7 @@ const SecondaryLink = styled.a`
 `
 
 const Footer = styled.div`
-  padding: 4.8rem 1.6rem 2.4rem;
-  height: 108px;
+  padding: 2.4rem 1.6rem 2.4rem;
   display: none;
 
   @media (min-width: 800px) {
@@ -324,6 +348,17 @@ class Sidebar extends React.Component {
               <ConverterIcon />
             </IconWrapper>
             <BtnText>Converter</BtnText>
+          </Button>
+          <Button
+            activeClassName="active"
+            data-testid="port-nav-btn"
+            to="/port"
+          >
+            <IconWrapper>
+              <PortIcon />
+            </IconWrapper>
+            <BtnText>Port</BtnText>
+            <Badge>10</Badge>
           </Button>
         </MainMenu>
         <Sp mt={2}>
