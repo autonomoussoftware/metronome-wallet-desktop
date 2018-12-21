@@ -1,10 +1,11 @@
 'use strict'
 
-const keys = require('./keys')
-const auth = require('./auth')
-const wallet = require('./wallet')
 const WalletError = require('../WalletError')
 const restart = require('./electron-restart')
+const wallet = require('./wallet')
+const storage = require('./storage')
+const auth = require('./auth')
+const keys = require('./keys')
 
 const logger = require('electron-log')
 
@@ -58,6 +59,8 @@ const clearCache = () => Promise.resolve().then(restart)
 
 const validatePassword = data => auth.isValidPassword(data)
 
+const persistState = data => storage.persistState(data).then(() => true)
+
 const recoverFromMnemonic = function (data, _, core) {
   if (auth.isValidPassword(data.password)) {
     const seed = keys.mnemonicToSeedHex(data.mnemonic)
@@ -109,6 +112,7 @@ module.exports = {
   validatePassword,
   onLoginSubmit,
   buyMetronome,
+  persistState,
   getGasLimit,
   getGasPrice,
   convertEth,

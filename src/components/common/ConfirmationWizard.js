@@ -1,15 +1,16 @@
 import * as validators from 'metronome-wallet-ui-logic/src/validators'
 import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import * as selectors from 'metronome-wallet-ui-logic/src/selectors'
 import * as utils from 'metronome-wallet-ui-logic/src/utils'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
 import theme from 'metronome-wallet-ui-logic/src/theme'
+import styled from 'styled-components'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import React from 'react'
 
 import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './index'
 import CheckIcon from '../icons/CheckIcon'
 import CloseIcon from '../icons/CloseIcon'
-import config from '../../config'
 
 const ConfirmationTitle = styled.h1`
   font-size: 1.6rem;
@@ -91,7 +92,8 @@ class ConfirmationWizard extends React.Component {
     styles: PropTypes.object,
     client: PropTypes.shape({
       validatePassword: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    config: PropTypes.object.isRequired
   }
 
   static defaultProps = {
@@ -231,7 +233,7 @@ class ConfirmationWizard extends React.Component {
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
-            {error && <Message>{utils.messageParser(config, error)}</Message>}
+            {error && <Message>{utils.messageParser(this.props.config, error)}</Message>}
             <TryAgainBtn
               data-testid="try-again-btn"
               onClick={this.onCancelClick}
@@ -263,4 +265,6 @@ class ConfirmationWizard extends React.Component {
   }
 }
 
-export default withClient(ConfirmationWizard)
+const mapStateToProps = (state) => ({ config: selectors.getConfig(state) })
+
+export default withClient(connect(mapStateToProps)(ConfirmationWizard))

@@ -6,24 +6,26 @@ const addresses =
   MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN || 'main']
 const defaultExplorerUrl = 'https://explorer.metronome.io'
 
-const testEnv = {
+const env = {
   ETH_CHAIN: 'ropsten',
-  ETH_WS_API_URL: 'wss://eth.wallet.bloqrock.net:8546',
-  EXPLORER_INDEXER_URL: 'https://indexer.bloqrock.net',
+  // ETH_WS_API_URL: 'wss://eth.wallet.bloqrock.net:8546',
+  ETH_WS_API_URL: 'ws://ec2-54-233-108-37.sa-east-1.compute.amazonaws.com:8546',
+  // EXPLORER_INDEXER_URL: 'https://indexer.bloqrock.net',
+  EXPLORER_INDEXER_URL: 'http://localhost:3005',
   MET_EXPLORER_URL: 'https://explorer.met.bloqrock.net',
   TRACKING_ID: null,
   SENTRY_DSN: null,
-  debug: true
+  debug: false
 }
 
-const env = {
+const prodEnv = {
   ETH_CHAIN: 'mainnet',
   ETH_WS_API_URL: 'wss://eth.wallet.metronome.io:8546',
   EXPLORER_INDEXER_URL: 'https://indexer.metronome.io',
   MET_EXPLORER_URL: 'https://explorer.metronome.io',
   TRACKING_ID: null,
   SENTRY_DSN: null,
-  debug: true
+  debug: false
 }
 
 module.exports = {

@@ -1,11 +1,11 @@
-import { forwardToMainProcess, sendToMainProcess } from '../utils'
 import fastPasswordEntropy from 'fast-password-entropy'
 import keys from './keys'
 import * as utils from './utils'
+import './sentry'
 
 const { clipboard, shell } = window.require('electron')
 
-function createClient(config, createStore) {
+function createClient(createStore) {
   const reduxDevtoolsOptions = {
     actionsBlacklist: ['price-updated$'],
     features: { dispatch: true },
@@ -14,8 +14,12 @@ function createClient(config, createStore) {
 
   const store = createStore(
     reduxDevtoolsOptions,
-    { config }
   )
+
+  store.subscribe(function () {
+    utils.forwardToMainProcess('persist-state')(store.getState())
+  })
+
   const onTermsLinkClick = () =>
     shell.openExternal('https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE')
 
@@ -34,8 +38,8 @@ function createClient(config, createStore) {
   const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
 
   const onInit = () => {
-    window.addEventListener('beforeunload', function() {
-      sendToMainProcess('ui-unload')
+    window.addEventListener('beforeunload', function () {
+      utils.sendToMainProcess('ui-unload')
     })
     window.addEventListener('online', () => {
       store.dispatch({
@@ -49,28 +53,28 @@ function createClient(config, createStore) {
         payload: { ok: false }
       })
     })
-    return sendToMainProcess('ui-ready')
+    return utils.sendToMainProcess('ui-ready')
   }
 
   const forwardedMethods = {
-    getConvertEthGasLimit: forwardToMainProcess('get-convert-eth-gas-limit'),
-    getConvertMetGasLimit: forwardToMainProcess('get-convert-met-gas-limit'),
-    getConvertEthEstimate: forwardToMainProcess('get-convert-eth-estimate'),
-    getConvertMetEstimate: forwardToMainProcess('get-convert-met-estimate'),
-    onOnboardingCompleted: forwardToMainProcess('onboarding-completed'),
-    recoverFromMnemonic: forwardToMainProcess('recover-from-mnemonic'),
-    getAuctionGasLimit: forwardToMainProcess('get-auction-gas-limit'),
-    getTokensGasLimit: forwardToMainProcess('get-tokens-gas-limit'),
-    validatePassword: forwardToMainProcess('validate-password'),
-    buyMetronome: forwardToMainProcess('buy-metronome', 60000),
-    convertEth: forwardToMainProcess('convert-eth', 60000),
-    convertMet: forwardToMainProcess('convert-met', 60000),
-    onLoginSubmit: forwardToMainProcess('login-submit'),
-    getGasLimit: forwardToMainProcess('get-gas-limit'),
-    getGasPrice: forwardToMainProcess('get-gas-price'),
-    sendEth: forwardToMainProcess('send-eth', 60000),
-    sendMet: forwardToMainProcess('send-met', 60000),
-    clearCache: forwardToMainProcess('clear-cache')
+    getConvertEthGasLimit: utils.forwardToMainProcess('get-convert-eth-gas-limit'),
+    getConvertMetGasLimit: utils.forwardToMainProcess('get-convert-met-gas-limit'),
+    getConvertEthEstimate: utils.forwardToMainProcess('get-convert-eth-estimate'),
+    getConvertMetEstimate: utils.forwardToMainProcess('get-convert-met-estimate'),
+    onOnboardingCompleted: utils.forwardToMainProcess('onboarding-completed'),
+    recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
+    getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),
+    getTokensGasLimit: utils.forwardToMainProcess('get-tokens-gas-limit'),
+    validatePassword: utils.forwardToMainProcess('validate-password'),
+    buyMetronome: utils.forwardToMainProcess('buy-metronome', 60000),
+    convertEth: utils.forwardToMainProcess('convert-eth', 60000),
+    convertMet: utils.forwardToMainProcess('convert-met', 60000),
+    onLoginSubmit: utils.forwardToMainProcess('login-submit'),
+    getGasLimit: utils.forwardToMainProcess('get-gas-limit'),
+    getGasPrice: utils.forwardToMainProcess('get-gas-price'),
+    sendEth: utils.forwardToMainProcess('send-eth', 60000),
+    sendMet: utils.forwardToMainProcess('send-met', 60000),
+    clearCache: utils.forwardToMainProcess('clear-cache')
   }
 
   const api = {

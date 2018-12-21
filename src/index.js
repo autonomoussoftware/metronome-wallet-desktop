@@ -5,7 +5,6 @@ import { ThemeProvider } from 'styled-components'
 import ReactDOM from 'react-dom'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import Modal from 'react-modal'
-import Raven from 'raven-js'
 import React from 'react'
 import Root from 'metronome-wallet-ui-logic/src/components/Root'
 
@@ -15,19 +14,9 @@ import createClient from './client'
 import Onboarding from './components/onboarding/Onboarding'
 import Loading from './components/Loading'
 import Router from './components/Router'
-import config from './config'
 import Login from './components/Login'
 
-if (config.SENTRY_DSN) {
-  Raven.config(config.SENTRY_DSN, {
-    release: window.require('electron').remote.app.getVersion()
-  }).install()
-  window.addEventListener('unhandledrejection', e =>
-    Raven.captureException(e.reason)
-  )
-}
-
-const client = createClient(config, createStore)
+const client = createClient(createStore)
 
 // Initialize all the Main Process subscriptions
 subscribeToMainProcessMessages(client.store)

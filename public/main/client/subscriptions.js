@@ -15,9 +15,13 @@ function getLogData (data) {
   return JSON.stringify(logData)
 }
 
+const logEvent = eventName => eventName !== 'persist-state'
+
 function onRendererEvent (eventName, handler) {
   ipcMain.on(eventName, function (event, { id, data }) {
-    logger.verbose(`--> ${eventName}:${id} ${getLogData()}`)
+    if (logEvent(eventName)) {
+      logger.verbose(`--> ${eventName}:${id} ${getLogData()}`)
+    }
     const result = handler(data)
 
     result
@@ -26,7 +30,9 @@ function onRendererEvent (eventName, handler) {
           return
         }
         event.sender.send(eventName, { id, data: res })
-        logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
+        if (logEvent(eventName)) {
+          logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
+        }
       })
       .catch(function (err) {
         if (event.sender.isDestroyed()) {
@@ -73,6 +79,7 @@ const subscribeToRendererMessages = function (emitter, core) {
     'convert-met': withCore(handlers.convertMet),
     'send-eth': withCore(handlers.sendEth),
     'send-met': withCore(handlers.sendMet),
+    'persist-state': handlers.persistState,
     'clear-cache': handlers.clearCache
   })
 }

@@ -36,7 +36,6 @@ function presetDefaults () {
   if (defaultSettings.settingsVersion > currentSettingsVersion) {
     logger.verbose('Clearing database cache')
     const db = getDb()
-    db.collection('transactions')
     db.collection('state')
     db.dropDatabase()
       .catch(function (err) {

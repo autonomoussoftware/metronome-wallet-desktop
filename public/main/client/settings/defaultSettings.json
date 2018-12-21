@@ -3,9 +3,9 @@
     "chain": "ropsten",
     "node": {
       "jsonRpcApiUrl": "https://eth.wallet.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.wallet.bloqrock.net:8546"
+      "websocketApiUrl": "ws://ec2-54-233-108-37.sa-east-1.compute.amazonaws.com:8546"
     },
-    "indexerApiUrl": "https://indexer.bloqrock.net",
+    "indexerApiUrl": "http://localhost:3005",
     "tracerApiUrl": "https://tracer.bloqrock.net",
     "defaultDerivationPath": "m/44'/60'/0'/0",
     "trackingId": "UA-116275666-6",

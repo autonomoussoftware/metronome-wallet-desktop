@@ -5,6 +5,7 @@ const logger = require('electron-log')
 const { ipcMain } = require('electron')
 const { getPasswordHash } = require('./settings')
 const { subscribeToRendererMessages } = require('./subscriptions')
+const storage = require('./storage')
 
 function createClient (config) {
   const {
@@ -35,16 +36,29 @@ function createClient (config) {
   )
 
   emitter.on('open-wallets', function ({ address }) {
-    send('transactions-scan-started', { data: {} })
-    coreApi.explorer.syncTransactions(0, address)
-      .then(function () {
-        send('transactions-scan-finished', { data: {} })
-      })
-      .catch(function (err) {
-        logger.warn('Could not sync transactions/events', err)
-        send('transactions-scan-finished', { data: {} })
+    storage.getSyncBlock()
+      .then(function (from) {
+        send('transactions-scan-started', { data: {} })
+        logger.warn('From: ', from)
+        coreApi.explorer.syncTransactions(from, address)
+          .then(storage.setSyncBlock)
+          .then(function () {
+            send('transactions-scan-finished', { data: {} })
+            emitter.on('eth-block', function ({ number }) {
+              storage.setSyncBlock(number)
+                .catch(function (err) {
+                  logger.warn('Could not save new synced block', err)
+                })
+            })
+          })
+          .catch(function (err) {
+            logger.warn('Could not sync transactions/events', err)
+            send('transactions-scan-finished', { data: {} })
+          })
       })
   })
+
+  emitter.on('wallet-error', err => logger.warn(JSON.stringify(err)))
 
   ipcMain.on('ui-ready', function (e, args) {
     webContent = e.sender
@@ -56,7 +70,15 @@ function createClient (config) {
       webContent.send('eth-block', bestBlock)
     }
     const onboardingComplete = !!getPasswordHash()
-    webContent.send('ui-ready', Object.assign({}, args, { data: { onboardingComplete } }))
+    storage.getState().then(function (persistedState) {
+      webContent.send('ui-ready', Object.assign({}, args, {
+        data: {
+          onboardingComplete,
+          persistedState: persistedState || {},
+          config
+        }
+      }))
+    })
   })
 
   ipcMain.on('ui-unload', function () {
