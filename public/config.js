@@ -1,6 +1,7 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
+const newConfig = require('../config/index.js')
 
 const addresses =
   MetronomeContracts.addresses[process.env.REACT_APP_ETH_CHAIN || 'main']
@@ -18,17 +19,17 @@ const env = {
   debug: false
 }
 
-const prodEnv = {
-  ETH_CHAIN: 'mainnet',
-  ETH_WS_API_URL: 'wss://eth.wallet.metronome.io:8546',
-  EXPLORER_INDEXER_URL: 'https://indexer.metronome.io',
-  MET_EXPLORER_URL: 'https://explorer.metronome.io',
-  TRACKING_ID: null,
-  SENTRY_DSN: null,
-  debug: false
-}
+// const prodEnv = {
+//   ETH_CHAIN: 'mainnet',
+//   ETH_WS_API_URL: 'wss://eth.wallet.metronome.io:8546',
+//   EXPLORER_INDEXER_URL: 'https://indexer.metronome.io',
+//   MET_EXPLORER_URL: 'https://explorer.metronome.io',
+//   TRACKING_ID: null,
+//   SENTRY_DSN: null,
+//   debug: false
+// }
 
-module.exports = {
+const oldConfig = {
   MET_TOKEN_ADDR: addresses.metToken,
   CONVERTER_ADDR: addresses.autonomousConverter,
   MET_EXPLORER_URL:
@@ -51,3 +52,6 @@ module.exports = {
   },
   debug: env.debug
 }
+
+// TODO: temporary until we migrate everything to use newConfig format
+module.exports = Object.assign({}, oldConfig, newConfig)

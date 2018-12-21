@@ -58,5 +58,6 @@ app.on('ready', function () {
   logger.info('App ready, initializing...')
   initMenu()
   initContextMenu()
-  createClient(config)
+  // config.enabledChains.forEach(chainName => createClient(config, chainName))
+  createClient(config, config.enabledChains[0])
 })

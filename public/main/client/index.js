@@ -7,7 +7,7 @@ const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function createClient (config) {
+function createClient (config, chain) {
   settings.presetDefaults()
   settings.attachSync(ipcMain)
 
@@ -33,7 +33,7 @@ function createClient (config) {
       }
       return
     }
-    webContent.send(eventName, data)
+    webContent.send(eventName, Object.assign({}, data, { chain }))
   }
 
   events.forEach(event =>
