@@ -1,11 +1,9 @@
+import FilteredMessage from 'metronome-wallet-ui-logic/src/components/FilteredMessage'
 import * as validators from 'metronome-wallet-ui-logic/src/validators'
 import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
-import * as selectors from 'metronome-wallet-ui-logic/src/selectors'
-import * as utils from 'metronome-wallet-ui-logic/src/utils'
-import theme from 'metronome-wallet-ui-logic/src/theme'
-import styled from 'styled-components'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
 import { LoadingBar, TextInput, BaseBtn, Flex, Btn, Sp } from './index'
@@ -92,8 +90,7 @@ class ConfirmationWizard extends React.Component {
     styles: PropTypes.object,
     client: PropTypes.shape({
       validatePassword: PropTypes.func.isRequired
-    }).isRequired,
-    config: PropTypes.object.isRequired
+    }).isRequired
   }
 
   static defaultProps = {
@@ -162,7 +159,8 @@ class ConfirmationWizard extends React.Component {
       .catch(err => this.setState({ status: 'failure', error: err.message }))
   }
 
-  onPasswordChange = ({ value }) => this.setState({ password: value, errors: {} })
+  onPasswordChange = ({ value }) =>
+    this.setState({ password: value, errors: {} })
 
   // eslint-disable-next-line complexity
   render() {
@@ -233,7 +231,7 @@ class ConfirmationWizard extends React.Component {
             <Sp my={2}>
               <Title>{this.props.failureTitle}</Title>
             </Sp>
-            {error && <Message>{utils.messageParser(this.props.config, error)}</Message>}
+            {error && <FilteredMessage>{error}</FilteredMessage>}
             <TryAgainBtn
               data-testid="try-again-btn"
               onClick={this.onCancelClick}
@@ -265,6 +263,4 @@ class ConfirmationWizard extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({ config: selectors.getConfig(state) })
-
-export default withClient(connect(mapStateToProps)(ConfirmationWizard))
+export default withClient(ConfirmationWizard)
