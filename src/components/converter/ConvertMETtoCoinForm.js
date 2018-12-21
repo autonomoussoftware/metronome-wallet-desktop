@@ -1,4 +1,4 @@
-import withConvertMETtoETHState from 'metronome-wallet-ui-logic/src/hocs/withConvertMETtoETHState'
+import withConvertMETtoCoinState from 'metronome-wallet-ui-logic/src/hocs/withConvertMETtoCoinState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -33,7 +33,7 @@ const Footer = styled.div`
   height: 100%;
 `
 
-class ConvertMETtoETHForm extends React.Component {
+class ConvertMETtoCoinForm extends React.Component {
   static propTypes = {
     onUseMinimumToggle: PropTypes.func.isRequired,
     gasEstimateError: PropTypes.bool,
@@ -74,7 +74,7 @@ class ConvertMETtoETHForm extends React.Component {
       {this.props.tabs}
       <Sp py={4} px={3}>
         <form
-          data-testid="metToEth-form"
+          data-testid="metToCoin-form"
           noValidate
           onSubmit={goToReview}
           id="convertForm"
@@ -146,4 +146,4 @@ class ConvertMETtoETHForm extends React.Component {
   }
 }
 
-export default withConvertMETtoETHState(ConvertMETtoETHForm)
+export default withConvertMETtoCoinState(ConvertMETtoCoinForm)

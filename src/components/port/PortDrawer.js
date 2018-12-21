@@ -6,8 +6,9 @@ import React from 'react'
 import {
   ConfirmationWizard,
   DisplayValue,
-  AmountFields,
   GasEditor,
+  TextInput,
+  FieldBtn,
   Drawer,
   Btn,
   Sp
@@ -35,25 +36,18 @@ const BtnContainer = styled.div`
 
 class PortDrawer extends React.Component {
   static propTypes = {
-    expectedMETamount: PropTypes.string,
     gasEstimateError: PropTypes.bool,
-    excessETHAmount: PropTypes.string,
     onRequestClose: PropTypes.func.isRequired,
-    ethPlaceholder: PropTypes.string,
-    usdPlaceholder: PropTypes.string,
-    tokenRemaining: PropTypes.string,
+    metPlaceholder: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
-    usedETHAmount: PropTypes.string,
     useCustomGas: PropTypes.bool.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     resetForm: PropTypes.func.isRequired,
-    ethAmount: PropTypes.string,
-    usdAmount: PropTypes.string,
+    metAmount: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
     validate: PropTypes.func.isRequired,
     gasPrice: PropTypes.string,
     gasLimit: PropTypes.string,
-    excedes: PropTypes.bool,
     errors: PropTypes.object.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
@@ -66,54 +60,32 @@ class PortDrawer extends React.Component {
 
   renderConfirmation = () => (
     <ConfirmationContainer data-testid="confirmation">
-      {this.props.excedes ? (
-        <React.Fragment>
-          You will use{' '}
-          <DisplayValue value={this.props.usedETHAmount} post=" ETH" inline />{' '}
-          to buy{' '}
-          <DisplayValue
-            inline
-            value={this.props.expectedMETamount}
-            post=" MET"
-          />{' '}
-          at current price and get a return of approximately{' '}
-          <DisplayValue inline value={this.props.excessETHAmount} post=" ETH" />
-          .
-          <Sp my={2}>
-            <ExpectedMsg error>
-              This operation will deplete the current auction.
-            </ExpectedMsg>
-          </Sp>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          You will use{' '}
-          <DisplayValue inline value={this.props.ethAmount} toWei post=" ETH" />{' '}
-          ($
-          {this.props.usdAmount}) to buy approximately{' '}
-          <DisplayValue
-            inline
-            value={this.props.expectedMETamount}
-            post=" MET"
-          />{' '}
-          at current price.
-        </React.Fragment>
-      )}
+      <React.Fragment>
+        You will por{' '}
+        <DisplayValue inline value={this.props.metAmount} toWei post=" MET" />.
+      </React.Fragment>
     </ConfirmationContainer>
   )
 
   renderForm = goToReview => (
     <form onSubmit={goToReview} noValidate data-testid="buy-form">
       <Sp py={4} px={3}>
-        <AmountFields
-          ethPlaceholder={this.props.ethPlaceholder}
-          usdPlaceholder={this.props.usdPlaceholder}
-          onMaxClick={this.props.onMaxClick}
-          ethAmount={this.props.ethAmount}
-          usdAmount={this.props.usdAmount}
-          autoFocus
+        <FieldBtn
+          data-testid="max-btn"
+          tabIndex="-1"
+          onClick={this.props.onMaxClick}
+          float
+        >
+          MAX
+        </FieldBtn>
+        <TextInput
+          placeholder={this.props.metPlaceholder}
+          data-testid="metAmount-field"
           onChange={this.props.onInputChange}
-          errors={this.props.errors}
+          error={this.props.errors.metAmount}
+          label="Amount (MET)"
+          value={this.props.metAmount}
+          id="metAmount"
         />
 
         <Sp mt={3}>
@@ -126,43 +98,11 @@ class PortDrawer extends React.Component {
             errors={this.props.errors}
           />
         </Sp>
-
-        {this.props.expectedMETamount && (
-          <Sp mt={2}>
-            {this.props.excedes ? (
-              <ExpectedMsg error>
-                You would get all remaining{' '}
-                <DisplayValue
-                  inline
-                  value={this.props.tokenRemaining}
-                  post=" MET"
-                />{' '}
-                and receive a return of approximately{' '}
-                <DisplayValue
-                  inline
-                  value={this.props.excessETHAmount}
-                  post=" ETH"
-                />
-                .
-              </ExpectedMsg>
-            ) : (
-              <ExpectedMsg>
-                You would get approximately{' '}
-                <DisplayValue
-                  inline
-                  value={this.props.expectedMETamount}
-                  post=" MET"
-                />
-                .
-              </ExpectedMsg>
-            )}
-          </Sp>
-        )}
       </Sp>
 
       <BtnContainer>
         <Btn submit block>
-          Review Buy
+          Review Port
         </Btn>
       </BtnContainer>
     </form>
@@ -172,16 +112,16 @@ class PortDrawer extends React.Component {
     return (
       <Drawer
         onRequestClose={this.props.onRequestClose}
-        data-testid="buy-drawer"
+        data-testid="port-drawer"
         isOpen={this.props.isOpen}
-        title="Buy Metronome"
+        title="Port Metronome"
       >
         <ConfirmationWizard
           renderConfirmation={this.renderConfirmation}
           onWizardSubmit={this.props.onSubmit}
-          pendingTitle="Buying MET..."
+          pendingTitle="Porting MET..."
           renderForm={this.renderForm}
-          editLabel="Edit this buy"
+          editLabel="Edit this port"
           validate={this.props.validate}
         />
       </Drawer>

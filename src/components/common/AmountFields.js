@@ -9,15 +9,15 @@ import Sp from './Spacing'
 
 export default class AmountFields extends React.Component {
   static propTypes = {
-    ethPlaceholder: PropTypes.string.isRequired,
+    coinPlaceholder: PropTypes.string.isRequired,
     usdPlaceholder: PropTypes.string.isRequired,
     onMaxClick: PropTypes.func.isRequired,
-    ethAmount: PropTypes.string,
+    coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
     autoFocus: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     errors: PropTypes.shape({
-      ethAmount: PropTypes.string,
+      coinAmount: PropTypes.string,
       usdAmount: PropTypes.string
     }).isRequired
   }
@@ -35,14 +35,14 @@ export default class AmountFields extends React.Component {
             MAX
           </FieldBtn>
           <TextInput
-            placeholder={this.props.ethPlaceholder}
-            data-testid="ethAmount-field"
+            placeholder={this.props.coinPlaceholder}
+            data-testid="coinAmount-field"
             autoFocus={this.props.autoFocus}
             onChange={this.props.onChange}
-            error={this.props.errors.ethAmount}
-            value={this.props.ethAmount}
+            error={this.props.errors.coinAmount}
+            value={this.props.coinAmount}
             label="Amount (ETH)"
-            id="ethAmount"
+            id="coinAmount"
           />
         </Flex.Item>
         <Sp mt={6} mx={1}>

@@ -20,7 +20,7 @@ const ErrorMsg = styled.div`
 export default class ConverterEstimates extends React.Component {
   static propTypes = {
     estimateError: PropTypes.string,
-    convertTo: PropTypes.oneOf(['ETH', 'MET']).isRequired,
+    convertTo: PropTypes.oneOf(['coin', 'MET']).isRequired,
     estimate: PropTypes.string,
     rate: PropTypes.string
   }

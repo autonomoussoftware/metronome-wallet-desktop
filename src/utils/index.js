@@ -47,9 +47,7 @@ export function isGreaterThanZero(amount) {
 
 export function getWeiUSDvalue(amount, rate) {
   const amountBN = toBN(amount)
-  const rateBN = toBN(
-    toWei(typeof rate === 'string' ? rate : rate.toString())
-  )
+  const rateBN = toBN(toWei(typeof rate === 'string' ? rate : rate.toString()))
   return amountBN.mul(rateBN).div(toBN(toWei('1')))
 }
 
@@ -61,18 +59,15 @@ export function getUSDequivalent(amount, rate) {
     : weiUSDvalue.lt(toBN(toWei('0.01')))
       ? '< $0.01 (USD)'
       : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
-        .dp(2)
-        .toString(10)} (USD)`
+          .dp(2)
+          .toString(10)} (USD)`
 }
 
 export function toUSD(amount, rate, errorValue, smallValue) {
   let isValidAmount
   let weiUSDvalue
   try {
-    weiUSDvalue = getWeiUSDvalue(
-      toWei(amount.replace(',', '.')),
-      rate
-    )
+    weiUSDvalue = getWeiUSDvalue(toWei(amount.replace(',', '.')), rate)
     isValidAmount = weiUSDvalue.gte(toBN('0'))
   } catch (e) {
     isValidAmount = false
@@ -83,15 +78,13 @@ export function toUSD(amount, rate, errorValue, smallValue) {
       ? '0'
       : weiUSDvalue.lt(toBN(toWei('0.01')))
         ? smallValue
-        : new BigNumber(fromWei(weiUSDvalue.toString()))
-          .dp(2)
-          .toString(10)
+        : new BigNumber(fromWei(weiUSDvalue.toString())).dp(2).toString(10)
     : errorValue
 
   return expectedUSDamount
 }
 
-export function toETH(amount, rate, errorValue = 'Invalid amount') {
+export function toCoin(amount, rate, errorValue = 'Invalid amount') {
   let isValidAmount
   let weiAmount
   try {
@@ -101,14 +94,14 @@ export function toETH(amount, rate, errorValue = 'Invalid amount') {
     isValidAmount = false
   }
 
-  const expectedETHamount = isValidAmount
+  const expectedCoinamount = isValidAmount
     ? weiAmount
-      .dividedBy(new BigNumber(toWei(String(rate))))
-      .decimalPlaces(18)
-      .toString(10)
+        .dividedBy(new BigNumber(toWei(String(rate))))
+        .decimalPlaces(18)
+        .toString(10)
     : errorValue
 
-  return expectedETHamount
+  return expectedCoinamount
 }
 
 export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
@@ -123,35 +116,35 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 
   const expectedMETamount = isValidAmount
     ? toWei(
-      weiAmount
-        .dividedBy(new BigNumber(rate))
-        .decimalPlaces(18)
-        .toString(10)
-    )
+        weiAmount
+          .dividedBy(new BigNumber(rate))
+          .decimalPlaces(18)
+          .toString(10)
+      )
     : errorValue
 
   const excedes = isValidAmount
     ? toBN(expectedMETamount).gte(toBN(remaining))
     : null
 
-  const usedETHAmount =
+  const usedCoinAmount =
     isValidAmount && excedes
       ? new BigNumber(remaining)
-        .multipliedBy(new BigNumber(rate))
-        .dividedBy(new BigNumber(toWei('1')))
-        .integerValue()
-        .toString(10)
+          .multipliedBy(new BigNumber(rate))
+          .dividedBy(new BigNumber(toWei('1')))
+          .integerValue()
+          .toString(10)
       : null
 
-  const excessETHAmount =
+  const excessCoinAmount =
     isValidAmount && excedes
       ? weiAmount
-        .minus(usedETHAmount)
-        .integerValue()
-        .toString(10)
+          .minus(usedCoinAmount)
+          .integerValue()
+          .toString(10)
       : null
 
-  return { expectedMETamount, excedes, usedETHAmount, excessETHAmount }
+  return { expectedMETamount, excedes, usedCoinAmount, excessCoinAmount }
 }
 
 export function weiToGwei(amount) {
@@ -187,9 +180,9 @@ export function sanitizeMnemonic(str) {
     .toLowerCase()
 }
 
-export function getConversionRate(metAmount, ethAmount) {
+export function getConversionRate(metAmount, coinAmount) {
   const compareAgainst = fromWei(metAmount)
-  return new BigNumber(ethAmount)
+  return new BigNumber(coinAmount)
     .dividedBy(new BigNumber(compareAgainst))
     .integerValue()
     .toString(10)

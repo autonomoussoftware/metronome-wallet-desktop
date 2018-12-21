@@ -31,8 +31,8 @@ const Arrow = styled.span`
 
 export default class AmountRow extends React.Component {
   static propTypes = {
-    mtnBoughtInAuction: PropTypes.string,
-    ethSpentInAuction: PropTypes.string,
+    metBoughtInAuction: PropTypes.string,
+    coinSpentInAuction: PropTypes.string,
     convertedFrom: PropTypes.string,
     isPending: PropTypes.bool.isRequired,
     fromValue: PropTypes.string,
@@ -57,15 +57,15 @@ export default class AmountRow extends React.Component {
             <React.Fragment>
               <DisplayValue
                 maxSize="1.6rem"
-                value={this.props.ethSpentInAuction}
+                value={this.props.coinSpentInAuction}
                 post=" ETH"
               />
-              {this.props.mtnBoughtInAuction && (
+              {this.props.metBoughtInAuction && (
                 <React.Fragment>
                   <Arrow>&darr;</Arrow>
                   <DisplayValue
                     maxSize="1.6rem"
-                    value={this.props.mtnBoughtInAuction}
+                    value={this.props.metBoughtInAuction}
                     post=" MET"
                   />
                 </React.Fragment>

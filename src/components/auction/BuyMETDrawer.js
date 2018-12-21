@@ -37,17 +37,17 @@ class BuyMETDrawer extends React.Component {
   static propTypes = {
     expectedMETamount: PropTypes.string,
     gasEstimateError: PropTypes.bool,
-    excessETHAmount: PropTypes.string,
+    excessCoinAmount: PropTypes.string,
     onRequestClose: PropTypes.func.isRequired,
-    ethPlaceholder: PropTypes.string,
+    coinPlaceholder: PropTypes.string,
     usdPlaceholder: PropTypes.string,
     tokenRemaining: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
-    usedETHAmount: PropTypes.string,
+    usedCoinAmount: PropTypes.string,
     useCustomGas: PropTypes.bool.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     resetForm: PropTypes.func.isRequired,
-    ethAmount: PropTypes.string,
+    coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
     validate: PropTypes.func.isRequired,
@@ -69,7 +69,7 @@ class BuyMETDrawer extends React.Component {
       {this.props.excedes ? (
         <React.Fragment>
           You will use{' '}
-          <DisplayValue value={this.props.usedETHAmount} post=" ETH" inline />{' '}
+          <DisplayValue value={this.props.usedCoinAmount} post=" ETH" inline />{' '}
           to buy{' '}
           <DisplayValue
             inline
@@ -77,7 +77,11 @@ class BuyMETDrawer extends React.Component {
             post=" MET"
           />{' '}
           at current price and get a return of approximately{' '}
-          <DisplayValue inline value={this.props.excessETHAmount} post=" ETH" />
+          <DisplayValue
+            inline
+            value={this.props.excessCoinAmount}
+            post=" ETH"
+          />
           .
           <Sp my={2}>
             <ExpectedMsg error>
@@ -88,7 +92,12 @@ class BuyMETDrawer extends React.Component {
       ) : (
         <React.Fragment>
           You will use{' '}
-          <DisplayValue inline value={this.props.ethAmount} toWei post=" ETH" />{' '}
+          <DisplayValue
+            inline
+            value={this.props.coinAmount}
+            toWei
+            post=" ETH"
+          />{' '}
           ($
           {this.props.usdAmount}) to buy approximately{' '}
           <DisplayValue
@@ -106,10 +115,10 @@ class BuyMETDrawer extends React.Component {
     <form onSubmit={goToReview} noValidate data-testid="buy-form">
       <Sp py={4} px={3}>
         <AmountFields
-          ethPlaceholder={this.props.ethPlaceholder}
+          coinPlaceholder={this.props.coinPlaceholder}
           usdPlaceholder={this.props.usdPlaceholder}
           onMaxClick={this.props.onMaxClick}
-          ethAmount={this.props.ethAmount}
+          coinAmount={this.props.coinAmount}
           usdAmount={this.props.usdAmount}
           autoFocus
           onChange={this.props.onInputChange}
@@ -140,7 +149,7 @@ class BuyMETDrawer extends React.Component {
                 and receive a return of approximately{' '}
                 <DisplayValue
                   inline
-                  value={this.props.excessETHAmount}
+                  value={this.props.excessCoinAmount}
                   post=" ETH"
                 />
                 .

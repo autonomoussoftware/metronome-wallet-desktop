@@ -77,7 +77,7 @@ export default class Stats extends React.Component {
     converterPriceUSD: PropTypes.string.isRequired,
     converterStatus: PropTypes.shape({
       currentPrice: PropTypes.string.isRequired,
-      availableEth: PropTypes.string.isRequired,
+      availableCoin: PropTypes.string.isRequired,
       availableMet: PropTypes.string.isRequired
     })
   }
@@ -119,7 +119,7 @@ export default class Stats extends React.Component {
             <Label>Available ETH</Label>
             <AvailableAmount>
               <DisplayValue
-                value={this.props.converterStatus.availableEth}
+                value={this.props.converterStatus.availableCoin}
                 post=" ETH"
               />
             </AvailableAmount>

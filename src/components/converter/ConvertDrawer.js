@@ -2,8 +2,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import ConvertETHtoMETForm from './ConvertETHtoMETForm'
-import ConvertMETtoETHForm from './ConvertMETtoETHForm'
+import ConvertCoinToMETForm from './ConvertCoinToMETForm'
+import ConvertMETtoCoinForm from './ConvertMETtoCoinForm'
 import { Drawer, Tabs } from '../common'
 
 const Arrow = styled.span`
@@ -21,11 +21,11 @@ export default class ConvertDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  state = { activeTab: 'eth' }
+  state = { activeTab: 'coin' }
 
   componentDidUpdate(prevProps) {
     if (this.props.isOpen && prevProps.isOpen !== this.props.isOpen) {
-      this.setState({ activeTab: 'eth' })
+      this.setState({ activeTab: 'coin' })
     }
   }
 
@@ -38,7 +38,7 @@ export default class ConvertDrawer extends React.Component {
         active={this.state.activeTab}
         items={[
           {
-            id: 'eth',
+            id: 'coin',
             label: (
               <React.Fragment>
                 ETH
@@ -68,8 +68,10 @@ export default class ConvertDrawer extends React.Component {
         isOpen={this.props.isOpen}
         title="Converter"
       >
-        {this.state.activeTab === 'eth' && <ConvertETHtoMETForm tabs={tabs} />}
-        {this.state.activeTab === 'met' && <ConvertMETtoETHForm tabs={tabs} />}
+        {this.state.activeTab === 'coin' && (
+          <ConvertCoinToMETForm tabs={tabs} />
+        )}
+        {this.state.activeTab === 'met' && <ConvertMETtoCoinForm tabs={tabs} />}
       </Drawer>
     )
   }

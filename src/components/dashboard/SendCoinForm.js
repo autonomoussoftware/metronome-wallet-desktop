@@ -1,4 +1,4 @@
-import withSendETHFormState from 'metronome-wallet-ui-logic/src/hocs/withSendETHFormState'
+import withSendCoinFormState from 'metronome-wallet-ui-logic/src/hocs/withSendCoinFormState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -31,15 +31,15 @@ const Footer = styled.div`
   height: 100%;
 `
 
-class SendETHForm extends React.Component {
+class SendCoinForm extends React.Component {
   static propTypes = {
     gasEstimateError: PropTypes.bool,
-    ethPlaceholder: PropTypes.string,
+    coinPlaceholder: PropTypes.string,
     usdPlaceholder: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
     useCustomGas: PropTypes.bool.isRequired,
     onMaxClick: PropTypes.func.isRequired,
-    ethAmount: PropTypes.string,
+    coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
     toAddress: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
@@ -55,7 +55,7 @@ class SendETHForm extends React.Component {
   renderConfirmation = () => (
     <ConfirmationContainer data-testid="confirmation">
       You will send{' '}
-      <DisplayValue inline value={this.props.ethAmount} toWei post=" ETH" />{' '}
+      <DisplayValue inline value={this.props.coinAmount} toWei post=" ETH" />{' '}
       {this.props.usdAmount ? `($${this.props.usdAmount})` : `(< $0.01)`} to the
       address {this.props.toAddress}.
     </ConfirmationContainer>
@@ -66,7 +66,7 @@ class SendETHForm extends React.Component {
       {this.props.tabs}
       <Sp py={4} px={3}>
         <form
-          data-testid="sendEth-form"
+          data-testid="sendCoin-form"
           noValidate
           onSubmit={goToReview}
           id="sendForm"
@@ -83,10 +83,10 @@ class SendETHForm extends React.Component {
           />
           <Sp mt={3}>
             <AmountFields
-              ethPlaceholder={this.props.ethPlaceholder}
+              coinPlaceholder={this.props.coinPlaceholder}
               usdPlaceholder={this.props.usdPlaceholder}
               onMaxClick={this.props.onMaxClick}
-              ethAmount={this.props.ethAmount}
+              coinAmount={this.props.coinAmount}
               usdAmount={this.props.usdAmount}
               onChange={this.props.onInputChange}
               errors={this.props.errors}
@@ -124,4 +124,4 @@ class SendETHForm extends React.Component {
   }
 }
 
-export default withSendETHFormState(SendETHForm)
+export default withSendCoinFormState(SendCoinForm)

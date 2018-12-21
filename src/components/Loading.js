@@ -14,9 +14,9 @@ const Checklist = styled.div`
 class Loading extends React.Component {
   static propTypes = {
     hasBlockHeight: PropTypes.bool.isRequired,
-    hasEthBalance: PropTypes.bool.isRequired,
+    hasCoinBalance: PropTypes.bool.isRequired,
     hasMetBalance: PropTypes.bool.isRequired,
-    hasEthRate: PropTypes.bool.isRequired
+    hasCoinRate: PropTypes.bool.isRequired
   }
 
   render() {
@@ -29,11 +29,11 @@ class Loading extends React.Component {
             text="Blockchain status"
           />
           <ChecklistItem
-            isActive={this.props.hasEthRate}
+            isActive={this.props.hasCoinRate}
             text="ETH exchange data"
           />
           <ChecklistItem
-            isActive={this.props.hasEthBalance}
+            isActive={this.props.hasCoinBalance}
             text="ETH balance"
           />
           <ChecklistItem

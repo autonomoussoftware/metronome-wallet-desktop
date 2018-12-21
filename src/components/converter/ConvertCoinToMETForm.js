@@ -1,4 +1,4 @@
-import withConvertETHtoMETState from 'metronome-wallet-ui-logic/src/hocs/withConvertETHtoMETState'
+import withConvertCoinToMETState from 'metronome-wallet-ui-logic/src/hocs/withConvertCoinToMETState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -32,18 +32,18 @@ const Footer = styled.div`
   height: 100%;
 `
 
-class ConvertETHtoMETForm extends React.Component {
+class ConvertCointoMETForm extends React.Component {
   static propTypes = {
     onUseMinimumToggle: PropTypes.func.isRequired,
     gasEstimateError: PropTypes.bool,
-    ethPlaceholder: PropTypes.string,
+    coinPlaceholder: PropTypes.string,
     usdPlaceholder: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
     estimateError: PropTypes.string,
     useCustomGas: PropTypes.bool.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     useMinimum: PropTypes.bool.isRequired,
-    ethAmount: PropTypes.string,
+    coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
     validate: PropTypes.func.isRequired,
@@ -58,11 +58,11 @@ class ConvertETHtoMETForm extends React.Component {
   }
 
   renderConfirmation = () => {
-    const { ethAmount, usdAmount, estimate, rate } = this.props
+    const { coinAmount, usdAmount, estimate, rate } = this.props
     return (
       <ConfirmationContainer data-testid="confirmation">
         You will convert{' '}
-        <DisplayValue inline value={ethAmount} toWei post=" ETH" />{' '}
+        <DisplayValue inline value={coinAmount} toWei post=" ETH" />{' '}
         {usdAmount ? `($${usdAmount})` : `(< $0.01)`} and get approximately{' '}
         <DisplayValue value={estimate} post=" MET" inline />, which means a rate
         of <DisplayValue value={rate} post=" ETH/MET" />.
@@ -75,16 +75,16 @@ class ConvertETHtoMETForm extends React.Component {
       {this.props.tabs}
       <Sp py={4} px={3}>
         <form
-          data-testid="ethToMet-form"
+          data-testid="coinToMet-form"
           noValidate
           onSubmit={goToReview}
           id="convertForm"
         >
           <AmountFields
-            ethPlaceholder={this.props.ethPlaceholder}
+            coinPlaceholder={this.props.coinPlaceholder}
             usdPlaceholder={this.props.usdPlaceholder}
             onMaxClick={this.props.onMaxClick}
-            ethAmount={this.props.ethAmount}
+            coinAmount={this.props.coinAmount}
             usdAmount={this.props.usdAmount}
             autoFocus
             onChange={this.props.onInputChange}
@@ -136,4 +136,4 @@ class ConvertETHtoMETForm extends React.Component {
   }
 }
 
-export default withConvertETHtoMETState(ConvertETHtoMETForm)
+export default withConvertCoinToMETState(ConvertCointoMETForm)

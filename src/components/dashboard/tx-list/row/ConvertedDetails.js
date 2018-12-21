@@ -21,7 +21,7 @@ export default class ConvertedDetails extends React.Component {
         <Currency>{this.props.convertedFrom}</Currency>
         {this.props.isPending ? ' to ' : ' converted to '}
         <Currency>
-          {this.props.convertedFrom === 'ETH' ? 'MET' : 'ETH'}
+          {this.props.convertedFrom === 'coin' ? 'MET' : 'ETH'}
         </Currency>
       </div>
     )

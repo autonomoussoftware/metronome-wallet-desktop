@@ -6,19 +6,19 @@ import Arrow from './Arrow'
 
 export default class AuctionAmount extends React.Component {
   static propTypes = {
-    mtnBoughtInAuction: PropTypes.string,
-    ethSpentInAuction: PropTypes.string
+    metBoughtInAuction: PropTypes.string,
+    coinSpentInAuction: PropTypes.string
   }
 
   render() {
     return (
       <React.Fragment>
-        <DisplayValue value={this.props.ethSpentInAuction} post=" ETH" />
+        <DisplayValue value={this.props.coinSpentInAuction} post=" ETH" />
 
-        {this.props.mtnBoughtInAuction && (
+        {this.props.metBoughtInAuction && (
           <React.Fragment>
             <Arrow />
-            <DisplayValue value={this.props.mtnBoughtInAuction} post=" MET" />
+            <DisplayValue value={this.props.metBoughtInAuction} post=" MET" />
           </React.Fragment>
         )}
       </React.Fragment>

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import { Drawer, Tabs } from '../common'
+import SendCoinForm from './SendCoinForm'
 import SendMETForm from './SendMETForm'
-import SendETHForm from './SendETHForm'
 
 class SendDrawer extends React.Component {
   static propTypes = {
@@ -14,11 +14,11 @@ class SendDrawer extends React.Component {
     isOpen: PropTypes.bool.isRequired
   }
 
-  state = { activeTab: 'eth' }
+  state = { activeTab: 'coin' }
 
   componentDidUpdate(prevProps) {
     if (this.props.isOpen && prevProps.isOpen !== this.props.isOpen) {
-      this.setState({ activeTab: 'eth' })
+      this.setState({ activeTab: 'coin' })
     }
   }
 
@@ -36,7 +36,7 @@ class SendDrawer extends React.Component {
             'data-rh': this.props.sendMetDisabledReason,
             disabled: this.props.sendMetDisabled
           },
-          { id: 'eth', label: 'ETH' }
+          { id: 'coin', label: 'ETH' }
         ]}
       />
     )
@@ -48,7 +48,7 @@ class SendDrawer extends React.Component {
         isOpen={this.props.isOpen}
         title="Send Transaction"
       >
-        {this.state.activeTab === 'eth' && <SendETHForm tabs={tabs} />}
+        {this.state.activeTab === 'coin' && <SendCoinForm tabs={tabs} />}
         {this.state.activeTab === 'met' && <SendMETForm tabs={tabs} />}
       </Drawer>
     )
