@@ -2,8 +2,9 @@
 
 const WalletError = require('../WalletError')
 const restart = require('./electron-restart')
-const wallet = require('./wallet')
+const dbManager = require('./database')
 const storage = require('./storage')
+const wallet = require('./wallet')
 const auth = require('./auth')
 const keys = require('./keys')
 
@@ -55,7 +56,7 @@ const onLoginSubmit = (data, emitter) =>
       return isValid
     })
 
-const clearCache = () => Promise.resolve().then(restart)
+const clearCache = () => dbManager.getDb().dropDatabase().then(restart)
 
 const validatePassword = data => auth.isValidPassword(data)
 
@@ -70,7 +71,7 @@ const recoverFromMnemonic = function (data, _, core) {
       wallet.setSeed(seed, data.password),
       wallet.setAddressForWalletId(walletId, address)
     ])
-      .then(restart)
+      .then(clearCache)
   }
 }
 
