@@ -1,5 +1,4 @@
 import { toast } from 'react-toastify'
-const { ipcRenderer } = window.require('electron')
 
 export const subscribeToMainProcessMessages = store => {
   /**
@@ -22,7 +21,7 @@ export const subscribeToMainProcessMessages = store => {
 
   const errorsMap = {}
 
-  ipcRenderer.on('error', (ev, { error }) => {
+  window.ipcRenderer.on('error', (ev, { error }) => {
     if (!toast.isActive(errorsMap[error.message])) {
       errorsMap[error.message] = toast.error(error.message)
     }
@@ -31,13 +30,13 @@ export const subscribeToMainProcessMessages = store => {
   /*
    * For more complex subscriptions you can do the following
    *
-   * ipcRenderer.on(MSG_CHANNEL, (event, arg) => {
+   * window.ipcRenderer.on(MSG_CHANNEL, (event, arg) => {
    *   do something with event and arg here...
    * })
    */
   function subscribeTo(types) {
     return types.forEach(type =>
-      ipcRenderer.on(type, (ev, { id, data, ...other }) => {
+      window.ipcRenderer.on(type, (ev, { id, data, ...other }) => {
         // ignore messages returned as promises with errors
         if (id && data && data.error) return
 

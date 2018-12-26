@@ -3,8 +3,6 @@ import keys from './keys'
 import * as utils from './utils'
 import './sentry'
 
-const { clipboard, shell } = window.require('electron')
-
 function createClient(createStore) {
   const reduxDevtoolsOptions = {
     actionsBlacklist: ['price-updated$'],
@@ -12,33 +10,38 @@ function createClient(createStore) {
     maxAge: 100 // default: 50
   }
 
-  const store = createStore(
-    reduxDevtoolsOptions,
-  )
+  const store = createStore(reduxDevtoolsOptions)
 
-  store.subscribe(function () {
+  store.subscribe(function() {
     utils.forwardToMainProcess('persist-state')(store.getState())
   })
 
   const onTermsLinkClick = () =>
-    shell.openExternal('https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE')
+    window.openLink(
+      'https://github.com/autonomoussoftware/metronome-wallet-desktop/blob/develop/LICENSE'
+    )
 
   const onHelpLinkClick = () =>
-    shell.openExternal('https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq')
+    window.openLink(
+      'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
+    )
 
-  const onExplorerLinkClick = (transactionHash) =>
-    shell.openExternal(`https://explorer.metronome.io/transactions/${transactionHash}`)
+  const onExplorerLinkClick = transactionHash =>
+    window.openLink(
+      `https://explorer.metronome.io/transactions/${transactionHash}`
+    )
 
   const getStringEntropy = fastPasswordEntropy
 
-  const refreshAllTransactions = () => { }
+  const refreshAllTransactions = () => {}
 
-  const refreshTransaction = () => { }
+  const refreshTransaction = () => {}
 
-  const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
+  // const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
+  const copyToClipboard = text => Promise.resolve(window.copyToClipboard(text))
 
   const onInit = () => {
-    window.addEventListener('beforeunload', function () {
+    window.addEventListener('beforeunload', function() {
       utils.sendToMainProcess('ui-unload')
     })
     window.addEventListener('online', () => {
@@ -57,10 +60,18 @@ function createClient(createStore) {
   }
 
   const forwardedMethods = {
-    getConvertEthGasLimit: utils.forwardToMainProcess('get-convert-eth-gas-limit'),
-    getConvertMetGasLimit: utils.forwardToMainProcess('get-convert-met-gas-limit'),
-    getConvertEthEstimate: utils.forwardToMainProcess('get-convert-eth-estimate'),
-    getConvertMetEstimate: utils.forwardToMainProcess('get-convert-met-estimate'),
+    getConvertEthGasLimit: utils.forwardToMainProcess(
+      'get-convert-eth-gas-limit'
+    ),
+    getConvertMetGasLimit: utils.forwardToMainProcess(
+      'get-convert-met-gas-limit'
+    ),
+    getConvertEthEstimate: utils.forwardToMainProcess(
+      'get-convert-eth-estimate'
+    ),
+    getConvertMetEstimate: utils.forwardToMainProcess(
+      'get-convert-met-estimate'
+    ),
     onOnboardingCompleted: utils.forwardToMainProcess('onboarding-completed'),
     recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
     getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),

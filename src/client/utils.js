@@ -12,10 +12,8 @@ export const isAddress = str => utils.isAddress(str)
 export const toBN = str => utils.toBN(str)
 export const toHex = bn => utils.toHex(bn)
 
-const { ipcRenderer } = window.require('electron')
-
 export function forwardToMainProcess(eventName, timeout = 10000) {
-  return function (data) {
+  return function(data) {
     return sendToMainProcess(eventName, data, timeout)
   }
 }
@@ -42,17 +40,17 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
       deferred.resolve(_data)
     }
 
-    ipcRenderer.removeListener(eventName, listener)
+    window.ipcRenderer.removeListener(eventName, listener)
   }
 
-  ipcRenderer.on(eventName, listener)
-  ipcRenderer.send(eventName, { id, data })
+  window.ipcRenderer.on(eventName, listener)
+  window.ipcRenderer.send(eventName, { id, data })
 
   if (timeout) {
     timeoutId = setTimeout(() => {
       console.warn(`Event "${eventName}" timed out after ${timeout}ms.`)
       deferred.reject(new Error('Operation timed out. Please try again later.'))
-      ipcRenderer.removeListener(eventName, listener)
+      window.ipcRenderer.removeListener(eventName, listener)
     }, timeout)
   }
 

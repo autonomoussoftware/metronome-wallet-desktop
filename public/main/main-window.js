@@ -64,7 +64,11 @@ function loadWindow () {
     height: 700,
     minWidth: 640,
     minHeight: 578,
-    useContentSize: true
+    useContentSize: true,
+    webPreferences: {
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js')
+    }
   })
 
   analytics.init(mainWindow.webContents.getUserAgent())
