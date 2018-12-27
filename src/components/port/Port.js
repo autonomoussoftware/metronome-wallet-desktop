@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DarkLayout, LoadingBar, Text, Btn, Sp } from '../common'
+import { DarkLayout, Btn } from '../common'
 import PortDrawer from './PortDrawer'
 
 const Container = styled.div`
@@ -19,7 +19,7 @@ const Container = styled.div`
   }
 `
 
-const ConvertBtn = styled(Btn)`
+const PortBtn = styled(Btn)`
   margin-top: 3.2rem;
   min-width: 260px;
 
@@ -29,17 +29,10 @@ const ConvertBtn = styled(Btn)`
   }
 `
 
-const LoadingContainer = styled.div`
-  text-align: center;
-  max-width: 400px;
-  margin: 0 auto;
-`
-
 class Port extends React.Component {
   static propTypes = {
-    convertDisabledReason: PropTypes.string,
-    convertDisabled: PropTypes.bool.isRequired,
-    converterStatus: PropTypes.object
+    portDisabledReason: PropTypes.string,
+    portDisabled: PropTypes.bool.isRequired
   }
 
   state = {
@@ -53,34 +46,23 @@ class Port extends React.Component {
   render() {
     return (
       <DarkLayout data-testid="port-container" title="Port">
-        {this.props.converterStatus ? (
-          <Container>
-            <ConvertBtn
-              data-rh-negative
-              data-disabled={this.props.convertDisabled}
-              data-testid="convert-btn"
-              data-modal="convert"
-              onClick={this.props.convertDisabled ? null : this.onOpenModal}
-              data-rh={this.props.convertDisabledReason}
-            >
-              Convert
-            </ConvertBtn>
+        <Container>
+          <PortBtn
+            data-rh-negative
+            data-disabled={this.props.portDisabled}
+            data-testid="port-btn"
+            data-modal="port"
+            onClick={this.props.portDisabled ? null : this.onOpenModal}
+            data-rh={this.props.portDisabledReason}
+          >
+            Port
+          </PortBtn>
 
-            <PortDrawer
-              onRequestClose={this.onCloseModal}
-              isOpen={this.state.activeModal === 'port'}
-            />
-          </Container>
-        ) : (
-          <Sp p={6}>
-            <LoadingContainer data-testid="waiting">
-              <Text>Waiting for port status...</Text>
-              <Sp py={2}>
-                <LoadingBar />
-              </Sp>
-            </LoadingContainer>
-          </Sp>
-        )}
+          <PortDrawer
+            onRequestClose={this.onCloseModal}
+            isOpen={this.state.activeModal === 'port'}
+          />
+        </Container>
       </DarkLayout>
     )
   }

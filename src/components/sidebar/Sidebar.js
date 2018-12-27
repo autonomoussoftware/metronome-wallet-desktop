@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 import ConverterIcon from '../icons/ConverterIcon'
+import ChainSelector from './ChainSelector'
 import AuctionIcon from '../icons/AuctionIcon'
 import WalletIcon from '../icons/WalletIcon'
 import LogoIcon from '../icons/LogoIcon'
@@ -317,7 +318,9 @@ class Sidebar extends React.Component {
         <LogoSmallContainer>
           <LogoIcon negative />
         </LogoSmallContainer>
-
+        <Sp mx={2} mb={3}>
+          <ChainSelector />
+        </Sp>
         <MainMenu>
           <Button
             activeClassName="active"

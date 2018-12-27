@@ -4,7 +4,7 @@ const MetronomeContracts = require('metronome-contracts')
 const addresses = MetronomeContracts.addresses.mainnet
 
 module.exports = {
-  displayName: 'Ethereum', // visible in select control
+  displayName: 'ETHEREUM', // visible in select control
   chainId: 1,
   symbol: 'ETH', // visible next to amounts
 

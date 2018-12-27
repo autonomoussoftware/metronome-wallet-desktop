@@ -24,11 +24,6 @@ const ConfirmationContainer = styled.div`
   }
 `
 
-const ExpectedMsg = styled.div`
-  font-size: 1.3rem;
-  color: ${p => (p.error ? p.theme.colors.danger : 'inherit')};
-`
-
 const BtnContainer = styled.div`
   background-image: linear-gradient(to bottom, #272727, #323232);
   padding: 3.2rem 2.4rem;

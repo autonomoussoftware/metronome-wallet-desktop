@@ -80,32 +80,31 @@ const USDValue = styled.div`
 
 class BalanceBlock extends React.Component {
   static propTypes = {
+    coinBalanceUSD: PropTypes.string.isRequired,
     coinBalanceWei: PropTypes.string.isRequired,
     metBalanceWei: PropTypes.string.isRequired,
-    coinBalanceUSD: PropTypes.string.isRequired
+    coinSymbol: PropTypes.string.isRequired
   }
 
   render() {
-    const { metBalanceWei, coinBalanceWei, coinBalanceUSD } = this.props
-
     return (
       <React.Fragment>
         <Balance>
           <CoinSymbol>MET</CoinSymbol>
           <Value data-testid="met-balance" large>
-            <DisplayValue value={metBalanceWei} />
+            <DisplayValue value={this.props.metBalanceWei} />
           </Value>
           <USDValue data-testid="met-balance-usd" hide>
             N/A
           </USDValue>
         </Balance>
         <Balance>
-          <CoinSymbol>ETH</CoinSymbol>
+          <CoinSymbol>{this.props.coinSymbol}</CoinSymbol>
           <Value data-testid="coin-balance">
-            <DisplayValue value={coinBalanceWei} />
+            <DisplayValue value={this.props.coinBalanceWei} />
           </Value>
           <USDValue data-testid="coin-balance-usd">
-            ${coinBalanceUSD} (USD)
+            ${this.props.coinBalanceUSD} (USD)
           </USDValue>
         </Balance>
       </React.Fragment>

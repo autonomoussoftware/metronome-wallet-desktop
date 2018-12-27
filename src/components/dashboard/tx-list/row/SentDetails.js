@@ -16,9 +16,9 @@ const Address = styled.span`
 
 export default class SentDetails extends React.Component {
   static propTypes = {
+    converterAddress: PropTypes.string.isRequired,
     isCancelApproval: PropTypes.bool,
-    CONVERTER_ADDR: PropTypes.string.isRequired,
-    MET_TOKEN_ADDR: PropTypes.string.isRequired,
+    metTokenAddress: PropTypes.string.isRequired,
     isApproval: PropTypes.bool,
     isPending: PropTypes.bool.isRequired,
     to: PropTypes.string.isRequired
@@ -38,9 +38,9 @@ export default class SentDetails extends React.Component {
             : this.props.isCancelApproval
               ? 'Allowance cancelled for'
               : 'Sent to'}{' '}
-        {this.props.to === this.props.MET_TOKEN_ADDR ? (
+        {this.props.to === this.props.metTokenAddress ? (
           'MET TOKEN CONTRACT'
-        ) : this.props.to === this.props.CONVERTER_ADDR ? (
+        ) : this.props.to === this.props.converterAddress ? (
           'CONVERTER CONTRACT'
         ) : (
           <Address>{this.props.to}</Address>
