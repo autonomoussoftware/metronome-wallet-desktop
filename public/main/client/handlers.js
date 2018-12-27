@@ -1,14 +1,12 @@
 'use strict'
 
-const WalletError = require('../WalletError')
+const WalletError = require('./WalletError')
 const restart = require('./electron-restart')
 const dbManager = require('./database')
 const storage = require('./storage')
 const wallet = require('./wallet')
 const auth = require('./auth')
 const keys = require('./keys')
-
-const logger = require('electron-log')
 
 const withAuth = fn => function (data, _, core) {
   data.walletId = '1'
@@ -75,23 +73,23 @@ const recoverFromMnemonic = function (data, _, core) {
   }
 }
 
-const getGasLimit = (data, emitter, core) => core.wallet.getGasLimit(data)
+const getGasLimit = (data, _, core) => core.wallet.getGasLimit(data)
 
-const getGasPrice = (data, emitter, core) => core.wallet.getGasPrice(data)
+const getGasPrice = (data, _, core) => core.wallet.getGasPrice(data)
 
 const sendEth = (data, emitter, core) => withAuth(core.wallet.sendEth)(data, emitter, core)
 
-const getTokensGasLimit = (data, emitter, core) => core.tokens.getTokensGasLimit(data)
+const getTokensGasLimit = (data, _, core) => core.tokens.getTokensGasLimit(data)
 
-const getAuctionGasLimit = (data, emitter, core) => core.metronome.getAuctionGasLimit(data)
+const getAuctionGasLimit = (data, _, core) => core.metronome.getAuctionGasLimit(data)
 
-const getConvertEthEstimate = (data, emitter, core) => core.metronome.getConvertEthEstimate(data)
+const getConvertEthEstimate = (data, _, core) => core.metronome.getConvertEthEstimate(data)
 
-const getConvertEthGasLimit = (data, emitter, core) => core.metronome.getConvertEthGasLimit(data)
+const getConvertEthGasLimit = (data, _, core) => core.metronome.getConvertEthGasLimit(data)
 
-const getConvertMetEstimate = (data, emitter, core) => core.metronome.getConvertMetEstimate(data)
+const getConvertMetEstimate = (data, _, core) => core.metronome.getConvertMetEstimate(data)
 
-const getConvertMetGasLimit = (data, emitter, core) => core.metronome.getConvertMetGasLimit(data)
+const getConvertMetGasLimit = (data, _, core) => core.metronome.getConvertMetGasLimit(data)
 
 const buyMetronome = (data, emitter, core) => withAuth(core.metronome.buyMetronome)(data, emitter, core)
 

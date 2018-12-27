@@ -2,7 +2,7 @@
 
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
-const WalletError = require('../WalletError')
+const WalletError = require('./WalletError')
 const handlers = require('./handlers')
 
 function getLogData (data) {

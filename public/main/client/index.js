@@ -1,13 +1,20 @@
 'use strict'
 
-const core = require('metronome-wallet-core')
-const logger = require('electron-log')
-const { ipcMain } = require('electron')
-const { getPasswordHash } = require('./settings')
 const { subscribeToRendererMessages } = require('./subscriptions')
+const core = require('metronome-wallet-core')
+const { ipcMain } = require('electron')
+const logger = require('electron-log')
+const settings = require('./settings')
 const storage = require('./storage')
 
 function createClient (config) {
+  settings.presetDefaults()
+  settings.attachSync(ipcMain)
+
+  ipcMain.on('log.error', function (_, args) {
+    logger.error(args.message)
+  })
+
   const {
     emitter,
     events,
@@ -52,13 +59,13 @@ function createClient (config) {
             })
           })
           .catch(function (err) {
-            logger.warn('Could not sync transactions/events', err)
+            logger.warn('Could not sync transactions/events', err.message)
             send('transactions-scan-finished', { data: {} })
           })
       })
   })
 
-  emitter.on('wallet-error', err => logger.warn(JSON.stringify(err)))
+  emitter.on('wallet-error', err => logger.warn(err.message))
 
   ipcMain.on('ui-ready', function (e, args) {
     webContent = e.sender
@@ -69,7 +76,7 @@ function createClient (config) {
     if (bestBlock) {
       webContent.send('eth-block', bestBlock)
     }
-    const onboardingComplete = !!getPasswordHash()
+    const onboardingComplete = !!settings.getPasswordHash()
     storage.getState().then(function (persistedState) {
       webContent.send('ui-ready', Object.assign({}, args, {
         data: {
