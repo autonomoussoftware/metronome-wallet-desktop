@@ -165,7 +165,12 @@
     }
   },
   "lint-staged": {
-    "{src,public}/**/*.js": ["eslint --cache"],
-    "src/**/*.{js,json,css,md}": ["prettier --write", "git add"]
+    "{src,public}/**/*.js": [
+      "eslint --cache"
+    ],
+    "src/**/*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
