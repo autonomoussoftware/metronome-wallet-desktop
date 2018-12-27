@@ -1,32 +1,25 @@
 'use strict'
 
 const { subscribeToRendererMessages } = require('./subscriptions')
-const core = require('metronome-wallet-core')
+const { createCore } = require('metronome-wallet-core')
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function createClient (config, chain) {
-  settings.presetDefaults()
-  settings.attachSync(ipcMain)
-
-  ipcMain.on('log.error', function (_, args) {
-    logger.error(args.message)
-  })
-
+function startCore({ chain, core }, config) {
   const {
     emitter,
     events,
     api: coreApi
-  } = core.start({ config })
+  } = core.start()
 
   events.push('create-wallet', 'open-wallets')
 
   let webContent = null
   let bestBlock = null
 
-  function send (eventName, data) {
+  function send(eventName, data) {
     if (!webContent) {
       if (eventName === 'eth-block') {
         bestBlock = data
@@ -59,7 +52,7 @@ function createClient (config, chain) {
             })
           })
           .catch(function (err) {
-            logger.warn('Could not sync transactions/events', err.message)
+            logger.warn('Could not sync transactions/events', err.stack)
             send('transactions-scan-finished', { data: {} })
           })
       })
@@ -74,11 +67,11 @@ function createClient (config, chain) {
     })
 
     if (bestBlock) {
-      webContent.send('eth-block', bestBlock)
+      send('eth-block', bestBlock)
     }
     const onboardingComplete = !!settings.getPasswordHash()
     storage.getState().then(function (persistedState) {
-      webContent.send('ui-ready', Object.assign({}, args, {
+      send('ui-ready', Object.assign({}, args, {
         data: {
           onboardingComplete,
           persistedState: persistedState || {},
@@ -93,6 +86,24 @@ function createClient (config, chain) {
   })
 
   subscribeToRendererMessages(emitter, coreApi)
+}
+
+function createClient(config) {
+  settings.presetDefaults()
+  settings.attachSync(ipcMain)
+
+  ipcMain.on('log.error', function (_, args) {
+    logger.error(args.message)
+  })
+
+  const cores = config.enabledChains.map(chainName => ({
+    chain: chainName,
+    core: createCore(
+      Object.assign({}, config.chains[chainName], config)
+    )
+  }))
+
+  cores.forEach(core => startCore(core, config))
 }
 
 module.exports = { createClient }

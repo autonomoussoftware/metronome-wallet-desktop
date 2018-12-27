@@ -59,5 +59,5 @@ app.on('ready', function () {
   initMenu()
   initContextMenu()
   // config.enabledChains.forEach(chainName => createClient(config, chainName))
-  createClient(config, config.enabledChains[0])
+  createClient(config)
 })

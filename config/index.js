@@ -9,9 +9,11 @@ module.exports = {
     ethRopsten,
     etcMorden
   },
-  enabledChains: ['ethMainnet', 'ethRopsten', 'etcMorden'],
-  requiredPasswordEntropy: 72,
+  enabledChains: ['ethMainnet', 'ethRopsten'], //, 'etcMorden'],
+  requiredPasswordEntropy: 1,
   trackingId: process.env.TRACKING_ID || null,
   sentryDsn: process.env.SENTRY_DSN || null,
-  debug: process.env.DEBUG || false
+  debug: process.env.DEBUG || false,
+  ratesUpdateMs: 30000,
+  explorerDebounce: 2000
 }

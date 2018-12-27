@@ -54,4 +54,4 @@ const oldConfig = {
 }
 
 // TODO: temporary until we migrate everything to use newConfig format
-module.exports = Object.assign({}, oldConfig, newConfig)
+module.exports = newConfig

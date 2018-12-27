@@ -5,7 +5,7 @@ import './sentry'
 
 function createClient(createStore) {
   const reduxDevtoolsOptions = {
-    actionsBlacklist: ['price-updated$'],
+    // actionsBlacklist: ['price-updated$'],
     features: { dispatch: true },
     maxAge: 100 // default: 50
   }
@@ -37,7 +37,6 @@ function createClient(createStore) {
 
   const refreshTransaction = () => {}
 
-  // const copyToClipboard = text => Promise.resolve(clipboard.writeText(text))
   const copyToClipboard = text => Promise.resolve(window.copyToClipboard(text))
 
   const onInit = () => {
