@@ -66,7 +66,7 @@ const Right = styled.div`
   }
 `
 
-const ReceiveBtn = Btn.extend`
+const ReceiveBtn = styled(Btn)`
   margin-left: 3.2rem;
 
   @media (min-width: 1040px) {

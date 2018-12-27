@@ -1,4 +1,4 @@
-import styled, { injectGlobal } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import React from 'react'
@@ -9,7 +9,7 @@ import CloseIcon from '../icons/CloseIcon'
  * There's no other way to override overlay states styles
  * so the sensible thing to do is to inject them here
  */
-injectGlobal`
+const GlobalStyles = createGlobalStyle`
   body.ReactModal__Body--open {
     overflow: hidden;
   }
@@ -141,6 +141,7 @@ export default class Drawer extends React.Component {
           </Header>
         )}
         <div data-testid={this.props['data-testid']}>{children}</div>
+        <GlobalStyles />
       </Container>
     )
   }

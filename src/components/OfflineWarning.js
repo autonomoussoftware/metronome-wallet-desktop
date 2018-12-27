@@ -19,7 +19,7 @@ const Container = styled.div`
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 `
 
-const DismissBtn = BaseBtn.extend`
+const DismissBtn = styled(BaseBtn)`
   position: relative;
   top: 1px;
   left: 6px;

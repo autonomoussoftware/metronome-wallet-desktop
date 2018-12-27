@@ -61,7 +61,7 @@ const Address = styled.div`
   }
 `
 
-const CopyBtn = Btn.extend`
+const CopyBtn = styled(Btn)`
   border-radius: 0 2px 2px 0;
   line-height: 1.8rem;
   padding: 0.5rem 0.8rem;

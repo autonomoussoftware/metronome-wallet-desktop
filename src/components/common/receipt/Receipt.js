@@ -39,18 +39,18 @@ const Value = styled.div`
   font-size: 1.3rem;
 `
 
-const Address = Value.extend`
+const Address = styled(Value)`
   word-wrap: break-word;
   word-break: break-word;
 `
 
-const Hash = Value.extend`
+const Hash = styled(Value)`
   word-wrap: break-word;
   word-break: break-word;
   font-size: 1.2rem;
 `
 
-const ExplorerBtn = Btn.extend`
+const ExplorerBtn = styled(Btn)`
   line-height: 1.5rem;
   opacity: 0.7;
   font-size: 1.4rem;

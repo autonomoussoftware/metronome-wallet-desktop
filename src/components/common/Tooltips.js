@@ -1,11 +1,11 @@
-import styled, { injectGlobal, keyframes } from 'styled-components'
+import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import ReactHintFactory from 'react-hint'
 import React from 'react'
 import 'react-hint/css/index.css'
 
 const ReactHint = ReactHintFactory(React)
 
-injectGlobal`
+const GlobalStyles = createGlobalStyle`
   .react-hint {
     &:after { display: none !important; }
   }
@@ -68,7 +68,10 @@ const onRenderContent = (target, content) => (
 )
 
 const Tooltips = () => (
-  <ReactHint events delay={100} onRenderContent={onRenderContent} />
+  <React.Fragment>
+    <ReactHint events delay={100} onRenderContent={onRenderContent} />
+    <GlobalStyles />
+  </React.Fragment>
 )
 
 export default Tooltips

@@ -19,7 +19,7 @@ const Value = styled.div`
   font-size: 1.3rem;
 `
 
-const Type = Value.extend`
+const Type = styled(Value)`
   text-transform: capitalize;
 `
 
