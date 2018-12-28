@@ -1,17 +1,39 @@
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle, css } from 'styled-components'
 import withChainSelectorState from 'metronome-wallet-ui-logic/src/hocs/withChainSelectorState'
 import * as ReachUI from '@reach/menu-button'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { DisplayValue } from '../common'
+import { DisplayValue, Flex } from '../common'
+import CaretIcon from '../icons/CaretIcon'
+import CoinIcon from '../icons/CoinIcon'
+
+const wideOrHover = styles => ({ parent }) => css`
+  ${parent}:hover & {
+    ${styles};
+  }
+  @media (min-width: 800px) {
+    ${styles};
+  }
+`
 
 const GlobalStyles = createGlobalStyle`
   [data-reach-menu] {
     display: block;
     position: absolute;
     z-index: 4;
+    width: 168px;
   }
+`
+
+const Title = styled.div`
+  color: ${({ theme }) => theme.colors.light};
+  font-size: 0.9rem;
+  letter-spacing: 1.6px;
+  font-weight: 600;
+  opacity: 0.5;
+  margin-bottom: 0.8rem;
+  margin-left: 0.6rem;
 `
 
 const MenuButton = styled(ReachUI.MenuButton)`
@@ -20,11 +42,15 @@ const MenuButton = styled(ReachUI.MenuButton)`
   color: ${({ theme }) => theme.colors.light};
   border-radius: 1.2rem;
   border: none;
-  padding: 1.6rem;
   text-align: left;
   display: block;
   width: 100%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0.4rem 1rem 0.8rem;
+  transition: padding 0.3s;
 
   &:focus,
   &:hover {
@@ -35,6 +61,11 @@ const MenuButton = styled(ReachUI.MenuButton)`
   &[aria-expanded='true'] {
     visibility: hidden;
   }
+
+  ${wideOrHover`
+    justify-content: center;
+    padding: 1.6rem 1.2rem;
+  `};
 `
 
 const MenuList = styled(ReachUI.MenuList)`
@@ -45,19 +76,63 @@ const MenuList = styled(ReachUI.MenuList)`
   outline: none;
   overflow: hidden;
   border-radius: 1.2rem;
-  transform: translateY(-72px);
+  transform: translateY(-56px);
 `
 
 const MenuItem = styled(ReachUI.MenuItem)`
   background-color: ${({ theme }) => theme.colors.lightShade};
   display: block;
   cursor: pointer;
-  padding: 1.6rem;
+  padding: 1.6rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   &[data-selected] {
     background-color: ${({ theme }) => theme.colors.translucentPrimary};
     outline: none;
   }
+
+  @media (min-width: 800px) {
+    justify-content: center;
+  }
+`
+
+const Icon = styled(CoinIcon)`
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  height: 2.4rem;
+  width: 2rem;
+  transition: width 0.3s, opacity 0.3s;
+
+  [data-reach-menu-item] &,
+  ${MenuButton}:focus &,
+  ${MenuButton}:hover & {
+    opacity: 1;
+  }
+
+  ${wideOrHover`
+    width: 2.4rem;
+  `};
+`
+
+const ItemBody = styled(Flex.Item)`
+  overflow: hidden;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.3s, margin 0.3s;
+
+  [data-reach-menu-item] & {
+    opacity: 1;
+    margin-left: 0.8rem;
+    margin-right: 0.4rem;
+  }
+
+  ${wideOrHover`
+    opacity: 1;
+    margin-left: 0.8rem;
+    margin-right: 0.4rem;
+  `};
 `
 
 const ChainName = styled.div`
@@ -65,6 +140,10 @@ const ChainName = styled.div`
   font-size: 1.1rem;
   letter-spacing: 1.6px;
   font-weight: 600;
+  margin-top: -2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const Balance = styled.div`
@@ -72,12 +151,29 @@ const Balance = styled.div`
   font-size: 1.1rem;
   letter-spacing: 1px;
   font-weight: 600;
+  margin-bottom: -2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
+const Caret = styled(CaretIcon)`
+  transform: scaleY(${({ caret }) => (caret === 'up' ? -1 : 1)});
+  opacity: ${({ caret }) => (caret === 'none' ? 0 : 0.5)};
+  transition: opacity 0.3s;
+
+  [data-reach-menu-item] &,
+  ${MenuButton}:focus &,
+  ${MenuButton}:hover & {
+    opacity: ${({ caret }) => (caret === 'none' ? 0 : 1)};
+  }
 `
 
 class ChainSelector extends React.Component {
   static propTypes = {
     onChainChange: PropTypes.func.isRequired,
     activeChain: PropTypes.string.isRequired,
+    parent: PropTypes.object.isRequired,
     chains: PropTypes.arrayOf(
       PropTypes.shape({
         displayName: PropTypes.string.isRequired,
@@ -95,28 +191,20 @@ class ChainSelector extends React.Component {
 
     return (
       <React.Fragment>
+        <Title parent={this.props.parent}>CHAIN</Title>
         <ReachUI.Menu>
-          <MenuButton>
-            <ChainName>{activeItem.displayName}</ChainName>
-            <Balance>
-              <DisplayValue
-                value={activeItem.balance}
-                post={` ${activeItem.symbol}`}
-              />
-            </Balance>
+          <MenuButton parent={this.props.parent}>
+            <Item {...activeItem} caret="down" parent={this.props.parent} />
           </MenuButton>
-          <MenuList>
+          <MenuList
+            onMouseEnter={this.props.handleMouseEnter}
+            onMouseLeave={this.props.handleMouseLeave}
+          >
             <MenuItem
               onSelect={() => this.props.onChainChange(activeItem.id)}
               key={activeItem.id}
             >
-              <ChainName>{activeItem.displayName}</ChainName>
-              <div>
-                <DisplayValue
-                  value={activeItem.balance}
-                  post={` ${activeItem.symbol}`}
-                />
-              </div>
+              <Item {...activeItem} caret="up" />
             </MenuItem>
             {this.props.chains
               .filter(({ id }) => id !== this.props.activeChain)
@@ -125,13 +213,7 @@ class ChainSelector extends React.Component {
                   onSelect={() => this.props.onChainChange(chain.id)}
                   key={chain.id}
                 >
-                  <div>{chain.displayName}</div>
-                  <div>
-                    <DisplayValue
-                      value={chain.balance}
-                      post={` ${chain.symbol}`}
-                    />
-                  </div>
+                  <Item {...chain} caret="none" />
                 </MenuItem>
               ))}
           </MenuList>
@@ -140,6 +222,32 @@ class ChainSelector extends React.Component {
       </React.Fragment>
     )
   }
+}
+
+const Item = ({ displayName, balance, symbol, id, caret, parent }) => (
+  <React.Fragment>
+    <Flex.Item>
+      <Icon coin={id} />
+    </Flex.Item>
+    <ItemBody grow="1" shrink="1" parent={parent}>
+      <ChainName>{displayName}</ChainName>
+      <Balance>
+        <DisplayValue value={balance} post={` ${symbol}`} />
+      </Balance>
+    </ItemBody>
+    <Flex.Item shrink="0">
+      <Caret caret={caret} />
+    </Flex.Item>
+  </React.Fragment>
+)
+
+Item.propTypes = {
+  displayName: PropTypes.string.isRequired,
+  balance: PropTypes.string.isRequired,
+  symbol: PropTypes.string.isRequired,
+  parent: PropTypes.object,
+  caret: PropTypes.oneOf(['up', 'down', 'none']).isRequired,
+  id: PropTypes.string.isRequired
 }
 
 export default withChainSelectorState(ChainSelector)

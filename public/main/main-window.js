@@ -63,7 +63,7 @@ function loadWindow () {
     width: 1140,
     height: 700,
     minWidth: 640,
-    minHeight: 578,
+    minHeight: 610,
     useContentSize: true,
     webPreferences: {
       nodeIntegration: false,
