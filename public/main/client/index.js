@@ -7,7 +7,7 @@ const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function startCore({ chain, core }, config) {
+function startCore ({ chain, core }, config) {
   const {
     emitter,
     events,
@@ -19,7 +19,7 @@ function startCore({ chain, core }, config) {
   let webContent = null
   let bestBlock = null
 
-  function send(eventName, data) {
+  function send (eventName, data) {
     if (!webContent) {
       if (eventName === 'eth-block') {
         bestBlock = data
@@ -36,16 +36,16 @@ function startCore({ chain, core }, config) {
   )
 
   emitter.on('open-wallets', function ({ address }) {
-    storage.getSyncBlock()
+    storage.getSyncBlock(chain)
       .then(function (from) {
         send('transactions-scan-started', { data: {} })
         logger.warn('From: ', from)
         coreApi.explorer.syncTransactions(from, address)
-          .then(storage.setSyncBlock)
+          .then(number => storage.setSyncBlock(number, chain))
           .then(function () {
             send('transactions-scan-finished', { data: {} })
             emitter.on('eth-block', function ({ number }) {
-              storage.setSyncBlock(number)
+              storage.setSyncBlock(number, chain)
                 .catch(function (err) {
                   logger.warn('Could not save new synced block', err)
                 })
@@ -88,7 +88,7 @@ function startCore({ chain, core }, config) {
   subscribeToRendererMessages(emitter, coreApi)
 }
 
-function createClient(config) {
+function createClient (config) {
   settings.presetDefaults()
   settings.attachSync(ipcMain)
 

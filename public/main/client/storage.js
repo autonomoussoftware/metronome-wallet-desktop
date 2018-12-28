@@ -39,17 +39,17 @@ function getBestBlock () {
     .then(get('data.height'))
 }
 
-function setSyncBlock (number) {
-  const query = { type: 'sync' }
+function setSyncBlock (number, chain) {
+  const query = { type: `sync-${chain}` }
   const update = Object.assign({ data: { number } }, query)
 
   return getDb().collection('state')
     .updateAsync(query, update, { upsert: true })
 }
 
-function getSyncBlock () {
+function getSyncBlock (chain) {
   return getDb().collection('state')
-    .findOneAsync({ type: 'sync' })
+    .findOneAsync({ type: `sync-${chain}` })
     .then(defaultTo({ data: { number: 0 } }))
     .then(get('data.number'))
 }
