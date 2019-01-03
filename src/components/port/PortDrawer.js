@@ -9,10 +9,33 @@ import {
   GasEditor,
   TextInput,
   FieldBtn,
+  Selector,
   Drawer,
+  Label,
+  Flex,
   Btn,
   Sp
 } from '../common'
+
+const SourceField = styled(Flex.Row)`
+  background-color: ${({ theme }) => theme.colors.lightShade};
+  padding: 2rem 1.6rem;
+  margin-top: 0.8rem;
+`
+
+const ChainName = styled.div`
+  color: ${({ theme }) => theme.colors.light};
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+`
+
+const Balance = styled.div`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+`
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -31,11 +54,20 @@ const BtnContainer = styled.div`
 
 class PortDrawer extends React.Component {
   static propTypes = {
+    availableDestinations: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired
+      })
+    ).isRequired,
+    sourceDisplayName: PropTypes.string.isRequired,
     gasEstimateError: PropTypes.bool,
     onRequestClose: PropTypes.func.isRequired,
     metPlaceholder: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
+    availableMet: PropTypes.string.isRequired,
     useCustomGas: PropTypes.bool.isRequired,
+    destination: PropTypes.string.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     resetForm: PropTypes.func.isRequired,
     metAmount: PropTypes.string,
@@ -65,6 +97,29 @@ class PortDrawer extends React.Component {
   renderForm = goToReview => (
     <form onSubmit={goToReview} noValidate data-testid="buy-form">
       <Sp py={4} px={3}>
+        <Label htmlFor="source-field">Source</Label>
+        <SourceField justify="space-between">
+          <ChainName>{this.props.sourceDisplayName}</ChainName>
+          <Balance>
+            <DisplayValue value={this.props.availableMet} post=" MET" />
+          </Balance>
+        </SourceField>
+        <Sp py={3}>
+          <Selector
+            data-testid="destination-field"
+            onChange={this.props.onInputChange}
+            // options={this.props.availableDestinations}
+            options={[
+              { value: 'etc', label: 'Ethereum Classic' },
+              { value: 'etc2', label: 'Ethereum Classic 2' }
+            ]}
+            error={this.props.errors.destination}
+            label="Destination"
+            // value={this.props.destination}
+            value={'etc'}
+            id="destination"
+          />
+        </Sp>
         <FieldBtn
           data-testid="max-btn"
           tabIndex="-1"
@@ -75,7 +130,7 @@ class PortDrawer extends React.Component {
         </FieldBtn>
         <TextInput
           placeholder={this.props.metPlaceholder}
-          data-testid="metAmount-field"
+          data-testid="amount-field"
           onChange={this.props.onInputChange}
           error={this.props.errors.metAmount}
           label="Amount (MET)"

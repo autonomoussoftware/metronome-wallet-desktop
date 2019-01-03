@@ -1,13 +1,14 @@
 import { BaseBtn, FieldBtn, Btn } from './Btn'
+import TextInput, { Label } from './TextInput'
 import ConfirmationWizard from './ConfirmationWizard'
 import DisplayValue from './DisplayValue'
 import AmountFields from './AmountFields'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
 import LoadingBar from './LoadingBar'
-import TextInput from './TextInput'
 import AltLayout from './AltLayout'
 import GasEditor from './GasEditor'
+import Selector from './Selector'
 import Tooltips from './Tooltips'
 import Drawer from './Drawer'
 import Modal from './Modal'
@@ -26,10 +27,12 @@ export {
   TextInput,
   AltLayout,
   GasEditor,
+  Selector,
   Tooltips,
   FieldBtn,
   BaseBtn,
   Drawer,
+  Label,
   Modal,
   Tabs,
   Text,

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-const Label = styled.label`
+export const Label = styled.label`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
@@ -44,7 +44,7 @@ const Input = styled.input`
   }
 `
 
-const ErrorMsg = styled.div`
+export const ErrorMsg = styled.div`
   color: ${p => p.theme.colors.danger};
   line-height: 1.6rem;
   font-size: 1.3rem;
