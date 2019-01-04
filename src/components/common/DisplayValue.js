@@ -1,17 +1,22 @@
+import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import { sanitize } from 'metronome-wallet-ui-logic/src/utils'
 import smartRounder from 'smart-round'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { fromWei } from 'web3-utils'
 
 class DisplayValue extends React.Component {
   static propTypes = {
-    // shouldFormat: PropTypes.bool,
     maxPrecision: PropTypes.number,
+    shouldFormat: PropTypes.bool,
     minDecimals: PropTypes.number,
     maxDecimals: PropTypes.number,
+    client: PropTypes.shape({
+      fromWei: PropTypes.func.isRequired
+    }).isRequired,
     maxSize: PropTypes.string,
     inline: PropTypes.bool,
     value: PropTypes.string,
+    toWei: PropTypes.bool,
     post: PropTypes.string,
     pre: PropTypes.string
   }
@@ -31,18 +36,36 @@ class DisplayValue extends React.Component {
   )
 
   render() {
-    const { value, post, pre, maxSize, inline } = this.props
+    const {
+      shouldFormat,
+      maxSize,
+      client,
+      toWei,
+      value,
+      post,
+      pre,
+      inline
+    } = this.props
 
     let formattedValue
 
     try {
-      formattedValue = this.round(fromWei(value), true)
+      formattedValue = this.round(
+        toWei ? sanitize(value) : client.fromWei(value),
+        shouldFormat
+      )
     } catch (e) {
       formattedValue = null
     }
 
     return (
-      <div style={{ fontSize: maxSize, display: inline ? 'inline' : 'block' }}>
+      <div
+        style={{
+          whiteSpace: 'nowrap',
+          fontSize: maxSize,
+          display: inline ? 'inline' : 'block'
+        }}
+      >
         {pre}
         {formattedValue || '?'}
         {post}
@@ -51,4 +74,4 @@ class DisplayValue extends React.Component {
   }
 }
 
-export default DisplayValue
+export default withClient(DisplayValue)

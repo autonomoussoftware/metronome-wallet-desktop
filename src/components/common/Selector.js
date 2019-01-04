@@ -28,6 +28,10 @@ const MenuButton = styled(ReachUI.MenuButton)`
   box-shadow: 0 2px 0 0px
     ${p => (p.hasErrors ? p.theme.colors.danger : 'transparent')};
 
+  &[disabled] {
+    cursor: not-allowed;
+  }
+
   &:focus {
     outline: none;
     box-shadow: 0 2px 0 0px ${p => p.theme.colors.primary};
@@ -59,6 +63,10 @@ const CaretContainer = styled.div`
     svg {
       fill: ${p => p.theme.colors.primary};
     }
+  }
+
+  [disabled] & {
+    opacity: 0.25;
   }
 `
 
@@ -105,19 +113,18 @@ export default class Selector extends React.Component {
   }
 
   render() {
-    const hasErrors = this.props.error && this.props.error.length > 0
+    const { onChange, options, error, label, value, id, ...other } = this.props
 
-    const activeItem = this.props.options.find(
-      ({ value }) => value === this.props.value
-    )
+    const hasErrors = error && error.length > 0
+    const activeItem = options.find(item => item.value === value)
 
     return (
       <div>
-        <Label hasErrors={hasErrors} htmlFor={this.props.id}>
-          {this.props.label}
+        <Label hasErrors={hasErrors} htmlFor={id}>
+          {label}
         </Label>
         <ReachUI.Menu>
-          <MenuButton>
+          <MenuButton {...other}>
             <ValueContainer>
               {activeItem ? activeItem.label : ''}{' '}
             </ValueContainer>
@@ -126,23 +133,19 @@ export default class Selector extends React.Component {
             </CaretContainer>
           </MenuButton>
           <MenuList>
-            {this.props.options.map(({ value, label }) => (
+            {options.map(item => (
               <MenuItem
-                onSelect={() =>
-                  this.props.onChange({ id: this.props.id, value })
-                }
-                key={value}
+                onSelect={() => onChange({ id, value: item.value })}
+                key={item.value}
               >
-                {label}
+                {item.label}
               </MenuItem>
             ))}
           </MenuList>
         </ReachUI.Menu>
         {hasErrors && (
           <ErrorMsg data-testid={`${this.props['data-testid']}-error`}>
-            {typeof this.props.error === 'string'
-              ? this.props.error
-              : this.props.error.join('. ')}
+            {typeof error === 'string' ? error : error.join('. ')}
           </ErrorMsg>
         )}
       </div>
