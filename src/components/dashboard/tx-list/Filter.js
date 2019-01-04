@@ -25,13 +25,14 @@ const Tab = styled.button`
   border-bottom: 2px solid ${p => (p.isActive ? 'white' : 'transparent')};
   margin-bottom: 1px;
   transition: 0.3s;
+
   &:focus {
     outline: none;
   }
 
-  @media (min-width: 760px) {
+  @media (min-width: 880px) {
     font-size: 1.4rem;
-    padding: 1.6rem;
+    padding: 1.6rem 1.4rem;
   }
 `
 
@@ -42,6 +43,7 @@ export default class Filter extends React.Component {
       'converted',
       'received',
       'auction',
+      'ported',
       'sent',
       ''
     ]).isRequired
@@ -79,6 +81,12 @@ export default class Filter extends React.Component {
           onClick={() => this.props.onFilterChange('converted')}
         >
           Converted
+        </Tab>
+        <Tab
+          isActive={this.props.activeFilter === 'ported'}
+          onClick={() => this.props.onFilterChange('ported')}
+        >
+          Ported
         </Tab>
       </Container>
     )

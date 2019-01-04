@@ -89,11 +89,17 @@ class TxList extends React.Component {
     </TxRowContainer>
   )
 
+  filterExtractValue = ({ txType }) =>
+    ['imported', 'exported'].includes(txType) ? 'ported' : txType
+
   render() {
     if (!this.state.isReady) return null
     return (
       <Container data-testid="tx-list">
-        <ItemFilter extractValue={tx => tx.txType} items={this.props.items}>
+        <ItemFilter
+          extractValue={this.filterExtractValue}
+          items={this.props.items}
+        >
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
               <Header

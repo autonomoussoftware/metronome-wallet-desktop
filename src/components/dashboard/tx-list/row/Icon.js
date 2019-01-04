@@ -5,6 +5,8 @@ import React from 'react'
 
 import ConverterIcon from '../../../icons/ConverterIcon'
 import AuctionIcon from '../../../icons/AuctionIcon'
+import ImportIcon from '../../../icons/ImportIcon'
+import ExportIcon from '../../../icons/ExportIcon'
 import TxIcon from '../../../icons/TxIcon'
 
 const Pending = styled.div`
@@ -26,6 +28,8 @@ export default class Icon extends React.Component {
     txType: PropTypes.oneOf([
       'converted',
       'received',
+      'imported',
+      'exported',
       'auction',
       'unknown',
       'sent'
@@ -46,6 +50,10 @@ export default class Icon extends React.Component {
         return <ConverterIcon color={color} />
       case 'auction':
         return <AuctionIcon color={color} />
+      case 'imported':
+        return <ImportIcon color={color} />
+      case 'exported':
+        return <ExportIcon color={color} />
       default:
         return <TxIcon color={color} />
     }

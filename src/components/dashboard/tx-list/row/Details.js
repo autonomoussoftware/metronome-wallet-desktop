@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import React from 'react'
 
 import ConvertedDetails from './ConvertedDetails'
+import ImportedDetails from './ImportedDetails'
+import ExportedDetails from './ExportedDetails'
 import ReceivedDetails from './ReceivedDetails'
 import AuctionDetails from './AuctionDetails'
 import SentDetails from './SentDetails'
@@ -34,6 +36,8 @@ export default class Details extends React.Component {
     txType: PropTypes.oneOf([
       'converted',
       'received',
+      'imported',
+      'exported',
       'auction',
       'unknown',
       'sent'
@@ -53,6 +57,10 @@ export default class Details extends React.Component {
           <ReceivedDetails {...this.props} />
         ) : this.props.txType === 'converted' ? (
           <ConvertedDetails {...this.props} />
+        ) : this.props.txType === 'imported' ? (
+          <ImportedDetails {...this.props} />
+        ) : this.props.txType === 'exported' ? (
+          <ExportedDetails {...this.props} />
         ) : (
           <div>Waiting for metadata</div>
         )}

@@ -41,6 +41,8 @@ export default class Amount extends React.Component {
     symbol: PropTypes.string,
     txType: PropTypes.oneOf([
       'converted',
+      'imported',
+      'exported',
       'received',
       'auction',
       'unknown',
@@ -64,7 +66,12 @@ export default class Amount extends React.Component {
         ) : (
           <DisplayValue
             value={this.props.value}
-            post={` ${this.props.symbol}`}
+            post={
+              this.props.txType === 'imported' ||
+              this.props.txType === 'exported'
+                ? ' MET'
+                : ` ${this.props.symbol}`
+            }
           />
         )}
       </Container>
