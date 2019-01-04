@@ -7,7 +7,7 @@ const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function startCore ({ chain, core }, config) {
+function startCore ({ chain, core }) {
   const {
     emitter,
     events,
@@ -17,13 +17,9 @@ function startCore ({ chain, core }, config) {
   events.push('create-wallet', 'open-wallets')
 
   let webContent = null
-  let bestBlock = null
 
   function send (eventName, data) {
     if (!webContent) {
-      if (eventName === 'eth-block') {
-        bestBlock = data
-      }
       return
     }
     webContent.send(eventName, Object.assign({}, data, { chain }))
@@ -39,7 +35,6 @@ function startCore ({ chain, core }, config) {
     storage.getSyncBlock(chain)
       .then(function (from) {
         send('transactions-scan-started', { data: {} })
-        logger.warn('From: ', from)
         coreApi.explorer.syncTransactions(from, address)
           .then(number => storage.setSyncBlock(number, chain))
           .then(function () {
@@ -60,24 +55,10 @@ function startCore ({ chain, core }, config) {
 
   emitter.on('wallet-error', err => logger.warn(err.message))
 
-  ipcMain.on('ui-ready', function (e, args) {
+  ipcMain.on('ui-ready', function (e) {
     webContent = e.sender
     webContent.on('destroyed', function () {
       webContent = null
-    })
-
-    if (bestBlock) {
-      send('eth-block', bestBlock)
-    }
-    const onboardingComplete = !!settings.getPasswordHash()
-    storage.getState().then(function (persistedState) {
-      send('ui-ready', Object.assign({}, args, {
-        data: {
-          onboardingComplete,
-          persistedState: persistedState || {},
-          config
-        }
-      }))
     })
   })
 
@@ -89,11 +70,21 @@ function startCore ({ chain, core }, config) {
 }
 
 function createClient (config) {
-  settings.presetDefaults()
-  settings.attachSync(ipcMain)
-
   ipcMain.on('log.error', function (_, args) {
     logger.error(args.message)
+  })
+
+  ipcMain.on('ui-ready', function (webContent, args) {
+    const onboardingComplete = !!settings.getPasswordHash()
+    storage.getState().then(function (persistedState) {
+      webContent.sender.send('ui-ready', Object.assign({}, args, {
+        data: {
+          onboardingComplete,
+          persistedState: persistedState || {},
+          config
+        }
+      }))
+    })
   })
 
   const cores = config.enabledChains.map(chainName => ({
@@ -103,7 +94,7 @@ function createClient (config) {
     )
   }))
 
-  cores.forEach(core => startCore(core, config))
+  cores.forEach(startCore)
 }
 
 module.exports = { createClient }

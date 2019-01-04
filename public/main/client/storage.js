@@ -3,13 +3,8 @@
 const promiseThrottle = require('./promise-throttle')
 const { defaultTo, get } = require('lodash/fp')
 const { getDb } = require('./database')
-const logger = require('electron-log')
 
-const keysToPersist = [
-  'blockchain',
-  'wallets',
-  'rates'
-]
+const keysToPersist = ['chains']
 
 const mapToObject = array => array.reduce(function (acum, current) {
   acum[current.type] = current.data
@@ -32,39 +27,22 @@ function getState () {
     .then(mapToObject)
 }
 
-function getBestBlock () {
-  return getDb().collection('state')
-    .findOneAsync({ type: 'blockchain' })
-    .then(defaultTo({ data: { height: null } }))
-    .then(get('data.height'))
-}
-
 function setSyncBlock (number, chain) {
-  const query = { type: `sync-${chain}` }
+  const query = { type: 'sync' }
   const update = Object.assign({ data: { number } }, query)
 
-  return getDb().collection('state')
+  return getDb().collection(`sync-${chain}`)
     .updateAsync(query, update, { upsert: true })
 }
 
 function getSyncBlock (chain) {
-  return getDb().collection('state')
-    .findOneAsync({ type: `sync-${chain}` })
+  return getDb().collection(`sync-${chain}`)
+    .findOneAsync({ type: 'sync' })
     .then(defaultTo({ data: { number: 0 } }))
     .then(get('data.number'))
 }
 
-function setBestBlock (data) {
-  const query = { type: 'blockchain' }
-  const update = Object.assign({ data }, query)
-
-  return getDb().collection('state')
-    .updateAsync(query, update, { upsert: true })
-}
-
 module.exports = {
-  getBestBlock,
-  setBestBlock,
   setSyncBlock,
   getSyncBlock,
   persistState,

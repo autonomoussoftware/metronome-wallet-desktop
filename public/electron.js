@@ -7,7 +7,7 @@ const { app } = require('electron')
 const isDev = require('electron-is-dev')
 
 const logger = require('./logger')
-const config = require('./config')
+const config = require('../config')
 const initMenu = require('./menu')
 const initContextMenu = require('./contextMenu')
 
