@@ -34,6 +34,7 @@ const Button = styled(NavLink)`
   }
 
   &.active {
+    pointer-events: none;
     border-bottom: 2px solid ${p => p.theme.colors.primary};
     background-image: linear-gradient(
       250deg,

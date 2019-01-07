@@ -52,6 +52,7 @@ const Button = styled(NavLink)`
   }
 
   &.active {
+    pointer-events: none;
     padding-left: 3.2rem;
   }
 
