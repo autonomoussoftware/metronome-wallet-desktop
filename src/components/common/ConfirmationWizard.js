@@ -209,7 +209,7 @@ class ConfirmationWizard extends React.Component {
     if (status === 'success') {
       return (
         <Sp my={19} mx={12} data-testid="success">
-          <Focusable innerRef={element => (this.focusable = element)}>
+          <Focusable ref={element => (this.focusable = element)}>
             <Flex.Column align="center">
               <CheckIcon color={theme.colors.success} />
               <Sp my={2}>
@@ -245,7 +245,7 @@ class ConfirmationWizard extends React.Component {
     }
     return (
       <Sp my={19} mx={12} data-testid="waiting">
-        <Focusable innerRef={element => (this.focusable = element)}>
+        <Focusable ref={element => (this.focusable = element)}>
           <Flex.Column align="center">
             <Sp mb={2}>
               <Title>{this.props.pendingTitle}</Title>
