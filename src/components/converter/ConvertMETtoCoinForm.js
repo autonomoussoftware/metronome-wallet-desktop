@@ -61,10 +61,11 @@ class ConvertMETtoCoinForm extends React.Component {
     const { metAmount, estimate, rate } = this.props
     return (
       <ConfirmationContainer data-testid="confirmation">
-        You will convert <DisplayValue inline value={metAmount} post=" MET" />{' '}
-        and get approximately{' '}
-        <DisplayValue value={estimate} post=" ETH" inline />, which means a rate
-        of <DisplayValue value={rate} post=" ETH/MET" />.
+        You will convert{' '}
+        <DisplayValue inline value={metAmount} post=" MET" toWei /> and get
+        approximately <DisplayValue value={estimate} post=" ETH" inline />,
+        which means a rate of{' '}
+        <DisplayValue value={rate} post=" ETH/MET" inline />.
       </ConfirmationContainer>
     )
   }

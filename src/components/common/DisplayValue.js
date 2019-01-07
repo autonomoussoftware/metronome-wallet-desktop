@@ -40,11 +40,11 @@ class DisplayValue extends React.Component {
       shouldFormat,
       maxSize,
       client,
+      inline,
       toWei,
       value,
       post,
-      pre,
-      inline
+      pre
     } = this.props
 
     let formattedValue

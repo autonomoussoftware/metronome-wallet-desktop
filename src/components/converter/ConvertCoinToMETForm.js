@@ -65,7 +65,7 @@ class ConvertCointoMETForm extends React.Component {
         <DisplayValue inline value={coinAmount} toWei post=" ETH" />{' '}
         {usdAmount ? `($${usdAmount})` : `(< $0.01)`} and get approximately{' '}
         <DisplayValue value={estimate} post=" MET" inline />, which means a rate
-        of <DisplayValue value={rate} post=" ETH/MET" />.
+        of <DisplayValue value={rate} post=" ETH/MET" inline />.
       </ConfirmationContainer>
     )
   }
