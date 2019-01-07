@@ -178,7 +178,6 @@ class ChainSelector extends React.Component {
       PropTypes.shape({
         displayName: PropTypes.string.isRequired,
         balance: PropTypes.string.isRequired,
-        symbol: PropTypes.string.isRequired,
         id: PropTypes.string.isRequired
       })
     ).isRequired
@@ -224,7 +223,7 @@ class ChainSelector extends React.Component {
   }
 }
 
-const Item = ({ displayName, balance, symbol, id, caret, parent }) => (
+const Item = ({ displayName, balance, id, caret, parent }) => (
   <React.Fragment>
     <Flex.Item>
       <Icon coin={id} />
@@ -232,7 +231,7 @@ const Item = ({ displayName, balance, symbol, id, caret, parent }) => (
     <ItemBody grow="1" shrink="1" parent={parent}>
       <ChainName>{displayName}</ChainName>
       <Balance>
-        <DisplayValue value={balance} post={` ${symbol}`} />
+        <DisplayValue value={balance} post=" MET" />
       </Balance>
     </ItemBody>
     <Flex.Item shrink="0">
@@ -244,7 +243,6 @@ const Item = ({ displayName, balance, symbol, id, caret, parent }) => (
 Item.propTypes = {
   displayName: PropTypes.string.isRequired,
   balance: PropTypes.string.isRequired,
-  symbol: PropTypes.string.isRequired,
   parent: PropTypes.object,
   caret: PropTypes.oneOf(['up', 'down', 'none']).isRequired,
   id: PropTypes.string.isRequired
