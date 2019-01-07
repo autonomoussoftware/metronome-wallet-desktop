@@ -71,11 +71,7 @@ class BuyMETDrawer extends React.Component {
           You will use{' '}
           <DisplayValue value={this.props.usedCoinAmount} post=" ETH" inline />{' '}
           to buy{' '}
-          <DisplayValue
-            inline
-            value={this.props.expectedMETamount}
-            post=" MET"
-          />{' '}
+          <DisplayValue inline value={this.props.tokenRemaining} post=" MET" />{' '}
           at current price and get a return of approximately{' '}
           <DisplayValue
             inline
