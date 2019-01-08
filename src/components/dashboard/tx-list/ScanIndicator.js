@@ -50,7 +50,7 @@ class ScanIndicator extends React.Component {
           {!this.props.isOnline
             ? 'Offline'
             : this.props.isScanning
-              ? 'Fetching your transactions…'
+              ? 'Syncing…'
               : 'Up-to-date'}
         </Label>
       </Container>
