@@ -20,6 +20,7 @@ const ErrorMsg = styled.div`
 export default class ConverterEstimates extends React.Component {
   static propTypes = {
     estimateError: PropTypes.string,
+    coinSymbol: PropTypes.string.isRequired,
     convertTo: PropTypes.oneOf(['coin', 'MET']).isRequired,
     estimate: PropTypes.string,
     rate: PropTypes.string
@@ -35,10 +36,16 @@ export default class ConverterEstimates extends React.Component {
               inline
               value={this.props.estimate}
               color="primary"
-              post={` ${this.props.convertTo}`}
+              post={` ${
+                this.props.convertTo === 'MET' ? 'MET' : this.props.coinSymbol
+              }`}
             />
             , which means a rate of{' '}
-            <DisplayValue value={this.props.rate} post=" ETH/MET." inline />
+            <DisplayValue
+              inline
+              value={this.props.rate}
+              post={` ${this.props.coinSymbol}/MET.`}
+            />
           </Container>
         )}
         {this.props.estimateError && (

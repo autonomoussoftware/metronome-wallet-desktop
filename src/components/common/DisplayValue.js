@@ -1,4 +1,4 @@
-import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import withDisplayValueState from 'metronome-wallet-ui-logic/src/hocs/withDisplayValueState'
 import { sanitize } from 'metronome-wallet-ui-logic/src/utils'
 import smartRounder from 'smart-round'
 import PropTypes from 'prop-types'
@@ -10,11 +10,11 @@ class DisplayValue extends React.Component {
     shouldFormat: PropTypes.bool,
     minDecimals: PropTypes.number,
     maxDecimals: PropTypes.number,
-    client: PropTypes.shape({
-      fromWei: PropTypes.func.isRequired
-    }).isRequired,
+    coinSymbol: PropTypes.string.isRequired,
+    fromWei: PropTypes.func.isRequired,
     maxSize: PropTypes.string,
     inline: PropTypes.bool,
+    isCoin: PropTypes.bool,
     value: PropTypes.string,
     toWei: PropTypes.bool,
     post: PropTypes.string,
@@ -38,9 +38,11 @@ class DisplayValue extends React.Component {
   render() {
     const {
       shouldFormat,
+      coinSymbol,
       maxSize,
-      client,
+      fromWei,
       inline,
+      isCoin,
       toWei,
       value,
       post,
@@ -51,7 +53,7 @@ class DisplayValue extends React.Component {
 
     try {
       formattedValue = this.round(
-        toWei ? sanitize(value) : client.fromWei(value),
+        toWei ? sanitize(value) : fromWei(value),
         shouldFormat
       )
     } catch (e) {
@@ -68,10 +70,10 @@ class DisplayValue extends React.Component {
       >
         {pre}
         {formattedValue || '?'}
-        {post}
+        {isCoin ? ` ${coinSymbol}` : post}
       </div>
     )
   }
 }
 
-export default withClient(DisplayValue)
+export default withDisplayValueState(DisplayValue)

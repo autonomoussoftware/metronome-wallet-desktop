@@ -34,6 +34,7 @@ export default class AmountRow extends React.Component {
     metBoughtInAuction: PropTypes.string,
     coinSpentInAuction: PropTypes.string,
     convertedFrom: PropTypes.string,
+    coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired,
     fromValue: PropTypes.string,
     toValue: PropTypes.string,
@@ -57,8 +58,8 @@ export default class AmountRow extends React.Component {
             <React.Fragment>
               <DisplayValue
                 maxSize="1.6rem"
+                isCoin
                 value={this.props.coinSpentInAuction}
-                post=" ETH"
               />
               {this.props.metBoughtInAuction && (
                 <React.Fragment>
@@ -76,7 +77,11 @@ export default class AmountRow extends React.Component {
               <DisplayValue
                 maxSize="1.6rem"
                 value={this.props.fromValue}
-                post={this.props.convertedFrom === 'ETH' ? ' ETH' : ' MET'}
+                post={
+                  this.props.convertedFrom === 'coin'
+                    ? ` ${this.props.coinSymbol}`
+                    : ' MET'
+                }
               />
               {this.props.toValue && (
                 <React.Fragment>
@@ -84,7 +89,11 @@ export default class AmountRow extends React.Component {
                   <DisplayValue
                     maxSize="1.6rem"
                     value={this.props.toValue}
-                    post={this.props.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
+                    post={
+                      this.props.convertedFrom === 'coin'
+                        ? ' MET'
+                        : ` ${this.props.coinSymbol}`
+                    }
                   />
                 </React.Fragment>
               )}

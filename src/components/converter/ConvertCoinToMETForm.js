@@ -41,6 +41,7 @@ class ConvertCointoMETForm extends React.Component {
     onInputChange: PropTypes.func.isRequired,
     estimateError: PropTypes.string,
     useCustomGas: PropTypes.bool.isRequired,
+    coinSymbol: PropTypes.string.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     useMinimum: PropTypes.bool.isRequired,
     coinAmount: PropTypes.string,
@@ -61,11 +62,16 @@ class ConvertCointoMETForm extends React.Component {
     const { coinAmount, usdAmount, estimate, rate } = this.props
     return (
       <ConfirmationContainer data-testid="confirmation">
-        You will convert{' '}
-        <DisplayValue inline value={coinAmount} toWei post=" ETH" />{' '}
+        You will convert <DisplayValue inline isCoin value={coinAmount} toWei />{' '}
         {usdAmount ? `($${usdAmount})` : `(< $0.01)`} and get approximately{' '}
         <DisplayValue value={estimate} post=" MET" inline />, which means a rate
-        of <DisplayValue value={rate} post=" ETH/MET" inline />.
+        of{' '}
+        <DisplayValue
+          inline
+          value={rate}
+          post={` ${this.props.coinSymbol}/MET`}
+        />
+        .
       </ConfirmationContainer>
     )
   }
@@ -85,6 +91,7 @@ class ConvertCointoMETForm extends React.Component {
             usdPlaceholder={this.props.usdPlaceholder}
             onMaxClick={this.props.onMaxClick}
             coinAmount={this.props.coinAmount}
+            coinSymbol={this.props.coinSymbol}
             usdAmount={this.props.usdAmount}
             autoFocus
             onChange={this.props.onInputChange}
@@ -102,6 +109,7 @@ class ConvertCointoMETForm extends React.Component {
           </Sp>
           <ConverterEstimates
             estimateError={this.props.estimateError}
+            coinSymbol={this.props.coinSymbol}
             convertTo="MET"
             estimate={this.props.estimate}
             rate={this.props.rate}
@@ -127,7 +135,7 @@ class ConvertCointoMETForm extends React.Component {
       <ConfirmationWizard
         renderConfirmation={this.renderConfirmation}
         onWizardSubmit={this.props.onSubmit}
-        pendingTitle="Converting ETH..."
+        pendingTitle={`Converting ${this.props.coinSymbol}...`}
         renderForm={this.renderForm}
         editLabel="Edit this conversion"
         validate={this.props.validate}

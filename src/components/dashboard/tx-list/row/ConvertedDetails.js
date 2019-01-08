@@ -11,6 +11,7 @@ const Currency = styled.span`
 export default class ConvertedDetails extends React.Component {
   static propTypes = {
     convertedFrom: PropTypes.string,
+    coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired
   }
 
@@ -21,7 +22,7 @@ export default class ConvertedDetails extends React.Component {
         <Currency>{this.props.convertedFrom}</Currency>
         {this.props.isPending ? ' to ' : ' converted to '}
         <Currency>
-          {this.props.convertedFrom === 'coin' ? 'MET' : 'ETH'}
+          {this.props.convertedFrom === 'coin' ? 'MET' : this.props.coinSymbol}
         </Currency>
       </div>
     )

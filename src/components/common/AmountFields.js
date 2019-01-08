@@ -11,6 +11,7 @@ export default class AmountFields extends React.Component {
   static propTypes = {
     coinPlaceholder: PropTypes.string.isRequired,
     usdPlaceholder: PropTypes.string.isRequired,
+    coinSymbol: PropTypes.string.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
@@ -41,7 +42,7 @@ export default class AmountFields extends React.Component {
             onChange={this.props.onChange}
             error={this.props.errors.coinAmount}
             value={this.props.coinAmount}
-            label="Amount (ETH)"
+            label={`Amount (${this.props.coinSymbol})`}
             id="coinAmount"
           />
         </Flex.Item>

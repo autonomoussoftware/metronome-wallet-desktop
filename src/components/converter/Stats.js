@@ -79,7 +79,8 @@ export default class Stats extends React.Component {
       currentPrice: PropTypes.string.isRequired,
       availableCoin: PropTypes.string.isRequired,
       availableMet: PropTypes.string.isRequired
-    })
+    }),
+    coinSymbol: PropTypes.string.isRequired
   }
 
   render() {
@@ -93,9 +94,9 @@ export default class Stats extends React.Component {
                 <Badge>1 MET</Badge>
                 <Price>
                   <DisplayValue
-                    pre=" = "
+                    isCoin
                     value={this.props.converterStatus.currentPrice}
-                    post=" ETH"
+                    pre=" = "
                   />
                 </Price>
               </Flex.Row>
@@ -116,11 +117,11 @@ export default class Stats extends React.Component {
         </Sp>
         <Sp p={2}>
           <Flex.Row justify="space-between" align="baseline">
-            <Label>Available ETH</Label>
+            <Label>Available {this.props.coinSymbol}</Label>
             <AvailableAmount>
               <DisplayValue
+                isCoin
                 value={this.props.converterStatus.availableCoin}
-                post=" ETH"
               />
             </AvailableAmount>
           </Flex.Row>

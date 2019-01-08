@@ -67,19 +67,20 @@ class Receipt extends React.Component {
     refreshStatus: PropTypes.oneOf(['init', 'pending', 'success', 'failure'])
       .isRequired,
     refreshError: PropTypes.string,
+    coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired,
     tx: PropTypes.object.isRequired
   }
 
   // eslint-disable-next-line complexity
   render() {
-    const { isPending, tx } = this.props
+    const { isPending, coinSymbol, tx } = this.props
 
     return (
       <Container data-testid="receipt-modal">
         {tx.txType !== 'unknown' && (
           <Row first>
-            <AmountRow {...tx} isPending={isPending} />
+            <AmountRow {...tx} isPending={isPending} coinSymbol={coinSymbol} />
           </Row>
         )}
 

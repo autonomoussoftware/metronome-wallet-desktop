@@ -11,6 +11,7 @@ class SendDrawer extends React.Component {
     sendMetDisabledReason: PropTypes.string,
     sendMetDisabled: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
+    coinSymbol: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
 
@@ -36,7 +37,7 @@ class SendDrawer extends React.Component {
             'data-rh': this.props.sendMetDisabledReason,
             disabled: this.props.sendMetDisabled
           },
-          { id: 'coin', label: 'ETH' }
+          { id: 'coin', label: this.props.coinSymbol }
         ]}
       />
     )

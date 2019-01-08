@@ -41,7 +41,8 @@ class Converter extends React.Component {
     convertDisabledReason: PropTypes.string,
     converterPriceUSD: PropTypes.string.isRequired,
     convertDisabled: PropTypes.bool.isRequired,
-    converterStatus: PropTypes.object
+    converterStatus: PropTypes.object,
+    coinSymbol: PropTypes.string.isRequired
   }
 
   state = {
@@ -63,6 +64,7 @@ class Converter extends React.Component {
             <Stats
               converterPriceUSD={this.props.converterPriceUSD}
               converterStatus={this.props.converterStatus}
+              coinSymbol={this.props.coinSymbol}
             />
 
             <ConvertBtn
@@ -78,6 +80,7 @@ class Converter extends React.Component {
 
             <ConvertDrawer
               onRequestClose={this.onCloseModal}
+              coinSymbol={this.props.coinSymbol}
               isOpen={this.state.activeModal === 'convert'}
             />
           </Container>

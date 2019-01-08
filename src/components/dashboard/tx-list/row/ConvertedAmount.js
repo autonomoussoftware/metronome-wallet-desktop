@@ -4,9 +4,10 @@ import React from 'react'
 import { DisplayValue } from '../../../common'
 import Arrow from './Arrow'
 
-export default class Amount extends React.Component {
+export default class ConvertedAmount extends React.Component {
   static propTypes = {
     convertedFrom: PropTypes.string,
+    coinSymbol: PropTypes.string.isRequired,
     fromValue: PropTypes.string,
     toValue: PropTypes.string
   }
@@ -17,7 +18,11 @@ export default class Amount extends React.Component {
         {this.props.fromValue ? (
           <DisplayValue
             value={this.props.fromValue}
-            post={` ${this.props.convertedFrom}`}
+            post={` ${
+              this.props.convertedFrom === 'coin'
+                ? this.props.coinSymbol
+                : this.props.convertedFrom
+            }`}
           />
         ) : (
           <div>New transaction</div>
@@ -29,7 +34,11 @@ export default class Amount extends React.Component {
               <Arrow />
               <DisplayValue
                 value={this.props.toValue}
-                post={this.props.convertedFrom === 'ETH' ? ' MET' : ' ETH'}
+                post={
+                  this.props.convertedFrom === 'coin'
+                    ? ' MET'
+                    : ` ${this.props.coinSymbol}`
+                }
               />
             </React.Fragment>
           )}

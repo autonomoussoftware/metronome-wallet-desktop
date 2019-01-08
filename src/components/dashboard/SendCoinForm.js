@@ -38,6 +38,7 @@ class SendCoinForm extends React.Component {
     usdPlaceholder: PropTypes.string,
     onInputChange: PropTypes.func.isRequired,
     useCustomGas: PropTypes.bool.isRequired,
+    coinSymbol: PropTypes.string.isRequired,
     onMaxClick: PropTypes.func.isRequired,
     coinAmount: PropTypes.string,
     usdAmount: PropTypes.string,
@@ -55,7 +56,7 @@ class SendCoinForm extends React.Component {
   renderConfirmation = () => (
     <ConfirmationContainer data-testid="confirmation">
       You will send{' '}
-      <DisplayValue inline value={this.props.coinAmount} toWei post=" ETH" />{' '}
+      <DisplayValue inline value={this.props.coinAmount} toWei isCoin />{' '}
       {this.props.usdAmount ? `($${this.props.usdAmount})` : `(< $0.01)`} to the
       address {this.props.toAddress}.
     </ConfirmationContainer>
@@ -86,6 +87,7 @@ class SendCoinForm extends React.Component {
               coinPlaceholder={this.props.coinPlaceholder}
               usdPlaceholder={this.props.usdPlaceholder}
               onMaxClick={this.props.onMaxClick}
+              coinSymbol={this.props.coinSymbol}
               coinAmount={this.props.coinAmount}
               usdAmount={this.props.usdAmount}
               onChange={this.props.onInputChange}

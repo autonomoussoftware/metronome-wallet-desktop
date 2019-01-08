@@ -70,7 +70,11 @@ export default class Amount extends React.Component {
               this.props.txType === 'imported' ||
               this.props.txType === 'exported'
                 ? ' MET'
-                : ` ${this.props.symbol}`
+                : ` ${
+                    this.props.symbol === 'coin'
+                      ? this.props.coinSymbol
+                      : this.props.symbol
+                  }`
             }
           />
         )}

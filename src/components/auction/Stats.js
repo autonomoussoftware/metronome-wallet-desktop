@@ -95,9 +95,9 @@ export default class Stats extends React.Component {
                 <Badge>1 MET</Badge>
                 <Price>
                   <DisplayValue
-                    pre=" = "
+                    isCoin
                     value={auctionStatus.currentPrice}
-                    post=" ETH"
+                    pre=" = "
                   />
                 </Price>
               </Flex.Row>

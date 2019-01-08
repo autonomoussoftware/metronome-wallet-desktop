@@ -18,6 +18,7 @@ const Arrow = styled.span`
 export default class ConvertDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    coinSymbol: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired
   }
 
@@ -41,7 +42,7 @@ export default class ConvertDrawer extends React.Component {
             id: 'coin',
             label: (
               <React.Fragment>
-                ETH
+                {this.props.coinSymbol}
                 <Arrow>&rarr;</Arrow>
                 MET
               </React.Fragment>
@@ -53,7 +54,7 @@ export default class ConvertDrawer extends React.Component {
               <React.Fragment>
                 MET
                 <Arrow>&rarr;</Arrow>
-                ETH
+                {this.props.coinSymbol}
               </React.Fragment>
             )
           }
