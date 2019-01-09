@@ -7,16 +7,16 @@ export const subscribeToMainProcessMessages = store => {
    */
   subscribeTo([
     'metronome-token-status-updated',
-    'mtn-converter-status-updated',
     'connectivity-state-changed',
     'transactions-scan-finished',
     'transactions-scan-started',
+    'converter-status-updated',
     'auction-status-updated',
     'wallet-state-changed',
-    'eth-price-updated',
+    'coin-price-updated',
     'create-wallet',
     'open-wallets',
-    'eth-block'
+    'coin-block'
   ])
 
   const errorsMap = {}

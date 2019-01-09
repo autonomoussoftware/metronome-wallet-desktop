@@ -56,7 +56,7 @@ describe('<Converter/>', () => {
 
 function converterStatusUpdated(payload = {}) {
   return {
-    type: 'mtn-converter-status-updated',
+    type: 'converter-status-updated',
     payload
   }
 }
