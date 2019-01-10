@@ -17,7 +17,7 @@ module.exports = {
   },
   enabledChains: process.env.REACT_APP_ENABLED_CHAINS
     ? process.env.REACT_APP_ENABLED_CHAINS.split(' ')
-    : ['ethMain'],
+    : ['ethMainnet'],
   requiredPasswordEntropy: 72,
   explorerDebounce: 2000,
   ratesUpdateMs: 30000,
