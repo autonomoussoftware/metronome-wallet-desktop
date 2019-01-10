@@ -9,7 +9,9 @@ module.exports = {
   symbol: 'ETH', // visible next to amounts
 
   // contracts addresses
+  tokenPorterAddress: addresses.tokenPorter,
   converterAddress: addresses.autonomousConverter,
+  validatorAddress: addresses.validator,
   metTokenAddress: addresses.metToken,
   auctionAddress: addresses.auctions,
 

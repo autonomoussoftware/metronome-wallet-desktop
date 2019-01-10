@@ -1,15 +1,17 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const addresses = MetronomeContracts.addresses.ropsten
+const addresses = MetronomeContracts.addresses.morden
 
 module.exports = {
   displayName: 'ETC (Morden)', // visible in select control
-  chainId: 3,
+  chainId: 2,
   symbol: 'ETC', // visible next to amounts
 
   // contracts addresses
+  tokenPorterAddress: addresses.tokenPorter,
   converterAddress: addresses.autonomousConverter,
+  validatorAddress: addresses.validator,
   metTokenAddress: addresses.metToken,
   auctionAddress: addresses.auctions,
 

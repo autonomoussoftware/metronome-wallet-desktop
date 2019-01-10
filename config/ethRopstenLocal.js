@@ -4,7 +4,7 @@ const MetronomeContracts = require('metronome-contracts')
 const addresses = MetronomeContracts.addresses.ropsten
 
 module.exports = {
-  displayName: 'ETH (Ropsten)', // visible in select control
+  displayName: 'Ropsten (Local)', // visible in select control
   chainId: 3,
   symbol: 'ETH', // visible next to amounts
 
@@ -17,9 +17,9 @@ module.exports = {
 
   // urls
   explorerUrl: 'https://explorer.metronome.io',   // TODO: update!
-  indexerUrl: 'https://indexer.metronome.io',     // TODO: update!
+  indexerUrl: 'http://localhost:3005',
   metApiUrl: 'https://api.metronome.io/',         // TODO: update!
-  wsApiUrl: 'wss://eth.wallet.metronome.io:8546', // TODO: update!
+  wsApiUrl: 'ws://localhost:8546',
 
   // defauls
   coinDefaultGasLimit: '21000',
