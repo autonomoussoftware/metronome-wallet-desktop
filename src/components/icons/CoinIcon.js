@@ -70,16 +70,24 @@ const ETC = isTest => (
 
 const CoinIcon = ({ coin, ...other }) => (
   <BaseIcon {...other}>
+    {coin === 'ethRopstenLocal' && ETH('local')}
+    {coin === 'etcMordenLocal' && ETC('local')}
     {coin === 'ethMainnet' && ETH()}
-    {coin === 'ethRopsten' && ETH(true)}
+    {coin === 'ethRopsten' && ETH('test')}
     {coin === 'etcMainnet' && ETC()}
-    {coin === 'etcMorden' && ETC(true)}
+    {coin === 'etcMorden' && ETC('test')}
   </BaseIcon>
 )
 
 CoinIcon.propTypes = {
-  coin: PropTypes.oneOf(['ethMainnet', 'ethRopsten', 'etcMainnet', 'etcMorden'])
-    .isRequired
+  coin: PropTypes.oneOf([
+    'ethRopstenLocal',
+    'etcMordenLocal',
+    'ethMainnet',
+    'ethRopsten',
+    'etcMainnet',
+    'etcMorden'
+  ]).isRequired
 }
 
 export default CoinIcon
