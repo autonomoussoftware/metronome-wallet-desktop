@@ -3,14 +3,16 @@
 const logger = require('electron-log')
 
 const { getPasswordHash, setPasswordHash } = require('./settings')
-const { pbkdf2: { hash, verify }, sha256 } = require('./crypto')
+const {
+  pbkdf2: { hash, verify },
+  sha256
+} = require('./crypto')
 
 function setPassword (password) {
   const passwordHash = getPasswordHash()
   if (!passwordHash) {
     logger.info('No password set, using current as default')
-    return hash(password)
-      .then(setPasswordHash)
+    return hash(password).then(setPasswordHash)
   }
 }
 
@@ -33,12 +35,11 @@ function isValidPassword (password) {
       if (sha256.hash(password) === passwordHash) {
         logger.debug('Upgrading password encryption')
 
-        return hash(password)
-          .then(function (newHash) {
-            setPasswordHash(newHash)
+        return hash(password).then(function (newHash) {
+          setPasswordHash(newHash)
 
-            return true
-          })
+          return true
+        })
       }
       // end of logic to remove
 

@@ -59,13 +59,13 @@ function createClient(createStore) {
   }
 
   const forwardedMethods = {
-    getConvertEthGasLimit: utils.forwardToMainProcess(
+    getConvertCoinGasLimit: utils.forwardToMainProcess(
       'get-convert-eth-gas-limit'
     ),
     getConvertMetGasLimit: utils.forwardToMainProcess(
       'get-convert-met-gas-limit'
     ),
-    getConvertEthEstimate: utils.forwardToMainProcess(
+    getConvertCoinEstimate: utils.forwardToMainProcess(
       'get-convert-eth-estimate'
     ),
     getConvertMetEstimate: utils.forwardToMainProcess(
@@ -77,12 +77,12 @@ function createClient(createStore) {
     getTokensGasLimit: utils.forwardToMainProcess('get-tokens-gas-limit'),
     validatePassword: utils.forwardToMainProcess('validate-password'),
     buyMetronome: utils.forwardToMainProcess('buy-metronome', 60000),
-    convertEth: utils.forwardToMainProcess('convert-eth', 60000),
+    convertCoin: utils.forwardToMainProcess('convert-eth', 60000),
     convertMet: utils.forwardToMainProcess('convert-met', 60000),
     onLoginSubmit: utils.forwardToMainProcess('login-submit'),
     getGasLimit: utils.forwardToMainProcess('get-gas-limit'),
     getGasPrice: utils.forwardToMainProcess('get-gas-price'),
-    sendEth: utils.forwardToMainProcess('send-eth', 60000),
+    sendCoin: utils.forwardToMainProcess('send-eth', 60000),
     sendMet: utils.forwardToMainProcess('send-met', 60000),
     clearCache: utils.forwardToMainProcess('clear-cache')
   }

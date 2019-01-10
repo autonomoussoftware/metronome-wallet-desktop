@@ -7,12 +7,13 @@ const Datastore = require('nedb')
 const logger = require('electron-log')
 const path = require('path')
 
-const promisifyMethods = methods => function (obj) {
-  methods.forEach(function (method) {
-    obj[`${method}Async`] = promisify(obj[method].bind(obj))
-  })
-  return obj
-}
+const promisifyMethods = methods =>
+  function (obj) {
+    methods.forEach(function (method) {
+      obj[`${method}Async`] = promisify(obj[method].bind(obj))
+    })
+    return obj
+  }
 
 const promisifyCollection = promisifyMethods([
   'find',
@@ -26,13 +27,15 @@ const collections = {}
 function addCollection (name) {
   logger.verbose(`Creating database collection ${name}`)
 
-  const newCollection = promisifyCollection(new Datastore({
-    filename: path.join(
-      app.getPath('userData'),
-      `Database/${upperFirst(name)}`
-    ),
-    autoload: true
-  }))
+  const newCollection = promisifyCollection(
+    new Datastore({
+      filename: path.join(
+        app.getPath('userData'),
+        `Database/${upperFirst(name)}`
+      ),
+      autoload: true
+    })
+  )
 
   collections[name] = newCollection
 
@@ -47,8 +50,9 @@ function dropDatabase () {
   logger.verbose('Dropping database')
 
   return Promise.all(
-    Object.keys(collections)
-      .map(name => collections[name].removeAsync({}, { multi: true }))
+    Object.keys(collections).map(name =>
+      collections[name].removeAsync({}, { multi: true })
+    )
   )
     .then(sum)
     .then(function (count) {

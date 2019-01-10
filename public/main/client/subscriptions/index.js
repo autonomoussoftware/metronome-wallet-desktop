@@ -2,11 +2,13 @@
 
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
-const WalletError = require('./WalletError')
-const handlers = require('./handlers')
+const WalletError = require('../WalletError')
+const handlers = require('../handlers')
 
 function getLogData (data) {
-  if (!data) { return '' }
+  if (!data) {
+    return ''
+  }
   const logData = Object.assign({}, data)
 
   const blackList = ['password']
@@ -17,8 +19,14 @@ function getLogData (data) {
 
 const logEvent = eventName => eventName !== 'persist-state'
 
-function onRendererEvent (eventName, handler) {
+const ignoreChain = (chain, data) =>
+  (chain !== 'multi' && chain !== 'none' && data.chain && chain !== data.chain)
+
+function onRendererEvent (eventName, handler, chain) {
   ipcMain.on(eventName, function (event, { id, data }) {
+    if (ignoreChain(chain, data)) {
+      return
+    }
     if (logEvent(eventName)) {
       logger.verbose(`--> ${eventName}:${id} ${getLogData()}`)
     }
@@ -48,40 +56,53 @@ function onRendererEvent (eventName, handler) {
   })
 }
 
-const subscribeToRendererMessages = function (emitter, core) {
-  function subscribeTo (types) {
-    return Object.keys(types).forEach(type =>
-      onRendererEvent(type, types[type])
-    )
-  }
+const subscribeTo = (types, chain) =>
+  Object.keys(types).forEach(type => onRendererEvent(type, types[type], chain))
 
-  function withCore (fn) {
-    return function (data) {
-      return fn(data, emitter, core)
-    }
-  }
+// Subscribe to messages where only one particular core has to react
+function subscribeSingleCore ({ emitter, coreApi, chain }) {
+  const withCore = fn => data => fn(data, { emitter, coreApi, chain })
 
   subscribeTo({
     'get-convert-eth-gas-limit': withCore(handlers.getConvertEthGasLimit),
     'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
     'get-convert-eth-estimate': withCore(handlers.getConvertEthEstimate),
     'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
-    'recover-from-mnemonic': withCore(handlers.recoverFromMnemonic),
-    'onboarding-completed': withCore(handlers.onboardingCompleted),
     'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
-    'validate-password': handlers.validatePassword,
     'buy-metronome': withCore(handlers.buyMetronome),
-    'login-submit': withCore(handlers.onLoginSubmit),
     'get-gas-limit': withCore(handlers.getGasLimit),
     'get-gas-price': withCore(handlers.getGasPrice),
     'convert-eth': withCore(handlers.convertEth),
     'convert-met': withCore(handlers.convertMet),
     'send-eth': withCore(handlers.sendEth),
-    'send-met': withCore(handlers.sendMet),
-    'persist-state': handlers.persistState,
-    'clear-cache': handlers.clearCache
-  })
+    'send-met': withCore(handlers.sendMet)
+  }, chain)
 }
 
-module.exports = { subscribeToRendererMessages }
+// Subscribe to messages where no core has to react
+const subscribeWithoutCore = () =>
+  subscribeTo({
+    'validate-password': handlers.validatePassword,
+    'persist-state': handlers.persistState,
+    'clear-cache': handlers.clearCache
+  }, 'none')
+
+// Subscribe to messages where two or more cores have to react
+function subscribeMultiCore (cores) {
+  const withCores = fn => data => fn(data, cores)
+
+  subscribeTo({
+    'recover-from-mnemonic': withCores(handlers.recoverFromMnemonic),
+    'onboarding-completed': withCores(handlers.onboardingCompleted),
+    'login-submit': withCores(handlers.onLoginSubmit)
+  }, 'multi')
+}
+
+function subscribe (cores) {
+  cores.forEach(subscribeSingleCore)
+  subscribeMultiCore(cores)
+  subscribeWithoutCore()
+}
+
+module.exports = { subscribe }

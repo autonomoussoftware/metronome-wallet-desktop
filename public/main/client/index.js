@@ -1,6 +1,6 @@
 'use strict'
 
-const { subscribeToRendererMessages } = require('./subscriptions')
+const subscriptions = require('./subscriptions')
 const { createCore } = require('metronome-wallet-core')
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
@@ -8,11 +8,7 @@ const settings = require('./settings')
 const storage = require('./storage')
 
 function startCore ({ chain, core }) {
-  const {
-    emitter,
-    events,
-    api: coreApi
-  } = core.start()
+  const { emitter, events, api: coreApi } = core.start()
 
   events.push('create-wallet', 'open-wallets')
 
@@ -32,25 +28,24 @@ function startCore ({ chain, core }) {
   )
 
   emitter.on('open-wallets', function ({ address }) {
-    storage.getSyncBlock(chain)
-      .then(function (from) {
-        send('transactions-scan-started', { data: {} })
-        coreApi.explorer.syncTransactions(from, address)
-          .then(number => storage.setSyncBlock(number, chain))
-          .then(function () {
-            send('transactions-scan-finished', { data: {} })
-            emitter.on('eth-block', function ({ number }) {
-              storage.setSyncBlock(number, chain)
-                .catch(function (err) {
-                  logger.warn('Could not save new synced block', err)
-                })
+    storage.getSyncBlock(chain).then(function (from) {
+      send('transactions-scan-started', { data: {} })
+      coreApi.explorer
+        .syncTransactions(from, address)
+        .then(number => storage.setSyncBlock(number, chain))
+        .then(function () {
+          send('transactions-scan-finished', { data: {} })
+          emitter.on('eth-block', function ({ number }) {
+            storage.setSyncBlock(number, chain).catch(function (err) {
+              logger.warn('Could not save new synced block', err)
             })
           })
-          .catch(function (err) {
-            logger.warn('Could not sync transactions/events', err.stack)
-            send('transactions-scan-finished', { data: {} })
-          })
-      })
+        })
+        .catch(function (err) {
+          logger.warn('Could not sync transactions/events', err.stack)
+          send('transactions-scan-finished', { data: {} })
+        })
+    })
   })
 
   emitter.on('wallet-error', err => logger.warn(err.message))
@@ -66,7 +61,11 @@ function startCore ({ chain, core }) {
     webContent = null
   })
 
-  subscribeToRendererMessages(emitter, coreApi)
+  return {
+    emitter,
+    events,
+    coreApi
+  }
 }
 
 function createClient (config) {
@@ -77,24 +76,32 @@ function createClient (config) {
   ipcMain.on('ui-ready', function (webContent, args) {
     const onboardingComplete = !!settings.getPasswordHash()
     storage.getState().then(function (persistedState) {
-      webContent.sender.send('ui-ready', Object.assign({}, args, {
-        data: {
-          onboardingComplete,
-          persistedState: persistedState || {},
-          config
-        }
-      }))
+      webContent.sender.send(
+        'ui-ready',
+        Object.assign({}, args, {
+          data: {
+            onboardingComplete,
+            persistedState: persistedState || {},
+            config
+          }
+        })
+      )
     })
   })
 
   const cores = config.enabledChains.map(chainName => ({
     chain: chainName,
-    core: createCore(
-      Object.assign({}, config.chains[chainName], config)
-    )
+    core: createCore(Object.assign({}, config.chains[chainName], config))
   }))
 
-  cores.forEach(startCore)
+  cores.forEach(function (core) {
+    const { emitter, events, coreApi } = startCore(core)
+    core.emitter = emitter
+    core.events = events
+    core.coreApi = coreApi
+  })
+
+  subscriptions.subscribe(cores)
 }
 
 module.exports = { createClient }

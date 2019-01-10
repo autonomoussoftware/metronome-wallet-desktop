@@ -51,17 +51,23 @@ function getSeedByAddress (address, password) {
 }
 
 const setAddressForWalletId = (walletId, address) =>
-  Promise.resolve(settings.set(`user.wallets.${walletId}.addresses`, {
-    [address]: {
-      index: 0
-    }
-  }))
+  Promise.resolve(
+    settings.set(`user.wallets.${walletId}.addresses`, {
+      [address]: {
+        index: 0
+      }
+    })
+  )
 
-const getAddressesForWalletId = walletId =>
-  getWalletAddresses(walletId)
+const getAddressesForWalletId = walletId => getWalletAddresses(walletId)
 
 const setSeed = (seed, password) =>
-  Promise.resolve(settings.set(`user.wallets.${getWalletId(seed)}.encryptedSeed`, aes256cbcIv.encrypt(password, seed)))
+  Promise.resolve(
+    settings.set(
+      `user.wallets.${getWalletId(seed)}.encryptedSeed`,
+      aes256cbcIv.encrypt(password, seed)
+    )
+  )
 
 module.exports = {
   getAddressesForWalletId,
