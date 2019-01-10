@@ -35,7 +35,7 @@ function startCore ({ chain, core }) {
         .then(number => storage.setSyncBlock(number, chain))
         .then(function () {
           send('transactions-scan-finished', { data: {} })
-          emitter.on('eth-block', function ({ number }) {
+          emitter.on('coin-block', function ({ number }) {
             storage.setSyncBlock(number, chain).catch(function (err) {
               logger.warn('Could not save new synced block', err)
             })

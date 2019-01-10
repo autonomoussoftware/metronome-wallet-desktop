@@ -64,18 +64,18 @@ function subscribeSingleCore ({ emitter, coreApi, chain }) {
   const withCore = fn => data => fn(data, { emitter, coreApi, chain })
 
   subscribeTo({
-    'get-convert-eth-gas-limit': withCore(handlers.getConvertEthGasLimit),
+    'get-convert-coin-gas-limit': withCore(handlers.getConvertCoinGasLimit),
     'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
-    'get-convert-eth-estimate': withCore(handlers.getConvertEthEstimate),
+    'get-convert-coin-estimate': withCore(handlers.getConvertCoinEstimate),
     'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
     'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
     'buy-metronome': withCore(handlers.buyMetronome),
     'get-gas-limit': withCore(handlers.getGasLimit),
     'get-gas-price': withCore(handlers.getGasPrice),
-    'convert-eth': withCore(handlers.convertEth),
+    'convert-coin': withCore(handlers.convertCoin),
     'convert-met': withCore(handlers.convertMet),
-    'send-eth': withCore(handlers.sendEth),
+    'send-coin': withCore(handlers.sendCoin),
     'send-met': withCore(handlers.sendMet)
   }, chain)
 }

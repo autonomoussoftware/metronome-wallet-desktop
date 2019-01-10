@@ -40,8 +40,8 @@ const getGasLimit = (data, { coreApi }) => coreApi.wallet.getGasLimit(data)
 
 const getGasPrice = (data, { coreApi }) => coreApi.wallet.getGasPrice(data)
 
-const sendEth = (data, { coreApi }) =>
-  withAuth(coreApi.wallet.sendEth)(data, { coreApi })
+const sendCoin = (data, { coreApi }) =>
+  withAuth(coreApi.wallet.sendCoin)(data, { coreApi })
 
 const getTokensGasLimit = (data, { coreApi }) =>
   coreApi.tokens.getTokensGasLimit(data)
@@ -49,11 +49,11 @@ const getTokensGasLimit = (data, { coreApi }) =>
 const getAuctionGasLimit = (data, { coreApi }) =>
   coreApi.metronome.getAuctionGasLimit(data)
 
-const getConvertEthEstimate = (data, { coreApi }) =>
-  coreApi.metronome.getConvertEthEstimate(data)
+const getConvertCoinEstimate = (data, { coreApi }) =>
+  coreApi.metronome.getConvertCoinEstimate(data)
 
-const getConvertEthGasLimit = (data, { coreApi }) =>
-  coreApi.metronome.getConvertEthGasLimit(data)
+const getConvertCoinGasLimit = (data, { coreApi }) =>
+  coreApi.metronome.getConvertCoinGasLimit(data)
 
 const getConvertMetEstimate = (data, { coreApi }) =>
   coreApi.metronome.getConvertMetEstimate(data)
@@ -64,8 +64,8 @@ const getConvertMetGasLimit = (data, { coreApi }) =>
 const buyMetronome = (data, { coreApi }) =>
   withAuth(coreApi.metronome.buyMetronome)(data, { coreApi })
 
-const convertEth = (data, { coreApi }) =>
-  withAuth(coreApi.metronome.convertEth)(data, { coreApi })
+const convertCoin = (data, { coreApi }) =>
+  withAuth(coreApi.metronome.convertCoin)(data, { coreApi })
 
 const convertMet = (data, { coreApi }) =>
   withAuth(coreApi.metronome.convertMet)(data, { coreApi })
@@ -74,8 +74,8 @@ const sendMet = (data, { coreApi }) =>
   withAuth(coreApi.metronome.sendMet)(data, { coreApi })
 
 module.exports = {
-  getConvertEthEstimate,
-  getConvertEthGasLimit,
+  getConvertCoinEstimate,
+  getConvertCoinGasLimit,
   getConvertMetEstimate,
   getConvertMetGasLimit,
   getAuctionGasLimit,
@@ -84,9 +84,9 @@ module.exports = {
   createWallet,
   getGasLimit,
   getGasPrice,
-  convertEth,
+  convertCoin,
   convertMet,
   openWallet,
   sendMet,
-  sendEth
+  sendCoin
 }
