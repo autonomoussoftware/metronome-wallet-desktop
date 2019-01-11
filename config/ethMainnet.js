@@ -1,7 +1,7 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const addresses = MetronomeContracts.addresses.mainnet
+const contracts = MetronomeContracts.mainnet
 
 module.exports = {
   displayName: 'ETHEREUM', // visible in select control
@@ -9,11 +9,12 @@ module.exports = {
   symbol: 'ETH', // visible next to amounts
 
   // contracts addresses
-  tokenPorterAddress: addresses.tokenPorter,
-  converterAddress: addresses.autonomousConverter,
-  validatorAddress: addresses.validator,
-  metTokenAddress: addresses.metToken,
-  auctionAddress: addresses.auctions,
+  tokenPorterAddress: contracts.TokenPorter.address,
+  converterAddress: contracts.AutonomousConverter.address,
+  validatorAddress: contracts.Validator.address,
+  metTokenAddress: contracts.METToken.address,
+  auctionAddress: contracts.Auctions.address,
+
 
   // urls
   explorerUrl: 'https://explorer.metronome.io',
