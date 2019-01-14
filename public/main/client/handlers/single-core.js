@@ -73,6 +73,9 @@ const convertMet = (data, { coreApi }) =>
 const sendMet = (data, { coreApi }) =>
   withAuth(coreApi.metronome.sendMet)(data, { coreApi })
 
+// TODO: Implement retry method
+const retryImport = (data, core) => Promise.resolve({})
+
 module.exports = {
   getConvertCoinEstimate,
   getConvertCoinGasLimit,
@@ -85,6 +88,7 @@ module.exports = {
   getGasLimit,
   getGasPrice,
   convertCoin,
+  retryImport,
   convertMet,
   openWallet,
   sendMet,

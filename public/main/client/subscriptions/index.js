@@ -68,12 +68,14 @@ function subscribeSingleCore ({ emitter, coreApi, chain }) {
     'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
     'get-convert-coin-estimate': withCore(handlers.getConvertCoinEstimate),
     'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
+    'get-port-fee-estimate': withCore(handlers.getPortFeeEstimate),
     'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
     'buy-metronome': withCore(handlers.buyMetronome),
     'get-gas-limit': withCore(handlers.getGasLimit),
     'get-gas-price': withCore(handlers.getGasPrice),
     'convert-coin': withCore(handlers.convertCoin),
+    'retry-import': withCore(handlers.retryImport),
     'convert-met': withCore(handlers.convertMet),
     'send-coin': withCore(handlers.sendCoin),
     'send-met': withCore(handlers.sendMet)
@@ -95,7 +97,9 @@ function subscribeMultiCore (cores) {
   subscribeTo({
     'recover-from-mnemonic': withCores(handlers.recoverFromMnemonic),
     'onboarding-completed': withCores(handlers.onboardingCompleted),
-    'login-submit': withCores(handlers.onLoginSubmit)
+    'port-metronome': withCores(handlers.portMetronome),
+    'login-submit': withCores(handlers.onLoginSubmit),
+    'get-port-fees': withCores(handlers.getPortFees)
   }, 'multi')
 }
 
