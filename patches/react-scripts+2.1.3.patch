@@ -1,15 +1,6 @@
 patch-package
 --- a/node_modules/react-scripts/config/webpack.config.js
 +++ b/node_modules/react-scripts/config/webpack.config.js
-@@ -323,7 +323,7 @@ module.exports = function(webpackEnv) {
-               loader: require.resolve('eslint-loader'),
-             },
-           ],
--          include: paths.appSrc,
-+          include: [paths.appSrc, /metronome-wallet-ui-logic/],
-         },
-         {
-           // "oneOf" will traverse all following loaders until one will
 @@ -345,7 +345,7 @@ module.exports = function(webpackEnv) {
              // The preset includes JSX, Flow, TypeScript, and some ESnext features.
              {
