@@ -39,6 +39,8 @@ function addCollection (name) {
 
   collections[name] = newCollection
 
+  newCollection.persistence.setAutocompactionInterval(500)
+
   return newCollection
 }
 
