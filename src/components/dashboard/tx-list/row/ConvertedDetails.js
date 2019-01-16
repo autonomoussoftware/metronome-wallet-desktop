@@ -19,7 +19,9 @@ export default class ConvertedDetails extends React.Component {
     return (
       <div>
         {this.props.isPending && 'Pending conversion from '}
-        <Currency>{this.props.convertedFrom}</Currency>
+        <Currency>
+          {this.props.convertedFrom === 'coin' ? this.props.coinSymbol : 'MET'}
+        </Currency>
         {this.props.isPending ? ' to ' : ' converted to '}
         <Currency>
           {this.props.convertedFrom === 'coin' ? 'MET' : this.props.coinSymbol}

@@ -1,15 +1,23 @@
+import { toChecksumAddress } from 'web3-utils'
 import withReceiptState from 'metronome-wallet-ui-logic/src/hocs/withReceiptState'
 import PropTypes from 'prop-types'
+import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
 import React from 'react'
-import { toChecksumAddress } from 'web3-utils'
 
+import DisplayValue from '../DisplayValue'
 import AmountRow from './AmountRow'
 import TypeRow from './TypeRow'
 import { Btn } from '../Btn'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.medium};
+`
+
+const Scroller = styled.div`
+  box-shadow: 0 -1.6rem 1.6rem -1.6rem ${p => p.theme.colors.darkShade} inset;
+  overflow-y: auto;
+  max-height: 60vh;
 `
 
 const Row = styled.div`
@@ -37,11 +45,16 @@ const Value = styled.div`
   text-align: right;
   line-height: 1.6rem;
   font-size: 1.3rem;
+
+  &[data-rh] {
+    border-bottom: 1px dotted ${p => p.theme.colors.darkShade};
+  }
 `
 
 const Address = styled(Value)`
   word-wrap: break-word;
   word-break: break-word;
+  font-size: 1.2rem;
 `
 
 const Hash = styled(Value)`
@@ -78,18 +91,40 @@ class Receipt extends React.Component {
 
     return (
       <Container data-testid="receipt-modal">
-        {tx.txType !== 'unknown' && (
-          <Row first>
-            <AmountRow {...tx} isPending={isPending} coinSymbol={coinSymbol} />
+        <Scroller>
+          {tx.txType !== 'unknown' && (
+            <Row first>
+              <AmountRow
+                {...tx}
+                isPending={isPending}
+                coinSymbol={coinSymbol}
+              />
+            </Row>
+          )}
+
+          {tx.timestamp && tx.formattedTime && (
+            <Row>
+              <Label>Block mined</Label>
+              <Value data-rh={tx.formattedTime}>
+                <TimeAgo timestamp={tx.timestamp} />
+              </Value>
+            </Row>
+          )}
+
+          <Row first={tx.txType === 'unknown'}>
+            <TypeRow {...tx} />
           </Row>
-        )}
 
-        <Row first={tx.txType === 'unknown'}>
-          <TypeRow {...tx} />
-        </Row>
+          {tx.txType === 'exported' && tx.portFee && (
+            <Row>
+              <Label>Fee</Label>
+              <Value>
+                <DisplayValue value={tx.portFee} post=" MET" />
+              </Value>
+            </Row>
+          )}
 
-        {tx.txType === 'received' &&
-          tx.from && (
+          {tx.txType === 'received' && tx.from && (
             <Row>
               <Label>
                 {this.props.isPending ? 'Pending' : 'Received'} from
@@ -98,38 +133,58 @@ class Receipt extends React.Component {
             </Row>
           )}
 
-        {tx.txType === 'sent' &&
-          tx.to && (
+          {tx.txType === 'sent' && tx.to && (
             <Row>
               <Label>{this.props.isPending ? 'Pending' : 'Sent'} to</Label>
               <Address>{toChecksumAddress(tx.to)}</Address>
             </Row>
           )}
 
-        <Row>
-          <Label>Confirmations</Label>
-          <Value>{this.props.confirmations}</Value>
-        </Row>
+          {tx.txType === 'exported' && tx.exportedTo && (
+            <Row>
+              <Label>{this.props.isPending ? 'Pending' : 'Exported'} to</Label>
+              <Value>{tx.exportedTo} blockchain</Value>
+            </Row>
+          )}
 
-        {tx.receipt && (
+          {tx.portDestinationAddress && (
+            <Row>
+              <Label>Destination Address</Label>
+              <Address>{toChecksumAddress(tx.portDestinationAddress)}</Address>
+            </Row>
+          )}
+
           <Row>
-            <Label>Gas used</Label>
-            <Value>{tx.receipt.gasUsed}</Value>
+            <Label>Confirmations</Label>
+            <Value>{this.props.confirmations}</Value>
           </Row>
-        )}
 
-        <Row>
-          <Label>Transaction hash</Label>
-          <Hash>{this.props.hash}</Hash>
-        </Row>
+          {tx.txType === 'exported' && tx.portBurnHash && (
+            <Row>
+              <Label>Port burn hash</Label>
+              <Hash>{tx.portBurnHash}</Hash>
+            </Row>
+          )}
 
-        {tx.blockNumber && (
+          {tx.gasUsed && (
+            <Row>
+              <Label>Gas used</Label>
+              <Value>{tx.gasUsed}</Value>
+            </Row>
+          )}
+
           <Row>
-            <Label>Block number</Label>
-            <Hash>{tx.blockNumber}</Hash>
+            <Label>Transaction hash</Label>
+            <Hash>{this.props.hash}</Hash>
           </Row>
-        )}
 
+          {tx.blockNumber && (
+            <Row>
+              <Label>Block number</Label>
+              <Hash>{tx.blockNumber}</Hash>
+            </Row>
+          )}
+        </Scroller>
         <ExplorerBtn
           onClick={() => this.props.onExplorerLinkClick(tx.hash)}
           block

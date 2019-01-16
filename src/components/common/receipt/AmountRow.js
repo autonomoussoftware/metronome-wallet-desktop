@@ -40,6 +40,8 @@ export default class AmountRow extends React.Component {
     toValue: PropTypes.string,
     txType: PropTypes.oneOf([
       'converted',
+      'exported',
+      'imported',
       'received',
       'auction',
       'unknown',
@@ -102,7 +104,16 @@ export default class AmountRow extends React.Component {
             <DisplayValue
               maxSize="2rem"
               value={this.props.value}
-              post={` ${this.props.symbol}`}
+              post={
+                this.props.txType === 'imported' ||
+                this.props.txType === 'exported'
+                  ? ' MET'
+                  : ` ${
+                      this.props.symbol === 'coin'
+                        ? this.props.coinSymbol
+                        : this.props.symbol
+                    }`
+              }
             />
           )}
         </Amount>

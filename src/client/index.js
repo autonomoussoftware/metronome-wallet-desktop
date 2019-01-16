@@ -6,8 +6,8 @@ import './sentry'
 function createClient(createStore) {
   const reduxDevtoolsOptions = {
     // actionsBlacklist: ['price-updated$'],
-    features: { dispatch: true },
-    maxAge: 100 // default: 50
+    features: { dispatch: true }
+    // maxAge: 100 // default: 50
   }
 
   const store = createStore(reduxDevtoolsOptions)

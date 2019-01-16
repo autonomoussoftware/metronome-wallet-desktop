@@ -19,6 +19,7 @@ export default class ReceiptModal extends React.Component {
         shouldReturnFocusAfterClose={false}
         onRequestClose={this.props.onRequestClose}
         isOpen={this.props.isOpen}
+        title="Receipt"
       >
         <Receipt hash={this.props.hash} />
       </Modal>
