@@ -3,6 +3,7 @@
 const WalletError = require('../WalletError')
 const wallet = require('../wallet')
 const auth = require('../auth')
+const config = require('../../../../config')
 
 const withAuth = fn =>
   function (data, { coreApi }) {
@@ -73,6 +74,30 @@ const convertMet = (data, { coreApi }) =>
 const sendMet = (data, { coreApi }) =>
   withAuth(coreApi.metronome.sendMet)(data, { coreApi })
 
+const getExportMetFee = (data, { coreApi }) =>
+  coreApi.metronome.getExportMetFee(data)
+
+const estimateExportMetGas = (data, { coreApi }) =>
+  coreApi.metronome.estimateExportMetGas(
+    Object.assign({}, data, {
+      destinationChain: config.chains[data.destinationChain].symbol,
+      destinationMetAddress:
+        config.chains[data.destinationChain].metTokenAddress,
+      extraData: '0x00' // TODO: complete with extra data as needed
+    })
+  )
+
+const exportMetronome = (data, core) =>
+  withAuth(core.coreApi.metronome.exportMet)(
+    Object.assign({}, data, {
+      destinationChain: config.chains[data.destinationChain].symbol,
+      destinationMetAddress:
+        config.chains[data.destinationChain].metTokenAddress,
+      extraData: '0x00' // TODO: complete with extra data as needed
+    }),
+    core
+  )
+
 // TODO: Implement retry method
 const retryImport = (data, core) => Promise.resolve({})
 
@@ -81,8 +106,11 @@ module.exports = {
   getConvertCoinGasLimit,
   getConvertMetEstimate,
   getConvertMetGasLimit,
+  estimateExportMetGas,
   getAuctionGasLimit,
   getTokensGasLimit,
+  getExportMetFee,
+  exportMetronome,
   buyMetronome,
   createWallet,
   getGasLimit,

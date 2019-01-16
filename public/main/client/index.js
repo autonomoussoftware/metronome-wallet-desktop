@@ -48,7 +48,8 @@ function startCore ({ chain, core }) {
     })
   })
 
-  emitter.on('wallet-error', err => logger.warn(err.message))
+  emitter.on('wallet-error', err =>
+    logger.warn(`${chain.padEnd(18, ' ')}----->  ${err.message}`))
 
   ipcMain.on('ui-ready', function (e) {
     webContent = e.sender

@@ -3,7 +3,6 @@
 const auth = require('../auth')
 const WalletError = require('../WalletError')
 const singleCore = require('./single-core')
-const config = require('../../../../config')
 const noCore = require('./no-core')
 const keys = require('../keys')
 
@@ -48,25 +47,22 @@ function onLoginSubmit (data, cores) {
 
 const findCore = (cores, chain) => cores.find(e => e.chain === chain)
 
-function getPortFees ({ chain, destinationChain, from, to, value }, cores) {
-  const core = findCore(cores, chain)
-  return core.coreApi.metronome.getExportMetFee({ value }).then(fee =>
-    core.coreApi.metronome
-      .estimateExportMetGas({
-        destinationChain: config.chains[destinationChain].symbol,
-        destinationMetAddress: config.chains[destinationChain].metTokenAddress,
-        extraData: '0x00', // TODO: complete with extra data as needed
-        fee,
-        from,
-        to,
-        value
-      })
-      .then(exportGasLimit => ({ exportGasLimit, fee }))
-  )
+function getPortFees (data, cores) {
+  const exportCore = findCore(cores, data.chain)
+  return singleCore
+    .getExportMetFee(data, exportCore)
+    .then(fee =>
+      singleCore
+        .estimateExportMetGas(Object.assign({}, data, { fee }), exportCore)
+        .then(exportGasLimit => ({ exportGasLimit, fee }))
+    )
 }
 
 // TODO: Implement port method
-const portMetronome = (data, cores) => Promise.resolve({})
+function portMetronome (data, cores) {
+  const exportCore = findCore(cores, data.chain)
+  return singleCore.exportMetronome(data, exportCore)
+}
 
 module.exports = {
   onboardingCompleted,
