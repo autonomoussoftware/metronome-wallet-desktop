@@ -138,6 +138,7 @@ const ItemBody = styled(Flex.Item)`
 const ChainName = styled.div`
   color: ${({ theme }) => theme.colors.light};
   font-size: 1.1rem;
+  line-height: 1.4rem;
   letter-spacing: 1.6px;
   font-weight: 600;
   margin-top: -2px;
@@ -149,6 +150,7 @@ const ChainName = styled.div`
 const Balance = styled.div`
   color: ${({ theme }) => theme.colors.primary};
   font-size: 1.1rem;
+  line-height: 1.4rem;
   letter-spacing: 1px;
   font-weight: 600;
   margin-bottom: -2px;
