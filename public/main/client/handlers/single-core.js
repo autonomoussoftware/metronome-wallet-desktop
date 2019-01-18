@@ -87,16 +87,17 @@ const estimateExportMetGas = (data, { coreApi }) =>
     })
   )
 
+const estimateImportMetGas = (data, { coreApi }) =>
+  coreApi.metronome.estimateImportMetGas(data)
+
 const exportMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.exportMet)(
-    Object.assign({}, data, {
-      destinationChain: config.chains[data.destinationChain].symbol,
-      destinationMetAddress:
-        config.chains[data.destinationChain].metTokenAddress,
-      extraData: '0x00' // TODO: complete with extra data as needed
-    }),
+    data,
     core
   )
+
+const importMetronome = (data, core) =>
+  withAuth(core.coreApi.metronome.importMet)(data, core)
 
 // TODO: Implement retry method
 const retryImport = (data, core) => Promise.resolve({})
@@ -107,10 +108,12 @@ module.exports = {
   getConvertMetEstimate,
   getConvertMetGasLimit,
   estimateExportMetGas,
+  estimateImportMetGas,
   getAuctionGasLimit,
   getTokensGasLimit,
   getExportMetFee,
   exportMetronome,
+  importMetronome,
   buyMetronome,
   createWallet,
   getGasLimit,

@@ -5,6 +5,7 @@ const WalletError = require('../WalletError')
 const singleCore = require('./single-core')
 const noCore = require('./no-core')
 const keys = require('../keys')
+const config = require('../../../../config')
 
 const createWallets = (data, cores) =>
   Promise.all([
@@ -58,10 +59,46 @@ function getPortFees (data, cores) {
     )
 }
 
-// TODO: Implement port method
 function portMetronome (data, cores) {
   const exportCore = findCore(cores, data.chain)
-  return singleCore.exportMetronome(data, exportCore)
+  const exportData = Object.assign({}, data, {
+    destinationChain: config.chains[data.destinationChain].symbol,
+    destinationMetAddress: config.chains[data.destinationChain].metTokenAddress,
+    extraData: '0x00'
+  })
+  return singleCore
+    .exportMetronome(exportData, exportCore)
+    .then(function ({ receipt }) {
+      const parsedExportReceipt = Object.keys(receipt.events)
+        .filter(e => !receipt.events[e].event) // Filter already parsed event keys
+        .map(e => receipt.events[e]) // Get not parsed events
+        .map(e => exportCore.coreApi.explorer.tryParseEventLog(e)) // Try to parse each event
+        .find(e => e.parsed.event === 'LogExportReceipt') // Get LogExportReceipt event
+      if (!parsedExportReceipt || !parsedExportReceipt.parsed) {
+        return Promise.reject(
+          new WalletError('There was an error trying to parse export receipt')
+        )
+      }
+      const { returnValues } = parsedExportReceipt.parsed
+      const importCore = findCore(cores, data.destinationChain)
+      const importData = Object.assign({}, data, {
+        blockTimestamp: returnValues.blockTimestamp,
+        burnSequence: returnValues.burnSequence,
+        currentBurnHash: returnValues.currentBurnHash,
+        currentTick: returnValues.currentTick,
+        dailyMintable: returnValues.dailyMintable,
+        destinationChain: config.chains[data.destinationChain].symbol,
+        destinationMetAddress: returnValues.destinationMetronomeAddr,
+        extraData: returnValues.extraData,
+        fee: returnValues.fee,
+        from: data.from,
+        originChain: config.chains[data.chain].symbol,
+        previousBurnHash: returnValues.prevBurnHash,
+        supply: returnValues.supplyOnAllChains,
+        value: returnValues.amountToBurn
+      })
+      return singleCore.importMetronome(importData, importCore)
+    })
 }
 
 module.exports = {

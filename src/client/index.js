@@ -75,7 +75,7 @@ function createClient(createStore) {
     recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
     getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),
     getTokensGasLimit: utils.forwardToMainProcess('get-tokens-gas-limit'),
-    portMetronome: utils.forwardToMainProcess('port-metronome', 60000),
+    portMetronome: utils.forwardToMainProcess('port-metronome', 120000),
     validatePassword: utils.forwardToMainProcess('validate-password'),
     buyMetronome: utils.forwardToMainProcess('buy-metronome', 60000),
     convertCoin: utils.forwardToMainProcess('convert-coin', 60000),
