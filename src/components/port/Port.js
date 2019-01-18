@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 import { DarkLayout, DisplayValue, Flex, Btn } from '../common'
+import FailedImports from './FailedImports'
 import PortDrawer from './PortDrawer'
 
 const Container = styled.div`
@@ -88,24 +89,6 @@ const Details = styled.div`
   }
 `
 
-const RetryBtn = styled(Btn)`
-  margin-left: 2.4rem;
-  background-color: rgba(126, 97, 248, 0.4);
-  background-image: none;
-  color: ${({ theme }) => theme.colors.light};
-  font-size: 1.3rem;
-  letter-spacing: 0.4px;
-  min-width: 108px;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
-  box-shadow: none;
-
-  &:hover,
-  &:focus {
-    opacity: 0.8;
-  }
-`
-
 const BtnContainer = styled.div`
   margin-top: 5rem;
   margin-left: 2.4rem;
@@ -128,13 +111,7 @@ class Port extends React.Component {
         hash: PropTypes.string.isRequired
       })
     ).isRequired,
-    failedImports: PropTypes.arrayOf(
-      PropTypes.shape({
-        originChain: PropTypes.string.isRequired,
-        amount: PropTypes.string.isRequired,
-        hash: PropTypes.string.isRequired
-      })
-    ).isRequired,
+    failedImports: PropTypes.array.isRequired,
     portDisabled: PropTypes.bool.isRequired,
     onRetry: PropTypes.func.isRequired
   }
@@ -142,8 +119,6 @@ class Port extends React.Component {
   state = {
     activeModal: null
   }
-
-  handleRetryClick = e => this.props.onRetry(e.target.dataset.hash)
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
 
@@ -185,31 +160,10 @@ class Port extends React.Component {
                   Resubmit incomplete imports that failed to excecute by
                   clicking Retry.
                 </Description>
-                <List>
-                  {this.props.failedImports.map(item => (
-                    <Item key={item.hash}>
-                      <Flex.Row justify="space-between" align="center">
-                        <LeftLabel>FAILED</LeftLabel>
-                        <Flex.Row justify="space-between" align="center">
-                          <Flex.Column align="flex-end">
-                            <Amount>
-                              <DisplayValue value={item.amount} post=" MET" />
-                            </Amount>
-                            <Details>
-                              IMPORTING FROM <span>{item.originChain}</span>
-                            </Details>
-                          </Flex.Column>
-                          <RetryBtn
-                            data-hash={item.hash}
-                            onClick={this.handleRetryClick}
-                          >
-                            Retry
-                          </RetryBtn>
-                        </Flex.Row>
-                      </Flex.Row>
-                    </Item>
-                  ))}
-                </List>
+                <FailedImports
+                  onRetry={this.props.onRetry}
+                  items={this.props.failedImports}
+                />
               </div>
             )}
           </Flex.Item>
