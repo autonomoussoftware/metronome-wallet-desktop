@@ -8,7 +8,7 @@ import Converter from './converter/Converter'
 import Sidebar from './sidebar/Sidebar'
 import Auction from './auction/Auction'
 import Tools from './tools/Tools'
-import Port from './port/Port'
+// import Port from './port/Port'
 
 const fadeIn = keyframes`
   from {
@@ -50,7 +50,7 @@ export const layout = (
         <Route path="/wallets" component={Dashboard} />
         <Route path="/auction" component={Auction} />
         <Route path="/converter" component={Converter} />
-        <Route path="/port" component={Port} />
+        {/* <Route path="/port" component={Port} /> */}
         <Route path="/tools" component={Tools} />
       </Switch>
     </Main>
