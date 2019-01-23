@@ -1,41 +1,24 @@
 'use strict'
 
 const { aes256cbcIv, sha256 } = require('./crypto')
-const logger = require('electron-log')
 const settings = require('electron-settings')
 
 const getActiveWallet = () => settings.get('user.activeWallet')
 
+const setActiveWallet = activeWallet =>
+  settings.set('user.activeWallet', activeWallet)
+
 const getWallets = () => Object.keys(settings.get('user.wallets'))
 
-const getWalletId = seed => 1 // sha256.hash(seed)
+const getWalletId = seed => sha256.hash(seed)
 
-function getWalletAddresses (walletId) {
-  const addressesPath = `user.wallets.${walletId}.addresses`
-  return Object.keys(settings.get(addressesPath))
-}
+const getWalletAddresses = walletId =>
+  Object.keys(settings.get(`user.wallets.${walletId}.addresses`))
 
-function findWalletId (address) {
-  const _address = address.toLowerCase()
-  const walletIds = Object.keys(settings.get('user.wallets'))
-  return walletIds.find(walletId =>
-    getWalletAddresses(walletId).includes(_address)
+const findWalletId = address =>
+  Object.keys(settings.get('user.wallets')).find(walletId =>
+    getWalletAddresses(walletId).includes(address)
   )
-}
-
-function getWallet (walletId) {
-  return settings.get(`user.wallets.${walletId}`)
-}
-
-function getWalletAddressIndex ({ walletId, address }) {
-  const wallet = getWallet(walletId)
-  return wallet.addresses[address.toLowerCase()].index
-}
-
-function isAddressInWallet ({ walletId, address }) {
-  const addresses = getWalletAddresses(walletId)
-  return addresses.includes(address.toLowerCase())
-}
 
 function getSeed (walletId, password) {
   if (!walletId) {
@@ -45,10 +28,8 @@ function getSeed (walletId, password) {
   return aes256cbcIv.decrypt(password, encryptedSeed)
 }
 
-function getSeedByAddress (address, password) {
-  const walletId = findWalletId(address)
-  return getSeed(walletId, password)
-}
+const getSeedByAddress = (address, password) =>
+  getSeed(findWalletId(address), password)
 
 const setAddressForWalletId = (walletId, address) =>
   Promise.resolve(
@@ -74,6 +55,7 @@ module.exports = {
   setAddressForWalletId,
   getSeedByAddress,
   getActiveWallet,
+  setActiveWallet,
   findWalletId,
   getWalletId,
   getWallets,

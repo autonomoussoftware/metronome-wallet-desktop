@@ -27,11 +27,12 @@ function startCore ({ chain, core }) {
     })
   )
 
-  emitter.on('open-wallets', function ({ address }) {
+  emitter.on('open-wallets', function ({ address, activeWallet }) {
+    const walletId = activeWallet
     storage.getSyncBlock(chain).then(function (from) {
       send('transactions-scan-started', { data: {} })
       coreApi.explorer
-        .syncTransactions(from, address)
+        .syncTransactions(from, address, walletId)
         .then(number => storage.setSyncBlock(number, chain))
         .then(function () {
           send('transactions-scan-finished', { data: {} })
@@ -73,6 +74,8 @@ function createClient (config) {
   ipcMain.on('log.error', function (_, args) {
     logger.error(args.message)
   })
+
+  settings.presetDefaults()
 
   ipcMain.on('ui-ready', function (webContent, args) {
     const onboardingComplete = !!settings.getPasswordHash()
