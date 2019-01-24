@@ -4,6 +4,7 @@ const { app } = require('electron')
 const { promisify } = require('util')
 const { sum, upperFirst } = require('lodash')
 const Datastore = require('nedb')
+const config = require('../../../config')
 const logger = require('electron-log')
 const path = require('path')
 
@@ -39,7 +40,9 @@ function addCollection (name) {
 
   collections[name] = newCollection
 
-  newCollection.persistence.setAutocompactionInterval(500)
+  if (config.dbAutocompactionInterval) {
+    newCollection.persistence.setAutocompactionInterval(config.dbAutocompactionInterval)
+  }
 
   return newCollection
 }

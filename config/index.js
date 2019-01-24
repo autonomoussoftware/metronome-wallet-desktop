@@ -18,6 +18,7 @@ module.exports = {
   enabledChains: process.env.REACT_APP_ENABLED_CHAINS
     ? process.env.REACT_APP_ENABLED_CHAINS.split(' ')
     : ['ethMainnet'],
+  dbAutocompactionInterval: 30000,
   requiredPasswordEntropy: process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY
     ? parseInt(process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY, 10)
     : 72,
