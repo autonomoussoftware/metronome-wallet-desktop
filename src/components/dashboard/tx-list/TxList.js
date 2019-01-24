@@ -132,7 +132,7 @@ class TxList extends React.Component {
                             isScrolling={isScrolling}
                             autoHeight
                             scrollTop={scrollTop}
-                            rowHeight={65}
+                            rowHeight={66}
                             rowCount={filteredItems.length}
                             onScroll={onChildScroll}
                             height={height || 500} // defaults for tests
