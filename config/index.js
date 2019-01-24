@@ -18,7 +18,9 @@ module.exports = {
   enabledChains: process.env.REACT_APP_ENABLED_CHAINS
     ? process.env.REACT_APP_ENABLED_CHAINS.split(' ')
     : ['ethMainnet'],
-  requiredPasswordEntropy: 72,
+  requiredPasswordEntropy: process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY
+    ? parseInt(process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY, 10)
+    : 72,
   explorerDebounce: 2000,
   ratesUpdateMs: 30000,
   trackingId: process.env.TRACKING_ID || null,
