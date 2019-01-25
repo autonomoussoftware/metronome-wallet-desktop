@@ -7,14 +7,13 @@ const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function startCore ({ chain, core }) {
+function startCore ({ chain, core }, webContent) {
+  logger.verbose(`Starting core ${chain}`)
   const { emitter, events, api: coreApi } = core.start()
 
   emitter.setMaxListeners(15)
 
   events.push('create-wallet', 'open-wallets')
-
-  let webContent = null
 
   function send (eventName, data) {
     if (!webContent) {
@@ -66,22 +65,16 @@ function startCore ({ chain, core }) {
     )
   })
 
-  ipcMain.on('ui-ready', function (e) {
-    webContent = e.sender
-    webContent.on('destroyed', function () {
-      webContent = null
-    })
-  })
-
-  ipcMain.on('ui-unload', function () {
-    webContent = null
-  })
-
   return {
     emitter,
     events,
     coreApi
   }
+}
+
+function stopCore ({ core, chain }) {
+  logger.verbose(`Stopping core ${chain}`)
+  core.stop()
 }
 
 function createClient (config) {
@@ -91,7 +84,21 @@ function createClient (config) {
 
   settings.presetDefaults()
 
+  const cores = config.enabledChains.map(chainName => ({
+    chain: chainName,
+    core: createCore(Object.assign({}, config.chains[chainName], config))
+  }))
+
   ipcMain.on('ui-ready', function (webContent, args) {
+    cores.forEach(function (core) {
+      const { emitter, events, coreApi } = startCore(core, webContent.sender)
+      core.emitter = emitter
+      core.events = events
+      core.coreApi = coreApi
+    })
+
+    subscriptions.subscribe(cores)
+
     const onboardingComplete = !!settings.getPasswordHash()
     storage.getState()
       .catch(function (err) {
@@ -115,19 +122,7 @@ function createClient (config) {
       })
   })
 
-  const cores = config.enabledChains.map(chainName => ({
-    chain: chainName,
-    core: createCore(Object.assign({}, config.chains[chainName], config))
-  }))
-
-  cores.forEach(function (core) {
-    const { emitter, events, coreApi } = startCore(core)
-    core.emitter = emitter
-    core.events = events
-    core.coreApi = coreApi
-  })
-
-  subscriptions.subscribe(cores)
+  ipcMain.on('ui-unload', () => cores.forEach(stopCore))
 }
 
 module.exports = { createClient }
