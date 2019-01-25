@@ -1,6 +1,5 @@
 import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
 import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
-import { ToastContainer } from 'react-toastify'
 import { ThemeProvider } from 'styled-components'
 import ReactDOM from 'react-dom'
 import theme from 'metronome-wallet-ui-logic/src/theme'
@@ -11,6 +10,7 @@ import Root from 'metronome-wallet-ui-logic/src/components/Root'
 import { subscribeToMainProcessMessages } from './subscriptions'
 import { Tooltips } from './components/common'
 import createClient from './client'
+import { Toasts } from './components/common/Toasts'
 import Onboarding from './components/onboarding/Onboarding'
 import Loading from './components/Loading'
 import Router from './components/Router'
@@ -33,7 +33,7 @@ ReactDOM.render(
             LoginComponent={Login}
           />
           <Tooltips />
-          <ToastContainer position="top-center" hideProgressBar />
+          <Toasts />
         </React.Fragment>
       </ThemeProvider>
     </Provider>

@@ -1,4 +1,4 @@
-import { toast } from 'react-toastify'
+import { toast } from '../src/components/common/Toasts'
 
 export const subscribeToMainProcessMessages = store => {
   /**

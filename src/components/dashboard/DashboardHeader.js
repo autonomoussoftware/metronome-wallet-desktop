@@ -1,8 +1,8 @@
-import { toast } from 'react-toastify'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
+import { toast } from '../common/Toasts'
 import { Btn } from '../common'
 
 const Container = styled.header`
@@ -80,8 +80,7 @@ export default class DashboardHeader extends React.Component {
     this.props.copyToClipboard(this.props.address)
     if (!toast.isActive(this.toastId)) {
       this.toastId = toast('Address copied to clipboard', {
-        closeButton: false,
-        autoClose: 2000
+        autoClose: 1500
       })
     }
   }
