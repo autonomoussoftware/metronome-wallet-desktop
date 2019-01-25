@@ -12,6 +12,12 @@ const Container = styled.div`
   background-color: ${p => p.theme.colors.lightShade};
   padding: 0.4rem 1rem 0.4rem 0.4rem;
   margin-top: 3px;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'auto' : 'pointer')};
+
+  &:hover {
+    background-color: ${({ theme, isDisabled }) =>
+      theme.colors[isDisabled ? 'lightShade' : 'darkShade']};
+  }
 `
 
 const Label = styled.div`
@@ -22,11 +28,15 @@ const Label = styled.div`
   margin-left: 7px;
 `
 
-const GreenLight = styled.div`
+const IndicatorLed = styled.div`
   width: 10px;
   height: 10px;
-  background-color: ${({ isOnline }) =>
-    isOnline ? '#45d48d' : 'rgba(119, 132, 125, 0.68)'};
+  background-color: ${({ isOnline, syncStatus, theme }) =>
+    !isOnline
+      ? 'rgba(119, 132, 125, 0.68)'
+      : syncStatus === 'failed'
+      ? theme.colors.danger
+      : '#45d48d'};
   border: 1px solid white;
   border-radius: 10px;
   margin: 3px;
@@ -34,25 +44,29 @@ const GreenLight = styled.div`
 
 class ScanIndicator extends React.Component {
   static propTypes = {
-    isScanning: PropTypes.bool.isRequired,
-    isOnline: PropTypes.bool.isRequired
+    onLabelClick: PropTypes.func.isRequired,
+    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
+    isOnline: PropTypes.bool.isRequired,
+    tooltip: PropTypes.string,
+    label: PropTypes.string.isRequired
   }
 
   render() {
     return (
-      <Container>
-        {this.props.isOnline && this.props.isScanning ? (
+      <Container
+        isDisabled={this.props.syncStatus === 'syncing' || !this.props.isOnline}
+        onClick={this.props.onLabelClick}
+        data-rh={this.props.tooltip}
+      >
+        {this.props.isOnline && this.props.syncStatus === 'syncing' ? (
           <Spinner />
         ) : (
-          <GreenLight isOnline={this.props.isOnline} />
+          <IndicatorLed
+            syncStatus={this.props.syncStatus}
+            isOnline={this.props.isOnline}
+          />
         )}
-        <Label>
-          {!this.props.isOnline
-            ? 'Offline'
-            : this.props.isScanning
-              ? 'Syncing…'
-              : 'Up-to-date'}
-        </Label>
+        <Label>{this.props.label}</Label>
       </Container>
     )
   }

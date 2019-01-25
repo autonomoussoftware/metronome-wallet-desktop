@@ -33,9 +33,15 @@ function createClient(createStore) {
 
   const getStringEntropy = fastPasswordEntropy
 
-  const refreshAllTransactions = () => {}
+  const refreshAllTransactions = () =>
+    new Promise((resolve, reject) => {
+      setTimeout(() => resolve('ok'), 1000)
+    })
 
-  const refreshTransaction = () => {}
+  const refreshTransaction = (hash, address) =>
+    new Promise((resolve, reject) => {
+      setTimeout(() => resolve('ok'), 1000)
+    })
 
   const copyToClipboard = text => Promise.resolve(window.copyToClipboard(text))
 

@@ -1,12 +1,16 @@
+import withReceiptState from 'metronome-wallet-ui-logic/src/hocs/withReceiptState'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { Modal } from '../common'
+import Modal, { HeaderButton } from '../common/Modal'
 import Receipt from '../common/receipt/Receipt'
 
-export default class ReceiptModal extends React.Component {
+class ReceiptModal extends React.Component {
   static propTypes = {
+    onRefreshRequest: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func.isRequired,
+    refreshStatus: PropTypes.oneOf(['init', 'pending', 'success', 'failure'])
+      .isRequired,
     isOpen: PropTypes.bool.isRequired,
     hash: PropTypes.string
   }
@@ -18,11 +22,21 @@ export default class ReceiptModal extends React.Component {
       <Modal
         shouldReturnFocusAfterClose={false}
         onRequestClose={this.props.onRequestClose}
+        headerChildren={
+          <HeaderButton
+            disabled={this.props.refreshStatus === 'pending'}
+            onClick={this.props.onRefreshRequest}
+          >
+            {this.props.refreshStatus === 'pending' ? 'Syncing...' : 'Refresh'}
+          </HeaderButton>
+        }
         isOpen={this.props.isOpen}
         title="Receipt"
       >
-        <Receipt hash={this.props.hash} />
+        <Receipt {...this.props} />
       </Modal>
     )
   }
 }
+
+export default withReceiptState(ReceiptModal)

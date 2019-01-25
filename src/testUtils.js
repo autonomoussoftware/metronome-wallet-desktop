@@ -8,7 +8,7 @@ import { merge } from 'lodash'
 import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
-import config from './config'
+import config from '../config'
 
 /*
  * The same render method of 'react-testing-library' but wrapped with
@@ -138,7 +138,7 @@ export function getInitialState(overrides = {}) {
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: 1 } },
     wallets: {
-      isScanningTx: false,
+      syncStatus: 'up-to-date',
       active: 'foo',
       allIds: ['foo'],
       byId: {
@@ -159,7 +159,7 @@ export function getInitialState(overrides = {}) {
   return merge({}, baseState, overrides)
 }
 
-/**
+/*
  * A sample transaction object. Useful for populating state in tests.
  */
 export function getDummyTransaction() {

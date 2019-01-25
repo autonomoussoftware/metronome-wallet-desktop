@@ -80,8 +80,8 @@ class Dashboard extends React.Component {
     sendDisabledReason: PropTypes.string,
     hasTransactions: PropTypes.bool.isRequired,
     copyToClipboard: PropTypes.func.isRequired,
-    isScanningTx: PropTypes.bool.isRequired,
     sendDisabled: PropTypes.bool.isRequired,
+    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     address: PropTypes.string.isRequired
   }
 
@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
 
         <TxList
           hasTransactions={this.props.hasTransactions}
-          isScanningTx={this.props.isScanningTx}
+          syncStatus={this.props.syncStatus}
         />
 
         <ReceiveDrawer

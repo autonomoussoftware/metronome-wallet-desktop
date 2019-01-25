@@ -1,5 +1,4 @@
 import { toChecksumAddress } from 'web3-utils'
-import withReceiptState from 'metronome-wallet-ui-logic/src/hocs/withReceiptState'
 import PropTypes from 'prop-types'
 import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
@@ -71,7 +70,7 @@ const ExplorerBtn = styled(Btn)`
   border-radius: 0;
 `
 
-class Receipt extends React.Component {
+export default class Receipt extends React.Component {
   static propTypes = {
     onExplorerLinkClick: PropTypes.func.isRequired,
     onRefreshRequest: PropTypes.func.isRequired,
@@ -195,5 +194,3 @@ class Receipt extends React.Component {
     )
   }
 }
-
-export default withReceiptState(Receipt)

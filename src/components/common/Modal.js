@@ -40,16 +40,23 @@ const Title = styled.h1`
   color: ${p =>
     p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
   margin: 0;
+  flex-grow: 1;
 `
 
-const CloseButton = styled.button`
+export const HeaderButton = styled.button`
+  margin-left: 2rem;
   background: transparent;
   border: none;
   padding: 0;
   outline: none;
   cursor: pointer;
   color: ${p =>
-    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
+    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.primary};
+
+  &[disabled] {
+    color: ${p => p.theme.colors.weak};
+  }
+
   &:hover {
     opacity: 0.5;
   }
@@ -58,6 +65,7 @@ const CloseButton = styled.button`
 export default class Modal extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    headerChildren: PropTypes.node,
     children: PropTypes.node.isRequired,
     variant: PropTypes.oneOf(['primary']),
     isOpen: PropTypes.bool.isRequired,
@@ -68,6 +76,7 @@ export default class Modal extends React.Component {
     const {
       onRequestClose,
       styleOverrides,
+      headerChildren,
       children,
       variant,
       isOpen,
@@ -109,13 +118,14 @@ export default class Modal extends React.Component {
       >
         <Header hasTitle={!!title} variant={variant}>
           {title && <Title variant={variant}>{title}</Title>}
-          <CloseButton onClick={onRequestClose} variant={variant}>
+          {headerChildren}
+          <HeaderButton onClick={onRequestClose} variant={variant}>
             <CloseIcon
               color={
                 variant === 'primary' ? theme.colors.light : theme.colors.copy
               }
             />
-          </CloseButton>
+          </HeaderButton>
         </Header>
         {children}
       </Container>

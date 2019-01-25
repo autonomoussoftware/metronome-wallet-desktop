@@ -45,7 +45,7 @@ export default class Header extends React.Component {
     hasTransactions: PropTypes.bool.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     activeFilter: PropTypes.string.isRequired,
-    isScanningTx: PropTypes.bool.isRequired
+    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired
   }
 
   render() {
@@ -53,8 +53,9 @@ export default class Header extends React.Component {
       <Container>
         <Flex.Row grow="1">
           <Title>Transactions</Title>
-          {(this.props.hasTransactions || !this.props.isScanningTx) && (
-            <ScanIndicator isScanning={this.props.isScanningTx} />
+          {(this.props.hasTransactions ||
+            this.props.syncStatus !== 'syncing') && (
+            <ScanIndicator syncStatus={this.props.syncStatus} />
           )}
         </Flex.Row>
         <Filter

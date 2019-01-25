@@ -41,7 +41,7 @@ const FooterLogo = styled.div`
 class TxList extends React.Component {
   static propTypes = {
     hasTransactions: PropTypes.bool.isRequired,
-    isScanningTx: PropTypes.bool.isRequired,
+    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
         txType: PropTypes.string.isRequired,
@@ -105,13 +105,13 @@ class TxList extends React.Component {
               <Header
                 hasTransactions={this.props.hasTransactions}
                 onFilterChange={onFilterChange}
-                isScanningTx={this.props.isScanningTx}
                 activeFilter={activeFilter}
+                syncStatus={this.props.syncStatus}
               />
 
               <ListContainer>
                 {!this.props.hasTransactions &&
-                  (this.props.isScanningTx ? (
+                  (this.props.syncStatus === 'syncing' ? (
                     <ScanningTxPlaceholder />
                   ) : (
                     <NoTxPlaceholder />
