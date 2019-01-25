@@ -10,6 +10,8 @@ const storage = require('./storage')
 function startCore ({ chain, core }) {
   const { emitter, events, api: coreApi } = core.start()
 
+  emitter.setMaxListeners(15)
+
   events.push('create-wallet', 'open-wallets')
 
   let webContent = null
@@ -27,30 +29,42 @@ function startCore ({ chain, core }) {
     })
   )
 
-  emitter.on('open-wallets', function ({ address, activeWallet }) {
-    const walletId = activeWallet
-    storage.getSyncBlock(chain).then(function (from) {
-      send('transactions-scan-started', { data: {} })
-      coreApi.explorer
-        .syncTransactions(from, address, walletId)
-        .then(number => storage.setSyncBlock(number, chain))
-        .then(function () {
-          send('transactions-scan-finished', { data: {} })
-          emitter.on('coin-block', function ({ number }) {
-            storage.setSyncBlock(number, chain).catch(function (err) {
-              logger.warn('Could not save new synced block', err)
+  function syncTransactions ({ address }) {
+    storage.getSyncBlock(chain)
+      .then(function (from) {
+        send('transactions-scan-started', { data: {} })
+
+        return coreApi.explorer
+          .syncTransactions(from, address)
+          .then(number => storage.setSyncBlock(number, chain))
+          .then(function () {
+            send('transactions-scan-finished', { data: { success: true } })
+
+            emitter.on('coin-block', function ({ number }) {
+              storage.setSyncBlock(number, chain).catch(function (err) {
+                logger.warn('Could not save new synced block', err)
+              })
             })
           })
-        })
-        .catch(function (err) {
-          logger.warn('Could not sync transactions/events', err.stack)
-          send('transactions-scan-finished', { data: {} })
-        })
-    })
-  })
+      })
+      .catch(function (err) {
+        logger.warn('Could not sync transactions/events', err.stack)
+        send('transactions-scan-finished', { data: { err, success: false } })
 
-  emitter.on('wallet-error', err =>
-    logger.warn(`${chain.padEnd(18, ' ')}----->  ${err.message}`))
+        emitter.once('coin-block', () =>
+          syncTransactions({ address })
+        )
+      })
+  }
+
+  emitter.on('open-wallets', syncTransactions)
+
+  emitter.on('wallet-error', function (err) {
+    logger.warn(err.inner
+      ? `${err.message} - ${err.inner.message}`
+      : err.message
+    )
+  })
 
   ipcMain.on('ui-ready', function (e) {
     webContent = e.sender
@@ -79,18 +93,26 @@ function createClient (config) {
 
   ipcMain.on('ui-ready', function (webContent, args) {
     const onboardingComplete = !!settings.getPasswordHash()
-    storage.getState().then(function (persistedState) {
-      webContent.sender.send(
-        'ui-ready',
-        Object.assign({}, args, {
-          data: {
-            onboardingComplete,
-            persistedState: persistedState || {},
-            config
-          }
-        })
-      )
-    })
+    storage.getState()
+      .catch(function (err) {
+        logger.warn('Faild to get state', err.message)
+        return {}
+      })
+      .then(function (persistedState) {
+        webContent.sender.send(
+          'ui-ready',
+          Object.assign({}, args, {
+            data: {
+              onboardingComplete,
+              persistedState: persistedState || {},
+              config
+            }
+          })
+        )
+      })
+      .catch(function (err) {
+        logger.error('Could not send ui-ready message back', err.message)
+      })
   })
 
   const cores = config.enabledChains.map(chainName => ({

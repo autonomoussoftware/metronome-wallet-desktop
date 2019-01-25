@@ -15,7 +15,6 @@ module.exports = {
   metTokenAddress: contracts.METToken.address,
   auctionAddress: contracts.Auctions.address,
 
-
   // urls
   explorerUrl: 'https://explorer.metronome.io',   // TODO: update!
   indexerUrl: 'http://localhost:3015',

@@ -12,5 +12,8 @@
     },
     "ecmaVersion": 2017
   },
-  "root": true
+  "root": true,
+  "rules": {
+    "promise/catch-or-return": "error"
+  }
 }
