@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import Modal, { HeaderButton } from '../common/Modal'
+import { toast } from '../common/Toasts'
 import Receipt from '../common/receipt/Receipt'
 
 class ReceiptModal extends React.Component {
@@ -13,6 +14,17 @@ class ReceiptModal extends React.Component {
       .isRequired,
     isOpen: PropTypes.bool.isRequired,
     hash: PropTypes.string
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.refreshStatus !== prevProps.refreshStatus &&
+      this.props.refreshStatus === 'failure'
+    ) {
+      if (!toast.isActive(this.toastId)) {
+        this.toastId = toast.error('Could not refresh')
+      }
+    }
   }
 
   render() {

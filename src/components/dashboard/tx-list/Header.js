@@ -43,6 +43,7 @@ const Title = styled.div`
 export default class Header extends React.Component {
   static propTypes = {
     hasTransactions: PropTypes.bool.isRequired,
+    onWalletRefresh: PropTypes.func.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     activeFilter: PropTypes.string.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired
@@ -55,7 +56,10 @@ export default class Header extends React.Component {
           <Title>Transactions</Title>
           {(this.props.hasTransactions ||
             this.props.syncStatus !== 'syncing') && (
-            <ScanIndicator syncStatus={this.props.syncStatus} />
+            <ScanIndicator
+              onWalletRefresh={this.props.onWalletRefresh}
+              syncStatus={this.props.syncStatus}
+            />
           )}
         </Flex.Row>
         <Filter

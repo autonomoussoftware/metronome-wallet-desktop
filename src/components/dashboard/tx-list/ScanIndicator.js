@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
+import { toast } from '../../common/Toasts'
 import Spinner from '../../common/Spinner'
 
 const Container = styled.div`
@@ -49,6 +50,17 @@ class ScanIndicator extends React.Component {
     isOnline: PropTypes.bool.isRequired,
     tooltip: PropTypes.string,
     label: PropTypes.string.isRequired
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.syncStatus !== prevProps.syncStatus &&
+      this.props.syncStatus === 'failed'
+    ) {
+      if (!toast.isActive(this.toastId)) {
+        this.toastId = toast.error('Could not refresh')
+      }
+    }
   }
 
   render() {

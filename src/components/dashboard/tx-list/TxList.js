@@ -41,6 +41,7 @@ const FooterLogo = styled.div`
 class TxList extends React.Component {
   static propTypes = {
     hasTransactions: PropTypes.bool.isRequired,
+    onWalletRefresh: PropTypes.func.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -103,6 +104,7 @@ class TxList extends React.Component {
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
               <Header
+                onWalletRefresh={this.props.onWalletRefresh}
                 hasTransactions={this.props.hasTransactions}
                 onFilterChange={onFilterChange}
                 activeFilter={activeFilter}

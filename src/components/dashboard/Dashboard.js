@@ -80,6 +80,7 @@ class Dashboard extends React.Component {
     sendDisabledReason: PropTypes.string,
     hasTransactions: PropTypes.bool.isRequired,
     copyToClipboard: PropTypes.func.isRequired,
+    onWalletRefresh: PropTypes.func.isRequired,
     sendDisabled: PropTypes.bool.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     address: PropTypes.string.isRequired
@@ -132,6 +133,7 @@ class Dashboard extends React.Component {
 
         <TxList
           hasTransactions={this.props.hasTransactions}
+          onWalletRefresh={this.props.onWalletRefresh}
           syncStatus={this.props.syncStatus}
         />
 
