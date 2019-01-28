@@ -4,6 +4,7 @@ const WalletError = require('../WalletError')
 const wallet = require('../wallet')
 const auth = require('../auth')
 const config = require('../../../../config')
+const logger = require('electron-log')
 
 const withAuth = fn =>
   function (data, { coreApi }) {
@@ -36,6 +37,25 @@ const openWallet = ({ emitter }) =>
       })
     )
   )
+
+function refreshAllTransactions ({ address }, { coreApi, emitter }) {
+  emitter.emit('transactions-scan-started', { data: {} })
+  return coreApi.explorer.refreshAllTransactions(address)
+    .then(() => emitter.emit('transactions-scan-finished', { data: { success: true } }))
+    .catch(function (err) {
+      logger.warn('Could not sync transactions/events', err.stack)
+      emitter.emit('transactions-scan-finished', { data: { err, success: false } })
+      emitter.once('coin-block', () =>
+        refreshAllTransactions({ address }, { coreApi, emitter })
+      )
+    })
+}
+
+function refreshTransaction ({ hash, address }, { coreApi }) {
+  return coreApi.explorer.refreshTransaction(hash, address)
+    .then(() => ({ data: { success: true } }))
+    .catch(err => ({ data: { err, success: false } }))
+}
 
 const getGasLimit = (data, { coreApi }) => coreApi.wallet.getGasLimit(data)
 
@@ -100,15 +120,18 @@ const importMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.importMet)(data, core)
 
 // TODO: Implement retry method
+// eslint-disable-next-line no-unused-vars
 const retryImport = (data, core) => Promise.resolve({})
 
 module.exports = {
+  refreshAllTransactions,
   getConvertCoinEstimate,
   getConvertCoinGasLimit,
   getConvertMetEstimate,
   getConvertMetGasLimit,
   estimateExportMetGas,
   estimateImportMetGas,
+  refreshTransaction,
   getAuctionGasLimit,
   getTokensGasLimit,
   getExportMetFee,

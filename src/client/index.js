@@ -33,16 +33,6 @@ function createClient(createStore) {
 
   const getStringEntropy = fastPasswordEntropy
 
-  const refreshAllTransactions = () =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => resolve('ok'), 1000)
-    })
-
-  const refreshTransaction = (hash, address) =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => resolve('ok'), 1000)
-    })
-
   const copyToClipboard = text => Promise.resolve(window.copyToClipboard(text))
 
   const onInit = () => {
@@ -77,6 +67,14 @@ function createClient(createStore) {
     getConvertMetEstimate: utils.forwardToMainProcess(
       'get-convert-met-estimate'
     ),
+    refreshAllTransactions: utils.forwardToMainProcess(
+      'refresh-all-transactions',
+      120000
+    ),
+    refreshTransaction: utils.forwardToMainProcess(
+      'refresh-transaction',
+      120000
+    ),
     onOnboardingCompleted: utils.forwardToMainProcess('onboarding-completed'),
     recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
     getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),
@@ -101,9 +99,7 @@ function createClient(createStore) {
     ...forwardedMethods,
     isValidMnemonic: keys.isValidMnemonic,
     createMnemonic: keys.createMnemonic,
-    refreshAllTransactions,
     onExplorerLinkClick,
-    refreshTransaction,
     onTermsLinkClick,
     getStringEntropy,
     copyToClipboard,

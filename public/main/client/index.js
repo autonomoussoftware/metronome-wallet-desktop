@@ -13,7 +13,12 @@ function startCore ({ chain, core }, webContent) {
 
   emitter.setMaxListeners(15)
 
-  events.push('create-wallet', 'open-wallets')
+  events.push(
+    'create-wallet',
+    'open-wallets',
+    'transactions-scan-started',
+    'transactions-scan-finished'
+  )
 
   function send (eventName, data) {
     if (!webContent) {

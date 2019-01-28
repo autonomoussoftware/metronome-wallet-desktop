@@ -65,11 +65,13 @@ function subscribeSingleCore ({ emitter, coreApi, chain }) {
 
   subscribeTo({
     'get-convert-coin-gas-limit': withCore(handlers.getConvertCoinGasLimit),
-    'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
     'get-convert-coin-estimate': withCore(handlers.getConvertCoinEstimate),
+    'get-convert-met-gas-limit': withCore(handlers.getConvertMetGasLimit),
+    'refresh-all-transactions': withCore(handlers.refreshAllTransactions),
     'get-convert-met-estimate': withCore(handlers.getConvertMetEstimate),
     'get-auction-gas-limit': withCore(handlers.getAuctionGasLimit),
     'get-tokens-gas-limit': withCore(handlers.getTokensGasLimit),
+    'refresh-transaction': withCore(handlers.refreshTransaction),
     'buy-metronome': withCore(handlers.buyMetronome),
     'get-gas-limit': withCore(handlers.getGasLimit),
     'get-gas-price': withCore(handlers.getGasPrice),
