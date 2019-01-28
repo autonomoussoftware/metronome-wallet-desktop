@@ -50,12 +50,15 @@ const setSeed = (seed, password) =>
     )
   )
 
+const clearWallets = () => settings.set('user.wallets', {})
+
 module.exports = {
   getAddressesForWalletId,
   setAddressForWalletId,
   getSeedByAddress,
   getActiveWallet,
   setActiveWallet,
+  clearWallets,
   findWalletId,
   getWalletId,
   getWallets,

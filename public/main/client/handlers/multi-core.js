@@ -5,6 +5,7 @@ const WalletError = require('../WalletError')
 const singleCore = require('./single-core')
 const noCore = require('./no-core')
 const keys = require('../keys')
+const wallet = require('../wallet')
 const config = require('../../../../config')
 
 const createWallets = (data, cores) =>
@@ -29,6 +30,7 @@ const onboardingCompleted = (data, cores) =>
 
 const recoverFromMnemonic = function (data, cores) {
   if (auth.isValidPassword(data.password)) {
+    wallet.clearWallets()
     return createWallets(
       { seed: keys.mnemonicToSeedHex(data.mnemonic), password: data.password },
       cores
