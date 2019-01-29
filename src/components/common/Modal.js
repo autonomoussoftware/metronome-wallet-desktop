@@ -57,6 +57,7 @@ export const HeaderButton = styled.button`
     color: ${p => p.theme.colors.weak};
   }
 
+  &:not([disabled]):hover,
   &:hover {
     opacity: 0.5;
   }

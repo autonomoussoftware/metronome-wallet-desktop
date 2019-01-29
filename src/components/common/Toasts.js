@@ -17,7 +17,7 @@ const GlobalStyles = createGlobalStyle`
 
   .Toastify__toast {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 1.6rem;
     cursor: pointer;
   }
 
@@ -70,11 +70,11 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem 1.6rem;
-  min-height: 6rem;
+  padding: 1rem 1.6rem;
+  min-height: 5.4rem;
   background-color: ${p => p.theme.colors.dark};
   border-radius: 2px;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   box-shadow: 0 0 1.6rem 0 ${p => p.theme.colors.darkShade};
 
   .Toastify__toast--default & {
