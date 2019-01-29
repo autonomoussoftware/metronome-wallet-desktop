@@ -54,7 +54,7 @@ function refreshAllTransactions ({ address }, { coreApi, emitter }) {
 function refreshTransaction ({ hash, address }, { coreApi }) {
   return coreApi.explorer.refreshTransaction(hash, address)
     .then(() => ({ data: { success: true } }))
-    .catch(err => ({ data: { err, success: false } }))
+    .catch(error => ({ data: { error, success: false } }))
 }
 
 const getGasLimit = (data, { coreApi }) => coreApi.wallet.getGasLimit(data)
