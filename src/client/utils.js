@@ -30,12 +30,14 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
   const deferred = new Deferred()
   let timeoutId
 
-  function listener(ev, { id: _id, data: _data }) {
+  function listener(ev, { id: _id, data: _data, error }) {
     if (timeoutId) window.clearTimeout(timeoutId)
     if (_id !== id) return
 
-    if (_data.error) {
-      deferred.reject(_data.error)
+    const responseError = error || (_data && _data.error)
+
+    if (responseError) {
+      deferred.reject(responseError)
     } else {
       deferred.resolve(_data)
     }
