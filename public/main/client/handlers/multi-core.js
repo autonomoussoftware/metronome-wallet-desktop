@@ -8,12 +8,12 @@ const keys = require('../keys')
 const wallet = require('../wallet')
 const config = require('../../../../config')
 
-const createWallets = (data, cores) =>
+const createWallets = (data, cores, openWallets = true) =>
   Promise.all([
     cores.forEach(core =>
       singleCore
         .createWallet(data, core)
-        .then(() => singleCore.openWallet(core))
+        .then(() => openWallets && singleCore.openWallet(core))
     )
   ])
 
@@ -33,7 +33,8 @@ const recoverFromMnemonic = function (data, cores) {
     wallet.clearWallets()
     return createWallets(
       { seed: keys.mnemonicToSeedHex(data.mnemonic), password: data.password },
-      cores
+      cores,
+      false
     ).then(noCore.clearCache)
   }
 }

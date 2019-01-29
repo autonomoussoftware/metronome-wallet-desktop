@@ -127,7 +127,10 @@ function createClient (config) {
       })
   })
 
-  ipcMain.on('ui-unload', () => cores.forEach(stopCore))
+  ipcMain.on('ui-unload', function () {
+    cores.forEach(stopCore)
+    subscriptions.unsubscribe(cores)
+  })
 }
 
 module.exports = { createClient }
