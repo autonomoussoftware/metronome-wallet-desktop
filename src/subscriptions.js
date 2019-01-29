@@ -21,9 +21,9 @@ export const subscribeToMainProcessMessages = store => {
 
   const errorsMap = {}
 
-  window.ipcRenderer.on('error', (ev, { error }) => {
-    if (!toast.isActive(errorsMap[error.message])) {
-      errorsMap[error.message] = toast.error(error.message)
+  window.ipcRenderer.on('wallet-error', (ev, { message }) => {
+    if (!toast.isActive(errorsMap[message])) {
+      errorsMap[message] = toast.error(message)
     }
   })
 
