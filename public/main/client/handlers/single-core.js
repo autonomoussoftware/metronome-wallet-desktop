@@ -41,13 +41,17 @@ const openWallet = ({ emitter }) =>
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
   emitter.emit('transactions-scan-started', { data: {} })
   return coreApi.explorer.refreshAllTransactions(address)
-    .then(() => emitter.emit('transactions-scan-finished', { data: { success: true } }))
+    .then(function () {
+      emitter.emit('transactions-scan-finished', { data: { success: true } })
+      return {}
+    })
     .catch(function (error) {
       logger.warn('Could not sync transactions/events', error.stack)
       emitter.emit('transactions-scan-finished', { data: { error, success: false } })
       emitter.once('coin-block', () =>
         refreshAllTransactions({ address }, { coreApi, emitter })
       )
+      return {}
     })
 }
 
