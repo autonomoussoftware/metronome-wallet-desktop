@@ -65,6 +65,7 @@ function loadWindow () {
     minWidth: 640,
     minHeight: 610,
     useContentSize: true,
+    backgroundColor: '#323232',
     webPreferences: {
       nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js')
