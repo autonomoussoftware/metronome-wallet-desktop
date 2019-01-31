@@ -1,5 +1,3 @@
-import { toast } from '../src/components/common/Toasts'
-
 export const subscribeToMainProcessMessages = store => {
   /**
    * Subscribe to an array of IPC messages and dispatch a Redux
@@ -18,14 +16,6 @@ export const subscribeToMainProcessMessages = store => {
     'open-wallets',
     'coin-block'
   ])
-
-  const errorsMap = {}
-
-  window.ipcRenderer.on('wallet-error', (ev, { message }) => {
-    if (!toast.isActive(errorsMap[message])) {
-      errorsMap[message] = toast.error(message)
-    }
-  })
 
   /*
    * For more complex subscriptions you can do the following

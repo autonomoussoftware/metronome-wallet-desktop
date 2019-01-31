@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { toast } from '../common/Toasts'
+import { ToastsContext } from '../toasts'
 import { Btn } from '../common'
 
 const Container = styled.header`
@@ -76,13 +76,13 @@ export default class DashboardHeader extends React.Component {
     address: PropTypes.string.isRequired
   }
 
+  static contextType = ToastsContext
+
   onCopyToClipboardClick = () => {
     this.props.copyToClipboard(this.props.address)
-    if (!toast.isActive(this.toastId)) {
-      this.toastId = toast('Address copied to clipboard', {
-        autoClose: 1500
-      })
-    }
+    this.context.toast('info', 'Address copied to clipboard', {
+      autoClose: 1500
+    })
   }
 
   render() {

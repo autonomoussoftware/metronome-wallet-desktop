@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { toast } from '../../common/Toasts'
+import { ToastsContext } from '../../toasts'
 import Spinner from '../../common/Spinner'
 
 const Container = styled.div`
@@ -52,14 +52,14 @@ class ScanIndicator extends React.Component {
     label: PropTypes.string.isRequired
   }
 
+  static contextType = ToastsContext
+
   componentDidUpdate(prevProps) {
     if (
       this.props.syncStatus !== prevProps.syncStatus &&
       this.props.syncStatus === 'failed'
     ) {
-      if (!toast.isActive(this.toastId)) {
-        this.toastId = toast.error('Could not refresh')
-      }
+      this.context.toast('error', 'Could not refresh')
     }
   }
 

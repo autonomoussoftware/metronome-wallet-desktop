@@ -8,9 +8,9 @@ import React from 'react'
 import Root from 'metronome-wallet-ui-logic/src/components/Root'
 
 import { subscribeToMainProcessMessages } from './subscriptions'
+import { ToastsProvider } from './components/toasts'
 import { Tooltips } from './components/common'
 import createClient from './client'
-import { Toasts } from './components/common/Toasts'
 import Onboarding from './components/onboarding/Onboarding'
 import Loading from './components/Loading'
 import Router from './components/Router'
@@ -25,7 +25,7 @@ ReactDOM.render(
   <ClientProvider value={client}>
     <Provider store={client.store}>
       <ThemeProvider theme={theme}>
-        <React.Fragment>
+        <ToastsProvider>
           <Root
             OnboardingComponent={Onboarding}
             LoadingComponent={Loading}
@@ -33,8 +33,7 @@ ReactDOM.render(
             LoginComponent={Login}
           />
           <Tooltips />
-          <Toasts />
-        </React.Fragment>
+        </ToastsProvider>
       </ThemeProvider>
     </Provider>
   </ClientProvider>,
