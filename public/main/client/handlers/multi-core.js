@@ -58,7 +58,7 @@ function getPortFees (data, cores) {
     .then(fee =>
       singleCore
         .estimateExportMetGas(Object.assign({}, data, { fee }), exportCore)
-        .then(exportGasLimit => ({ exportGasLimit, fee }))
+        .then(({ gasLimit }) => ({ exportGasLimit: gasLimit, fee }))
     )
 }
 
