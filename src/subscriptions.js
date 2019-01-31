@@ -5,6 +5,7 @@ export const subscribeToMainProcessMessages = store => {
    */
   subscribeTo([
     'metronome-token-status-updated',
+    'web3-connection-status-changed',
     'connectivity-state-changed',
     'transactions-scan-finished',
     'transactions-scan-started',

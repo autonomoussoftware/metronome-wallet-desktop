@@ -57,7 +57,7 @@ const Message = styled.div`
   color: white;
   font-size: 13px;
   line-height: 1.25;
-  padding: 12px 24px 12px 0;
+  padding: 12px 32px 12px 0;
 `
 
 const ShowMoreBtn = styled.button`
