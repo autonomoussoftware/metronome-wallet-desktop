@@ -1,17 +1,17 @@
 'use strict'
 
 const subscriptions = require('./subscriptions')
-const { createCore } = require('metronome-wallet-core')
 const { ipcMain } = require('electron')
+const createCore = require('metronome-wallet-core')
 const logger = require('electron-log')
 const settings = require('./settings')
 const storage = require('./storage')
 
-function startCore ({ chain, core }, webContent) {
+function startCore ({ chain, core, config: coreConfig }, webContent) {
   logger.verbose(`Starting core ${chain}`)
-  const { emitter, events, api: coreApi } = core.start()
+  const { emitter, events, api: coreApi } = core.start(coreConfig)
 
-  emitter.setMaxListeners(15)
+  emitter.setMaxListeners(30)
 
   events.push(
     'create-wallet',
@@ -24,7 +24,7 @@ function startCore ({ chain, core }, webContent) {
     if (!webContent) {
       return
     }
-    webContent.send(eventName, Object.assign({}, data, { chain }))
+    webContent.sender.send(eventName, Object.assign({}, data, { chain }))
   }
 
   events.forEach(event =>
@@ -91,12 +91,13 @@ function createClient (config) {
 
   const cores = config.enabledChains.map(chainName => ({
     chain: chainName,
-    core: createCore(Object.assign({}, config.chains[chainName], config))
+    core: createCore(),
+    config: Object.assign({}, config.chains[chainName], config)
   }))
 
   ipcMain.on('ui-ready', function (webContent, args) {
     cores.forEach(function (core) {
-      const { emitter, events, coreApi } = startCore(core, webContent.sender)
+      const { emitter, events, coreApi } = startCore(core, webContent)
       core.emitter = emitter
       core.events = events
       core.coreApi = coreApi
