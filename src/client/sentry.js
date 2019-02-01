@@ -1,16 +1,17 @@
 import Raven from 'raven-js'
+import get from 'lodash/get'
 
-window.ipcRenderer.on('initial-state-received', (ev, { data }) => {
-  const config = data.config
-  console.warn(config)
-  console.warn('About to configure sentry with DSN: ', config.SENTRY_DSN)
-  if (config.SENTRY_DSN) {
-    console.warn('About to configure sentry with DSN: ', config.SENTRY_DSN)
-    Raven.config(config.SENTRY_DSN, {
-      release: window.getAppVersion()
-    }).install()
-    window.addEventListener('unhandledrejection', e =>
-      Raven.captureException(e.reason)
+window.ipcRenderer.on('ui-ready', (ev, payload) => {
+  const sentryDsn = get(payload, 'data.config.sentryDsn', null)
+  if (sentryDsn) {
+    try {
+      Raven.config(sentryDsn, { release: window.getAppVersion() }).install()
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn(`Error while configuring Raven with Sentry. ${err.message}`)
+    }
+    window.addEventListener('unhandledrejection', err =>
+      Raven.captureException(err.reason)
     )
   }
 })
