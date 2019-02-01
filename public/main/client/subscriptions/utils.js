@@ -2,6 +2,8 @@
 
 const { ipcMain } = require('electron')
 const logger = require('electron-log')
+const stringify = require('json-stringify-safe')
+
 const WalletError = require('../WalletError')
 
 function getLogData (data) {
@@ -13,7 +15,7 @@ function getLogData (data) {
   const blackList = ['password']
   blackList.forEach(w => delete logData[w])
 
-  return JSON.stringify(logData)
+  return stringify(logData)
 }
 
 const logEvent = eventName => eventName !== 'persist-state'
@@ -38,7 +40,7 @@ function onRendererEvent (eventName, handler, chain) {
         }
         event.sender.send(eventName, { id, data: res })
         if (logEvent(eventName)) {
-          logger.verbose(`<-- ${eventName}:${id} ${JSON.stringify(res)}`)
+          logger.verbose(`<-- ${eventName}:${id} ${stringify(res)}`)
         }
       })
       .catch(function (err) {

@@ -51,6 +51,7 @@
     "electron-updater": "2.23.3",
     "electron-window-state": "5.0.3",
     "fast-password-entropy": "1.1.0",
+    "json-stringify-safe": "5.0.1",
     "lodash": "4.17.11",
     "metronome-contracts": "2.0.0",
     "metronome-wallet-core": "autonomoussoftware/metronome-wallet-core#port-feature",

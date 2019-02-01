@@ -1,9 +1,11 @@
 'use strict'
 
-const subscriptions = require('./subscriptions')
 const { ipcMain } = require('electron')
 const createCore = require('metronome-wallet-core')
 const logger = require('electron-log')
+const stringify = require('json-stringify-safe')
+
+const subscriptions = require('./subscriptions')
 const settings = require('./settings')
 const storage = require('./storage')
 
@@ -26,7 +28,7 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
     }
     const payload = Object.assign({}, data, { chain })
     webContent.sender.send(eventName, payload)
-    logger.verbose(`<-- ${eventName} ${JSON.stringify(payload)}`)
+    logger.verbose(`<-- ${eventName} ${stringify(payload)}`)
   }
 
   events.forEach(event =>
@@ -122,7 +124,7 @@ function createClient (config) {
           }
         })
         webContent.sender.send('ui-ready', payload)
-        logger.verbose(`<-- ui-ready ${JSON.stringify(payload)}`)
+        logger.verbose(`<-- ui-ready ${stringify(payload)}`)
       })
       .catch(function (err) {
         logger.error('Could not send ui-ready message back', err.message)
