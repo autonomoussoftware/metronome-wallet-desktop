@@ -50,6 +50,7 @@ export function sendToMainProcess(eventName, data, timeout = 10000) {
 
   if (timeout) {
     timeoutId = setTimeout(() => {
+      // eslint-disable-next-line no-console
       console.warn(`Event "${eventName}" timed out after ${timeout}ms.`)
       deferred.reject(new Error('Operation timed out. Please try again later.'))
       window.ipcRenderer.removeListener(eventName, listener)
