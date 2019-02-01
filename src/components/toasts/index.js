@@ -10,7 +10,7 @@ export const ToastsContext = React.createContext({})
 
 const defaults = {
   messagesPerToast: 1,
-  autoClose: 5000
+  autoClose: 6000
 }
 
 export class ToastsProvider extends React.Component {
@@ -65,7 +65,7 @@ export class ToastsProvider extends React.Component {
 
   componentDidMount() {
     window.ipcRenderer.on('wallet-error', (_, { message }) =>
-      this.addToast('error', message)
+      this.addToast('error', message, { autoClose: 15000 })
     )
   }
 

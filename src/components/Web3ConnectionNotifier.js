@@ -28,7 +28,8 @@ class Web3ConnectionNotifier extends React.Component {
     ) {
       this.context.toast(
         'error',
-        `Disconnected from ${this.props.chainName} network`
+        `Disconnected from ${this.props.chainName} network`,
+        { autoClose: 15000 }
       )
     }
   }
