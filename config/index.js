@@ -23,6 +23,7 @@ module.exports = {
   requiredPasswordEntropy: process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY
     ? parseInt(process.env.REACT_APP_REQUIRED_PASSWORD_ENTROPY, 10)
     : 72,
+  scanTransactionTimeout: 240000,
   explorerDebounce: 2000,
   ratesUpdateMs: 30000,
   trackingId: process.env.TRACKING_ID || null,

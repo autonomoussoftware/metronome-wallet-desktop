@@ -57,6 +57,7 @@
     "metronome-wallet-core": "autonomoussoftware/metronome-wallet-core#port-feature",
     "metronome-wallet-ui-logic": "autonomoussoftware/metronome-wallet-ui-logic#port-feature",
     "nedb": "1.8.0",
+    "p-timeout": "2.0.1",
     "qrcode.react": "0.7.2",
     "raven": "2.6.4",
     "raven-js": "3.27.0",

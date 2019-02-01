@@ -5,6 +5,7 @@ const wallet = require('../wallet')
 const auth = require('../auth')
 const config = require('../../../../config')
 const logger = require('electron-log')
+const pTimeout = require('p-timeout')
 
 const withAuth = fn =>
   function (data, { coreApi }) {
@@ -40,14 +41,20 @@ const openWallet = ({ emitter }) =>
 
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
   emitter.emit('transactions-scan-started', {})
-  return coreApi.explorer.refreshAllTransactions(address)
+  return pTimeout(
+    coreApi.explorer.refreshAllTransactions(address),
+    config.scanTransactionTimeout
+  )
     .then(function () {
       emitter.emit('transactions-scan-finished', { success: true })
       return {}
     })
     .catch(function (error) {
       logger.warn('Could not sync transactions/events', error.stack)
-      emitter.emit('transactions-scan-finished', { error: error.message, success: false })
+      emitter.emit('transactions-scan-finished', {
+        error: error.message,
+        success: false
+      })
       emitter.once('coin-block', () =>
         refreshAllTransactions({ address }, { coreApi, emitter })
       )
@@ -56,7 +63,10 @@ function refreshAllTransactions ({ address }, { coreApi, emitter }) {
 }
 
 function refreshTransaction ({ hash, address }, { coreApi }) {
-  return coreApi.explorer.refreshTransaction(hash, address)
+  return pTimeout(
+    coreApi.explorer.refreshTransaction(hash, address),
+    config.scanTransactionTimeout
+  )
     .then(() => ({ success: true }))
     .catch(error => ({ error, success: false }))
 }
@@ -115,10 +125,7 @@ const estimateImportMetGas = (data, { coreApi }) =>
   coreApi.metronome.estimateImportMetGas(data)
 
 const exportMetronome = (data, core) =>
-  withAuth(core.coreApi.metronome.exportMet)(
-    data,
-    core
-  )
+  withAuth(core.coreApi.metronome.exportMet)(data, core)
 
 const importMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.importMet)(data, core)
