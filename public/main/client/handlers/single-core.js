@@ -39,15 +39,15 @@ const openWallet = ({ emitter }) =>
   )
 
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
-  emitter.emit('transactions-scan-started', { data: {} })
+  emitter.emit('transactions-scan-started', {})
   return coreApi.explorer.refreshAllTransactions(address)
     .then(function () {
-      emitter.emit('transactions-scan-finished', { data: { success: true } })
+      emitter.emit('transactions-scan-finished', { success: true })
       return {}
     })
     .catch(function (error) {
       logger.warn('Could not sync transactions/events', error.stack)
-      emitter.emit('transactions-scan-finished', { data: { error, success: false } })
+      emitter.emit('transactions-scan-finished', { error: error.message, success: false })
       emitter.once('coin-block', () =>
         refreshAllTransactions({ address }, { coreApi, emitter })
       )
@@ -57,8 +57,8 @@ function refreshAllTransactions ({ address }, { coreApi, emitter }) {
 
 function refreshTransaction ({ hash, address }, { coreApi }) {
   return coreApi.explorer.refreshTransaction(hash, address)
-    .then(() => ({ data: { success: true } }))
-    .catch(error => ({ data: { error, success: false } }))
+    .then(() => ({ success: true }))
+    .catch(error => ({ error, success: false }))
 }
 
 const getGasLimit = (data, { coreApi }) => coreApi.wallet.getGasLimit(data)

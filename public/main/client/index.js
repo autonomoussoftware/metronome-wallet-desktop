@@ -40,13 +40,13 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
   function syncTransactions ({ address }) {
     storage.getSyncBlock(chain)
       .then(function (from) {
-        send('transactions-scan-started', { data: {} })
+        send('transactions-scan-started', {})
 
         return coreApi.explorer
           .syncTransactions(from, address)
           .then(number => storage.setSyncBlock(number, chain))
           .then(function () {
-            send('transactions-scan-finished', { data: { success: true } })
+            send('transactions-scan-finished', { success: true })
 
             emitter.on('coin-block', function ({ number }) {
               storage.setSyncBlock(number, chain).catch(function (err) {
@@ -57,7 +57,7 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
       })
       .catch(function (err) {
         logger.warn('Could not sync transactions/events', err.stack)
-        send('transactions-scan-finished', { data: { err, success: false } })
+        send('transactions-scan-finished', { error: err.message, success: false })
 
         emitter.once('coin-block', () =>
           syncTransactions({ address })
