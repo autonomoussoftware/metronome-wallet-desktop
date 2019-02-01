@@ -1,6 +1,9 @@
 import fastPasswordEntropy from 'fast-password-entropy'
-import keys from './keys'
+import debounce from 'lodash/debounce'
+import get from 'lodash/get'
+
 import * as utils from './utils'
+import keys from './keys'
 import './sentry'
 
 function createClient(createStore) {
@@ -12,8 +15,13 @@ function createClient(createStore) {
 
   const store = createStore(reduxDevtoolsOptions)
 
-  store.subscribe(function() {
-    utils.forwardToMainProcess('persist-state')(store.getState())
+  window.ipcRenderer.on('ui-ready', (ev, payload) => {
+    const debounceTime = get(payload, 'data.config.statePersistanceDebounce', 0)
+    store.subscribe(
+      debounce(function() {
+        utils.forwardToMainProcess('persist-state')(store.getState())
+      }, debounceTime)
+    )
   })
 
   const onTermsLinkClick = () =>
