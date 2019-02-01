@@ -5,6 +5,7 @@ const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
 const logger = require('electron-log')
 const path = require('path')
+const windowStateKeeper = require('electron-window-state')
 
 const analytics = require('../analytics')
 const restart = require('./client/electron-restart')
@@ -57,11 +58,16 @@ function loadWindow () {
     return
   }
 
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1140,
+    defaultHeight: 700
+  })
+
   // TODO this should be read from config
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1140,
-    height: 700,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     minWidth: 640,
     minHeight: 610,
     useContentSize: true,
@@ -69,8 +75,12 @@ function loadWindow () {
     webPreferences: {
       nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    x: mainWindowState.x,
+    y: mainWindowState.y
   })
+
+  mainWindowState.manage(mainWindow)
 
   analytics.init(mainWindow.webContents.getUserAgent())
 
