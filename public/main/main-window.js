@@ -69,8 +69,7 @@ function loadWindow () {
     width: mainWindowState.width,
     height: mainWindowState.height,
     minWidth: 640,
-    minHeight: 610,
-    useContentSize: true,
+    minHeight: 632,
     backgroundColor: '#323232',
     webPreferences: {
       nodeIntegration: false,
