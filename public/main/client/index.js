@@ -24,7 +24,9 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
     if (!webContent) {
       return
     }
-    webContent.sender.send(eventName, Object.assign({}, data, { chain }))
+    const payload = Object.assign({}, data, { chain })
+    webContent.sender.send(eventName, payload)
+    logger.verbose(`<-- ${eventName} ${JSON.stringify(payload)}`)
   }
 
   events.forEach(event =>
@@ -112,16 +114,15 @@ function createClient (config) {
         return {}
       })
       .then(function (persistedState) {
-        webContent.sender.send(
-          'ui-ready',
-          Object.assign({}, args, {
-            data: {
-              onboardingComplete,
-              persistedState: persistedState || {},
-              config
-            }
-          })
-        )
+        const payload = Object.assign({}, args, {
+          data: {
+            onboardingComplete,
+            persistedState: persistedState || {},
+            config
+          }
+        })
+        webContent.sender.send('ui-ready', payload)
+        logger.verbose(`<-- ui-ready ${JSON.stringify(payload)}`)
       })
       .catch(function (err) {
         logger.error('Could not send ui-ready message back', err.message)
