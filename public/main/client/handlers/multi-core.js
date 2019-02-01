@@ -1,12 +1,15 @@
 'use strict'
 
+const { flatten } = require('lodash')
+
 const auth = require('../auth')
-const WalletError = require('../WalletError')
-const singleCore = require('./single-core')
-const noCore = require('./no-core')
+const config = require('../../../../config')
 const keys = require('../keys')
 const wallet = require('../wallet')
-const config = require('../../../../config')
+const WalletError = require('../WalletError')
+
+const noCore = require('./no-core')
+const singleCore = require('./single-core')
 
 const createWallets = (data, cores, openWallets = true) =>
   Promise.all([
@@ -72,10 +75,10 @@ function portMetronome (data, cores) {
   return singleCore
     .exportMetronome(exportData, exportCore)
     .then(function ({ receipt }) {
-      const parsedExportReceipt = Object.keys(receipt.events)
+      const parsedExportReceipt = flatten(Object.keys(receipt.events)
         .filter(e => !receipt.events[e].event) // Filter already parsed event keys
         .map(e => receipt.events[e]) // Get not parsed events
-        .map(e => exportCore.coreApi.explorer.tryParseEventLog(e)) // Try to parse each event
+        .map(e => exportCore.coreApi.explorer.tryParseEventLog(e))) // Try to parse each event
         .find(e => e.parsed.event === 'LogExportReceipt') // Get LogExportReceipt event
       if (!parsedExportReceipt || !parsedExportReceipt.parsed) {
         return Promise.reject(
