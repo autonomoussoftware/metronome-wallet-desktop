@@ -1,18 +1,15 @@
 import { BaseBtn, FieldBtn, Btn } from './Btn'
-import ConverterIcon from './ConverterIcon'
+import TextInput, { Label } from './TextInput'
+import ConfirmationWizard from './ConfirmationWizard'
 import DisplayValue from './DisplayValue'
-import AuctionIcon from './AuctionIcon'
+import AmountFields from './AmountFields'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
 import LoadingBar from './LoadingBar'
-import WalletIcon from './WalletIcon'
-import CloseIcon from './CloseIcon'
-import CheckIcon from './CheckIcon'
-import TextInput from './TextInput'
+import AltLayout from './AltLayout'
+import GasEditor from './GasEditor'
+import Selector from './Selector'
 import Tooltips from './Tooltips'
-import CopyIcon from './CopyIcon'
-import LogoIcon from './LogoIcon'
-import TxIcon from './TxIcon'
 import Drawer from './Drawer'
 import Modal from './Modal'
 import Tabs from './Tabs'
@@ -21,23 +18,21 @@ import Flex from './Flex'
 import Sp from './Spacing'
 
 export {
-  ConverterIcon,
+  ConfirmationWizard,
   DisplayValue,
-  AuctionIcon,
+  AmountFields,
   ItemFilter,
   DarkLayout,
   LoadingBar,
-  WalletIcon,
-  CloseIcon,
-  CheckIcon,
   TextInput,
+  AltLayout,
+  GasEditor,
+  Selector,
   Tooltips,
-  CopyIcon,
-  LogoIcon,
   FieldBtn,
   BaseBtn,
-  TxIcon,
   Drawer,
+  Label,
   Modal,
   Tabs,
   Text,

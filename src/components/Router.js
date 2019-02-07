@@ -1,13 +1,14 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
-import React, { Component } from 'react'
+import React from 'react'
+
 import OfflineWarning from './OfflineWarning'
-import Dashboard from './Dashboard'
-import Converter from './Converter'
-import Sidebar from './Sidebar'
-import Auction from './Auction'
-import Tools from './Tools'
-import Help from './Help'
+import Dashboard from './dashboard/Dashboard'
+import Converter from './converter/Converter'
+import Sidebar from './sidebar/Sidebar'
+import Auction from './auction/Auction'
+import Tools from './tools/Tools'
+// import Port from './port/Port'
 
 const fadeIn = keyframes`
   from {
@@ -49,15 +50,15 @@ export const layout = (
         <Route path="/wallets" component={Dashboard} />
         <Route path="/auction" component={Auction} />
         <Route path="/converter" component={Converter} />
+        {/* <Route path="/port" component={Port} /> */}
         <Route path="/tools" component={Tools} />
-        <Route component={Help} path="/help" />
       </Switch>
     </Main>
     <OfflineWarning />
   </Container>
 )
 
-export default class Router extends Component {
+export default class Router extends React.Component {
   render() {
     return <HashRouter>{layout}</HashRouter>
   }

@@ -1,19 +1,23 @@
 'use strict'
 
-const os = require('os')
 const path = require('path')
-const Raven = require('raven')
+
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+
 const { app } = require('electron')
 const isDev = require('electron-is-dev')
+const os = require('os')
+const Raven = require('raven')
 
-const logger = require('./logger')
+const { createWindow } = require('./main/main-window.js')
+const { createClient } = require('./main/client')
 const config = require('./config')
-const initMenu = require('./menu')
 const initContextMenu = require('./contextMenu')
+const initMenu = require('./menu')
+const logger = require('./logger')
 
 if (isDev) {
-  require('dotenv').config()
-
+  // Development
   app.on('ready', function () {
     require('electron-debug')({ enabled: true })
 
@@ -28,6 +32,7 @@ if (isDev) {
       .catch(err => logger.debug('An error occurred: ', err))
   })
 } else {
+  // Production
   if (config.sentryDsn) {
     Raven.config(config.sentryDsn, {
       captureUnhandledRejections: true,
@@ -49,14 +54,13 @@ app.on('window-all-closed', function () {
   }
 })
 
-const { createWindow } = require(path.join(__dirname, './main/main-window.js'))
 createWindow()
-
-const { initMainWorker } = require(path.join(__dirname, './main/main-worker.js'))
 
 app.on('ready', function () {
   logger.info('App ready, initializing...')
+
   initMenu()
   initContextMenu()
-  initMainWorker()
+
+  createClient(config)
 })

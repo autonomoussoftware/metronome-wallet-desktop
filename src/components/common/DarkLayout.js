@@ -4,13 +4,13 @@ import React from 'react'
 
 const Container = styled.div`
   min-height: 100%;
-  background-image: ${p => p.theme.colors.bg.darkGradient};
+  background-image: ${p => p.theme.colors.darkGradient};
   border-left: 2px solid rgb(46, 46, 46);
 `
 
 const Header = styled.header`
   padding: 2.4rem;
-  background-color: ${p => p.theme.colors.bg.dark};
+  background-color: ${p => p.theme.colors.dark};
   box-shadow: 0 2px 2px 0 ${p => p.theme.colors.lightShade};
 
   @media (min-width: 800px) {

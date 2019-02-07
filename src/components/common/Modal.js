@@ -1,9 +1,10 @@
 import ReactModal from 'react-modal'
-import CloseIcon from './CloseIcon'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import theme from '../../theme'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
+
+import CloseIcon from '../icons/CloseIcon'
 
 const Container = styled(ReactModal)`
   &.ReactModal__Content {
@@ -39,16 +40,24 @@ const Title = styled.h1`
   color: ${p =>
     p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
   margin: 0;
+  flex-grow: 1;
 `
 
-const CloseButton = styled.button`
+export const HeaderButton = styled.button`
+  margin-left: 2rem;
   background: transparent;
   border: none;
   padding: 0;
   outline: none;
   cursor: pointer;
   color: ${p =>
-    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
+    p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.primary};
+
+  &[disabled] {
+    color: ${p => p.theme.colors.weak};
+  }
+
+  &:not([disabled]):hover,
   &:hover {
     opacity: 0.5;
   }
@@ -57,6 +66,7 @@ const CloseButton = styled.button`
 export default class Modal extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
+    headerChildren: PropTypes.node,
     children: PropTypes.node.isRequired,
     variant: PropTypes.oneOf(['primary']),
     isOpen: PropTypes.bool.isRequired,
@@ -67,6 +77,7 @@ export default class Modal extends React.Component {
     const {
       onRequestClose,
       styleOverrides,
+      headerChildren,
       children,
       variant,
       isOpen,
@@ -86,7 +97,7 @@ export default class Modal extends React.Component {
             zIndex: '3'
           },
           content: {
-            background: theme.colors.bg.white,
+            background: theme.colors.light,
             flexDirection: 'column',
             marginBottom: '1.6rem',
             borderRadius: '0',
@@ -108,13 +119,14 @@ export default class Modal extends React.Component {
       >
         <Header hasTitle={!!title} variant={variant}>
           {title && <Title variant={variant}>{title}</Title>}
-          <CloseButton onClick={onRequestClose} variant={variant}>
+          {headerChildren}
+          <HeaderButton onClick={onRequestClose} variant={variant}>
             <CloseIcon
               color={
                 variant === 'primary' ? theme.colors.light : theme.colors.copy
               }
             />
-          </CloseButton>
+          </HeaderButton>
         </Header>
         {children}
       </Container>

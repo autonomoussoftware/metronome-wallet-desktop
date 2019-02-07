@@ -17,7 +17,7 @@ Item.propTypes = {
 }
 
 // ...even flexbox containers, that's why we extend from Item...
-const Row = Item.extend`
+const Row = styled(Item)`
   justify-content: ${p => p.justify || 'flex-start'};
   align-items: ${p => p.align || 'stretch'};
   flex-wrap: ${p => (p.rowwrap ? 'wrap' : 'nowrap')};
@@ -25,7 +25,7 @@ const Row = Item.extend`
 `
 
 // ...and Columns are just Rows with a diferent flex-direction.
-const Column = Row.extend`
+const Column = styled(Row)`
   flex-direction: column;
 `
 

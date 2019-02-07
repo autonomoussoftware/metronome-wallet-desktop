@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-const Label = styled.label`
+export const Label = styled.label`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
@@ -44,7 +44,7 @@ const Input = styled.input`
   }
 `
 
-const ErrorMsg = styled.div`
+export const ErrorMsg = styled.div`
   color: ${p => p.theme.colors.danger};
   line-height: 1.6rem;
   font-size: 1.3rem;
@@ -74,12 +74,15 @@ export default class TextInput extends React.Component {
     id: PropTypes.string.isRequired
   }
 
-  InputControl = this.props.rows || this.props.cols
-    ? Input.withComponent('textarea')
-    : Input
+  InputControl =
+    this.props.rows || this.props.cols ? Input.withComponent('textarea') : Input
+
+  onChange = e => {
+    this.props.onChange({ id: this.props.id, value: e.target.value })
+  }
 
   render() {
-    const { label, value, type, id, error, ...other } = this.props
+    const { onChange, label, value, type, id, error, ...other } = this.props
 
     const hasErrors = error && error.length > 0
 
@@ -90,6 +93,7 @@ export default class TextInput extends React.Component {
         </Label>
         <this.InputControl
           hasErrors={hasErrors}
+          onChange={this.onChange}
           value={value || ''}
           type={type || 'text'}
           id={id}

@@ -1,7 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "1.1.0",
-  "private": true,
+  "version": "1.2.0",
   "author": {
     "name": "Autonomous Software",
     "email": "info@autonomous.sh",
@@ -12,86 +11,67 @@
     "type": "git",
     "url": "git@github.com:autonomoussoftware/metronome-wallet-desktop.git"
   },
+  "license": "MIT",
   "homepage": "./",
   "main": "public/electron.js",
-  "copyright": "Copyright © 2018 ${author}",
+  "copyright": "Copyright © 2019 ${author}",
   "scripts": {
     "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "dist": "react-scripts build && build --c.extraMetadata.main=build/electron.js",
     "dist:mac": "./sign/mac.sh",
     "dist:win": ".\\sign\\win.bat",
+    "dist": "react-scripts build && npm run pack",
     "eject": "react-scripts eject",
     "lint": "eslint --cache public && eslint --cache src",
     "pack": "build --c.extraMetadata.main=build/electron.js",
+    "patch-web3": "git apply --ignore-whitespace --verbose node_modules/metronome-wallet-core/patches/* || true",
     "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
-    "precommit": "npm run lint",
-    "prepush": "CI=true react-scripts test --env=jsdom -",
-    "prebuild": "npm run build:libs",
-    "build:libs": "npm run build:libs:round",
-    "build:libs:round": "cd src/lib/smart-round && npm i && npm run build",
-    "release": "react-scripts build && build --c.extraMetadata.main=build/electron.js --publish always",
+    "prepare": "npm run patch-web3 && patch-package",
+    "release": "react-scripts build && npm run pack -- --publish always",
     "start": "react-scripts start",
-    "test": "react-scripts test --env=jsdom"
+    "test": "react-scripts test"
   },
   "dependencies": {
-    "7zip-bin": "3.1.0",
-    "axios": "0.17.1",
-    "axios-cookiejar-support": "0.3.5",
+    "@reach/menu-button": "0.1.7",
     "bignumber.js": "7.2.1",
     "bip39": "2.5.0",
-    "chalk": "2.4.1",
-    "coincap-lib": "1.0.0",
+    "chalk": "2.4.2",
     "credential-plus": "2.0.7",
     "credential-plus-pbkdf2": "2.0.4",
-    "cross-env": "5.2.0",
-    "cuid": "2.1.1",
-    "debug": "3.1.0",
+    "cuid": "2.1.4",
     "dotenv": "5.0.1",
     "electron-context-menu": "0.9.1",
     "electron-debug": "1.5.0",
-    "electron-log": "2.2.16",
+    "electron-is-dev": "0.3.0",
+    "electron-log": "2.2.17",
     "electron-settings": "3.2.0",
     "electron-unhandled": "1.1.0",
     "electron-updater": "2.23.3",
-    "ethereumjs-tx": "1.3.6",
-    "ethereumjs-wallet": "0.6.0",
+    "electron-window-state": "5.0.3",
     "fast-password-entropy": "1.1.0",
-    "human-standard-token-abi": "1.0.2",
-    "lodash": "4.17.10",
-    "metronome-contracts": "1.4.1",
-    "moment": "2.22.2",
-    "moment-precise-range-plugin": "1.3.0",
+    "json-stringify-safe": "5.0.1",
+    "lodash": "4.17.11",
+    "metronome-contracts": "2.0.0",
+    "metronome-wallet-core": "2.0.0",
+    "metronome-wallet-ui-logic": "2.0.1",
     "nedb": "1.8.0",
-    "p-defer": "1.0.0",
-    "p-retry": "1.0.0",
-    "promise-all-props": "1.0.1",
+    "p-timeout": "2.0.1",
     "qrcode.react": "0.7.2",
-    "raven": "2.6.3",
-    "raven-js": "3.26.3",
-    "react": "16.4.1",
-    "react-dom": "16.4.1",
+    "raven": "2.6.4",
+    "raven-js": "3.27.0",
+    "react": "16.7.0",
+    "react-dom": "16.7.0",
     "react-hint": "3.1.0",
     "react-modal": "3.5.1",
-    "react-redux": "5.0.7",
+    "react-motion": "0.5.2",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
-    "react-scripts": "1.1.5",
-    "react-toastify": "3.4.3",
-    "react-transition-group": "2.2.1",
+    "react-scripts": "2.1.3",
     "react-virtualized": "9.20.1",
-    "redux": "3.7.2",
-    "redux-actions": "2.4.0",
-    "reselect": "3.0.1",
-    "safe-buffer": "5.1.2",
     "smart-round": "1.0.0",
-    "socket.io-client": "2.1.1",
-    "startinterval2": "1.0.1",
-    "styled-components": "3.3.3",
-    "supports-color": "5.4.0",
-    "tough-cookie": "2.4.3",
-    "universal-analytics": "0.4.17",
-    "web3": "1.0.0-beta.34"
+    "styled-components": "4.1.2",
+    "universal-analytics": "0.4.20",
+    "web3-utils": "1.0.0-beta.37"
   },
   "devDependencies": {
     "concurrently": "3.6.0",
@@ -99,21 +79,23 @@
     "electron": "1.8.8",
     "electron-builder": "20.22.0",
     "electron-devtools-installer": "2.2.4",
-    "electron-is-dev": "0.3.0",
-    "eslint": "4.19.1",
-    "eslint-config-bloq": "1.2.2",
+    "eslint": "5.6.0",
+    "eslint-config-bloq": "1.3.0",
     "eslint-config-prettier": "2.9.0",
-    "eslint-config-standard": "11.0.0",
-    "eslint-plugin-import": "2.13.0",
-    "eslint-plugin-jsdoc": "3.7.1",
-    "eslint-plugin-mocha": "5.1.0",
-    "eslint-plugin-node": "6.0.1",
-    "eslint-plugin-prefer-arrow": "1.1.2",
-    "eslint-plugin-promise": "3.8.0",
-    "eslint-plugin-standard": "3.1.0",
+    "eslint-config-standard": "12.0.0",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-jsdoc": "3.15.1",
+    "eslint-plugin-mocha": "5.2.1",
+    "eslint-plugin-node": "8.0.1",
+    "eslint-plugin-prefer-arrow": "1.1.3",
+    "eslint-plugin-promise": "4.0.1",
+    "eslint-plugin-standard": "4.0.0",
     "expect": "22.4.3",
-    "husky": "0.14.3",
-    "prettier": "1.13.7",
+    "husky": "1.3.1",
+    "lint-staged": "8.1.0",
+    "merkletreejs": "0.0.20",
+    "patch-package": "5.1.1",
+    "prettier": "1.15.3",
     "proxyquire": "1.8.0",
     "react-testing-library": "1.10.0",
     "wait-on": "2.1.0"
@@ -122,6 +104,7 @@
     "appId": "sh.autonomous.metronome.wallet.desktop",
     "productName": "Metronome Wallet",
     "files": [
+      ".env",
       "build/**/*",
       "node_modules/**/*"
     ],
@@ -132,12 +115,13 @@
       "buildResources": "assets"
     },
     "mac": {
-      "artifactName": "${name}-${version}.${ext}",
+      "artifactName": "${name}_v${version}.${ext}",
       "category": "public.app-category.finance",
       "icon": "./assets/icon.icns",
       "extendInfo": {
         "NSUserNotificationAlertStyle": "alert"
-      }
+      },
+      "electronUpdaterCompatibility": ">= 2.16"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",
@@ -171,5 +155,25 @@
   },
   "config": {
     "cra_dev_serv": "http://localhost:3000"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "{src,public}/**/*.js": [
+      "eslint --cache"
+    ],
+    "src/**/*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

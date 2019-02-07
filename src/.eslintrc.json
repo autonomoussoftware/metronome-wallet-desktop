@@ -2,8 +2,11 @@
   "env": {
     "browser": true
   },
+  "plugins": ["import", "react"],
   "extends": [
     "bloq",
+    "plugin:import/recommended",
+    "plugin:react/recommended",
     "prettier",
     "react-app"
   ],
@@ -15,11 +18,21 @@
     "sourceType": "module"
   },
   "root": true,
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "16.4.1"
+    }
+  },
   "rules": {
-    "arrow-body-style": "off",
-    "complexity": ["error", 10],
-    "max-params": ["error", 4],
+    "react/jsx-no-duplicate-props": ["error"],
+    "react/no-unused-prop-types": ["warn"],
+    "react/boolean-prop-naming": ["warn"],
+    "react/button-has-type": ["warn"],
+    "react/no-typos": ["error"],
+    "arrow-body-style": ["warn", "as-needed"],
+    "complexity": ["warn", { "max": 10 }],
     "no-console": "warn",
-    "no-shadow": "warn"
+    "no-shadow": ["error", { "allow": ["status", "Text"] }]
   }
 }

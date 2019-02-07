@@ -1,14 +1,16 @@
+import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { render, Simulate } from 'react-testing-library'
 import { ThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router'
-import { Provider } from 'react-redux'
-import createStore from './createStore'
+import createClient from './client'
 import { merge } from 'lodash'
-import config from './config'
-import theme from './theme'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import React from 'react'
 
-/**
+import config from '../config'
+
+/*
  * The same render method of 'react-testing-library' but wrapped with
  * Redux store Provider and 'styled-components' ThemeProvider.
  *
@@ -19,19 +21,21 @@ import React from 'react'
  * property useful for dispatching actions inside your tests.
  */
 export function reduxRender(element, initialState) {
-  const store = createStore(initialState)
+  const client = createClient(config, createStore, initialState)
 
   const renderResult = render(
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <React.Fragment>{element}</React.Fragment>
-      </ThemeProvider>
-    </Provider>
+    <ClientProvider value={client}>
+      <Provider store={client.store}>
+        <ThemeProvider theme={theme}>
+          <React.Fragment>{element}</React.Fragment>
+        </ThemeProvider>
+      </Provider>
+    </ClientProvider>
   )
-  return { ...renderResult, store }
+  return { ...renderResult, store: client.store }
 }
 
-/**
+/*
  * The same as reduxRender() above but also wrapped with 'react-router'
  * in order to test navigation flows.
  *
@@ -44,7 +48,7 @@ export function routerRender(element, initialState, initialRoute = '/') {
   )
 }
 
-/**
+/*
  * Declaratively test complex form validations
  *
  * getter   : function that receives a data-testid and returns an HTML element
@@ -71,7 +75,7 @@ export function testValidation(getter, formId, { formData, errors }) {
   })
 }
 
-/**
+/*
  * Add dataset property (data-foo attribute values) to nodes
  *
  * This hack is required because jsdom has no support for dataset yet
@@ -105,19 +109,20 @@ export const oneHourAgo = () => Date.now() / 1000 - 60 * 60
 export const inOneHour = () => Date.now() / 1000 + 60 * 60
 export const inOneWeek = () => Date.now() / 1000 + 60 * 60 * 24 * 7
 
-/**
+/*
  * Returns a common initial state for Redux store that is useful for most tests
  * Accepts an optional object with overrides that will be deeply merged with
  * the base state object.
  */
 export function getInitialState(overrides = {}) {
   const baseState = {
+    config,
     connectivity: { isOnline: true },
     blockchain: { height: 1, gasPrice: config.DEFAULT_GAS_PRICE },
     converter: {
       status: {
         availableEth: '100',
-        availableMtn: '100',
+        availableMet: '100',
         currentPrice: '10'
       }
     },
@@ -125,7 +130,7 @@ export function getInitialState(overrides = {}) {
       status: {
         nextAuctionStartTime: inOneHour(),
         tokenRemaining: '1',
-        currentAuction: '10',
+        currentAuction: 10,
         currentPrice: '33000000000',
         genesisTime: twoWeeksAgo()
       }
@@ -133,7 +138,7 @@ export function getInitialState(overrides = {}) {
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: 1 } },
     wallets: {
-      isScanningTx: false,
+      syncStatus: 'up-to-date',
       active: 'foo',
       allIds: ['foo'],
       byId: {
@@ -154,7 +159,7 @@ export function getInitialState(overrides = {}) {
   return merge({}, baseState, overrides)
 }
 
-/**
+/*
  * A sample transaction object. Useful for populating state in tests.
  */
 export function getDummyTransaction() {

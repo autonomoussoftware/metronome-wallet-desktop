@@ -37,6 +37,10 @@
       *, *:before, *:after {
         box-sizing: border-box;
       }
+      /* Required by Reach UI. See https://github.com/reach/reach-ui/blob/master/packages/menu-button/styles.css#L1 */
+      :root {
+        --reach-menu-button: 1;
+      }
     </style>
   </head>
   <body>

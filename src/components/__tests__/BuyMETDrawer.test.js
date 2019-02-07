@@ -1,8 +1,8 @@
 import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
+import BuyMETDrawer from '../auction/BuyMETDrawer'
 import { Simulate } from 'react-testing-library'
-import BuyMETDrawer from '../BuyMETDrawer'
 import React from 'react'
 
 const closeHandler = jest.fn()

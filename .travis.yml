@@ -1,6 +1,3 @@
-branches:
-  only: travis-build
-
 language: node_js
 node_js: "8"
 
@@ -46,9 +43,9 @@ before_script:
 script:
   - |
     if [ "$TRAVIS_BRANCH" == "develop" ]; then
-      npm test && npm run dist
+      npm run dist
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
-      npm test && npm run release
+      npm run release
     fi
 
 before_cache:

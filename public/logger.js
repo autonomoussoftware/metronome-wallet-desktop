@@ -3,6 +3,7 @@
 const chalk = require('chalk')
 const logger = require('electron-log')
 const isDev = require('electron-is-dev')
+const stringify = require('json-stringify-safe')
 const unhandled = require('electron-unhandled')
 
 logger.transports.file.appName = 'metronome-desktop-wallet'
@@ -31,8 +32,7 @@ logger.transports.console = function ({ date, level, data }) {
   let meta = ''
   if (data.length) {
     meta += ' => '
-    meta += data.map(d => typeof d === 'object' ? JSON.stringify(d) : d)
-      .join(', ')
+    meta += data.map(d => typeof d === 'object' ? stringify(d) : d).join(', ')
   }
 
   // eslint-disable-next-line no-console

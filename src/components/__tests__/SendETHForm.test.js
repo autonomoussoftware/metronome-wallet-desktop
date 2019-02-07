@@ -2,10 +2,10 @@ import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import SendETHForm from '../SendETHForm'
+import SendETHForm from '../dashboard/SendETHForm'
 import React from 'react'
 
-const element = <SendETHForm />
+const element = <SendETHForm tabs={<div />} />
 
 const ETHprice = 250
 
@@ -35,16 +35,6 @@ describe('<SendETHForm/>', () => {
       testUtils.testValidation(getByTestId, 'sendEth-form', {
         formData: { 'toAddress-field': 'foo' },
         errors: { 'toAddress-field': 'Invalid address' }
-      })
-    })
-
-    it('displays an error if ADDRESS CHECKSUM is invalid', () => {
-      const { getByTestId } = testUtils.reduxRender(element, getInitialState())
-      testUtils.testValidation(getByTestId, 'sendEth-form', {
-        formData: {
-          'toAddress-field': '0xd6758d1907Ed647605429d40cd19C58A6d05Eb8b'
-        },
-        errors: { 'toAddress-field': 'Address checksum is invalid' }
       })
     })
 
