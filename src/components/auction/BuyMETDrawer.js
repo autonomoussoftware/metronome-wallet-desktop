@@ -84,8 +84,9 @@ class BuyMETDrawer extends React.Component {
       ) : (
         <React.Fragment>
           You will use{' '}
-          <DisplayValue inline value={this.props.coinAmount} toWei isCoin /> ($
-          {this.props.usdAmount}) to buy approximately{' '}
+          <DisplayValue inline value={this.props.coinAmount} toWei isCoin /> (
+          {this.props.usdAmount ? `$${this.props.usdAmount}` : '< $0.01'}) to
+          buy approximately{' '}
           <DisplayValue
             inline
             value={this.props.expectedMETamount}
