@@ -1,11 +1,12 @@
 'use strict'
 
-const WalletError = require('../WalletError')
-const wallet = require('../wallet')
-const auth = require('../auth')
-const config = require('../../../../config')
 const logger = require('electron-log')
 const pTimeout = require('p-timeout')
+
+const auth = require('../auth')
+const config = require('../../../config')
+const wallet = require('../wallet')
+const WalletError = require('../WalletError')
 
 const withAuth = fn =>
   function (data, { coreApi }) {

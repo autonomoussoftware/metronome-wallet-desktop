@@ -43,39 +43,6 @@ More info [github.com/megahertz/electron-log](https://github.com/megahertz/elect
 
 To completely remove the application and start over, remove the settings file too.
 
-### Run in Ropsten Testnet
-
-Modify the `Settings` file replacing the following properties:
-
-```json
-{
-  "app": {
-    "chain": "ropsten",
-    "node": {
-      "jsonRpcApiUrl": "https://eth.wallet.bloqrock.net:8545",
-      "websocketApiUrl": "wss://eth.wallet.bloqrock.net:8546"
-    },
-    "indexerApiUrl": "https://indexer.bloqrock.net",
-    "tracerApiUrl": "https://tracer.bloqrock.net"
-  },
-  "tokens": {
-    "0xf3e9a687fdf24112745d4d7dee150ba87a07ecc3": {
-      "decimals": 18,
-      "name": "Metronome",
-      "symbol": "MET"
-    }
-  }
-}
-```
-
-Then, start the wallet setting the proper environment variable as follows:
-
-```bash
-REACT_APP_ETH_CHAIN=ropsten npm run dev
-```
-
-Alternatively, a `.env` file can also be used to set the chain variable.
-
 ### Production Build
 
 ```bash
@@ -86,8 +53,10 @@ npm run dist
 npm run release
 ```
 
-To sign the macOS installers, execute `npm run dist:mac`. The signing certificate shall be in the root folder and be named `met.p12`. The certificate password will be required before signing.
+To sign the macOS installers, execute `npm run dist:mac`.
+The signing certificate shall be in the root folder and be named `met.p12`.
+The certificate password will be required before signing.
 
-## LICENSE
+## License
 
 MIT

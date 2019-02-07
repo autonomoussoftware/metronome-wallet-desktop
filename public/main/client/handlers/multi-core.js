@@ -3,7 +3,7 @@
 const { flatten } = require('lodash')
 
 const auth = require('../auth')
-const config = require('../../../../config')
+const config = require('../../../config')
 const keys = require('../keys')
 const wallet = require('../wallet')
 const WalletError = require('../WalletError')

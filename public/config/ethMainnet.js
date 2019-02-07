@@ -1,12 +1,12 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.morden
+const contracts = MetronomeContracts.mainnet
 
 module.exports = {
-  displayName: 'ETC (Morden)', // visible in select control
-  chainId: 2,
-  symbol: 'ETC', // visible next to amounts
+  displayName: 'ETHEREUM', // visible in select control
+  chainId: 1,
+  symbol: 'ETH', // visible next to amounts
 
   // contracts addresses
   tokenPorterAddress: contracts.TokenPorter.address,
@@ -15,12 +15,11 @@ module.exports = {
   metTokenAddress: contracts.METToken.address,
   auctionAddress: contracts.Auctions.address,
 
-
   // urls
-  explorerUrl: 'https://explorer.metronome.io',   // TODO: update!
-  indexerUrl: 'https://indexer.metronome.io',     // TODO: update!
-  metApiUrl: 'https://api.metronome.io/',         // TODO: update!
-  wsApiUrl: 'wss://eth.wallet.metronome.io:8546', // TODO: update!
+  explorerUrl: 'https://explorer.metronome.io',
+  indexerUrl: 'https://indexer.metronome.io',
+  metApiUrl: 'https://api.metronome.io/',
+  wsApiUrl: 'wss://eth.wallet.metronome.io:8546',
 
   // defauls
   coinDefaultGasLimit: '21000',
