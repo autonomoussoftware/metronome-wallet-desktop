@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "2.0.0",
+  "version": "1.2.0",
   "author": {
     "name": "Autonomous Software",
     "email": "info@autonomous.sh",
@@ -115,12 +115,13 @@
       "buildResources": "assets"
     },
     "mac": {
-      "artifactName": "${name}-${version}.${ext}",
+      "artifactName": "${name}_v${version}.${ext}",
       "category": "public.app-category.finance",
       "icon": "./assets/icon.icns",
       "extendInfo": {
         "NSUserNotificationAlertStyle": "alert"
-      }
+      },
+      "electronUpdaterCompatibility": ">= 2.16"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",

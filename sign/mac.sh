@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Building and signing application for macOS"
 export CSC_LINK="file://met.p12"
 

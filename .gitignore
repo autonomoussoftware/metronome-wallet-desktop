@@ -3,6 +3,7 @@
 
 # environment variables
 .env
+.env.*
 
 # building
 /build
