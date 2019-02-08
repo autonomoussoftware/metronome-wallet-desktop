@@ -20,6 +20,7 @@
     "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "dist": "react-scripts build && npm run pack",
     "eject": "react-scripts eject",
+    "env": "./scripts/env.sh",
     "lint": "eslint --cache public && eslint --cache src",
     "pack": "build --c.extraMetadata.main=build/electron.js",
     "patch-web3": "git apply --ignore-whitespace --verbose node_modules/metronome-wallet-core/patches/* || true",
@@ -27,7 +28,7 @@
     "prepare": "npm run patch-web3 && patch-package",
     "release:mac": "./scripts/mac.sh",
     "release:win": ".\\scripts\\win.bat",
-    "release": "react-scripts build && npm run pack -- --publish always",
+    "release": "npm run env && react-scripts build && npm run pack -- --publish always",
     "start": "react-scripts start",
     "test": "react-scripts test"
   },

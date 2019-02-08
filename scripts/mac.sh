@@ -2,13 +2,6 @@
 
 echo "Building and signing application for macOS"
 
-cat > .env << EOF
-DEBUG=$DEBUG
-ENABLED_CHAINS=$ENABLED_CHAINS
-SENTRY_DSN=$SENTRY_DSN
-TRACKING_ID=$TRACKING_ID
-EOF
-
 echo "Insert the certificate password and press Enter:"
 read -rs PASSWORD
 
