@@ -13,21 +13,16 @@
   "main": "public/electron.js",
   "copyright": "Copyright © 2019 ${author}",
   "scripts": {
-    "debug": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
-    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
-    "dist": "react-scripts build && npm run pack",
-    "eject": "react-scripts eject",
+    "debug": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
+    "dev": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
+    "dist": "react-scripts build && electron-builder --c.extraMetadata.main=build/electron.js",
     "env": "./scripts/env.sh",
-    "lint": "eslint --cache public && eslint --cache src",
-    "pack": "build --c.extraMetadata.main=build/electron.js",
     "patch-web3": "git apply --ignore-whitespace --verbose node_modules/metronome-wallet-core/patches/* || true",
-    "ppa": "TARFILE=\"$npm_package_name\"_$npm_package_version.orig.tar.gz; DEBFILE=\"$npm_package_name\"_v$npm_package_version.deb; mkdir -p dist/app; dpkg -x dist/$DEBFILE ./dist/app/ && rm -r dist/app/opt/Metronome\\ Wallet/resources/app.asar.unpacked/node_modules/7zip-bin-linux/arm* && perl -pi -e 's/opt/usr\\/lib/' dist/app/usr/share/applications/metronome-desktop-wallet.desktop && tar -czf ppa/$TARFILE -C dist/ app/ && rm -r dist/app && cd ppa && tar -xzf $TARFILE && cd app && dch -b -v $npm_package_version-1xenial --distribution xenial Xenial release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1artful --distribution artful Artful release $npm_package_version && debuild -us -uc && dch -b -v $npm_package_version-1bionic --distribution bionic Bionic release $npm_package_version && debuild -us -uc",
+    "postinstall": "electron-builder install-app-deps",
+    "ppa": "./scripts/ppa.sh",
     "prepare": "npm run patch-web3 && patch-package",
-    "release:mac": "./scripts/mac.sh",
     "release:win": ".\\scripts\\win.bat",
-    "release": "npm run env && react-scripts build && npm run pack -- --publish always",
-    "start": "react-scripts start",
-    "test": "react-scripts test"
+    "release": "npm run dist -- --publish always"
   },
   "dependencies": {
     "@reach/menu-button": "0.1.7",
