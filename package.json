@@ -16,12 +16,13 @@
     "debug": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron . --inspect\"",
     "dev": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "dist": "react-scripts build && electron-builder --c.extraMetadata.main=build/electron.js",
+    "env:win": "./scripts/env.bat",
     "env": "./scripts/env.sh",
     "patch-web3": "git apply --ignore-whitespace --verbose node_modules/metronome-wallet-core/patches/* || true",
     "postinstall": "electron-builder install-app-deps",
     "ppa": "./scripts/ppa.sh",
     "prepare": "npm run patch-web3 && patch-package",
-    "release:win": ".\\scripts\\win.bat",
+    "release:win": ".\\scripts\\release-win.bat",
     "release": "npm run dist -- --publish always"
   },
   "dependencies": {
