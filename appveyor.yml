@@ -16,7 +16,7 @@ cache:
 
 install:
   - ps: Install-Product node 8
-  - npm i --global --production windows-build-tools
+  - npm i --global --production windows-build-tools@4
   - npm i
 
 platform:
@@ -35,4 +35,5 @@ for:
 
   configuration: Release
   build_script:
+    - npm run env
     - npm run release
