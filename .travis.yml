@@ -47,6 +47,7 @@ script:
     if [ "$TRAVIS_BRANCH" == "develop" ]; then
       npm run dist
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
+      npm run env
       npm run release
     fi
 
