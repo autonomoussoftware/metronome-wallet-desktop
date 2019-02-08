@@ -7,10 +7,7 @@
     "url": "https://autonomous.sh"
   },
   "description": "Metronome Wallet for desktop devices",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:autonomoussoftware/metronome-wallet-desktop.git"
-  },
+  "repository": "autonomoussoftware/metronome-wallet-desktop",
   "license": "MIT",
   "homepage": "https://metronome.io",
   "main": "public/electron.js",

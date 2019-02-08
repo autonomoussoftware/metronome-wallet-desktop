@@ -13,12 +13,14 @@ matrix:
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
     - os: linux
-      sudo: true
       services: docker
       language: generic
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
 
 cache:
   directories:
@@ -47,9 +49,6 @@ script:
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
       npm run release
     fi
-
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
 
 branches:
   except:
