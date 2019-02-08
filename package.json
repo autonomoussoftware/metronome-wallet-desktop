@@ -17,7 +17,7 @@
     "dev": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && ELECTRON_START_URL=$npm_package_config_cra_dev_serv electron .\"",
     "dist": "react-scripts build && electron-builder --c.extraMetadata.main=build/electron.js",
     "env": "run-script-os",
-    "env:win32": "./scripts/env.bat",
+    "env:win32": ".\\scripts\\env.bat",
     "env:darwin:linux": "./scripts/env.sh",
     "patch-web3": "run-script-os",
     "patch-web3:win32": "for %v in (.\\node_modules\\metronome-wallet-core\\patches\\*.patch) do (git apply --ignore-whitespace --verbose \"%v\" ) || exit 0",
