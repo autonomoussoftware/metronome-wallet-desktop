@@ -12,7 +12,7 @@
     "url": "git@github.com:autonomoussoftware/metronome-wallet-desktop.git"
   },
   "license": "MIT",
-  "homepage": "./",
+  "homepage": "https://metronome.io",
   "main": "public/electron.js",
   "copyright": "Copyright © 2019 ${author}",
   "scripts": {
