@@ -35,4 +35,5 @@ for:
 
   configuration: Release
   build_script:
+    - npm run env
     - npm run release
