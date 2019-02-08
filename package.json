@@ -9,7 +9,7 @@
   "description": "Metronome Wallet for desktop devices",
   "repository": "autonomoussoftware/metronome-wallet-desktop",
   "license": "MIT",
-  "homepage": "https://metronome.io",
+  "homepage": "./",
   "main": "public/electron.js",
   "copyright": "Copyright © 2019 ${author}",
   "scripts": {
