@@ -22,7 +22,6 @@
     "patch-web3": "run-script-os",
     "patch-web3:win32": "for %v in (.\\node_modules\\metronome-wallet-core\\patches\\*.patch) do (git apply --ignore-whitespace --verbose \"%v\" ) || exit 0",
     "patch-web3:darwin:linux": "git apply --ignore-whitespace --verbose node_modules/metronome-wallet-core/patches/* || true",
-    "postinstall": "electron-builder install-app-deps",
     "ppa": "./scripts/ppa.sh",
     "prepare": "npm run patch-web3 && patch-package",
     "release:win": ".\\scripts\\release-win.bat",
