@@ -49,7 +49,7 @@
     "json-stringify-safe": "5.0.1",
     "lodash": "4.17.11",
     "metronome-contracts": "2.0.0",
-    "metronome-wallet-core": "2.0.0",
+    "metronome-wallet-core": "2.0.1",
     "metronome-wallet-ui-logic": "2.0.1",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
