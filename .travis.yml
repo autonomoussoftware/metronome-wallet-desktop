@@ -1,8 +1,6 @@
-branches:
-  only: travis-build
-
 language: node_js
-node_js: "8"
+node_js:
+  - "8.15"
 
 notifications:
   email: false
@@ -23,6 +21,9 @@ matrix:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
 cache:
   directories:
   - node_modules
@@ -38,6 +39,7 @@ before_install:
     fi
 
 install:
+  - nvm install
   - npm i
 
 before_script:
@@ -46,13 +48,11 @@ before_script:
 script:
   - |
     if [ "$TRAVIS_BRANCH" == "develop" ]; then
-      npm test && npm run dist
+      npm run dist
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
-      npm test && npm run release
+      npm run env
+      npm run release
     fi
-
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
 
 branches:
   except:

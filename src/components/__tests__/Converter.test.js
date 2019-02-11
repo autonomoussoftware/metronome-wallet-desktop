@@ -1,11 +1,14 @@
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
-import Converter from '../Converter'
+import Converter from '../converter/Converter'
 import React from 'react'
 
 describe('<Converter/>', () => {
   it('displays a "waiting..." message until the first converter status is received', () => {
-    const { queryByTestId, store } = testUtils.reduxRender(<Converter />)
+    const { queryByTestId, store } = testUtils.reduxRender(
+      <Converter />,
+      getInitialState()
+    )
     expect(queryByTestId('waiting')).not.toBeNull()
     store.dispatch(converterStatusUpdated(dummyStatus()))
     expect(queryByTestId('waiting')).toBeNull()
@@ -21,37 +24,6 @@ describe('<Converter/>', () => {
       expect(queryByTestId('convert-drawer')).toBeNull()
       Simulate.click(btn)
       expect(queryByTestId('convert-drawer')).not.toBeNull()
-    })
-
-    describe('if we are on the INITIAL AUCTION', () => {
-      it('displays stats', () => {
-        const { queryByTestId } = testUtils.reduxRender(
-          <Converter />,
-          getInitialState(dummyStatus(), inInitialAuction())
-        )
-        expect(queryByTestId('stats')).not.toBeNull()
-      })
-
-      it('Convert button is disabled', () => {
-        const { getByTestId, queryByTestId } = testUtils.reduxRender(
-          <Converter />,
-          getInitialState(dummyStatus(), inInitialAuction())
-        )
-        const btn = testUtils.withDataset(getByTestId('convert-btn'), 'modal')
-        expect(queryByTestId('convert-drawer')).toBeNull()
-        Simulate.click(btn)
-        expect(queryByTestId('convert-drawer')).toBeNull()
-      })
-
-      it('Convert button shows a tooltip when hovered', () => {
-        const { getByTestId } = testUtils.reduxRender(
-          <Converter />,
-          getInitialState(dummyStatus(), inInitialAuction())
-        )
-        expect(getByTestId('convert-btn').getAttribute('data-rh')).toBe(
-          'Conversions are disabled during Initial Auction'
-        )
-      })
     })
 
     describe('if connectivity is lost', () => {
@@ -84,7 +56,7 @@ describe('<Converter/>', () => {
 
 function converterStatusUpdated(payload = {}) {
   return {
-    type: 'mtn-converter-status-updated',
+    type: 'converter-status-updated',
     payload
   }
 }
@@ -98,24 +70,15 @@ function goOffline() {
 
 const dummyStatus = (overrides = {}) => ({
   availableEth: '100',
-  availableMtn: '100',
+  availableMet: '100',
   currentPrice: '10',
-  ...overrides
-})
-
-const inInitialAuction = (overrides = {}) => ({
-  nextAuctionStartTime: testUtils.inOneWeek(),
-  tokenRemaining: '1',
-  currentAuction: '0',
-  currentPrice: '33000000000',
-  genesisTime: testUtils.oneHourAgo(),
   ...overrides
 })
 
 const inDailyAuction = (overrides = {}) => ({
   nextAuctionStartTime: testUtils.inOneHour(),
   tokenRemaining: '1',
-  currentAuction: '10',
+  currentAuction: 10,
   currentPrice: '33000000000',
   genesisTime: testUtils.twoWeeksAgo(),
   ...overrides

@@ -3,41 +3,41 @@
 exports[`<AmountFields/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-htoDjs hAEOmi"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-gzVnrw bHqtcW"
     >
       <button
-        type="button"
         class="sc-htpNat fpAZyb"
         data-testid="max-btn"
         tabindex="-1"
+        type="button"
       >
         MAX
       </button>
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-bxivhb htFESG"
           for="ethAmount"
         >
           Amount (ETH)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="ethAmount"
+          class="sc-ifAKCX kSbDeA"
           data-testid="ethAmount-field"
+          id="ethAmount"
           placeholder="0.00"
+          type="text"
           value=""
         />
       </div>
     </div>
     <div
-      class="sc-hMqMXs dnTKXF"
+      class="sc-iwsKbI fGVAip"
     >
       <svg
-        class="sc-bxivhb hXQRLM"
+        class="sc-bZQynM hKkckV"
         viewBox="0 0 24 24"
       >
         <path
@@ -46,21 +46,21 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </svg>
     </div>
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-gzVnrw bHqtcW"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-bxivhb htFESG"
           for="usdAmount"
         >
           Amount (USD)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="usdAmount"
+          class="sc-ifAKCX kSbDeA"
           data-testid="usdAmount-field"
+          id="usdAmount"
           placeholder="0.00"
+          type="text"
           value=""
         />
       </div>

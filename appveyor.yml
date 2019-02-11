@@ -7,16 +7,13 @@ init:
 
 shallow_clone: true
 
-environment:
-  DEBUG: electron-builder
-
 cache:
   - node_modules
   - '%USERPROFILE%\.electron'
 
 install:
-  - ps: Install-Product node LTS x64
-  - npm i --global --production windows-build-tools
+  - ps: Install-Product node 8.15
+  - npm i --global --production windows-build-tools@4
   - npm i
 
 platform:
@@ -25,7 +22,7 @@ platform:
 build_script:
   - npm run dist
 
-test: off
+test: "off"
 
 for:
 -
@@ -35,4 +32,5 @@ for:
 
   configuration: Release
   build_script:
+    - npm run env
     - npm run release

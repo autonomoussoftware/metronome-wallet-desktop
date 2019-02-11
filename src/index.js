@@ -1,43 +1,44 @@
-import { subscribeToMainProcessMessages } from './subscriptions'
-import { sendToMainProcess } from './utils'
-import { ToastContainer } from 'react-toastify'
+import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
+import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { ThemeProvider } from 'styled-components'
-import { Tooltips } from './components/common'
-import { Provider } from 'react-redux'
-import createStore from './createStore'
 import ReactDOM from 'react-dom'
-import config from './config'
+import theme from 'metronome-wallet-ui-logic/src/theme'
 import Modal from 'react-modal'
-import Raven from 'raven-js'
-import theme from './theme'
 import React from 'react'
-import App from './components/App'
+import Root from 'metronome-wallet-ui-logic/src/components/Root'
 
-if (config.SENTRY_DSN) {
-  Raven.config(config.SENTRY_DSN, {
-    release: window.require('electron').remote.app.getVersion()
-  }).install()
-  window.addEventListener('unhandledrejection', e =>
-    Raven.captureException(e.reason)
-  )
-}
+import { subscribeToMainProcessMessages } from './subscriptions'
+import Web3ConnectionNotifier from './components/Web3ConnectionNotifier'
+import { ToastsProvider } from './components/toasts'
+import { Tooltips } from './components/common'
+import createClient from './client'
+import Onboarding from './components/onboarding/Onboarding'
+import Loading from './components/Loading'
+import Router from './components/Router'
+import Login from './components/Login'
 
-// We could pass some initial state to createStore()
-const store = createStore()
+const client = createClient(createStore)
 
 // Initialize all the Main Process subscriptions
-subscribeToMainProcessMessages(store)
+subscribeToMainProcessMessages(client.store)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <React.Fragment>
-        <App onMount={() => sendToMainProcess('ui-ready')} />
-        <Tooltips />
-        <ToastContainer position="top-center" hideProgressBar />
-      </React.Fragment>
-    </ThemeProvider>
-  </Provider>,
+  <ClientProvider value={client}>
+    <Provider store={client.store}>
+      <ThemeProvider theme={theme}>
+        <ToastsProvider>
+          <Root
+            OnboardingComponent={Onboarding}
+            LoadingComponent={Loading}
+            RouterComponent={Router}
+            LoginComponent={Login}
+          />
+          <Tooltips />
+          <Web3ConnectionNotifier />
+        </ToastsProvider>
+      </ThemeProvider>
+    </Provider>
+  </ClientProvider>,
   document.getElementById('root')
 )
 

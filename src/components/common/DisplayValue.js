@@ -1,17 +1,22 @@
+import withDisplayValueState from 'metronome-wallet-ui-logic/src/hocs/withDisplayValueState'
+import { sanitize } from 'metronome-wallet-ui-logic/src/utils'
 import smartRounder from 'smart-round'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Web3 from 'web3'
 
 class DisplayValue extends React.Component {
   static propTypes = {
-    shouldFormat: PropTypes.bool,
     maxPrecision: PropTypes.number,
+    shouldFormat: PropTypes.bool,
     minDecimals: PropTypes.number,
     maxDecimals: PropTypes.number,
+    coinSymbol: PropTypes.string.isRequired,
+    fromWei: PropTypes.func.isRequired,
     maxSize: PropTypes.string,
     inline: PropTypes.bool,
+    isCoin: PropTypes.bool,
     value: PropTypes.string,
+    toWei: PropTypes.bool,
     post: PropTypes.string,
     pre: PropTypes.string
   }
@@ -31,24 +36,44 @@ class DisplayValue extends React.Component {
   )
 
   render() {
-    const { value, post, pre, maxSize, inline } = this.props
+    const {
+      shouldFormat,
+      coinSymbol,
+      maxSize,
+      fromWei,
+      inline,
+      isCoin,
+      toWei,
+      value,
+      post,
+      pre
+    } = this.props
 
     let formattedValue
 
     try {
-      formattedValue = this.round(Web3.utils.fromWei(value), true)
+      formattedValue = this.round(
+        toWei ? sanitize(value) : fromWei(value),
+        shouldFormat
+      )
     } catch (e) {
       formattedValue = null
     }
 
     return (
-      <div style={{ fontSize: maxSize, display: inline ? 'inline' : 'block' }}>
+      <div
+        style={{
+          whiteSpace: 'nowrap',
+          fontSize: maxSize,
+          display: inline ? 'inline' : 'block'
+        }}
+      >
         {pre}
         {formattedValue || '?'}
-        {post}
+        {isCoin ? ` ${coinSymbol}` : post}
       </div>
     )
   }
 }
 
-export default DisplayValue
+export default withDisplayValueState(DisplayValue)

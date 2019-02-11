@@ -3,38 +3,38 @@
 exports[`<AmountFields/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-jzJRlG bHelQC"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-fjdhpX drJUfP"
     >
       <button
-        type="button"
         class="sc-htpNat fpAZyb"
         data-testid="max-btn"
         tabindex="-1"
+        type="button"
       >
         MAX
       </button>
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-gqjmRU dJlQgb"
           for="ethAmount"
         >
           Amount (ETH)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="ethAmount"
+          class="sc-VigVT bvGVcQ"
           data-testid="ethAmount-field"
+          id="ethAmount"
           placeholder="0.00"
+          type="text"
           value=""
         />
       </div>
     </div>
     <div
-      class="sc-hMqMXs dnTKXF"
+      class="sc-kAzzGY djrWJo"
     >
       <svg
         class="sc-bxivhb hXQRLM"
@@ -46,21 +46,21 @@ exports[`<AmountFields/> should match its snapshot 1`] = `
       </svg>
     </div>
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-fjdhpX drJUfP"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-gqjmRU dJlQgb"
           for="usdAmount"
         >
           Amount (USD)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="usdAmount"
+          class="sc-VigVT bvGVcQ"
           data-testid="usdAmount-field"
+          id="usdAmount"
           placeholder="0.00"
+          type="text"
           value=""
         />
       </div>
@@ -202,45 +202,45 @@ exports[`<ConvertMETtoETHForm/> should match its snapshot 1`] = `
 exports[`<GasEditor/> should match its snapshot 1`] = `
 <div>
   <div
-    class="sc-jKJlTe fkNCah"
+    class="sc-jzJRlG bHelQC"
   >
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-fjdhpX drJUfP"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-gqjmRU dJlQgb"
           for="gasLimit"
         >
           Gas Limit (Units)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="gasLimit"
+          class="sc-VigVT bvGVcQ"
           data-testid="gas-limit-field"
+          id="gasLimit"
+          type="text"
           value="21000"
         />
       </div>
     </div>
     <div
-      class="sc-hMqMXs keWZLk"
+      class="sc-kAzzGY fJFJon"
     />
     <div
-      class="sc-ckVGcZ kvHIve"
+      class="sc-fjdhpX drJUfP"
     >
       <div>
         <label
-          class="sc-dnqmqq ilsafR"
+          class="sc-gqjmRU dJlQgb"
           for="gasPrice"
         >
           Gas Price (Gwei)
         </label>
         <input
-          class="sc-iwsKbI kZiHEX"
-          type="text"
-          id="gasPrice"
+          class="sc-VigVT bvGVcQ"
           data-testid="gas-price-field"
+          id="gasPrice"
+          type="text"
           value="1"
         />
       </div>

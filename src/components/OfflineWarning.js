@@ -1,9 +1,10 @@
-import * as selectors from '../selectors'
-import { connect } from 'react-redux'
-import { BaseBtn, CloseIcon } from './common'
+import withOfflineWarningState from 'metronome-wallet-ui-logic/src/hocs/withOfflineWarningState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
+
+import { BaseBtn } from './common'
+import CloseIcon from './icons/CloseIcon'
 
 const Container = styled.div`
   position: fixed;
@@ -18,7 +19,7 @@ const Container = styled.div`
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 `
 
-const DismissBtn = BaseBtn.extend`
+const DismissBtn = styled(BaseBtn)`
   position: relative;
   top: 1px;
   left: 6px;
@@ -26,35 +27,17 @@ const DismissBtn = BaseBtn.extend`
 
 class OfflineWarning extends React.Component {
   static propTypes = {
-    isOnline: PropTypes.bool.isRequired
+    handleDismissClick: PropTypes.func.isRequired,
+    isVisible: PropTypes.bool.isRequired
   }
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      isVisible: !props.isOnline
-    }
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.isOnline) {
-      this.setState({ isVisible: false })
-    } else if (newProps.isOnline !== this.props.isOnline) {
-      this.setState({ isVisible: true })
-    }
-  }
-
-  onDismissClick = () => this.setState({ isVisible: false })
 
   render() {
-    const { isVisible } = this.state
-
     return (
-      isVisible && (
+      this.props.isVisible && (
         <Container>
           Your wallet is not connected to the network. Check your internet
           connection.{' '}
-          <DismissBtn onClick={this.onDismissClick}>
+          <DismissBtn onClick={this.props.handleDismissClick}>
             <CloseIcon size="1.2rem" />
           </DismissBtn>
         </Container>
@@ -63,8 +46,4 @@ class OfflineWarning extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  isOnline: selectors.getIsOnline(state)
-})
-
-export default connect(mapStateToProps)(OfflineWarning)
+export default withOfflineWarningState(OfflineWarning)

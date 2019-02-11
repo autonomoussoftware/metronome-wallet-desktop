@@ -1,0 +1,33 @@
+patch-package
+--- a/node_modules/react-scripts/config/webpack.config.js
++++ b/node_modules/react-scripts/config/webpack.config.js
+@@ -323,7 +323,8 @@ module.exports = function(webpackEnv) {
+               loader: require.resolve('eslint-loader'),
+             },
+           ],
+-          include: paths.appSrc,
++          include: [paths.appSrc, /metronome-wallet-ui-logic/],
++          exclude: [/metronome-wallet-ui-logic\/node_modules/],
+         },
+         {
+           // "oneOf" will traverse all following loaders until one will
+@@ -345,7 +346,7 @@ module.exports = function(webpackEnv) {
+             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
+             {
+               test: /\.(js|mjs|jsx|ts|tsx)$/,
+-              include: paths.appSrc,
++              include: [paths.appSrc, /metronome-wallet-ui-logic/],
+               loader: require.resolve('babel-loader'),
+               options: {
+                 customize: require.resolve(
+--- a/node_modules/react-scripts/scripts/utils/createJestConfig.js
++++ b/node_modules/react-scripts/scripts/utils/createJestConfig.js
+@@ -54,7 +54,7 @@ module.exports = (resolve, rootDir, isEjecting) => {
+       ),
+     },
+     transformIgnorePatterns: [
+-      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
++      '[/\\\\]node_modules[/\\\\](?!(metronome-wallet-ui-logic)/).+\\.(js|jsx|ts|tsx)$',
+       '^.+\\.module\\.(css|sass|scss)$',
+     ],
+     moduleNameMapper: {

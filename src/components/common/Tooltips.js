@@ -1,11 +1,11 @@
-import { default as styled, injectGlobal, keyframes } from 'styled-components'
+import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import ReactHintFactory from 'react-hint'
 import React from 'react'
 import 'react-hint/css/index.css'
 
 const ReactHint = ReactHintFactory(React)
 
-injectGlobal`
+const GlobalStyles = createGlobalStyle`
   .react-hint {
     &:after { display: none !important; }
   }
@@ -22,7 +22,9 @@ const Container = styled.div`
   background-color: ${p =>
     p.negative
       ? p.theme.colors.primary
-      : p.darker ? p.theme.colors.bg.darker : p.theme.colors.dark};
+      : p.darker
+      ? p.theme.colors.darker
+      : p.theme.colors.dark};
   max-width: ${p => p.maxWidth || 'auto'};
   font-size: 1.3rem;
   padding: 8px 12px;
@@ -48,25 +50,28 @@ const Container = styled.div`
     border-top-color: ${p =>
       p.negative
         ? p.theme.colors.primary
-        : p.darker ? p.theme.colors.bg.darker : p.theme.colors.dark};
+        : p.darker
+        ? p.theme.colors.darker
+        : p.theme.colors.dark};
   }
 `
 
-const onRenderContent = (target, content) => {
-  return (
-    <Container
-      data-testid="tooltip"
-      negative={target.dataset.rhNegative}
-      maxWidth={target.dataset.rhWidth}
-      darker={target.dataset.rhDarker}
-    >
-      {content}
-    </Container>
-  )
-}
+const onRenderContent = (target, content) => (
+  <Container
+    data-testid="tooltip"
+    negative={target.dataset.rhNegative}
+    maxWidth={target.dataset.rhWidth}
+    darker={target.dataset.rhDarker}
+  >
+    {content}
+  </Container>
+)
 
 const Tooltips = () => (
-  <ReactHint events delay={100} onRenderContent={onRenderContent} />
+  <React.Fragment>
+    <ReactHint events delay={100} onRenderContent={onRenderContent} />
+    <GlobalStyles />
+  </React.Fragment>
 )
 
 export default Tooltips
