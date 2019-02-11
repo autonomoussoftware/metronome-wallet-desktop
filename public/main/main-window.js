@@ -31,7 +31,7 @@ function initAutoUpdate () {
   if (isDev) {
     return
   }
-  if (process.platform === 'linux' || process.platform === 'windows') {
+  if (process.platform === 'linux') {
     return
   }
 
