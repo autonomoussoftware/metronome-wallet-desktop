@@ -7,9 +7,6 @@ init:
 
 shallow_clone: true
 
-environment:
-  DEBUG: electron-builder
-
 cache:
   - node_modules
   - '%USERPROFILE%\.electron'
