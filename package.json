@@ -45,7 +45,7 @@
     "lodash": "4.17.11",
     "metronome-contracts": "2.0.0",
     "metronome-wallet-core": "2.0.1",
-    "metronome-wallet-ui-logic": "2.0.1",
+    "metronome-wallet-ui-logic": "2.1.0",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
     "qrcode.react": "0.7.2",

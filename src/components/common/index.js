@@ -3,6 +3,7 @@ import TextInput, { Label } from './TextInput'
 import ConfirmationWizard from './ConfirmationWizard'
 import DisplayValue from './DisplayValue'
 import AmountFields from './AmountFields'
+import LastUpdated from './LastUpdated'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
 import LoadingBar from './LoadingBar'
@@ -21,6 +22,7 @@ export {
   ConfirmationWizard,
   DisplayValue,
   AmountFields,
+  LastUpdated,
   ItemFilter,
   DarkLayout,
   LoadingBar,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DarkLayout, LoadingBar, Text, Btn, Sp } from '../common'
+import { DarkLayout, LastUpdated, LoadingBar, Text, Btn, Sp } from '../common'
 import ConvertDrawer from './ConvertDrawer'
 import Stats from './Stats'
 
@@ -42,6 +42,7 @@ class Converter extends React.Component {
     converterPriceUSD: PropTypes.string.isRequired,
     convertDisabled: PropTypes.bool.isRequired,
     converterStatus: PropTypes.object,
+    lastUpdated: PropTypes.number,
     coinSymbol: PropTypes.string.isRequired
   }
 
@@ -94,6 +95,9 @@ class Converter extends React.Component {
             </LoadingContainer>
           </Sp>
         )}
+        <Sp px={6}>
+          <LastUpdated timestamp={this.props.lastUpdated} />
+        </Sp>
       </DarkLayout>
     )
   }
