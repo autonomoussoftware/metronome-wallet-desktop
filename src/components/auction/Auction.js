@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DarkLayout, LoadingBar, Text, Btn, Sp } from '../common'
+import { DarkLayout, LastUpdated, LoadingBar, Text, Btn, Sp } from '../common'
 import BuyMETDrawer from './BuyMETDrawer'
 import CountDown from './CountDown'
 import Stats from './Stats'
@@ -54,6 +54,7 @@ class Auction extends React.Component {
     auctionPriceUSD: PropTypes.string.isRequired,
     auctionStatus: PropTypes.object,
     buyDisabled: PropTypes.bool.isRequired,
+    lastUpdated: PropTypes.number,
     title: PropTypes.string
   }
 
@@ -107,6 +108,9 @@ class Auction extends React.Component {
             </LoadingContainer>
           </Sp>
         )}
+        <Sp px={6}>
+          <LastUpdated timestamp={this.props.lastUpdated} />
+        </Sp>
       </DarkLayout>
     )
   }

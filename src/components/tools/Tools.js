@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 import ConfirmModal from './ConfirmModal'
+import WalletStatus from './WalletStatus'
 import {
   ConfirmationWizard,
   DarkLayout,
@@ -115,6 +116,11 @@ class Tools extends React.Component {
             onConfirm={this.props.onRescanTransactions}
             isOpen={this.state.activeModal === 'confirm-rescan'}
           />
+        </Sp>
+        <Sp mt={5}>
+          <hr />
+          <h4>Wallet Information</h4>
+          <WalletStatus />
         </Sp>
       </Sp>
     )

@@ -19,6 +19,6 @@ module.exports = {
   requiredPasswordEntropy: parseInt(process.env.REQUIRED_PASSWORD_ENTROPY || 72, 10),
   scanTransactionTimeout: 240000,
   sentryDsn: process.env.SENTRY_DSN,
-  statePersistanceDebounce: 15000,
+  statePersistanceDebounce: 2000,
   trackingId: process.env.TRACKING_ID
 }

@@ -18,9 +18,13 @@ function createClient(createStore) {
   window.ipcRenderer.on('ui-ready', (ev, payload) => {
     const debounceTime = get(payload, 'data.config.statePersistanceDebounce', 0)
     store.subscribe(
-      debounce(function() {
-        utils.forwardToMainProcess('persist-state')(store.getState())
-      }, debounceTime)
+      debounce(
+        function() {
+          utils.forwardToMainProcess('persist-state')(store.getState())
+        },
+        debounceTime,
+        { maxWait: 2 * debounceTime }
+      )
     )
   })
 
@@ -112,6 +116,7 @@ function createClient(createStore) {
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,
+    getAppVersion: window.getAppVersion,
     onInit,
     store
   }
