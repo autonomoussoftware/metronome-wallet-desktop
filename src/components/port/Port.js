@@ -101,6 +101,7 @@ const PortBtn = styled(Btn)`
 class Port extends React.Component {
   static propTypes = {
     portDisabledReason: PropTypes.string,
+    shouldRenderForm: PropTypes.bool.isRequired,
     pendingImports: PropTypes.arrayOf(
       PropTypes.shape({
         destinationChain: PropTypes.string.isRequired,
@@ -181,10 +182,12 @@ class Port extends React.Component {
             </PortBtn>
           </BtnContainer>
 
-          <PortDrawer
-            onRequestClose={this.onCloseModal}
-            isOpen={this.state.activeModal === 'port'}
-          />
+          {this.props.shouldRenderForm && (
+            <PortDrawer
+              onRequestClose={this.onCloseModal}
+              isOpen={this.state.activeModal === 'port'}
+            />
+          )}
         </Container>
       </DarkLayout>
     )
