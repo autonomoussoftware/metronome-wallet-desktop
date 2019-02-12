@@ -82,12 +82,12 @@ export default class Filter extends React.Component {
         >
           Converted
         </Tab>
-        {/* <Tab
+        <Tab
           isActive={this.props.activeFilter === 'ported'}
           onClick={() => this.props.onFilterChange('ported')}
         >
           Ported
-        </Tab> */}
+        </Tab>
       </Container>
     )
   }

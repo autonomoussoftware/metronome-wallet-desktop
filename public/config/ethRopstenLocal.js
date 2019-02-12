@@ -4,9 +4,9 @@ const MetronomeContracts = require('metronome-contracts')
 const contracts = MetronomeContracts.ropsten
 
 module.exports = {
-  displayName: 'Ropsten (Local)', // visible in select control
+  displayName: 'Ropsten (Local)',
   chainId: 3,
-  symbol: 'ETH', // visible next to amounts
+  symbol: 'ETH',
 
   // contracts addresses
   tokenPorterAddress: contracts.TokenPorter.address,

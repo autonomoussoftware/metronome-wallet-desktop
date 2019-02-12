@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-// import FailedImportsBadge from './FailedImportsBadge'
+import FailedImportsBadge from './FailedImportsBadge'
 import ConverterIcon from '../icons/ConverterIcon'
 import AuctionIcon from '../icons/AuctionIcon'
 import WalletIcon from '../icons/WalletIcon'
-// import PortIcon from '../icons/PortIcon'
+import PortIcon from '../icons/PortIcon'
 
 const Button = styled(NavLink)`
   display: flex;
@@ -114,13 +114,13 @@ export default class PrimaryNav extends React.Component {
           <Label parent={this.props.parent}>Converter</Label>
         </Button>
 
-        {/* <Button activeClassName="active" data-testid="port-nav-btn" to="/port">
+        <Button activeClassName="active" data-testid="port-nav-btn" to="/port">
           <IconWrapper>
             <PortIcon />
           </IconWrapper>
           <Label parent={this.props.parent}>Port</Label>
           <FailedImportsBadge parent={this.props.parent} />
-        </Button> */}
+        </Button>
       </React.Fragment>
     )
   }

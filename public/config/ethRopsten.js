@@ -1,11 +1,11 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.mainnet
+const contracts = MetronomeContracts.ropsten
 
 module.exports = {
-  displayName: 'Ethereum',
-  chainId: 1,
+  displayName: 'ETH (Ropsten)',
+  chainId: 3,
   symbol: 'ETH',
 
   // contracts addresses
@@ -16,10 +16,10 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://explorer.metronome.io',
-  indexerUrl: 'https://indexer.metronome.io',
-  metApiUrl: 'https://api.metronome.io/',
-  wsApiUrl: 'wss://eth.wallet.metronome.io:8546',
+  explorerUrl: 'https://explorer.metronome.io', // TODO: update!
+  indexerUrl: 'https://indexer.metronome.io', // TODO: update!
+  metApiUrl: 'https://api.metronome.io/', // TODO: update!
+  wsApiUrl: 'wss://eth.wallet.metronome.io:8546', // TODO: update!
 
   // defauls
   coinDefaultGasLimit: '21000',

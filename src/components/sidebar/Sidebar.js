@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 
-// import ChainSelector from './ChainSelector'
+import ChainSelector from './ChainSelector'
 import SecondaryNav from './SecondaryNav'
 import PrimaryNav from './PrimaryNav'
 import LogoIcon from '../icons/LogoIcon'
@@ -34,9 +34,7 @@ const Container = styled.div`
 `
 
 const LogoLargeContainer = styled.div`
-  padding: 3.2rem 3.2rem 5.6rem; // remove this line when reinserting ChainSelector
-  height: 125px; // remove this line when reinserting ChainSelector
-  // padding: 2.4rem 2.4rem 2.8rem 2.4rem; // add this line when reinserting ChainSelector
+  padding: 2.4rem 2.4rem 2.8rem 2.4rem;
   display: none;
   flex-shrink: 0;
 
@@ -46,9 +44,7 @@ const LogoLargeContainer = styled.div`
 `
 
 const LogoSmallContainer = styled.div`
-  padding: 2.3rem 1.6rem; // remove this line when reinserting ChainSelector
-  height: 125px; // remove this line when reinserting ChainSelector
-  // padding: 2.3rem 1.6rem 3.2rem; // add this line when reinserting ChainSelector
+  padding: 2.3rem 1.6rem 3.2rem;
   display: block;
   flex-shrink: 0;
 
@@ -57,17 +53,16 @@ const LogoSmallContainer = styled.div`
   }
 `
 
-// const ChainSelectorContainer = styled.div`
-//   margin: 0 0.8rem 2.4rem;
+const ChainSelectorContainer = styled.div`
+  margin: 0 0.8rem 2.4rem;
 
-//   @media (min-width: 800px) {
-//     margin: 0 1.6rem 2.4rem;
-//   }
-// `
+  @media (min-width: 800px) {
+    margin: 0 1.6rem 2.4rem;
+  }
+`
 
 const PrimaryNavContainer = styled.nav`
   flex-grow: 1;
-  margin-top: 5rem; // remove this line when reinserting ChainSelector
 `
 
 const SecondaryNavContainer = styled.div`
@@ -103,9 +98,9 @@ export default class Sidebar extends React.Component {
           <LogoIcon negative />
         </LogoSmallContainer>
 
-        {/* <ChainSelectorContainer>
+        <ChainSelectorContainer>
           <ChainSelector parent={Container} />
-        </ChainSelectorContainer> */}
+        </ChainSelectorContainer>
 
         <PrimaryNavContainer>
           <PrimaryNav parent={Container} />
