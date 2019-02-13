@@ -2,7 +2,7 @@
 
 const restart = require('../electron-restart')
 const dbManager = require('../database')
-const logger = require('electron-log')
+const logger = require('../../../logger')
 const storage = require('../storage')
 const auth = require('../auth')
 

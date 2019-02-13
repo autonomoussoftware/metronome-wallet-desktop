@@ -2,9 +2,9 @@
 
 const { ipcMain } = require('electron')
 const createCore = require('metronome-wallet-core')
-const logger = require('electron-log')
 const stringify = require('json-stringify-safe')
 
+const logger = require('../../logger')
 const subscriptions = require('./subscriptions')
 const settings = require('./settings')
 const storage = require('./storage')

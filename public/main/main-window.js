@@ -3,10 +3,10 @@
 const { app, BrowserWindow, Notification } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
-const logger = require('electron-log')
 const path = require('path')
 const windowStateKeeper = require('electron-window-state')
 
+const logger = require('../logger')
 const analytics = require('../analytics')
 const restart = require('./client/electron-restart')
 

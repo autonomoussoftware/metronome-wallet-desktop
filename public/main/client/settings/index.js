@@ -1,10 +1,10 @@
 'use strict'
 
-const logger = require('electron-log')
 const settings = require('electron-settings')
 const utils = require('web3-utils')
 const { merge } = require('lodash')
 
+const logger = require('../../../logger')
 const restart = require('../electron-restart')
 const { getDb } = require('../database')
 

@@ -1,8 +1,8 @@
 'use strict'
 
-const logger = require('electron-log')
 const pTimeout = require('p-timeout')
 
+const logger = require('../../../logger')
 const auth = require('../auth')
 const config = require('../../../config')
 const wallet = require('../wallet')
