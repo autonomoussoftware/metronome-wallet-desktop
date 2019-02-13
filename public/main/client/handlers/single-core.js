@@ -26,19 +26,21 @@ function createWallet (data, { coreApi, emitter }) {
   return Promise.all([
     wallet.setSeed(data.seed, data.password),
     wallet.setAddressForWalletId(walletId, address)
-  ]).then(() => emitter.emit('create-wallet', { walletId }))
+  ])
+    .then(wallet.setActiveWallet(walletId))
+    .then(() => emitter.emit('create-wallet', { walletId }))
 }
 
-const openWallet = ({ emitter }) =>
-  wallet.getWallets().forEach(walletId =>
-    wallet.getAddressesForWalletId(walletId).forEach(address =>
-      emitter.emit('open-wallets', {
-        walletIds: [walletId],
-        activeWallet: walletId,
-        address
-      })
-    )
+function openWallet ({ emitter }) {
+  const activeWallet = wallet.getActiveWallet() || wallet.getWallets()[0]
+  wallet.getAddressesForWalletId(activeWallet).forEach(address =>
+    emitter.emit('open-wallets', {
+      walletIds: [activeWallet],
+      activeWallet,
+      address
+    })
   )
+}
 
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
   emitter.emit('transactions-scan-started', {})
