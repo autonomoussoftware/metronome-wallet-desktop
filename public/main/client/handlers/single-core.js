@@ -27,7 +27,7 @@ function createWallet (data, { coreApi, emitter }) {
     wallet.setSeed(data.seed, data.password),
     wallet.setAddressForWalletId(walletId, address)
   ])
-    .then(wallet.setActiveWallet(walletId))
+    .then(() => wallet.setActiveWallet(walletId))
     .then(() => emitter.emit('create-wallet', { walletId }))
 }
 
