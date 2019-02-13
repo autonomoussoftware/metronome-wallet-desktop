@@ -36,6 +36,9 @@ function initAutoUpdate () {
   }
 
   autoUpdater.checkForUpdates()
+    .catch(function (err) {
+      logger.warn('Could not find updates', err.message)
+    })
 
   autoUpdater.on('checking-for-update', () => logger.info('Checking for update...'))
   autoUpdater.on('update-available', () => logger.info('Update available.'))
