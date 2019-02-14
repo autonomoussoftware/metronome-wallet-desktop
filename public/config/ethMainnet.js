@@ -16,7 +16,7 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://explorer.metronome.io',
+  explorerUrl: 'https://etherscan.io/tx/{{hash}}',
   indexerUrl: 'https://indexer.metronome.io',
   metApiUrl: 'https://api.metronome.io/',
   wsApiUrl: 'wss://eth.wallet.metronome.io:8546',

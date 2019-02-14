@@ -16,7 +16,7 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://explorer.metronome.io', // TODO: update!
+  explorerUrl: 'https://mordenexplorer.ethertrack.io/tx/{{hash}}',
   indexerUrl: 'http://localhost:3015',
   metApiUrl: 'https://api.metronome.io/', // TODO: update!
   wsApiUrl: 'ws://localhost:8556',

@@ -16,7 +16,7 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'http://localhost:3004',
+  explorerUrl: 'https://ropsten.etherscan.io/tx/{{hash}}',
   indexerUrl: 'http://localhost:3005',
   metApiUrl: 'http://localhost:3002/',
   wsApiUrl: 'ws://localhost:8546',

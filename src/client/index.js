@@ -38,10 +38,7 @@ function createClient(createStore) {
       'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
     )
 
-  const onExplorerLinkClick = transactionHash =>
-    window.openLink(
-      `https://explorer.metronome.io/transactions/${transactionHash}`
-    )
+  const onLinkClick = url => window.openLink(url)
 
   const getStringEntropy = fastPasswordEntropy
 
@@ -111,12 +108,12 @@ function createClient(createStore) {
     ...forwardedMethods,
     isValidMnemonic: keys.isValidMnemonic,
     createMnemonic: keys.createMnemonic,
-    onExplorerLinkClick,
     onTermsLinkClick,
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,
     getAppVersion: window.getAppVersion,
+    onLinkClick,
     onInit,
     store
   }
