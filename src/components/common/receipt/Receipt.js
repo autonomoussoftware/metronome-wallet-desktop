@@ -184,10 +184,7 @@ export default class Receipt extends React.Component {
             </Row>
           )}
         </Scroller>
-        <ExplorerBtn
-          onClick={() => this.props.onExplorerLinkClick(tx.hash)}
-          block
-        >
+        <ExplorerBtn onClick={this.props.onExplorerLinkClick} block>
           VIEW IN EXPLORER
         </ExplorerBtn>
       </Container>
