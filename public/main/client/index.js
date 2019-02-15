@@ -107,15 +107,6 @@ function createClient (config) {
   }))
 
   ipcMain.on('ui-ready', function (webContent, args) {
-    cores.forEach(function (core) {
-      const { emitter, events, coreApi } = startCore(core, webContent)
-      core.emitter = emitter
-      core.events = events
-      core.coreApi = coreApi
-    })
-
-    subscriptions.subscribe(cores)
-
     const onboardingComplete = !!settings.getPasswordHash()
     storage.getState()
       .catch(function (err) {
@@ -135,6 +126,18 @@ function createClient (config) {
       })
       .catch(function (err) {
         logger.error('Could not send ui-ready message back', err.message)
+      })
+      .then(function () {
+        cores.forEach(function (core) {
+          const { emitter, events, coreApi } = startCore(core, webContent)
+          core.emitter = emitter
+          core.events = events
+          core.coreApi = coreApi
+        })
+        subscriptions.subscribe(cores)
+      })
+      .catch(function (err) {
+        logger.error('Could not start cores', err.message)
       })
   })
 
