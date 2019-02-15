@@ -133,10 +133,6 @@ const exportMetronome = (data, core) =>
 const importMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.importMet)(data, core)
 
-// TODO: Implement retry method
-// eslint-disable-next-line no-unused-vars
-const retryImport = (data, core) => Promise.resolve({})
-
 module.exports = {
   refreshAllTransactions,
   getConvertCoinEstimate,
@@ -156,7 +152,6 @@ module.exports = {
   getGasLimit,
   getGasPrice,
   convertCoin,
-  retryImport,
   convertMet,
   openWallet,
   sendMet,
