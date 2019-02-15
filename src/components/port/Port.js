@@ -10,8 +10,13 @@ import PortDrawer from './PortDrawer'
 const Container = styled.div`
   display: flex;
   padding: 3.2rem 4.8rem;
-  align-items: flex-start;
-  flex-direction: row;
+  align-items: stretch;
+  flex-direction: column;
+
+  @media (min-width: 1000px) {
+    align-items: flex-start;
+    flex-direction: row;
+  }
 `
 
 const Title = styled.h2`
@@ -90,8 +95,17 @@ const Details = styled.div`
 `
 
 const BtnContainer = styled.div`
-  margin-top: 5rem;
-  margin-left: 2.4rem;
+  margin-bottom: 3.2rem;
+  order: -1;
+  align-self: center;
+
+  @media (min-width: 1000px) {
+    margin-top: 5rem;
+    margin-left: 2.4rem;
+    margin-bottom: 0;
+    order: 0;
+    align-self: flex-start;
+  }
 `
 
 const PortBtn = styled(Btn)`
@@ -130,30 +144,34 @@ class Port extends React.Component {
       <DarkLayout data-testid="port-container" title="Port">
         <Container>
           <Flex.Item grow="1">
-            <Title>Pending Imports</Title>
-            <List>
-              {this.props.pendingImports.map(item => (
-                <Item key={item.hash}>
-                  <Flex.Row justify="space-between" align="center">
-                    <LeftLabel>
-                      <Validations>
-                        {item.validations}/{item.totalValidators}
-                      </Validations>{' '}
-                      <Hiddable>VALIDATIONS</Hiddable>
-                    </LeftLabel>
-                    <Flex.Column align="flex-end">
-                      <Amount>
-                        <DisplayValue value={item.amount} post=" MET" />
-                      </Amount>
-                      <Details>
-                        IMPORTING FROM <span>{item.originChain}</span> to{' '}
-                        <span>{item.destinationChain}</span>
-                      </Details>
-                    </Flex.Column>
-                  </Flex.Row>
-                </Item>
-              ))}
-            </List>
+            {this.props.pendingImports.length > 0 && (
+              <React.Fragment>
+                <Title>Pending Imports</Title>
+                <List>
+                  {this.props.pendingImports.map(item => (
+                    <Item key={item.hash}>
+                      <Flex.Row justify="space-between" align="center">
+                        <LeftLabel>
+                          <Validations>
+                            {item.validations}/{item.totalValidators}
+                          </Validations>{' '}
+                          <Hiddable>VALIDATIONS</Hiddable>
+                        </LeftLabel>
+                        <Flex.Column align="flex-end">
+                          <Amount>
+                            <DisplayValue value={item.amount} post=" MET" />
+                          </Amount>
+                          <Details>
+                            IMPORTING FROM <span>{item.originChain}</span> to{' '}
+                            <span>{item.destinationChain}</span>
+                          </Details>
+                        </Flex.Column>
+                      </Flex.Row>
+                    </Item>
+                  ))}
+                </List>
+              </React.Fragment>
+            )}
             {this.props.failedImports.length > 0 && (
               <div>
                 <Title>Failed Imports</Title>
@@ -181,14 +199,14 @@ class Port extends React.Component {
               New Port
             </PortBtn>
           </BtnContainer>
-
-          {this.props.shouldRenderForm && (
-            <PortDrawer
-              onRequestClose={this.onCloseModal}
-              isOpen={this.state.activeModal === 'port'}
-            />
-          )}
         </Container>
+
+        {this.props.shouldRenderForm && (
+          <PortDrawer
+            onRequestClose={this.onCloseModal}
+            isOpen={this.state.activeModal === 'port'}
+          />
+        )}
       </DarkLayout>
     )
   }
