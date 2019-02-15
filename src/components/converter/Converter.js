@@ -36,6 +36,13 @@ const LoadingContainer = styled.div`
   margin: 0 auto;
 `
 
+const LastUpdatedContainer = styled.div`
+  padding: 0 2.4rem 3.2rem;
+  @media (min-width: 1180px) {
+    padding: 0 4.8rem 3.2rem;
+  }
+`
+
 class Converter extends React.Component {
   static propTypes = {
     convertDisabledReason: PropTypes.string,
@@ -95,9 +102,9 @@ class Converter extends React.Component {
             </LoadingContainer>
           </Sp>
         )}
-        <Sp px={6}>
+        <LastUpdatedContainer>
           <LastUpdated timestamp={this.props.lastUpdated} />
-        </Sp>
+        </LastUpdatedContainer>
       </DarkLayout>
     )
   }
