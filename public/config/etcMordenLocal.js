@@ -18,7 +18,7 @@ module.exports = {
   // urls
   explorerUrl: 'https://mordenexplorer.ethertrack.io/tx/{{hash}}',
   indexerUrl: 'http://localhost:3015',
-  metApiUrl: 'https://api.metronome.io/', // TODO: update!
+  metApiUrl: 'http://localhost:3012/',
   wsApiUrl: 'ws://localhost:8556',
 
   // defauls
