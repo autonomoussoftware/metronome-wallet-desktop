@@ -20,7 +20,12 @@ function createClient(createStore) {
     store.subscribe(
       debounce(
         function() {
-          utils.forwardToMainProcess('persist-state')(store.getState())
+          utils
+            .forwardToMainProcess('persist-state')(store.getState())
+            .catch(err =>
+              // eslint-disable-next-line no-console
+              console.warn(`Error persisting state: ${err.message}`)
+            )
         },
         debounceTime,
         { maxWait: 2 * debounceTime }
