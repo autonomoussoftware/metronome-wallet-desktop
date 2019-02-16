@@ -26,6 +26,7 @@ export default class Icon extends React.Component {
     isPending: PropTypes.bool.isRequired,
     isFailed: PropTypes.bool.isRequired,
     txType: PropTypes.oneOf([
+      'import-requested',
       'converted',
       'received',
       'imported',
@@ -50,6 +51,7 @@ export default class Icon extends React.Component {
         return <ConverterIcon color={color} />
       case 'auction':
         return <AuctionIcon color={color} />
+      case 'import-requested':
       case 'imported':
         return <ImportIcon color={color} />
       case 'exported':

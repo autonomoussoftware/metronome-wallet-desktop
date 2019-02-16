@@ -114,14 +114,17 @@ export default class Receipt extends React.Component {
             <TypeRow {...tx} />
           </Row>
 
-          {tx.txType === 'exported' && tx.portFee && (
-            <Row>
-              <Label>Fee</Label>
-              <Value>
-                <DisplayValue value={tx.portFee} post=" MET" />
-              </Value>
-            </Row>
-          )}
+          {(tx.txType === 'import-requested' ||
+            tx.txType === 'imported' ||
+            tx.txType === 'exported') &&
+            tx.portFee && (
+              <Row>
+                <Label>Fee</Label>
+                <Value>
+                  <DisplayValue value={tx.portFee} post=" MET" />
+                </Value>
+              </Row>
+            )}
 
           {tx.txType === 'received' && tx.from && (
             <Row>
@@ -146,6 +149,27 @@ export default class Receipt extends React.Component {
             </Row>
           )}
 
+          {tx.txType === 'import-requested' && tx.importedFrom && (
+            <Row>
+              <Label>
+                {this.props.isPending
+                  ? 'Pending import request'
+                  : 'Import requested'}{' '}
+                from
+              </Label>
+              <Value>{tx.importedFrom} blockchain</Value>
+            </Row>
+          )}
+
+          {tx.txType === 'imported' && tx.importedFrom && (
+            <Row>
+              <Label>
+                {this.props.isPending ? 'Pending Import' : 'Imported'} from
+              </Label>
+              <Value>{tx.importedFrom} blockchain</Value>
+            </Row>
+          )}
+
           {tx.portDestinationAddress && (
             <Row>
               <Label>Destination Address</Label>
@@ -158,12 +182,15 @@ export default class Receipt extends React.Component {
             <Value>{this.props.confirmations}</Value>
           </Row>
 
-          {tx.txType === 'exported' && tx.portBurnHash && (
-            <Row>
-              <Label>Port burn hash</Label>
-              <Hash>{tx.portBurnHash}</Hash>
-            </Row>
-          )}
+          {(tx.txType === 'import-requested' ||
+            tx.txType === 'imported' ||
+            tx.txType === 'exported') &&
+            tx.portBurnHash && (
+              <Row>
+                <Label>Port burn hash</Label>
+                <Hash>{tx.portBurnHash}</Hash>
+              </Row>
+            )}
 
           {tx.gasUsed && (
             <Row>

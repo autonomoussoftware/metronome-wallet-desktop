@@ -14,8 +14,8 @@ const Container = styled.div`
     p.isPending
       ? p.theme.colors.copy
       : p.isFailed
-        ? p.theme.colors.danger
-        : p.theme.colors.primary};
+      ? p.theme.colors.danger
+      : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
   font-size: 2.3vw;
@@ -40,6 +40,7 @@ export default class Amount extends React.Component {
     isFailed: PropTypes.bool.isRequired,
     symbol: PropTypes.string,
     txType: PropTypes.oneOf([
+      'import-requested',
       'converted',
       'imported',
       'exported',
@@ -67,6 +68,7 @@ export default class Amount extends React.Component {
           <DisplayValue
             value={this.props.value}
             post={
+              this.props.txType === 'import-requested' ||
               this.props.txType === 'imported' ||
               this.props.txType === 'exported'
                 ? ' MET'

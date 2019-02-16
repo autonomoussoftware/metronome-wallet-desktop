@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 import { DarkLayout, DisplayValue, Flex, Btn } from '../common'
+import RetryImportDrawer from './RetryImportDrawer'
 import FailedImports from './FailedImports'
 import PortDrawer from './PortDrawer'
 
@@ -114,6 +115,7 @@ const PortBtn = styled(Btn)`
 
 class Port extends React.Component {
   static propTypes = {
+    retryDisabledReason: PropTypes.string,
     portDisabledReason: PropTypes.string,
     shouldRenderForm: PropTypes.bool.isRequired,
     pendingImports: PropTypes.arrayOf(
@@ -127,17 +129,26 @@ class Port extends React.Component {
       })
     ).isRequired,
     failedImports: PropTypes.array.isRequired,
-    portDisabled: PropTypes.bool.isRequired,
-    onRetry: PropTypes.func.isRequired
+    retryDisabled: PropTypes.bool.isRequired,
+    portDisabled: PropTypes.bool.isRequired
   }
 
   state = {
+    retryCandidate: null,
     activeModal: null
   }
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
 
-  onCloseModal = () => this.setState({ activeModal: null })
+  onCloseModal = () =>
+    this.setState({ activeModal: null, retryCandidate: null })
+
+  onRetryClick = hash => {
+    const retryCandidate = this.props.failedImports.find(
+      ({ currentBurnHash }) => currentBurnHash === hash
+    )
+    this.setState({ activeModal: 'retry-import', retryCandidate })
+  }
 
   render() {
     return (
@@ -180,7 +191,9 @@ class Port extends React.Component {
                   clicking Retry.
                 </Description>
                 <FailedImports
-                  onRetry={this.props.onRetry}
+                  retryDisabledReason={this.props.retryDisabledReason}
+                  retryDisabled={this.props.retryDisabled}
+                  onRetryClick={this.onRetryClick}
                   items={this.props.failedImports}
                 />
               </div>
@@ -205,6 +218,14 @@ class Port extends React.Component {
           <PortDrawer
             onRequestClose={this.onCloseModal}
             isOpen={this.state.activeModal === 'port'}
+          />
+        )}
+
+        {this.props.shouldRenderForm && (
+          <RetryImportDrawer
+            onRequestClose={this.onCloseModal}
+            importData={this.state.retryCandidate}
+            isOpen={this.state.activeModal === 'retry-import'}
           />
         )}
       </DarkLayout>

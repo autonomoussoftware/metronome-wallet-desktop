@@ -68,40 +68,45 @@ const RetryBtn = styled(Btn)`
 
 export default class FailedImports extends React.Component {
   static propTypes = {
+    retryDisabledReason: PropTypes.string,
+    retryDisabled: PropTypes.bool.isRequired,
+    onRetryClick: PropTypes.func.isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
+        currentBurnHash: PropTypes.string.isRequired,
         originChain: PropTypes.string.isRequired,
-        receipt: PropTypes.shape({}),
-        meta: PropTypes.shape({
-          currentBurnHash: PropTypes.string.isRequired,
-          value: PropTypes.string.isRequired
-        })
+        value: PropTypes.string.isRequired,
+        from: PropTypes.string.isRequired
       })
-    ).isRequired,
-    onRetry: PropTypes.func.isRequired
+    ).isRequired
   }
 
-  handleRetryClick = e => this.props.onRetry(e.target.dataset.hash)
+  handleRetryClick = e => this.props.onRetryClick(e.target.dataset.hash)
 
   render() {
     return (
       <List>
         {this.props.items.map(item => (
-          <Item key={item.meta.currentBurnHash}>
+          <Item key={item.currentBurnHash}>
             <Flex.Row justify="space-between" align="center">
               <LeftLabel>FAILED</LeftLabel>
               <Flex.Row justify="space-between" align="center">
                 <Flex.Column align="flex-end">
                   <Amount>
-                    <DisplayValue value={item.meta.value} post=" MET" />
+                    <DisplayValue value={item.value} post=" MET" />
                   </Amount>
                   <Details>
                     EXPORTED FROM <span>{item.originChain}</span>
                   </Details>
                 </Flex.Column>
                 <RetryBtn
+                  data-rh-negative
+                  data-disabled={this.props.retryDisabled}
                   data-hash={item.currentBurnHash}
-                  onClick={this.handleRetryClick}
+                  onClick={
+                    this.props.retryDisabled ? null : this.handleRetryClick
+                  }
+                  data-rh={this.props.retryDisabledReason}
                 >
                   Retry
                 </RetryBtn>

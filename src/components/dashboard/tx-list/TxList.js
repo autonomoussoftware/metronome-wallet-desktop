@@ -91,7 +91,9 @@ class TxList extends React.Component {
   )
 
   filterExtractValue = ({ txType }) =>
-    ['imported', 'exported'].includes(txType) ? 'ported' : txType
+    ['import-requested', 'imported', 'exported'].includes(txType)
+      ? 'ported'
+      : txType
 
   render() {
     if (!this.state.isReady) return null

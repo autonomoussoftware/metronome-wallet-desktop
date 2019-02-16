@@ -39,6 +39,7 @@ export default class AmountRow extends React.Component {
     fromValue: PropTypes.string,
     toValue: PropTypes.string,
     txType: PropTypes.oneOf([
+      'import-requested',
       'converted',
       'exported',
       'imported',
@@ -51,6 +52,7 @@ export default class AmountRow extends React.Component {
     value: PropTypes.string
   }
 
+  // eslint-disable-next-line complexity
   render() {
     return (
       <React.Fragment>
@@ -105,6 +107,7 @@ export default class AmountRow extends React.Component {
               maxSize="2rem"
               value={this.props.value}
               post={
+                this.props.txType === 'import-requested' ||
                 this.props.txType === 'imported' ||
                 this.props.txType === 'exported'
                   ? ' MET'

@@ -92,6 +92,7 @@ function createClient(createStore) {
     onOnboardingCompleted: utils.forwardToMainProcess('onboarding-completed'),
     recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
     getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),
+    getImportGasLimit: utils.forwardToMainProcess('get-import-gas-limit'),
     getTokensGasLimit: utils.forwardToMainProcess('get-tokens-gas-limit'),
     portMetronome: utils.forwardToMainProcess('port-metronome', 750000),
     validatePassword: utils.forwardToMainProcess('validate-password'),

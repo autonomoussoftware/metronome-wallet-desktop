@@ -38,8 +38,10 @@ export default class TypeRow extends React.Component {
           {this.props.isCancelApproval
             ? 'Allowance canceled'
             : this.props.isApproval
-              ? 'Allowance set'
-              : this.props.txType}
+            ? 'Allowance set'
+            : this.props.txType === 'import-requested'
+            ? 'Import Request'
+            : this.props.txType}
         </Type>
       </React.Fragment>
     )
