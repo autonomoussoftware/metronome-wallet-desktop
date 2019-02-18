@@ -114,7 +114,7 @@ const sendMet = (data, { coreApi }) =>
 const getExportMetFee = (data, { coreApi }) =>
   coreApi.metronome.getExportMetFee(data)
 
-const estimateExportMetGas = (data, { coreApi }) =>
+const getExportGasLimit = (data, { coreApi }) =>
   coreApi.metronome.estimateExportMetGas(
     Object.assign({}, data, {
       destinationChain: config.chains[data.destinationChain].symbol,
@@ -124,7 +124,7 @@ const estimateExportMetGas = (data, { coreApi }) =>
     })
   )
 
-const estimateImportMetGas = (data, { coreApi }) =>
+const getImportGasLimit = (data, { coreApi }) =>
   coreApi.metronome.estimateImportMetGas(data)
 
 const exportMetronome = (data, core) =>
@@ -139,10 +139,10 @@ module.exports = {
   getConvertCoinGasLimit,
   getConvertMetEstimate,
   getConvertMetGasLimit,
-  estimateExportMetGas,
-  estimateImportMetGas,
   refreshTransaction,
   getAuctionGasLimit,
+  getExportGasLimit,
+  getImportGasLimit,
   getTokensGasLimit,
   getExportMetFee,
   exportMetronome,

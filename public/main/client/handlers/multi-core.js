@@ -60,7 +60,7 @@ function getPortFees (data, cores) {
     .getExportMetFee(data, exportCore)
     .then(fee =>
       singleCore
-        .estimateExportMetGas(Object.assign({}, data, { fee }), exportCore)
+        .getExportGasLimit(Object.assign({}, data, { fee }), exportCore)
         .then(({ gasLimit }) => ({ exportGasLimit: gasLimit, fee }))
     )
 }
@@ -75,10 +75,12 @@ function portMetronome (data, cores) {
   return singleCore
     .exportMetronome(exportData, exportCore)
     .then(function ({ receipt }) {
-      const parsedExportReceipt = flatten(Object.keys(receipt.events)
-        .filter(e => !receipt.events[e].event) // Filter already parsed event keys
-        .map(e => receipt.events[e]) // Get not parsed events
-        .map(e => exportCore.coreApi.explorer.tryParseEventLog(e))) // Try to parse each event
+      const parsedExportReceipt = flatten(
+        Object.keys(receipt.events)
+          .filter(e => !receipt.events[e].event) // Filter already parsed event keys
+          .map(e => receipt.events[e]) // Get not parsed events
+          .map(e => exportCore.coreApi.explorer.tryParseEventLog(e))
+      ) // Try to parse each event
         .find(e => e.parsed.event === 'LogExportReceipt') // Get LogExportReceipt event
       if (!parsedExportReceipt || !parsedExportReceipt.parsed) {
         return Promise.reject(
@@ -87,7 +89,7 @@ function portMetronome (data, cores) {
       }
       const { returnValues } = parsedExportReceipt.parsed
       const importCore = findCore(cores, data.destinationChain)
-      const importData = Object.assign({}, data, {
+      const importData = {
         blockTimestamp: returnValues.blockTimestamp,
         burnSequence: returnValues.burnSequence,
         currentBurnHash: returnValues.currentBurnHash,
@@ -101,9 +103,18 @@ function portMetronome (data, cores) {
         originChain: config.chains[data.chain].symbol,
         previousBurnHash: returnValues.prevBurnHash,
         supply: returnValues.supplyOnAllChains,
-        value: returnValues.amountToBurn
-      })
-      return singleCore.importMetronome(importData, importCore)
+        value: returnValues.amountToBurn,
+        password: data.password,
+        walletId: data.walletId
+      }
+      return singleCore
+        .getImportGasLimit(importData, importCore)
+        .then(function ({ gasLimit }) {
+          return singleCore.importMetronome(
+            Object.assign({}, importData, { gas: gasLimit }),
+            importCore
+          )
+        })
     })
 }
 
