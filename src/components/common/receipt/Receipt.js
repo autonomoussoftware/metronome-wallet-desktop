@@ -102,12 +102,12 @@ export default class Receipt extends React.Component {
     return (
       <Container data-testid="receipt-modal">
         <Scroller>
-          {tx.txType !== 'unknown' && (
+          {tx.txType !== 'unknown' && tx.txType !== 'attestation' && (
             <Row first>
               <AmountRow
                 {...tx}
-                isPending={isPending}
                 coinSymbol={coinSymbol}
+                isPending={isPending}
               />
             </Row>
           )}
@@ -193,15 +193,12 @@ export default class Receipt extends React.Component {
             <Value>{this.props.confirmations}</Value>
           </Row>
 
-          {(tx.txType === 'import-requested' ||
-            tx.txType === 'imported' ||
-            tx.txType === 'exported') &&
-            tx.portBurnHash && (
-              <Row>
-                <Label>Port burn hash</Label>
-                <Hash>{tx.portBurnHash}</Hash>
-              </Row>
-            )}
+          {tx.portBurnHash && (
+            <Row>
+              <Label>Port burn hash</Label>
+              <Hash>{tx.portBurnHash}</Hash>
+            </Row>
+          )}
 
           {tx.gasUsed && (
             <Row>
