@@ -1,3 +1,4 @@
+import { toChecksumAddress } from 'web3-utils'
 import withPortState from 'metronome-wallet-ui-logic/src/hocs/withPortState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -147,7 +148,13 @@ class Port extends React.Component {
     const retryCandidate = this.props.failedImports.find(
       ({ currentBurnHash }) => currentBurnHash === hash
     )
-    this.setState({ activeModal: 'retry-import', retryCandidate })
+    this.setState({
+      activeModal: 'retry-import',
+      retryCandidate: {
+        ...retryCandidate,
+        from: toChecksumAddress(retryCandidate.from)
+      }
+    })
   }
 
   render() {
