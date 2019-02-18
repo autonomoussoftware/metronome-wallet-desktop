@@ -4,10 +4,10 @@ import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
 import React from 'react'
 
+import { BaseBtn, Btn } from '../Btn'
 import DisplayValue from '../DisplayValue'
 import AmountRow from './AmountRow'
 import TypeRow from './TypeRow'
-import { Btn } from '../Btn'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.medium};
@@ -68,6 +68,17 @@ const ExplorerBtn = styled(Btn)`
   font-size: 1.4rem;
   letter-spacing: 1.4px;
   border-radius: 0;
+`
+
+const InspectBtn = styled(BaseBtn)`
+  letter-spacing: 1.4px;
+  color: ${p => p.theme.colors.weak};
+  width: 100%;
+  font-size: 1.1rem;
+  line-height: 2;
+  padding: 0 1rem;
+  margin: -1rem 0 1rem;
+  text-transform: uppercase;
 `
 
 export default class Receipt extends React.Component {
@@ -209,6 +220,12 @@ export default class Receipt extends React.Component {
               <Label>Block number</Label>
               <Hash>{tx.blockNumber}</Hash>
             </Row>
+          )}
+          {tx.meta && window.isDev && (
+            // eslint-disable-next-line no-alert
+            <InspectBtn onClick={() => alert(JSON.stringify(tx.meta, null, 2))}>
+              Inspect raw metadata
+            </InspectBtn>
           )}
         </Scroller>
         <ExplorerBtn onClick={this.props.onExplorerLinkClick} block>
