@@ -52,10 +52,12 @@ function onLoginSubmit (data, cores) {
   })
 }
 
-const findCore = (cores, chain) => cores.find(e => e.chain === chain)
+const findCoreByChainName = (cores, chain) => cores.find(e => e.chain === chain)
+
+const findCoreBySymbol = (cores, ticker) => cores.find(e => e.config.symbol === ticker)
 
 function getPortFees (data, cores) {
-  const exportCore = findCore(cores, data.chain)
+  const exportCore = findCoreByChainName(cores, data.chain)
   return singleCore
     .getExportMetFee(data, exportCore)
     .then(fee =>
@@ -65,8 +67,24 @@ function getPortFees (data, cores) {
     )
 }
 
+const withMerkleRoot = fn => function (data, cores) {
+  const exportCore = findCoreBySymbol(cores, data.originChain)
+  const importCore = findCoreByChainName(cores, data.chain)
+  return singleCore.getMerkleRoot(data.burnSequence, exportCore)
+    .then(function (root) {
+      const importData = Object.assign({}, data, { root })
+      return fn(importData, importCore)
+    })
+}
+
+const importMetronome = (data, cores) =>
+  withMerkleRoot(singleCore.importMetronome)(data, cores)
+
+const getImportMetGas = (data, cores) =>
+  withMerkleRoot(singleCore.getImportGasLimit)(data, cores)
+
 function portMetronome (data, cores) {
-  const exportCore = findCore(cores, data.chain)
+  const exportCore = findCoreByChainName(cores, data.chain)
   const exportData = Object.assign({}, data, {
     destinationChain: config.chains[data.destinationChain].symbol,
     destinationMetAddress: config.chains[data.destinationChain].metTokenAddress,
@@ -88,7 +106,7 @@ function portMetronome (data, cores) {
         )
       }
       const { returnValues } = parsedExportReceipt.parsed
-      const importCore = findCore(cores, data.destinationChain)
+      const importCore = findCoreByChainName(cores, data.destinationChain)
       const importData = {
         blockTimestamp: returnValues.blockTimestamp,
         burnSequence: returnValues.burnSequence,
@@ -126,6 +144,8 @@ function portMetronome (data, cores) {
 module.exports = {
   onboardingCompleted,
   recoverFromMnemonic,
+  importMetronome,
+  getImportMetGas,
   portMetronome,
   onLoginSubmit,
   getPortFees
