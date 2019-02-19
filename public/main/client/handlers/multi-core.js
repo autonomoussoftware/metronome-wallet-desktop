@@ -108,7 +108,7 @@ function portMetronome (data, cores) {
         walletId: data.walletId
       }
       return singleCore
-        .getMerkleRoot({ burnSequence: returnValues.burnSequence }, exportCore)
+        .getMerkleRoot(returnValues.burnSequence, exportCore)
         .then(function (root) {
           Object.assign(importData, { root })
           return singleCore
