@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
+import ReadOnlyField from './ReadOnlyField'
+import FeeEstimates from './FeeEstimates'
 import {
   ConfirmationWizard,
   DisplayValue,
@@ -11,32 +13,9 @@ import {
   FieldBtn,
   Selector,
   Drawer,
-  Label,
-  Flex,
   Btn,
   Sp
 } from '../common'
-import FeeEstimates from './FeeEstimates'
-
-const SourceField = styled(Flex.Row)`
-  background-color: ${({ theme }) => theme.colors.lightShade};
-  padding: 2rem 1.6rem;
-  margin-top: 0.8rem;
-`
-
-const ChainName = styled.div`
-  color: ${({ theme }) => theme.colors.light};
-  font-size: 1.3rem;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-`
-
-const Balance = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: 1.3rem;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-`
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -110,13 +89,12 @@ class PortDrawer extends React.Component {
   renderForm = goToReview => (
     <form onSubmit={goToReview} noValidate data-testid="port-form">
       <Sp py={4} px={3}>
-        <Label htmlFor="source-field">Source</Label>
-        <SourceField justify="space-between">
-          <ChainName>{this.props.sourceDisplayName}</ChainName>
-          <Balance>
-            <DisplayValue value={this.props.availableMet} post=" MET" />
-          </Balance>
-        </SourceField>
+        <ReadOnlyField
+          suffix={<DisplayValue value={this.props.availableMet} post=" MET" />}
+          value={this.props.sourceDisplayName}
+          label="Source"
+          id="source-field"
+        />
         <Sp py={3}>
           <Selector
             data-testid="destination-field"

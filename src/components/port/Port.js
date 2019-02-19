@@ -87,8 +87,7 @@ class Port extends React.Component {
 
   onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
 
-  onCloseModal = () =>
-    this.setState({ activeModal: null, retryCandidate: null })
+  onCloseModal = () => this.setState({ activeModal: null })
 
   onRetryClick = hash => {
     const retryCandidate = this.props.failedImports.find(

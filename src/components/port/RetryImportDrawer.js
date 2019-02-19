@@ -1,16 +1,29 @@
 import withRetryImportFormState from 'metronome-wallet-ui-logic/src/hocs/withRetryImportFormState'
 import PropTypes from 'prop-types'
+import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
 import React from 'react'
 
+import ReadOnlyField from './ReadOnlyField'
 import {
   ConfirmationWizard,
   DisplayValue,
   GasEditor,
   Drawer,
+  Flex,
   Btn,
   Sp
 } from '../common'
+
+const Message = styled.div`
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding-bottom: 2.4rem;
+
+  & span {
+    color: ${p => p.theme.colors.light};
+  }
+`
 
 const ConfirmationContainer = styled.div`
   font-size: 1.3rem;
@@ -31,22 +44,23 @@ const BtnContainer = styled.div`
 
 class RetryImportDrawer extends React.Component {
   static propTypes = {
+    destinationDisplayName: PropTypes.string.isRequired,
+    originDisplayName: PropTypes.string.isRequired,
     gasEstimateError: PropTypes.bool,
     onRequestClose: PropTypes.func.isRequired,
+    formattedTime: PropTypes.string.isRequired,
     onInputChange: PropTypes.func.isRequired,
     useCustomGas: PropTypes.bool.isRequired,
-    importData: PropTypes.shape({
-      destinationChain: PropTypes.string.isRequired,
-      originChain: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired
-    }),
+    timestamp: PropTypes.number.isRequired,
     resetForm: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     validate: PropTypes.func.isRequired,
     gasPrice: PropTypes.string,
     gasLimit: PropTypes.string,
     errors: PropTypes.object.isRequired,
-    isOpen: PropTypes.bool.isRequired
+    isOpen: PropTypes.bool.isRequired,
+    value: PropTypes.string.isRequired,
+    fee: PropTypes.string.isRequired
   }
 
   componentDidUpdate(prevProps) {
@@ -58,10 +72,10 @@ class RetryImportDrawer extends React.Component {
   renderConfirmation = () => (
     <ConfirmationContainer data-testid="confirmation">
       <React.Fragment>
-        You will import{' '}
-        <DisplayValue inline value={this.props.importData.value} post=" MET" />{' '}
-        from the <span>{this.props.importData.originChain}</span> blockchain to
-        the <span>{this.props.importData.destinationChain}</span> blockchain.
+        You will request an import of{' '}
+        <DisplayValue inline value={this.props.value} post=" MET" /> from the{' '}
+        <span>{this.props.originDisplayName}</span> blockchain to the{' '}
+        <span>{this.props.destinationDisplayName}</span> blockchain.
       </React.Fragment>
     </ConfirmationContainer>
   )
@@ -69,11 +83,38 @@ class RetryImportDrawer extends React.Component {
   renderForm = goToReview => (
     <form onSubmit={goToReview} noValidate data-testid="port-form">
       <Sp py={4} px={3}>
-        <pre style={{ fontSize: '12px' }}>
-          {JSON.stringify(this.props.importData, null, 2)}
-        </pre>
-
-        <Sp mt={3}>
+        <Message>
+          This Port operation was initiated{' '}
+          <span data-rh={this.props.formattedTime}>
+            <TimeAgo timestamp={this.props.timestamp} />
+          </span>
+          .
+        </Message>
+        <ReadOnlyField
+          value={this.props.originDisplayName}
+          label="Origin Blockchain"
+          id="originDisplayName"
+        />
+        <Sp pt={3}>
+          <Flex.Row>
+            <Flex.Item grow="1">
+              <ReadOnlyField
+                value={<DisplayValue value={this.props.value} />}
+                label="Amount (MET)"
+                id="value"
+              />
+            </Flex.Item>
+            <Sp px={1} />
+            <Flex.Item grow="1">
+              <ReadOnlyField
+                value={<DisplayValue value={this.props.fee} />}
+                label="Fee (MET)"
+                id="fee"
+              />
+            </Flex.Item>
+          </Flex.Row>
+        </Sp>
+        <Sp mt={4}>
           <GasEditor
             gasEstimateError={this.props.gasEstimateError}
             onInputChange={this.props.onInputChange}
@@ -84,7 +125,6 @@ class RetryImportDrawer extends React.Component {
           />
         </Sp>
       </Sp>
-
       <BtnContainer>
         <Btn submit block>
           Retry Import
