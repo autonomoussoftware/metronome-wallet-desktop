@@ -133,6 +133,9 @@ const exportMetronome = (data, core) =>
 const importMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.importMet)(data, core)
 
+const getMerkleRoot = (data, { coreApi }) =>
+  coreApi.metronome.getMerkleRoot(data)
+
 module.exports = {
   refreshAllTransactions,
   getConvertCoinEstimate,
@@ -147,6 +150,7 @@ module.exports = {
   getExportMetFee,
   exportMetronome,
   importMetronome,
+  getMerkleRoot,
   buyMetronome,
   createWallet,
   getGasLimit,

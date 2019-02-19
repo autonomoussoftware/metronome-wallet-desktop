@@ -108,12 +108,17 @@ function portMetronome (data, cores) {
         walletId: data.walletId
       }
       return singleCore
-        .getImportGasLimit(importData, importCore)
-        .then(function ({ gasLimit }) {
-          return singleCore.importMetronome(
-            Object.assign({}, importData, { gas: gasLimit }),
-            importCore
-          )
+        .getMerkleRoot({ burnSequence: returnValues.burnSequence }, exportCore)
+        .then(function (root) {
+          Object.assign(importData, { root })
+          return singleCore
+            .getImportGasLimit(importData, importCore)
+            .then(({ gasLimit }) =>
+              singleCore.importMetronome(
+                Object.assign({}, importData, { gas: gasLimit }),
+                importCore
+              )
+            )
         })
     })
 }
