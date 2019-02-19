@@ -46,6 +46,7 @@ export default class Header extends React.Component {
     onWalletRefresh: PropTypes.func.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     activeFilter: PropTypes.string.isRequired,
+    onTitleClick: PropTypes.func.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired
   }
 
@@ -53,7 +54,7 @@ export default class Header extends React.Component {
     return (
       <Container>
         <Flex.Row grow="1">
-          <Title>Transactions</Title>
+          <Title onClick={this.props.onTitleClick}>Transactions</Title>
           {(this.props.hasTransactions ||
             this.props.syncStatus !== 'syncing') && (
             <ScanIndicator
