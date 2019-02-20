@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DisplayValue, Flex, Btn } from '../common'
+import { DisplayValue, Flex } from '../common'
+import RetryBtn from './RetryBtn'
 
 const List = styled.ul`
   list-style-type: none;
@@ -45,24 +46,6 @@ const Details = styled.div`
     font-size: 1.3rem;
     font-weight: 600;
     text-transform: uppercase;
-  }
-`
-
-const RetryBtn = styled(Btn)`
-  margin-left: 2.4rem;
-  background-color: rgba(126, 97, 248, 0.4);
-  background-image: none;
-  color: ${({ theme }) => theme.colors.light};
-  font-size: 1.3rem;
-  letter-spacing: 0.4px;
-  min-width: 108px;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
-  box-shadow: none;
-
-  &:hover,
-  &:focus {
-    opacity: 0.8;
   }
 `
 

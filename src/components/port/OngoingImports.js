@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import React from 'react'
 
 import { DisplayValue, Flex } from '../common'
+import RetryBtn from './RetryBtn'
 
 const List = styled.ul`
   list-style-type: none;
@@ -27,6 +28,7 @@ const LeftLabel = styled.div`
   font-size: 1.1rem;
   letter-spacing: 0.4px;
   color: #c2c4c6;
+  flex-grow: 1;
 `
 
 const Hiddable = styled.span`
@@ -73,6 +75,9 @@ const Details = styled.div`
 export default class OngoingImports extends React.Component {
   static propTypes = {
     attestationThreshold: PropTypes.number.isRequired,
+    retryDisabledReason: PropTypes.string,
+    retryDisabled: PropTypes.bool.isRequired,
+    onRetryClick: PropTypes.func.isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
         attestedCount: PropTypes.number.isRequired,
@@ -83,6 +88,8 @@ export default class OngoingImports extends React.Component {
       })
     ).isRequired
   }
+
+  handleRetryClick = e => this.props.onRetryClick(e.target.dataset.hash)
 
   render() {
     return (
@@ -112,6 +119,17 @@ export default class OngoingImports extends React.Component {
                   IMPORTING FROM <span>{item.importedFrom}</span> BLOCKCHAIN
                 </Details>
               </Flex.Column>
+              <RetryBtn
+                data-rh-negative
+                data-disabled={this.props.retryDisabled}
+                data-hash={item.currentBurnHash}
+                onClick={
+                  this.props.retryDisabled ? null : this.handleRetryClick
+                }
+                data-rh={this.props.retryDisabledReason}
+              >
+                Retry
+              </RetryBtn>
             </Flex.Row>
           </Item>
         ))}

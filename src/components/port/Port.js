@@ -90,9 +90,9 @@ class Port extends React.Component {
   onCloseModal = () => this.setState({ activeModal: null })
 
   onRetryClick = hash => {
-    const retryCandidate = this.props.failedImports.find(
-      ({ currentBurnHash }) => currentBurnHash === hash
-    )
+    const retryCandidate = this.props.failedImports
+      .concat(this.props.ongoingImports)
+      .find(({ currentBurnHash }) => currentBurnHash === hash)
     this.setState({
       activeModal: 'retry-import',
       retryCandidate: {
@@ -138,6 +138,9 @@ class Port extends React.Component {
                 </Description>
                 <OngoingImports
                   attestationThreshold={this.props.attestationThreshold}
+                  retryDisabledReason={this.props.retryDisabledReason}
+                  retryDisabled={this.props.retryDisabled}
+                  onRetryClick={this.onRetryClick}
                   items={this.props.ongoingImports}
                 />
               </React.Fragment>
