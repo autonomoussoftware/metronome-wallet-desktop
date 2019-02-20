@@ -9,12 +9,14 @@ import RetryImportDrawer from './RetryImportDrawer'
 import OngoingImports from './OngoingImports'
 import FailedImports from './FailedImports'
 import PortDrawer from './PortDrawer'
+import PortIcon from '../icons/PortIcon'
 
 const Container = styled.div`
   display: flex;
   padding: 3.2rem 4.8rem;
   align-items: stretch;
   flex-direction: column;
+  justify-content: center;
 
   @media (min-width: 1000px) {
     align-items: flex-start;
@@ -46,6 +48,7 @@ const BtnContainer = styled.div`
   margin-bottom: 3.2rem;
   order: -1;
   align-self: center;
+  text-align: center;
 
   @media (min-width: 1000px) {
     margin-top: 7.2rem;
@@ -58,6 +61,34 @@ const BtnContainer = styled.div`
 
 const PortBtn = styled(Btn)`
   min-width: 200px;
+`
+const NoPortsContainer = styled.div`
+  margin-top: 3.2rem;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: 1000px) {
+    margin-top: -5rem;
+  }
+`
+
+const NoPortsTitle = styled.div`
+  margin-top: 3.4rem;
+  font-weight: 600;
+  font-size: 2.4rem;
+  line-height: 3.2rem;
+  text-align: center;
+  opacity: 0.75;
+`
+
+const NoPortsMessage = styled.div`
+  margin-top: 0.8rem;
+  margin-bottom: 3.2rem;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  text-align: center;
 `
 
 class Port extends React.Component {
@@ -102,52 +133,67 @@ class Port extends React.Component {
     })
   }
 
+  // eslint-disable-next-line complexity
   render() {
     return (
       <DarkLayout data-testid="port-container" title="Port">
         <Container>
-          <Flex.Item grow="1">
-            {this.props.failedImports.length > 0 && (
-              <React.Fragment>
-                <Title>Failed Ports</Title>
-                <Description>
-                  Resubmit incomplete ports that failed to excecute by clicking
-                  Retry.
-                </Description>
-                <FailedImports
-                  retryDisabledReason={this.props.retryDisabledReason}
-                  retryDisabled={this.props.retryDisabled}
-                  onRetryClick={this.onRetryClick}
-                  items={this.props.failedImports}
-                />
-              </React.Fragment>
-            )}
+          {(this.props.failedImports.length > 0 ||
+            this.props.ongoingImports.length > 0) && (
+            <Flex.Item grow="1">
+              {this.props.failedImports.length > 0 && (
+                <React.Fragment>
+                  <Title>Failed Ports</Title>
+                  <Description>
+                    Resubmit incomplete ports that failed to execute by clicking
+                    Retry.
+                  </Description>
+                  <FailedImports
+                    retryDisabledReason={this.props.retryDisabledReason}
+                    retryDisabled={this.props.retryDisabled}
+                    onRetryClick={this.onRetryClick}
+                    items={this.props.failedImports}
+                  />
+                </React.Fragment>
+              )}
 
-            {this.props.ongoingImports.length > 0 && (
-              <React.Fragment>
-                <Title>Ongoing Ports</Title>
-                <Description>
-                  An Import Request requires at least{' '}
-                  <span>
-                    {this.props.attestationThreshold}{' '}
-                    {this.props.attestationThreshold > 1
-                      ? 'validations'
-                      : 'validation'}
-                  </span>{' '}
-                  for the MET to be imported on this chain.
-                </Description>
-                <OngoingImports
-                  attestationThreshold={this.props.attestationThreshold}
-                  retryDisabledReason={this.props.retryDisabledReason}
-                  retryDisabled={this.props.retryDisabled}
-                  onRetryClick={this.onRetryClick}
-                  items={this.props.ongoingImports}
-                />
-              </React.Fragment>
-            )}
-          </Flex.Item>
-
+              {this.props.ongoingImports.length > 0 && (
+                <React.Fragment>
+                  <Title>Ongoing Ports</Title>
+                  <Description>
+                    An Import Request requires at least{' '}
+                    <span>
+                      {this.props.attestationThreshold}{' '}
+                      {this.props.attestationThreshold > 1
+                        ? 'validations'
+                        : 'validation'}
+                    </span>{' '}
+                    for the MET to be imported on this chain.
+                  </Description>
+                  <OngoingImports
+                    attestationThreshold={this.props.attestationThreshold}
+                    retryDisabledReason={this.props.retryDisabledReason}
+                    retryDisabled={this.props.retryDisabled}
+                    onRetryClick={this.onRetryClick}
+                    items={this.props.ongoingImports}
+                  />
+                </React.Fragment>
+              )}
+            </Flex.Item>
+          )}
           <BtnContainer>
+            {this.props.failedImports.length === 0 &&
+              this.props.ongoingImports.length === 0 && (
+                <NoPortsContainer>
+                  <PortIcon size="5.9rem" />
+                  <NoPortsTitle>You have no pending ports</NoPortsTitle>
+                  <NoPortsMessage>
+                    Port your Metronome between any of the other supported
+                    chains.
+                  </NoPortsMessage>
+                </NoPortsContainer>
+              )}
+
             <PortBtn
               data-rh-negative
               data-disabled={this.props.portDisabled}
