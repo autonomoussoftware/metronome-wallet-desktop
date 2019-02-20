@@ -54,7 +54,8 @@ function onLoginSubmit (data, cores) {
 
 const findCoreByChainName = (cores, chain) => cores.find(e => e.chain === chain)
 
-const findCoreBySymbol = (cores, ticker) => cores.find(e => e.config.symbol === ticker)
+const findCoreBySymbol = (cores, ticker) =>
+  cores.find(e => e.config.symbol === ticker)
 
 function getPortFees (data, cores) {
   const exportCore = findCoreByChainName(cores, data.chain)
@@ -67,15 +68,17 @@ function getPortFees (data, cores) {
     )
 }
 
-const withMerkleRoot = fn => function (data, cores) {
-  const exportCore = findCoreBySymbol(cores, data.originChain)
-  const importCore = findCoreByChainName(cores, data.chain)
-  return singleCore.getMerkleRoot(data.burnSequence, exportCore)
-    .then(function (root) {
-      const importData = Object.assign({}, data, { root })
-      return fn(importData, importCore)
-    })
-}
+const withMerkleRoot = fn =>
+  function (data, cores) {
+    const exportCore = findCoreBySymbol(cores, data.originChain)
+    const importCore = findCoreByChainName(cores, data.chain)
+    return singleCore
+      .getMerkleRoot(data.burnSequence, exportCore)
+      .then(function (root) {
+        const importData = Object.assign({}, data, { root })
+        return fn(importData, importCore)
+      })
+  }
 
 const importMetronome = (data, cores) =>
   withMerkleRoot(singleCore.importMetronome)(data, cores)
@@ -97,9 +100,8 @@ function portMetronome (data, cores) {
         Object.keys(receipt.events)
           .filter(e => !receipt.events[e].event) // Filter already parsed event keys
           .map(e => receipt.events[e]) // Get not parsed events
-          .map(e => exportCore.coreApi.explorer.tryParseEventLog(e))
-      ) // Try to parse each event
-        .find(e => e.parsed.event === 'LogExportReceipt') // Get LogExportReceipt event
+          .map(e => exportCore.coreApi.explorer.tryParseEventLog(e)) // Try to parse each event
+      ).find(e => e.parsed.event === 'LogExportReceipt') // Get LogExportReceipt event
       if (!parsedExportReceipt || !parsedExportReceipt.parsed) {
         return Promise.reject(
           new WalletError('There was an error trying to parse export receipt')
