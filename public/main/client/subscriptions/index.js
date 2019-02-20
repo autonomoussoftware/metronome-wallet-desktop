@@ -10,9 +10,9 @@ function subscribe (cores) {
   subscribeWithoutCore()
 }
 
-function unsubscribe () {
+function unsubscribe (cores) {
+  cores.forEach(unsubscribeSingleCore)
   unsubscribeMultiCore()
-  unsubscribeSingleCore()
   unsubscribeWithoutCore()
 }
 

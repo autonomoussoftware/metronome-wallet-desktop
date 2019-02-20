@@ -19,10 +19,14 @@ const Container = styled.div`
 
 const Label = styled.div`
   line-height: 4rem;
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-right: 1.6rem;
   white-space: nowrap;
+
+  @media (min-width: 1100px) {
+    font-size: 2.4rem;
+  }
 `
 
 const Badge = styled.div`

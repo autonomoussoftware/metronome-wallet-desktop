@@ -2,6 +2,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
+import ImportRequestedDetails from './ImportRequestedDetails'
+import AttestationDetails from './AttestationDetails'
 import ConvertedDetails from './ConvertedDetails'
 import ImportedDetails from './ImportedDetails'
 import ExportedDetails from './ExportedDetails'
@@ -34,6 +36,8 @@ export default class Details extends React.Component {
     isPending: PropTypes.bool,
     isFailed: PropTypes.bool.isRequired,
     txType: PropTypes.oneOf([
+      'import-requested',
+      'attestation',
       'converted',
       'received',
       'imported',
@@ -57,10 +61,14 @@ export default class Details extends React.Component {
           <ReceivedDetails {...this.props} />
         ) : this.props.txType === 'converted' ? (
           <ConvertedDetails {...this.props} />
+        ) : this.props.txType === 'import-requested' ? (
+          <ImportRequestedDetails {...this.props} />
         ) : this.props.txType === 'imported' ? (
           <ImportedDetails {...this.props} />
         ) : this.props.txType === 'exported' ? (
           <ExportedDetails {...this.props} />
+        ) : this.props.txType === 'attestation' ? (
+          <AttestationDetails {...this.props} />
         ) : (
           <div>Waiting for metadata</div>
         )}

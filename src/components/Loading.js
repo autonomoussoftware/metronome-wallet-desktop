@@ -11,7 +11,6 @@ const ChecklistContainer = styled(Flex.Row)`
 `
 
 const Title = styled.div`
-  display: none; // remove this line when reinserting ChainSelector
   font-weight: 600;
   font-size: 0.9rem;
   letter-spacing: 1.6px;
@@ -21,7 +20,7 @@ const Title = styled.div`
 `
 
 const Checklist = styled.div`
-  // padding-left: 4.8rem; // add this line when reinserting ChainSelector
+  padding-left: 4.8rem;
 `
 
 class Loading extends React.Component {

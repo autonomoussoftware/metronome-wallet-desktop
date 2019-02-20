@@ -14,8 +14,8 @@ const Container = styled.div`
     p.isPending
       ? p.theme.colors.copy
       : p.isFailed
-        ? p.theme.colors.danger
-        : p.theme.colors.primary};
+      ? p.theme.colors.danger
+      : p.theme.colors.primary};
   display: flex;
   justify-content: flex-end;
   font-size: 2.3vw;
@@ -35,11 +35,14 @@ const Container = styled.div`
 
 export default class Amount extends React.Component {
   static propTypes = {
+    isAttestationValid: PropTypes.bool,
     isProcessing: PropTypes.bool,
     isPending: PropTypes.bool,
     isFailed: PropTypes.bool.isRequired,
     symbol: PropTypes.string,
     txType: PropTypes.oneOf([
+      'import-requested',
+      'attestation',
       'converted',
       'imported',
       'exported',
@@ -51,6 +54,7 @@ export default class Amount extends React.Component {
     value: PropTypes.string.isRequired
   }
 
+  // eslint-disable-next-line complexity
   render() {
     return (
       <Container
@@ -61,12 +65,19 @@ export default class Amount extends React.Component {
           <AuctionAmount {...this.props} />
         ) : this.props.txType === 'converted' ? (
           <ConvertedAmount {...this.props} />
+        ) : this.props.txType === 'attestation' &&
+          this.props.isAttestationValid ? (
+          <div>Attestation Valid</div>
+        ) : this.props.txType === 'attestation' &&
+          !this.props.isAttestationValid ? (
+          <div>Attestation Invalid</div>
         ) : this.props.txType === 'unknown' || this.props.isProcessing ? (
           <div>New transaction</div>
         ) : (
           <DisplayValue
             value={this.props.value}
             post={
+              this.props.txType === 'import-requested' ||
               this.props.txType === 'imported' ||
               this.props.txType === 'exported'
                 ? ' MET'

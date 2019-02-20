@@ -3,6 +3,7 @@ export function subscribeToMainProcessMessages(store) {
     'indexer-connection-status-changed',
     'metronome-token-status-updated',
     'web3-connection-status-changed',
+    'attestation-threshold-updated',
     'connectivity-state-changed',
     'transactions-scan-finished',
     'transactions-scan-started',
