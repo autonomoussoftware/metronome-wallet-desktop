@@ -3,6 +3,7 @@ import TextInput, { Label } from './TextInput'
 import ConfirmationWizard from './ConfirmationWizard'
 import DisplayValue from './DisplayValue'
 import AmountFields from './AmountFields'
+import EntropyMeter from './EntropyMeter'
 import LastUpdated from './LastUpdated'
 import ItemFilter from './ItemFilter'
 import DarkLayout from './DarkLayout'
@@ -22,6 +23,7 @@ export {
   ConfirmationWizard,
   DisplayValue,
   AmountFields,
+  EntropyMeter,
   LastUpdated,
   ItemFilter,
   DarkLayout,

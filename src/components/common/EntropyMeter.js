@@ -12,6 +12,7 @@ import React from 'react'
  *   ratio >=  1 -> green
  *
  *   @param {number} ratio passwordEntropy / targetEntropy ratio
+ *   @returns {number} interpolated CSS hue value between red & green
  */
 function getHue(ratio) {
   // Hues are adapted to match the theme's success and danger colors
@@ -53,8 +54,8 @@ const Message = styled.div`
     p.ratio >= 1
       ? p.theme.colors.success
       : p.ratio >= 0.75
-        ? 'hsla(40, 100%, 50%, 0.75)'
-        : p.theme.colors.danger};
+      ? 'hsla(40, 100%, 50%, 0.75)'
+      : p.theme.colors.danger};
   text-shadow: ${p => p.theme.textShadow};
   text-align: right;
   margin-bottom: -18px;

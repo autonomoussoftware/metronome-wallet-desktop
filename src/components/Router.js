@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components'
 import React from 'react'
 
 import OfflineWarning from './OfflineWarning'
+import ChangePassword from './ChangePassword'
 import Dashboard from './dashboard/Dashboard'
 import Converter from './converter/Converter'
 import Sidebar from './sidebar/Sidebar'
@@ -52,6 +53,7 @@ export const layout = (
         <Route path="/converter" component={Converter} />
         <Route path="/port" component={Port} />
         <Route path="/tools" component={Tools} />
+        <Route path="/change-pass" component={ChangePassword} />
       </Switch>
     </Main>
     <OfflineWarning />
