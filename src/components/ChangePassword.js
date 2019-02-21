@@ -10,7 +10,7 @@ import { ToastsContext } from '../components/toasts'
 
 const Container = styled.div`
   padding: 3.2rem 2.4rem;
-  max-width: 45rem;
+  max-width: 50rem;
 
   @media (min-width: 800px) {
     padding: 3.2rem 4.8rem;
