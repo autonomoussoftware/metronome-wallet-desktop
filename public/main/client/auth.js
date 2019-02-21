@@ -12,8 +12,8 @@ function setPassword (password) {
   const passwordHash = getPasswordHash()
   if (!passwordHash) {
     logger.info('No password set, using current as default')
-    return hash(password).then(setPasswordHash)
   }
+  return hash(password).then(setPasswordHash)
 }
 
 function isValidPassword (password) {
@@ -47,4 +47,12 @@ function isValidPassword (password) {
     })
 }
 
-module.exports = { isValidPassword, setPassword }
+function changePassword ({ oldPassword, newPassword }) {
+  const isValid = isValidPassword(oldPassword)
+  if (isValid) {
+    setPassword(newPassword)
+  }
+  return isValid
+}
+
+module.exports = { isValidPassword, setPassword, changePassword }

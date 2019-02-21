@@ -101,6 +101,7 @@ function createClient(createStore) {
     convertCoin: utils.forwardToMainProcess('convert-coin', 750000),
     retryImport: utils.forwardToMainProcess('retry-import', 750000),
     convertMet: utils.forwardToMainProcess('convert-met', 750000),
+    changePassword: utils.forwardToMainProcess('change-password'),
     onLoginSubmit: utils.forwardToMainProcess('login-submit'),
     getPortFees: utils.forwardToMainProcess('get-port-fees'),
     getGasLimit: utils.forwardToMainProcess('get-gas-limit'),
