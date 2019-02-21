@@ -20,15 +20,17 @@ function clearCache () {
 const persistState = data => storage.persistState(data).then(() => true)
 
 function changePassword ({ oldPassword, newPassword }) {
-  const isValid = validatePassword(oldPassword)
-  if (isValid) {
-    wallet.getWallets().forEach(function (walletId) {
-      const seed = wallet.getSeed(walletId, oldPassword)
-      auth.setPassword(newPassword)
-      wallet.setSeed(seed, newPassword)
+  return validatePassword(oldPassword)
+    .then(function (isValid) {
+      if (isValid) {
+        wallet.getWallets().forEach(function (walletId) {
+          const seed = wallet.getSeed(walletId, oldPassword)
+          auth.setPassword(newPassword)
+          wallet.setSeed(seed, newPassword)
+        })
+      }
+      return isValid
     })
-  }
-  return isValid
 }
 
 module.exports = {
