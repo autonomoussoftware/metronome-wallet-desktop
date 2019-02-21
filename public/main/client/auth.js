@@ -47,12 +47,4 @@ function isValidPassword (password) {
     })
 }
 
-function changePassword ({ oldPassword, newPassword }) {
-  const isValid = isValidPassword(oldPassword)
-  if (isValid) {
-    setPassword(newPassword)
-  }
-  return isValid
-}
-
-module.exports = { isValidPassword, setPassword, changePassword }
+module.exports = { isValidPassword, setPassword }
