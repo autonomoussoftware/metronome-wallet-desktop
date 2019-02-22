@@ -42,6 +42,7 @@ class TxList extends React.Component {
   static propTypes = {
     hasTransactions: PropTypes.bool.isRequired,
     onWalletRefresh: PropTypes.func.isRequired,
+    isMultiChain: PropTypes.bool.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -120,6 +121,7 @@ class TxList extends React.Component {
                 onWalletRefresh={this.props.onWalletRefresh}
                 hasTransactions={this.props.hasTransactions}
                 onFilterChange={onFilterChange}
+                isMultiChain={this.props.isMultiChain}
                 onTitleClick={this.handleClick}
                 activeFilter={activeFilter}
                 syncStatus={this.props.syncStatus}

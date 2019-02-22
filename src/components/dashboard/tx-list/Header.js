@@ -1,10 +1,18 @@
+import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
 import React from 'react'
 
 import ScanIndicator from './ScanIndicator'
 import { Flex } from '../../common'
 import Filter from './Filter'
+
+const responsiveHeader = width => css`
+  @media (min-width: ${width}) {
+    align-items: baseline;
+    display: flex;
+    top: 6.8rem;
+  }
+`
 
 const Container = styled.div`
   position: sticky;
@@ -16,11 +24,7 @@ const Container = styled.div`
   margin: 0 -4.8rem;
   padding: 0 4.8rem;
 
-  @media (min-width: 1140px) {
-    top: 6.8rem;
-    display: flex;
-    align-items: baseline;
-  }
+  ${p => responsiveHeader(p.isMultiChain ? '1140px' : '1040px')}
 `
 
 const Title = styled.div`
@@ -46,13 +50,14 @@ export default class Header extends React.Component {
     onWalletRefresh: PropTypes.func.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     activeFilter: PropTypes.string.isRequired,
+    isMultiChain: PropTypes.bool.isRequired,
     onTitleClick: PropTypes.func.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired
   }
 
   render() {
     return (
-      <Container>
+      <Container isMultiChain={this.props.isMultiChain}>
         <Flex.Row grow="1">
           <Title onClick={this.props.onTitleClick}>Transactions</Title>
           {(this.props.hasTransactions ||
@@ -65,6 +70,7 @@ export default class Header extends React.Component {
         </Flex.Row>
         <Filter
           onFilterChange={this.props.onFilterChange}
+          isMultiChain={this.props.isMultiChain}
           activeFilter={this.props.activeFilter}
         />
       </Container>

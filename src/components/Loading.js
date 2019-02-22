@@ -11,6 +11,7 @@ const ChecklistContainer = styled(Flex.Row)`
 `
 
 const Title = styled.div`
+  display: ${p => (p.isMultiChain ? 'block' : 'none')};
   font-weight: 600;
   font-size: 0.9rem;
   letter-spacing: 1.6px;
@@ -20,11 +21,12 @@ const Title = styled.div`
 `
 
 const Checklist = styled.div`
-  padding-left: 4.8rem;
+  padding-left: ${p => (p.isMultiChain ? '4.8rem' : 0)};
 `
 
 class Loading extends React.Component {
   static propTypes = {
+    isMultiChain: PropTypes.bool.isRequired,
     chainsStatus: PropTypes.objectOf(
       PropTypes.shape({
         hasBlockHeight: PropTypes.bool,
@@ -44,8 +46,10 @@ class Loading extends React.Component {
         <ChecklistContainer justify="center">
           {Object.keys(this.props.chainsStatus).map(chainName => (
             <div key={chainName}>
-              <Title>{this.props.chainsStatus[chainName].displayName}</Title>
-              <Checklist>
+              <Title isMultiChain={this.props.isMultiChain}>
+                {this.props.chainsStatus[chainName].displayName}
+              </Title>
+              <Checklist isMultiChain={this.props.isMultiChain}>
                 <ChecklistItem
                   isActive={this.props.chainsStatus[chainName].hasBlockHeight}
                   text="Blockchain status"
