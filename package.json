@@ -20,6 +20,7 @@
     "env:win32": ".\\scripts\\env.bat",
     "env:darwin:linux": "./scripts/env.sh",
     "ppa": "./scripts/ppa.sh",
+    "postinstall": "electron-rebuild",
     "prepare": "patch-package",
     "release": "npm run dist -- --publish always"
   },
