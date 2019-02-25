@@ -85,7 +85,7 @@ function loadWindow () {
     backgroundColor: '#323232',
     webPreferences: {
       nodeIntegration: false,
-      // contextIsolation: false,
+      contextIsolation: false,
       preload: path.join(__dirname, 'preload.js')
     },
     x: mainWindowState.x,
