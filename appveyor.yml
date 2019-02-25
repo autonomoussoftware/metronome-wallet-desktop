@@ -34,3 +34,5 @@ for:
   build_script:
     - npm run env
     - npm run release
+    
+skip_tags: true
