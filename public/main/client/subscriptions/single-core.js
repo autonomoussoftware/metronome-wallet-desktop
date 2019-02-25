@@ -14,6 +14,7 @@ const listeners = {
   'get-auction-gas-limit': handlers.getAuctionGasLimit,
   'get-tokens-gas-limit': handlers.getTokensGasLimit,
   'refresh-transaction': handlers.refreshTransaction,
+  'get-export-gas-limit': handlers.getExportMetGas,
   'buy-metronome': handlers.buyMetronome,
   'get-gas-limit': handlers.getGasLimit,
   'get-gas-price': handlers.getGasPrice,
@@ -23,16 +24,19 @@ const listeners = {
   'send-met': handlers.sendMet
 }
 
+const coreListeners = {}
+
 // Subscribe to messages where only one particular core has to react
 function subscribeSingleCore (core) {
+  coreListeners[core.chain] = {}
   Object.keys(listeners).forEach(function (key) {
-    listeners[key] = withCore(core)(listeners[key])
+    coreListeners[core.chain][key] = withCore(core)(listeners[key])
   })
 
-  utils.subscribeTo(listeners, core.chain)
+  utils.subscribeTo(coreListeners[core.chain], core.chain)
 }
 
-const unsubscribeSingleCore = () =>
-  utils.unsubscribeTo(listeners)
+const unsubscribeSingleCore = core =>
+  utils.unsubscribeTo(coreListeners[core.chain])
 
 module.exports = { subscribeSingleCore, unsubscribeSingleCore }

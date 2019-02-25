@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DisplayValue, Flex, Btn } from '../common'
+import { DisplayValue, Flex } from '../common'
+import RetryBtn from './RetryBtn'
 
 const List = styled.ul`
   list-style-type: none;
@@ -48,60 +49,47 @@ const Details = styled.div`
   }
 `
 
-const RetryBtn = styled(Btn)`
-  margin-left: 2.4rem;
-  background-color: rgba(126, 97, 248, 0.4);
-  background-image: none;
-  color: ${({ theme }) => theme.colors.light};
-  font-size: 1.3rem;
-  letter-spacing: 0.4px;
-  min-width: 108px;
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
-  box-shadow: none;
-
-  &:hover,
-  &:focus {
-    opacity: 0.8;
-  }
-`
-
 export default class FailedImports extends React.Component {
   static propTypes = {
+    retryDisabledReason: PropTypes.string,
+    retryDisabled: PropTypes.bool.isRequired,
+    onRetryClick: PropTypes.func.isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
+        currentBurnHash: PropTypes.string.isRequired,
         originChain: PropTypes.string.isRequired,
-        receipt: PropTypes.shape({}),
-        meta: PropTypes.shape({
-          currentBurnHash: PropTypes.string.isRequired,
-          value: PropTypes.string.isRequired
-        })
+        value: PropTypes.string.isRequired,
+        from: PropTypes.string.isRequired
       })
-    ).isRequired,
-    onRetry: PropTypes.func.isRequired
+    ).isRequired
   }
 
-  handleRetryClick = e => this.props.onRetry(e.target.dataset.hash)
+  handleRetryClick = e => this.props.onRetryClick(e.target.dataset.hash)
 
   render() {
     return (
       <List>
         {this.props.items.map(item => (
-          <Item key={item.meta.currentBurnHash}>
+          <Item key={item.currentBurnHash}>
             <Flex.Row justify="space-between" align="center">
               <LeftLabel>FAILED</LeftLabel>
               <Flex.Row justify="space-between" align="center">
                 <Flex.Column align="flex-end">
                   <Amount>
-                    <DisplayValue value={item.meta.value} post=" MET" />
+                    <DisplayValue value={item.value} post=" MET" />
                   </Amount>
                   <Details>
                     EXPORTED FROM <span>{item.originChain}</span>
                   </Details>
                 </Flex.Column>
                 <RetryBtn
+                  data-rh-negative
+                  data-disabled={this.props.retryDisabled}
                   data-hash={item.currentBurnHash}
-                  onClick={this.handleRetryClick}
+                  onClick={
+                    this.props.retryDisabled ? null : this.handleRetryClick
+                  }
+                  data-rh={this.props.retryDisabledReason}
                 >
                   Retry
                 </RetryBtn>

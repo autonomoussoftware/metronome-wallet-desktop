@@ -1,5 +1,5 @@
+import { withRouter, NavLink } from 'react-router-dom'
 import withToolsState from 'metronome-wallet-ui-logic/src/hocs/withToolsState'
-import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -101,6 +101,17 @@ class Tools extends React.Component {
             </Flex.Row>
           </Sp>
         </form>
+        <Sp mt={5}>
+          <hr />
+          <h2>Change Password</h2>
+          <p>
+            This will allow you to change the password you use to access the
+            wallet.
+          </p>
+          <NavLink data-testid="change-password-btn" to="/change-pass">
+            <Btn>Change Password</Btn>
+          </NavLink>
+        </Sp>
         <Sp mt={5}>
           <hr />
           <h2>Rescan Transactions List</h2>

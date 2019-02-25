@@ -42,6 +42,7 @@ class TxList extends React.Component {
   static propTypes = {
     hasTransactions: PropTypes.bool.isRequired,
     onWalletRefresh: PropTypes.func.isRequired,
+    isMultiChain: PropTypes.bool.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -52,6 +53,7 @@ class TxList extends React.Component {
   }
 
   state = {
+    displayAttestations: false,
     activeModal: null,
     selectedTx: null,
     isReady: false
@@ -91,7 +93,17 @@ class TxList extends React.Component {
   )
 
   filterExtractValue = ({ txType }) =>
-    ['imported', 'exported'].includes(txType) ? 'ported' : txType
+    ['import-requested', 'imported', 'exported'].includes(txType)
+      ? 'ported'
+      : txType
+
+  handleClick = e => {
+    if (!window.isDev || !e.shiftKey || !e.altKey) return
+    this.setState(state => ({
+      ...state,
+      displayAttestations: !state.displayAttestations
+    }))
+  }
 
   render() {
     if (!this.state.isReady) return null
@@ -99,7 +111,9 @@ class TxList extends React.Component {
       <Container data-testid="tx-list">
         <ItemFilter
           extractValue={this.filterExtractValue}
-          items={this.props.items}
+          items={this.props.items.filter(({ txType }) =>
+            this.state.displayAttestations ? true : txType !== 'attestation'
+          )}
         >
           {({ filteredItems, onFilterChange, activeFilter }) => (
             <React.Fragment>
@@ -107,6 +121,8 @@ class TxList extends React.Component {
                 onWalletRefresh={this.props.onWalletRefresh}
                 hasTransactions={this.props.hasTransactions}
                 onFilterChange={onFilterChange}
+                isMultiChain={this.props.isMultiChain}
+                onTitleClick={this.handleClick}
                 activeFilter={activeFilter}
                 syncStatus={this.props.syncStatus}
               />

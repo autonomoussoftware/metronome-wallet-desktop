@@ -37,21 +37,21 @@ function WalletStatus(props) {
   return (
     <div>
       <Text>Version {props.appVersion}</Text>
-      <Flex.Row align="center">
-        <Text>Connected to {props.chainName} chain</Text>
-        <Sp px={2} />
-        <LastUpdated
-          timestamp={props.bestBlockTimestamp}
-          render={({ timeAgo, diff }) => (
-            <Text>
-              Best Block {props.height}
-              <MinedAgo diff={diff} as="span">
-                mined {timeAgo}
-              </MinedAgo>
-            </Text>
-          )}
-        />
-      </Flex.Row>
+
+      <Text>Connected to {props.chainName} chain</Text>
+
+      <LastUpdated
+        timestamp={props.bestBlockTimestamp}
+        render={({ timeAgo, diff }) => (
+          <Text>
+            Best Block {props.height}
+            <MinedAgo diff={diff} as="span">
+              mined {timeAgo}
+            </MinedAgo>
+          </Text>
+        )}
+      />
+
       <Flex.Row align="center">
         <Text>
           <IndicatorLed

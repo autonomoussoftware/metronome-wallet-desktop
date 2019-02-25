@@ -39,6 +39,7 @@ const Tab = styled.button`
 export default class Filter extends React.Component {
   static propTypes = {
     onFilterChange: PropTypes.func.isRequired,
+    isMultiChain: PropTypes.bool.isRequired,
     activeFilter: PropTypes.oneOf([
       'converted',
       'received',
@@ -82,12 +83,14 @@ export default class Filter extends React.Component {
         >
           Converted
         </Tab>
-        {/* <Tab
-          isActive={this.props.activeFilter === 'ported'}
-          onClick={() => this.props.onFilterChange('ported')}
-        >
-          Ported
-        </Tab> */}
+        {this.props.isMultiChain && (
+          <Tab
+            isActive={this.props.activeFilter === 'ported'}
+            onClick={() => this.props.onFilterChange('ported')}
+          >
+            Ported
+          </Tab>
+        )}
       </Container>
     )
   }

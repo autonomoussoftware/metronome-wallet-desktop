@@ -4,9 +4,9 @@ const { app } = require('electron')
 const { promisify } = require('util')
 const { sum, upperFirst } = require('lodash')
 const Datastore = require('nedb')
-const logger = require('electron-log')
 const path = require('path')
 
+const logger = require('../../logger')
 const config = require('../../config')
 
 const promisifyMethods = methods =>

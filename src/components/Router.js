@@ -1,14 +1,16 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
+import PropTypes from 'prop-types'
 import React from 'react'
 
 import OfflineWarning from './OfflineWarning'
+import ChangePassword from './ChangePassword'
 import Dashboard from './dashboard/Dashboard'
 import Converter from './converter/Converter'
 import Sidebar from './sidebar/Sidebar'
 import Auction from './auction/Auction'
 import Tools from './tools/Tools'
-// import Port from './port/Port'
+import Port from './port/Port'
 
 const fadeIn = keyframes`
   from {
@@ -39,9 +41,9 @@ const Main = styled.div`
   overflow-y: auto;
 `
 
-export const layout = (
+export const Layout = ({ isMultiChain }) => (
   <Container data-testid="router-container">
-    <Sidebar />
+    <Sidebar isMultiChain={isMultiChain} />
     <Main
       data-scrollelement // Required by react-virtualized implementation in Dashboard/TxList
     >
@@ -50,16 +52,29 @@ export const layout = (
         <Route path="/wallets" component={Dashboard} />
         <Route path="/auction" component={Auction} />
         <Route path="/converter" component={Converter} />
-        {/* <Route path="/port" component={Port} /> */}
         <Route path="/tools" component={Tools} />
+        <Route path="/change-pass" component={ChangePassword} />
+        {isMultiChain && <Route path="/port" component={Port} />}
       </Switch>
     </Main>
     <OfflineWarning />
   </Container>
 )
 
+Layout.propTypes = {
+  isMultiChain: PropTypes.bool.isRequired
+}
+
 export default class Router extends React.Component {
+  static propTypes = {
+    isMultiChain: PropTypes.bool.isRequired
+  }
+
   render() {
-    return <HashRouter>{layout}</HashRouter>
+    return (
+      <HashRouter>
+        <Layout isMultiChain={this.props.isMultiChain} />
+      </HashRouter>
+    )
   }
 }

@@ -8,7 +8,9 @@ const withCores = cores => fn => data => fn(data, cores)
 const listeners = {
   'recover-from-mnemonic': handlers.recoverFromMnemonic,
   'onboarding-completed': handlers.onboardingCompleted,
+  'get-import-gas-limit': handlers.getImportMetGas,
   'port-metronome': handlers.portMetronome,
+  'retry-import': handlers.importMetronome,
   'login-submit': handlers.onLoginSubmit,
   'get-port-fees': handlers.getPortFees
 }

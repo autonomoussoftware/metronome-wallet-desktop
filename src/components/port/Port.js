@@ -1,17 +1,27 @@
+import { toChecksumAddress } from 'web3-utils'
 import withPortState from 'metronome-wallet-ui-logic/src/hocs/withPortState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { DarkLayout, DisplayValue, Flex, Btn } from '../common'
+import { DarkLayout, Flex, Btn } from '../common'
+import RetryImportDrawer from './RetryImportDrawer'
+import OngoingImports from './OngoingImports'
 import FailedImports from './FailedImports'
 import PortDrawer from './PortDrawer'
+import PortIcon from '../icons/PortIcon'
 
 const Container = styled.div`
   display: flex;
   padding: 3.2rem 4.8rem;
-  align-items: flex-start;
-  flex-direction: row;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: center;
+
+  @media (min-width: 1000px) {
+    align-items: flex-start;
+    flex-direction: row;
+  }
 `
 
 const Title = styled.h2`
@@ -26,97 +36,83 @@ const Description = styled.p`
   color: #c2c4c6;
   margin-top: 0.8rem;
   margin-bottom: 0;
-`
-
-const List = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 2.4rem;
-  margin-bottom: 4.8rem;
-`
-
-const Item = styled.li`
-  background-color: ${({ theme }) => theme.colors.lightShade};
-  border-radius: 2px;
-  padding: 1.2rem 2.4rem 1.2rem 1.6rem;
-
-  & + & {
-    margin-top: 1.6rem;
-  }
-`
-
-const LeftLabel = styled.div`
-  font-size: 1.4rem;
-  letter-spacing: 0.4px;
-  color: #c2c4c6;
-`
-
-const Hiddable = styled.span`
-  display: none;
-
-  @media (min-width: 1000px) {
-    display: inline;
-  }
-`
-
-const Validations = styled.span`
-  background-color: ${({ theme }) => theme.colors.darkShade};
-  color: ${({ theme }) => theme.colors.light};
-  padding: 0.5rem 1.2rem;
-  border-radius: 1.2rem;
-  margin-right: 2.4rem;
-  font-size: 1.1rem;
-`
-
-const Amount = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: 2rem;
-  font-weight: 600;
-`
-
-const Details = styled.div`
-  font-size: 1.1rem;
-  letter-spacing: 0.4px;
-  color: #c2c4c6;
 
   & > span {
     color: ${({ theme }) => theme.colors.light};
     font-size: 1.3rem;
     font-weight: 600;
-    text-transform: uppercase;
   }
 `
 
 const BtnContainer = styled.div`
-  margin-top: 5rem;
-  margin-left: 2.4rem;
+  margin-bottom: 3.2rem;
+  order: -1;
+  align-self: center;
+  text-align: center;
+
+  @media (min-width: 1000px) {
+    margin-top: 7.2rem;
+    margin-left: 2.4rem;
+    margin-bottom: 0;
+    order: 0;
+    align-self: flex-start;
+  }
 `
 
 const PortBtn = styled(Btn)`
   min-width: 200px;
 `
+const NoPortsContainer = styled.div`
+  margin-top: 3.2rem;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: 1000px) {
+    margin-top: -5rem;
+  }
+`
+
+const NoPortsTitle = styled.div`
+  margin-top: 3.4rem;
+  font-weight: 600;
+  font-size: 2.4rem;
+  line-height: 3.2rem;
+  text-align: center;
+  opacity: 0.75;
+`
+
+const NoPortsMessage = styled.div`
+  margin-top: 0.8rem;
+  margin-bottom: 3.2rem;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  text-align: center;
+`
 
 class Port extends React.Component {
   static propTypes = {
+    attestationThreshold: PropTypes.number.isRequired,
+    retryDisabledReason: PropTypes.string,
     portDisabledReason: PropTypes.string,
-    pendingImports: PropTypes.arrayOf(
+    shouldRenderForm: PropTypes.bool.isRequired,
+    ongoingImports: PropTypes.arrayOf(
       PropTypes.shape({
-        destinationChain: PropTypes.string.isRequired,
-        totalValidators: PropTypes.number.isRequired,
-        validations: PropTypes.number.isRequired,
-        originChain: PropTypes.string.isRequired,
-        amount: PropTypes.string.isRequired,
+        attestedCount: PropTypes.number.isRequired,
+        refutedCount: PropTypes.number.isRequired,
+        importedFrom: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
         hash: PropTypes.string.isRequired
       })
     ).isRequired,
     failedImports: PropTypes.array.isRequired,
-    portDisabled: PropTypes.bool.isRequired,
-    onRetry: PropTypes.func.isRequired
+    retryDisabled: PropTypes.bool.isRequired,
+    portDisabled: PropTypes.bool.isRequired
   }
 
   state = {
+    retryCandidate: null,
     activeModal: null
   }
 
@@ -124,51 +120,80 @@ class Port extends React.Component {
 
   onCloseModal = () => this.setState({ activeModal: null })
 
+  onRetryClick = hash => {
+    const retryCandidate = this.props.failedImports
+      .concat(this.props.ongoingImports)
+      .find(({ currentBurnHash }) => currentBurnHash === hash)
+    this.setState({
+      activeModal: 'retry-import',
+      retryCandidate: {
+        ...retryCandidate,
+        from: toChecksumAddress(retryCandidate.from)
+      }
+    })
+  }
+
+  // eslint-disable-next-line complexity
   render() {
     return (
       <DarkLayout data-testid="port-container" title="Port">
         <Container>
-          <Flex.Item grow="1">
-            <Title>Pending Imports</Title>
-            <List>
-              {this.props.pendingImports.map(item => (
-                <Item key={item.hash}>
-                  <Flex.Row justify="space-between" align="center">
-                    <LeftLabel>
-                      <Validations>
-                        {item.validations}/{item.totalValidators}
-                      </Validations>{' '}
-                      <Hiddable>VALIDATIONS</Hiddable>
-                    </LeftLabel>
-                    <Flex.Column align="flex-end">
-                      <Amount>
-                        <DisplayValue value={item.amount} post=" MET" />
-                      </Amount>
-                      <Details>
-                        IMPORTING FROM <span>{item.originChain}</span> to{' '}
-                        <span>{item.destinationChain}</span>
-                      </Details>
-                    </Flex.Column>
-                  </Flex.Row>
-                </Item>
-              ))}
-            </List>
-            {this.props.failedImports.length > 0 && (
-              <div>
-                <Title>Failed Imports</Title>
-                <Description>
-                  Resubmit incomplete imports that failed to excecute by
-                  clicking Retry.
-                </Description>
-                <FailedImports
-                  onRetry={this.props.onRetry}
-                  items={this.props.failedImports}
-                />
-              </div>
-            )}
-          </Flex.Item>
+          {(this.props.failedImports.length > 0 ||
+            this.props.ongoingImports.length > 0) && (
+            <Flex.Item grow="1">
+              {this.props.failedImports.length > 0 && (
+                <React.Fragment>
+                  <Title>Failed Ports</Title>
+                  <Description>
+                    Resubmit incomplete ports that failed to execute by clicking
+                    Retry.
+                  </Description>
+                  <FailedImports
+                    retryDisabledReason={this.props.retryDisabledReason}
+                    retryDisabled={this.props.retryDisabled}
+                    onRetryClick={this.onRetryClick}
+                    items={this.props.failedImports}
+                  />
+                </React.Fragment>
+              )}
 
+              {this.props.ongoingImports.length > 0 && (
+                <React.Fragment>
+                  <Title>Ongoing Ports</Title>
+                  <Description>
+                    An Import Request requires at least{' '}
+                    <span>
+                      {this.props.attestationThreshold}{' '}
+                      {this.props.attestationThreshold > 1
+                        ? 'validations'
+                        : 'validation'}
+                    </span>{' '}
+                    for the MET to be imported on this chain.
+                  </Description>
+                  <OngoingImports
+                    attestationThreshold={this.props.attestationThreshold}
+                    retryDisabledReason={this.props.retryDisabledReason}
+                    retryDisabled={this.props.retryDisabled}
+                    onRetryClick={this.onRetryClick}
+                    items={this.props.ongoingImports}
+                  />
+                </React.Fragment>
+              )}
+            </Flex.Item>
+          )}
           <BtnContainer>
+            {this.props.failedImports.length === 0 &&
+              this.props.ongoingImports.length === 0 && (
+                <NoPortsContainer>
+                  <PortIcon size="5.9rem" />
+                  <NoPortsTitle>You have no pending ports</NoPortsTitle>
+                  <NoPortsMessage>
+                    Port your Metronome between any of the other supported
+                    chains.
+                  </NoPortsMessage>
+                </NoPortsContainer>
+              )}
+
             <PortBtn
               data-rh-negative
               data-disabled={this.props.portDisabled}
@@ -180,12 +205,22 @@ class Port extends React.Component {
               New Port
             </PortBtn>
           </BtnContainer>
+        </Container>
 
+        {this.props.shouldRenderForm && (
           <PortDrawer
             onRequestClose={this.onCloseModal}
             isOpen={this.state.activeModal === 'port'}
           />
-        </Container>
+        )}
+
+        {this.props.shouldRenderForm && (
+          <RetryImportDrawer
+            onRequestClose={this.onCloseModal}
+            importData={this.state.retryCandidate}
+            isOpen={this.state.activeModal === 'retry-import'}
+          />
+        )}
       </DarkLayout>
     )
   }

@@ -20,7 +20,12 @@ function createClient(createStore) {
     store.subscribe(
       debounce(
         function() {
-          utils.forwardToMainProcess('persist-state')(store.getState())
+          utils
+            .forwardToMainProcess('persist-state')(store.getState())
+            .catch(err =>
+              // eslint-disable-next-line no-console
+              console.warn(`Error persisting state: ${err.message}`)
+            )
         },
         debounceTime,
         { maxWait: 2 * debounceTime }
@@ -38,10 +43,7 @@ function createClient(createStore) {
       'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
     )
 
-  const onExplorerLinkClick = transactionHash =>
-    window.openLink(
-      `https://explorer.metronome.io/transactions/${transactionHash}`
-    )
+  const onLinkClick = url => window.openLink(url)
 
   const getStringEntropy = fastPasswordEntropy
 
@@ -90,6 +92,8 @@ function createClient(createStore) {
     onOnboardingCompleted: utils.forwardToMainProcess('onboarding-completed'),
     recoverFromMnemonic: utils.forwardToMainProcess('recover-from-mnemonic'),
     getAuctionGasLimit: utils.forwardToMainProcess('get-auction-gas-limit'),
+    getImportGasLimit: utils.forwardToMainProcess('get-import-gas-limit'),
+    getExportGasLimit: utils.forwardToMainProcess('get-export-gas-limit'),
     getTokensGasLimit: utils.forwardToMainProcess('get-tokens-gas-limit'),
     portMetronome: utils.forwardToMainProcess('port-metronome', 750000),
     validatePassword: utils.forwardToMainProcess('validate-password'),
@@ -97,6 +101,7 @@ function createClient(createStore) {
     convertCoin: utils.forwardToMainProcess('convert-coin', 750000),
     retryImport: utils.forwardToMainProcess('retry-import', 750000),
     convertMet: utils.forwardToMainProcess('convert-met', 750000),
+    changePassword: utils.forwardToMainProcess('change-password'),
     onLoginSubmit: utils.forwardToMainProcess('login-submit'),
     getPortFees: utils.forwardToMainProcess('get-port-fees'),
     getGasLimit: utils.forwardToMainProcess('get-gas-limit'),
@@ -111,12 +116,12 @@ function createClient(createStore) {
     ...forwardedMethods,
     isValidMnemonic: keys.isValidMnemonic,
     createMnemonic: keys.createMnemonic,
-    onExplorerLinkClick,
     onTermsLinkClick,
     getStringEntropy,
     copyToClipboard,
     onHelpLinkClick,
     getAppVersion: window.getAppVersion,
+    onLinkClick,
     onInit,
     store
   }

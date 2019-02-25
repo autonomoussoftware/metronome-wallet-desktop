@@ -1,6 +1,6 @@
 'use strict'
 
-const logger = require('electron-log')
+const logger = require('../../logger.js')
 
 const { getPasswordHash, setPasswordHash } = require('./settings')
 const {
@@ -12,8 +12,8 @@ function setPassword (password) {
   const passwordHash = getPasswordHash()
   if (!passwordHash) {
     logger.info('No password set, using current as default')
-    return hash(password).then(setPasswordHash)
   }
+  return hash(password).then(setPasswordHash)
 }
 
 function isValidPassword (password) {

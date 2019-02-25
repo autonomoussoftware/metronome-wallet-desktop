@@ -5,6 +5,7 @@ const utils = require('./utils')
 
 const listeners = {
   'validate-password': handlers.validatePassword,
+  'change-password': handlers.changePassword,
   'persist-state': handlers.persistState,
   'clear-cache': handlers.clearCache
 }

@@ -1,9 +1,9 @@
 'use strict'
 
 const { ipcMain } = require('electron')
-const logger = require('electron-log')
 const stringify = require('json-stringify-safe')
 
+const logger = require('../../../logger')
 const WalletError = require('../WalletError')
 
 function getLogData (data) {

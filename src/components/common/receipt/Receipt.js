@@ -4,10 +4,10 @@ import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
 import React from 'react'
 
+import { BaseBtn, Btn } from '../Btn'
 import DisplayValue from '../DisplayValue'
 import AmountRow from './AmountRow'
 import TypeRow from './TypeRow'
-import { Btn } from '../Btn'
 
 const Container = styled.div`
   background-color: ${p => p.theme.colors.medium};
@@ -70,6 +70,17 @@ const ExplorerBtn = styled(Btn)`
   border-radius: 0;
 `
 
+const InspectBtn = styled(BaseBtn)`
+  letter-spacing: 1.4px;
+  color: ${p => p.theme.colors.weak};
+  width: 100%;
+  font-size: 1.1rem;
+  line-height: 2;
+  padding: 0 1rem;
+  margin: -1rem 0 1rem;
+  text-transform: uppercase;
+`
+
 export default class Receipt extends React.Component {
   static propTypes = {
     onExplorerLinkClick: PropTypes.func.isRequired,
@@ -91,12 +102,12 @@ export default class Receipt extends React.Component {
     return (
       <Container data-testid="receipt-modal">
         <Scroller>
-          {tx.txType !== 'unknown' && (
+          {tx.txType !== 'unknown' && tx.txType !== 'attestation' && (
             <Row first>
               <AmountRow
                 {...tx}
-                isPending={isPending}
                 coinSymbol={coinSymbol}
+                isPending={isPending}
               />
             </Row>
           )}
@@ -114,14 +125,17 @@ export default class Receipt extends React.Component {
             <TypeRow {...tx} />
           </Row>
 
-          {tx.txType === 'exported' && tx.portFee && (
-            <Row>
-              <Label>Fee</Label>
-              <Value>
-                <DisplayValue value={tx.portFee} post=" MET" />
-              </Value>
-            </Row>
-          )}
+          {(tx.txType === 'import-requested' ||
+            tx.txType === 'imported' ||
+            tx.txType === 'exported') &&
+            tx.portFee && (
+              <Row>
+                <Label>Fee</Label>
+                <Value>
+                  <DisplayValue value={tx.portFee} post=" MET" />
+                </Value>
+              </Row>
+            )}
 
           {tx.txType === 'received' && tx.from && (
             <Row>
@@ -146,6 +160,27 @@ export default class Receipt extends React.Component {
             </Row>
           )}
 
+          {tx.txType === 'import-requested' && tx.importedFrom && (
+            <Row>
+              <Label>
+                {this.props.isPending
+                  ? 'Pending import request'
+                  : 'Import requested'}{' '}
+                from
+              </Label>
+              <Value>{tx.importedFrom} blockchain</Value>
+            </Row>
+          )}
+
+          {tx.txType === 'imported' && tx.importedFrom && (
+            <Row>
+              <Label>
+                {this.props.isPending ? 'Pending Import' : 'Imported'} from
+              </Label>
+              <Value>{tx.importedFrom} blockchain</Value>
+            </Row>
+          )}
+
           {tx.portDestinationAddress && (
             <Row>
               <Label>Destination Address</Label>
@@ -158,7 +193,7 @@ export default class Receipt extends React.Component {
             <Value>{this.props.confirmations}</Value>
           </Row>
 
-          {tx.txType === 'exported' && tx.portBurnHash && (
+          {tx.portBurnHash && (
             <Row>
               <Label>Port burn hash</Label>
               <Hash>{tx.portBurnHash}</Hash>
@@ -183,11 +218,14 @@ export default class Receipt extends React.Component {
               <Hash>{tx.blockNumber}</Hash>
             </Row>
           )}
+          {tx.meta && window.isDev && (
+            // eslint-disable-next-line no-alert
+            <InspectBtn onClick={() => alert(JSON.stringify(tx.meta, null, 2))}>
+              Inspect raw metadata
+            </InspectBtn>
+          )}
         </Scroller>
-        <ExplorerBtn
-          onClick={() => this.props.onExplorerLinkClick(tx.hash)}
-          block
-        >
+        <ExplorerBtn onClick={this.props.onExplorerLinkClick} block>
           VIEW IN EXPLORER
         </ExplorerBtn>
       </Container>

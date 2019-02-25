@@ -1,8 +1,8 @@
 'use strict'
 
-const logger = require('electron-log')
 const pTimeout = require('p-timeout')
 
+const logger = require('../../../logger')
 const auth = require('../auth')
 const config = require('../../../config')
 const wallet = require('../wallet')
@@ -114,7 +114,7 @@ const sendMet = (data, { coreApi }) =>
 const getExportMetFee = (data, { coreApi }) =>
   coreApi.metronome.getExportMetFee(data)
 
-const estimateExportMetGas = (data, { coreApi }) =>
+const getExportGasLimit = (data, { coreApi }) =>
   coreApi.metronome.estimateExportMetGas(
     Object.assign({}, data, {
       destinationChain: config.chains[data.destinationChain].symbol,
@@ -124,7 +124,7 @@ const estimateExportMetGas = (data, { coreApi }) =>
     })
   )
 
-const estimateImportMetGas = (data, { coreApi }) =>
+const getImportGasLimit = (data, { coreApi }) =>
   coreApi.metronome.estimateImportMetGas(data)
 
 const exportMetronome = (data, core) =>
@@ -133,9 +133,8 @@ const exportMetronome = (data, core) =>
 const importMetronome = (data, core) =>
   withAuth(core.coreApi.metronome.importMet)(data, core)
 
-// TODO: Implement retry method
-// eslint-disable-next-line no-unused-vars
-const retryImport = (data, core) => Promise.resolve({})
+const getMerkleRoot = (data, { coreApi }) =>
+  coreApi.metronome.getMerkleRoot(data)
 
 module.exports = {
   refreshAllTransactions,
@@ -143,20 +142,20 @@ module.exports = {
   getConvertCoinGasLimit,
   getConvertMetEstimate,
   getConvertMetGasLimit,
-  estimateExportMetGas,
-  estimateImportMetGas,
   refreshTransaction,
   getAuctionGasLimit,
+  getExportGasLimit,
+  getImportGasLimit,
   getTokensGasLimit,
   getExportMetFee,
   exportMetronome,
   importMetronome,
+  getMerkleRoot,
   buyMetronome,
   createWallet,
   getGasLimit,
   getGasPrice,
   convertCoin,
-  retryImport,
   convertMet,
   openWallet,
   sendMet,

@@ -2,9 +2,10 @@
 
 const restart = require('../electron-restart')
 const dbManager = require('../database')
-const logger = require('electron-log')
+const logger = require('../../../logger')
 const storage = require('../storage')
 const auth = require('../auth')
+const wallet = require('../wallet')
 
 const validatePassword = data => auth.isValidPassword(data)
 
@@ -18,8 +19,23 @@ function clearCache () {
 
 const persistState = data => storage.persistState(data).then(() => true)
 
+function changePassword ({ oldPassword, newPassword }) {
+  return validatePassword(oldPassword)
+    .then(function (isValid) {
+      if (isValid) {
+        wallet.getWallets().forEach(function (walletId) {
+          const seed = wallet.getSeed(walletId, oldPassword)
+          auth.setPassword(newPassword)
+          wallet.setSeed(seed, newPassword)
+        })
+      }
+      return isValid
+    })
+}
+
 module.exports = {
   validatePassword,
+  changePassword,
   persistState,
   clearCache
 }
