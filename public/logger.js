@@ -8,11 +8,6 @@ const unhandled = require('electron-unhandled')
 
 logger.transports.file.appName = 'metronome-desktop-wallet'
 
-if (isDev) {
-  logger.transports.console.level = 'debug'
-  logger.transports.file.level = 'debug'
-}
-
 function getColorLevel (level = '') {
   const colors = {
     error: 'red',
@@ -39,6 +34,11 @@ logger.transports.console = function ({ date, level, data }) {
   console.log(
     `${date.toISOString()} - ${chalk[color](level)}:\t${text}\t${meta}`
   )
+}
+
+if (isDev) {
+  logger.transports.console.level = 'debug'
+  logger.transports.file.level = 'debug'
 }
 
 unhandled({ logger: logger.error })
