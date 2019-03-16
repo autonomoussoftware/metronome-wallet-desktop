@@ -22,7 +22,8 @@
     "ppa": "./scripts/ppa.sh",
     "postinstall": "electron-rebuild",
     "prepare": "patch-package",
-    "release": "npm run dist -- --publish always"
+    "release": "npm run dist -- --publish always",
+    "test:e2e": "concurrently \"BROWSER=none react-scripts start\" \"wait-on $npm_package_config_cra_dev_serv && NODE_ENV=test ELECTRON_START_URL=$npm_package_config_cra_dev_serv jest --runInBand\""
   },
   "dependencies": {
     "@reach/menu-button": "0.1.7",
@@ -93,6 +94,7 @@
     "proxyquire": "1.8.0",
     "react-testing-library": "1.10.0",
     "run-script-os": "1.0.5",
+    "spectron": "5.0.0",
     "wait-on": "2.1.0"
   },
   "build": {

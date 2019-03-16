@@ -30,3 +30,8 @@ window.ipcRenderer = {
     return ipcRenderer.on(eventName, listener)
   }
 }
+
+// @see https://github.com/electron/spectron#node-integration
+if (process.env.NODE_ENV === 'test') {
+  window.electronRequire = require
+}

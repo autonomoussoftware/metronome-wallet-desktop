@@ -16,7 +16,12 @@ const initContextMenu = require('./contextMenu')
 const initMenu = require('./menu')
 const logger = require('./logger')
 
-if (isDev) {
+// If running tests, set a different location for user data
+if (process.env.NODE_ENV === 'test') {
+  app.setPath('userData', `${app.getPath('userData')}-test`)
+}
+
+if (isDev && process.env.NODE_ENV !== 'test') {
   // Development
   app.on('ready', function () {
     require('electron-debug')({ enabled: true })
@@ -48,11 +53,11 @@ if (isDev) {
   }
 }
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+// app.on('window-all-closed', function () {
+//   if (process.platform !== 'darwin') {
+//     app.quit()
+//   }
+// })
 
 createWindow()
 
