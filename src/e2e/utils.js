@@ -1,5 +1,6 @@
 const electronPath = require('electron')
 const Application = require('spectron').Application
+const getPortSync = require('get-port-sync')
 const rimraf = require('rimraf')
 const tempy = require('tempy')
 const path = require('path')
@@ -8,10 +9,14 @@ function getApp() {
   // Get a new user data directory for each test to avoid conflicts between them
   const tempUserDataPath = tempy.directory()
 
+  // Get a free port for each test (required to run chromedriver concurrently)
+  const freePort = getPortSync()
+
   const app = new Application({
     requireName: 'electronRequire',
     args: [path.join(__dirname, '../..')],
     path: electronPath,
+    port: freePort,
     env: {
       USER_DATA_PATH: tempUserDataPath,
       NODE_ENV: 'test'
