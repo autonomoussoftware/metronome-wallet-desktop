@@ -59,7 +59,35 @@ function onboardWithCustomMnemonic(app, mnemonic) {
     .then(() => waitText('Gathering Information'))
 }
 
+function fillWizard(app, cfg) {
+  const {
+    expectInexistence,
+    waitExistence,
+    fillPassword,
+    submitForm,
+    fillField
+  } = getHelpers(app)
+
+  const { form, fields, timeout = 120000 } = cfg
+
+  return Promise.all(
+    Object.keys(fields).map(fieldName =>
+      fillField(fieldName, fields[fieldName])
+    )
+  )
+    .then(() => expectInexistence('confirm-form'))
+    .then(() => submitForm(form))
+    .then(() => waitExistence('confirm-form'))
+    .then(() => fillPassword())
+    .then(() => expectInexistence('waiting'))
+    .then(() => submitForm('confirm-form'))
+    .then(() => waitExistence('waiting'))
+    .then(() => expectInexistence('success'))
+    .then(() => waitExistence('success', timeout))
+}
+
 module.exports = {
   onboardWithCustomMnemonic,
-  onboardWithRandomMnemonic
+  onboardWithRandomMnemonic,
+  fillWizard
 }
