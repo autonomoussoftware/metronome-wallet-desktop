@@ -95,6 +95,7 @@
     "react-testing-library": "1.10.0",
     "run-script-os": "1.0.5",
     "spectron": "5.0.0",
+    "tempy": "0.2.1",
     "wait-on": "2.1.0"
   },
   "build": {

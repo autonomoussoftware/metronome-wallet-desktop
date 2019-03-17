@@ -16,9 +16,9 @@ const initContextMenu = require('./contextMenu')
 const initMenu = require('./menu')
 const logger = require('./logger')
 
-// If running tests, set a different location for user data
+// Override user data path when running e2e tests
 if (process.env.NODE_ENV === 'test') {
-  app.setPath('userData', `${app.getPath('userData')}-test`)
+  app.setPath('userData', process.env.USER_DATA_PATH)
 }
 
 if (isDev && process.env.NODE_ENV !== 'test') {

@@ -2,26 +2,14 @@ const { getApp, getHelpers } = require('./utils')
 
 const app = getApp()
 
-beforeEach(function() {
-  return app.start()
-})
-
-afterEach(function() {
-  if (app && app.isRunning()) {
-    return app.stop()
-  }
-})
-
 it('Onboards a new user with generated mnemonic', function() {
-  const { wipeDataAndRestart, waitText, fillField, testId } = getHelpers(app)
+  const { waitText, fillField, testId } = getHelpers(app)
   const pass = process.env.E2E_PASSWORD
   let mnemonic
 
   return (
-    // Remove all user data (persisted state, settings, etc) and restart
-    wipeDataAndRestart()
-      // Accept terms & conditions
-      .then(() => waitText('Accept to Continue'))
+    // Accept terms & conditions
+    waitText('Accept to Continue')
       .then(() => testId('accept-terms-chb').click())
       .then(() => testId('accept-license-chb').click())
       .then(() => testId('accept-terms-btn').click())
