@@ -8,7 +8,7 @@ const {
 
 const app = getApp()
 
-it('Sends MET in active chain', function() {
+it('Sends coin in active chain', function() {
   const { waitText, click, get } = getHelpers(app)
 
   let toAddress
@@ -18,13 +18,13 @@ it('Sends MET in active chain', function() {
     .then(() => get('address').getText())
     .then(text => (toAddress = text))
     .then(() => openSendDrawer(app))
-    .then(() => click('met-tab'))
+    .then(() => click('coin-tab'))
     .then(() =>
       fillWizard(app, {
-        form: 'sendMet-form',
+        form: 'sendCoin-form',
         fields: {
           'toAddress-field': toAddress,
-          'metAmount-field': '0.000000000000000001'
+          'coinAmount-field': '0.000000000000000001'
         }
       })
     )

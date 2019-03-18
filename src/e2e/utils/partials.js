@@ -59,6 +59,38 @@ function onboardWithCustomMnemonic(app, mnemonic) {
     .then(() => waitText('Gathering Information'))
 }
 
+function openDrawer(app, cfg) {
+  const { expectInexistence, waitExistence, click } = getHelpers(app)
+  const { drawerTestId, btnTestId } = cfg
+
+  return expectInexistence(drawerTestId)
+    .then(() => click(btnTestId))
+    .then(() => waitExistence(drawerTestId))
+    .then(() => app.client.pause(600))
+}
+
+function openSendDrawer(app) {
+  return openDrawer(app, { drawerTestId: 'send-drawer', btnTestId: 'send-btn' })
+}
+
+function openConvertDrawer(app) {
+  return openDrawer(app, {
+    drawerTestId: 'convert-drawer',
+    btnTestId: 'convert-btn'
+  })
+}
+
+function openBuyDrawer(app) {
+  return openDrawer(app, { drawerTestId: 'buy-drawer', btnTestId: 'buy-btn' })
+}
+
+function navigateTo(app, sectionId) {
+  const { waitExistence, click } = getHelpers(app)
+  return click(`${sectionId}-nav-btn`).then(() =>
+    waitExistence(`${sectionId}-container`)
+  )
+}
+
 function fillWizard(app, cfg) {
   const {
     expectInexistence,
@@ -89,5 +121,9 @@ function fillWizard(app, cfg) {
 module.exports = {
   onboardWithCustomMnemonic,
   onboardWithRandomMnemonic,
+  openConvertDrawer,
+  openSendDrawer,
+  openBuyDrawer,
+  navigateTo,
   fillWizard
 }
