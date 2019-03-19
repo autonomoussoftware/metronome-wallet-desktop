@@ -1,3 +1,4 @@
+import FilteredMessage from 'metronome-wallet-ui-logic/src/components/FilteredMessage'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -16,9 +17,7 @@ const Address = styled.span`
 
 export default class SentDetails extends React.Component {
   static propTypes = {
-    converterAddress: PropTypes.string.isRequired,
     isCancelApproval: PropTypes.bool,
-    metTokenAddress: PropTypes.string.isRequired,
     isApproval: PropTypes.bool,
     isPending: PropTypes.bool.isRequired,
     to: PropTypes.string.isRequired
@@ -27,23 +26,25 @@ export default class SentDetails extends React.Component {
   render() {
     return (
       <div>
-        {this.props.isPending
-          ? this.props.isApproval
-            ? 'Pending allowance for'
-            : this.props.isCancelApproval
-              ? 'Pending cancel allowance for'
-              : 'Pending to'
-          : this.props.isApproval
-            ? 'Allowance set for'
-            : this.props.isCancelApproval
-              ? 'Allowance cancelled for'
-              : 'Sent to'}{' '}
-        {this.props.to === this.props.metTokenAddress ? (
-          'MET TOKEN CONTRACT'
-        ) : this.props.to === this.props.converterAddress ? (
-          'CONVERTER CONTRACT'
+        {this.props.isPending ? (
+          this.props.isApproval ? (
+            'Pending allowance for'
+          ) : this.props.isCancelApproval ? (
+            'Pending cancel allowance for'
+          ) : (
+            'Pending to'
+          )
+        ) : this.props.isApproval ? (
+          'Allowance set for'
+        ) : this.props.isCancelApproval ? (
+          'Allowance cancelled for'
         ) : (
-          <Address>{this.props.to}</Address>
+          <React.Fragment>
+            Sent to{' '}
+            <Address>
+              <FilteredMessage>{this.props.to}</FilteredMessage>
+            </Address>
+          </React.Fragment>
         )}
       </div>
     )
