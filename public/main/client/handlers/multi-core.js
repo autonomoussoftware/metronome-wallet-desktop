@@ -139,6 +139,7 @@ function portMetronome (data, cores) {
                 importCore
               )
             )
+            .catch(e => Promise.reject(new WalletError(e.message)))
         })
     })
 }
