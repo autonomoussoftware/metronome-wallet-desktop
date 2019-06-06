@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "1.4.0",
+  "version": "1.4.0-rc.2",
   "author": {
     "name": "Autonomous Software",
     "email": "info@autonomous.sh",
@@ -46,7 +46,7 @@
     "lodash": "4.17.11",
     "metronome-contracts": "2.2.0",
     "metronome-wallet-core": "2.2.2",
-    "metronome-wallet-ui-logic": "3.4.1",
+    "metronome-wallet-ui-logic": "3.4.2",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
     "qrcode.react": "0.7.2",
