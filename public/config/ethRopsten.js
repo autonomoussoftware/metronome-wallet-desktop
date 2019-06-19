@@ -1,7 +1,7 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.ropsten
+const contracts = MetronomeContracts['ropsten']
 
 const indexerUrl = process.env.ROPSTEN_INDEXER_URL || 'http://localhost:3005'
 const metApiUrl = process.env.ROPSTEN_API_URL || 'http://localhost:3002/'

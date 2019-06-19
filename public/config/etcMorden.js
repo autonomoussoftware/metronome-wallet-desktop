@@ -1,7 +1,7 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.morden
+const contracts = MetronomeContracts['morden']
 
 const indexerUrl = process.env.MORDEN_INDEXER_URL || 'http://localhost:3015'
 const metApiUrl = process.env.MORDEN_API_URL || 'http://localhost:3012/'
@@ -20,7 +20,7 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://mordenexplorer.ethertrack.io/tx/{{hash}}',
+  explorerUrl: 'https://mordenexplorer.ethernode.io/tx/{{hash}}',
   indexerUrl,
   metApiUrl,
   wsApiUrl,

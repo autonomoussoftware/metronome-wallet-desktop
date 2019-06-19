@@ -16,7 +16,7 @@ module.exports = {
   enabledChains,
   explorerDebounce: 2000,
   ratesUpdateMs: 30000,
-  requiredPasswordEntropy: parseInt(process.env.REQUIRED_PASSWORD_ENTROPY || 72, 10),
+  requiredPasswordEntropy: parseInt(process.env.REQUIRED_PASSWORD_ENTROPY || '72', 10),
   scanTransactionTimeout: 240000,
   sentryDsn: process.env.SENTRY_DSN,
   statePersistanceDebounce: 2000,
