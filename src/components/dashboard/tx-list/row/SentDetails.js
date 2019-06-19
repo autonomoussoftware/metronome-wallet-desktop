@@ -26,26 +26,20 @@ export default class SentDetails extends React.Component {
   render() {
     return (
       <div>
-        {this.props.isPending ? (
-          this.props.isApproval ? (
-            'Pending allowance for'
-          ) : this.props.isCancelApproval ? (
-            'Pending cancel allowance for'
-          ) : (
-            'Pending to'
-          )
-        ) : this.props.isApproval ? (
-          'Allowance set for'
-        ) : this.props.isCancelApproval ? (
-          'Allowance cancelled for'
-        ) : (
-          <React.Fragment>
-            Sent to{' '}
-            <Address>
-              <FilteredMessage>{this.props.to}</FilteredMessage>
-            </Address>
-          </React.Fragment>
-        )}
+        {this.props.isPending
+          ? this.props.isApproval
+            ? 'Pending allowance for '
+            : this.props.isCancelApproval
+            ? 'Pending cancel allowance for '
+            : 'Pending to '
+          : this.props.isApproval
+          ? 'Allowance set for '
+          : this.props.isCancelApproval
+          ? 'Allowance cancelled for '
+          : 'Sent to '}
+        <Address>
+          <FilteredMessage>{this.props.to}</FilteredMessage>
+        </Address>
       </div>
     )
   }

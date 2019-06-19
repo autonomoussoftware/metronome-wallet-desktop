@@ -1,7 +1,7 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.mainnet
+const contracts = MetronomeContracts['mainnet']
 
 module.exports = {
   displayName: 'Ethereum',
