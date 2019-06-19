@@ -9,7 +9,7 @@ const wsApiUrl = process.env.MORDEN_NODE_URL || 'ws://localhost:8556'
 
 module.exports = {
   displayName: 'Morden',
-  chainId: 2,
+  chainId: 62,
   symbol: 'ETC',
 
   // contracts addresses
