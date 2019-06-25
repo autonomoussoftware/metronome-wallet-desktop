@@ -4,6 +4,7 @@ export function subscribeToMainProcessMessages(store) {
     'metronome-token-status-updated',
     'web3-connection-status-changed',
     'attestation-threshold-updated',
+    'chain-hop-start-time-updated',
     'connectivity-state-changed',
     'transactions-scan-finished',
     'transactions-scan-started',
