@@ -1,6 +1,6 @@
 {
   "name": "metronome-desktop-wallet",
-  "version": "1.4.0-rc.2",
+  "version": "1.4.0",
   "author": {
     "name": "Autonomous Software",
     "email": "info@autonomous.sh",
@@ -44,9 +44,9 @@
     "fast-password-entropy": "1.1.1",
     "json-stringify-safe": "5.0.1",
     "lodash": "4.17.11",
-    "metronome-contracts": "2.3.0",
-    "metronome-wallet-core": "2.2.4",
-    "metronome-wallet-ui-logic": "3.4.3",
+    "metronome-contracts": "2.4.0",
+    "metronome-wallet-core": "2.4.0",
+    "metronome-wallet-ui-logic": "3.5.0",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
     "patch-package": "5.1.1",
