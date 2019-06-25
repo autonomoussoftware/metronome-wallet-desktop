@@ -1,6 +1,6 @@
 'use strict'
 
-const enabledChains = (process.env.ENABLED_CHAINS || 'ethRopsten')
+const enabledChains = (process.env.ENABLED_CHAINS || 'ethRopsten,etcMorden')
   .split(',')
   .map(name => name.trim())
 
