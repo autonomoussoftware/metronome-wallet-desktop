@@ -1,0 +1,32 @@
+patch-package
+--- a/node_modules/web3-utils/src/index.js
++++ b/node_modules/web3-utils/src/index.js
+@@ -225,7 +225,7 @@ var getUnitValue = function (unit) {
+  *
+  * @method fromWei
+  * @param {Number|String} number can be a number, number string or a HEX of a decimal
+- * @param {String} unit the unit to convert to, default ether
++ * @param {String} [unit] the unit to convert to, default ether
+  * @return {String|Object} When given a BN object it returns one as well, otherwise a number
+  */
+ var fromWei = function(number, unit) {
+@@ -257,7 +257,7 @@ var fromWei = function(number, unit) {
+  *
+  * @method toWei
+  * @param {Number|String|BN} number can be a number, number string or a HEX of a decimal
+- * @param {String} unit the unit to convert from, default ether
++ * @param {String} [unit] the unit to convert from, default ether
+  * @return {String|Object} When given a BN object it returns one as well, otherwise a number
+  */
+ var toWei = function(number, unit) {
+--- a/node_modules/web3-utils/src/utils.js
++++ b/node_modules/web3-utils/src/utils.js
+@@ -320,7 +320,7 @@ var hexToBytes = function(hex) {
+  *
+  * @method toHex
+  * @param {String|Number|BN|Object} value
+- * @param {Boolean} returnType
++ * @param {Boolean} [returnType]
+  * @return {String}
+  */
+ var toHex = function (value, returnType) {
