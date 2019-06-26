@@ -33,6 +33,3 @@ ppa/metronome-desktop-walle*
 
 # Certificates
 *.p12
-
-# Web3 patches
-/patches/web3-*.patch

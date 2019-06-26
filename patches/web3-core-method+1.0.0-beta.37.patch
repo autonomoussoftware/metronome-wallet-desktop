@@ -1,0 +1,40 @@
+patch-package
+--- a/node_modules/web3-core-method/src/index.js
++++ b/node_modules/web3-core-method/src/index.js
+@@ -200,6 +200,7 @@ Method.prototype._confirmTransaction = function (defer, result, payload) {
+         intervalId = null,
+         receiptJSON = '',
+         gasProvided = (_.isObject(payload.params[0]) && payload.params[0].gas) ? payload.params[0].gas : null,
++        isContractCall = _.isObject(payload.params[0]) && !!payload.params[0].data,
+         isContractDeployment = _.isObject(payload.params[0]) &&
+             payload.params[0].data &&
+             payload.params[0].from &&
+@@ -348,8 +349,8 @@ Method.prototype._confirmTransaction = function (defer, result, payload) {
+                 if (!isContractDeployment && !promiseResolved) {
+ 
+                     if(!receipt.outOfGas &&
+-                        (!gasProvided || gasProvided !== receipt.gasUsed) &&
+-                        (receipt.status === true || receipt.status === '0x1' || typeof receipt.status === 'undefined')) {
++                        (!gasProvided || gasProvided !== utils.numberToHex(receipt.gasUsed) || !isContractCall || (isContractCall && receipt.events)) &&
++                        (receipt.status === true || receipt.status === '0x1' || receipt.status === null || typeof receipt.status === 'undefined')) {
+                         defer.eventEmitter.emit('receipt', receipt);
+                         defer.resolve(receipt);
+ 
+@@ -533,7 +534,16 @@ Method.prototype.buildCall = function() {
+ 
+                     // If wallet was found, sign tx, and send using sendRawTransaction
+                     if (wallet && wallet.privateKey) {
+-                        return method.accounts.signTransaction(_.omit(tx, 'from'), wallet.privateKey).then(sendSignedTx);
++                        return method.accounts.signTransaction(_.omit(tx, 'from'), wallet.privateKey)
++                            .then(sendSignedTx)
++                            .catch(function (err) {
++                                if (_.isFunction(defer.eventEmitter.listeners) && defer.eventEmitter.listeners('error').length) {
++                                    defer.eventEmitter.emit('error', err);
++                                    defer.eventEmitter.removeAllListeners();
++                                    defer.eventEmitter.catch(function () {});
++                                }
++                                defer.reject(err);
++                            });
+                     }
+ 
+                     // ETH_SIGN
