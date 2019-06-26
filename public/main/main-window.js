@@ -12,6 +12,11 @@ const restart = require('./client/electron-restart')
 
 let mainWindow
 
+// Disable electron security warnings since local content is served via http
+if (isDev) {
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
+}
+
 function showUpdateNotification (info = {}) {
   if (!Notification.isSupported()) { return }
 
@@ -80,6 +85,7 @@ function loadWindow () {
     backgroundColor: '#323232',
     webPreferences: {
       nodeIntegration: false,
+      contextIsolation: false,
       preload: path.join(__dirname, 'preload.js')
     },
     x: mainWindowState.x,

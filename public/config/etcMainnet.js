@@ -1,12 +1,12 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.ropsten
+const contracts = MetronomeContracts['classic']
 
 module.exports = {
-  displayName: 'Ropsten (Local)',
-  chainId: 3,
-  symbol: 'ETH',
+  displayName: 'Ethereum Classic',
+  chainId: 61,
+  symbol: 'ETC',
 
   // contracts addresses
   tokenPorterAddress: contracts.TokenPorter.address,
@@ -16,14 +16,14 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://ropsten.etherscan.io/tx/{{hash}}',
-  indexerUrl: 'http://localhost:3005',
-  metApiUrl: 'http://localhost:3002/',
-  wsApiUrl: 'ws://localhost:8546',
+  explorerUrl: 'https://blockscout.com/etc/mainnet/tx/{{hash}}/internal_transactions',
+  indexerUrl: 'https://etc.indexer.metronome.io',
+  metApiUrl: 'https://etc.api.metronome.io/',
+  wsApiUrl: 'wss://etc.wallet.metronome.io:8546',
 
   // defauls
   coinDefaultGasLimit: '21000',
   metDefaultGasLimit: '250000',
-  defaultGasPrice: '1000000000',
-  maxGasPrice: '20000000000000000'
+  defaultGasPrice: '10000000000',
+  maxGasPrice: '200000000000000000'
 }

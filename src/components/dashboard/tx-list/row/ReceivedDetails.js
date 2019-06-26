@@ -1,3 +1,4 @@
+import FilteredMessage from 'metronome-wallet-ui-logic/src/components/FilteredMessage'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -24,7 +25,9 @@ export default class ReceivedDetails extends React.Component {
     return (
       <div>
         {this.props.isPending ? 'Pending' : 'Received'} from{' '}
-        <Address>{this.props.from}</Address>
+        <Address>
+          <FilteredMessage>{this.props.from}</FilteredMessage>
+        </Address>
       </div>
     )
   }

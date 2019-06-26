@@ -1,12 +1,16 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts.morden
+const contracts = MetronomeContracts['ropsten']
+
+const indexerUrl = process.env.ROPSTEN_INDEXER_URL || 'http://localhost:3005'
+const metApiUrl = process.env.ROPSTEN_API_URL || 'http://localhost:3002/'
+const wsApiUrl = process.env.ROPSTEN_NODE_URL || 'ws://localhost:8546'
 
 module.exports = {
-  displayName: 'Morden (Local)',
-  chainId: 2,
-  symbol: 'ETC',
+  displayName: 'Ropsten',
+  chainId: 3,
+  symbol: 'ETH',
 
   // contracts addresses
   tokenPorterAddress: contracts.TokenPorter.address,
@@ -16,10 +20,10 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://mordenexplorer.ethertrack.io/tx/{{hash}}',
-  indexerUrl: 'http://localhost:3015',
-  metApiUrl: 'http://localhost:3012/',
-  wsApiUrl: 'ws://localhost:8556',
+  explorerUrl: 'https://ropsten.etherscan.io/tx/{{hash}}',
+  indexerUrl,
+  metApiUrl,
+  wsApiUrl,
 
   // defauls
   coinDefaultGasLimit: '21000',

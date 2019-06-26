@@ -93,7 +93,7 @@ class TxList extends React.Component {
   )
 
   filterExtractValue = ({ txType }) =>
-    ['import-requested', 'imported', 'exported'].includes(txType)
+    ['import-requested', 'imported', 'exported', 'attestation'].includes(txType)
       ? 'ported'
       : txType
 
