@@ -4,7 +4,7 @@ const MetronomeContracts = require('metronome-contracts')
 const contracts = MetronomeContracts['classic']
 
 module.exports = {
-  displayName: 'Classic',
+  displayName: 'Ethereum Classic',
   chainId: 61,
   symbol: 'ETC',
 
