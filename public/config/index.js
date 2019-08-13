@@ -20,5 +20,6 @@ module.exports = {
   scanTransactionTimeout: 240000,
   sentryDsn: process.env.SENTRY_DSN,
   statePersistanceDebounce: 2000,
-  trackingId: process.env.TRACKING_ID
+  trackingId: process.env.TRACKING_ID,
+  web3Timeout: 120000
 }
