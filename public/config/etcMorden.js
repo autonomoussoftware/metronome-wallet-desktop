@@ -4,7 +4,6 @@ const MetronomeContracts = require('metronome-contracts')
 const contracts = MetronomeContracts['morden']
 
 const indexerUrl = process.env.MORDEN_INDEXER_URL || 'http://localhost:3015'
-const metApiUrl = process.env.MORDEN_API_URL || 'http://localhost:3012/'
 const wsApiUrl = process.env.MORDEN_NODE_URL || 'ws://localhost:8556'
 
 module.exports = {
@@ -22,7 +21,6 @@ module.exports = {
   // urls
   explorerUrl: 'https://mordenexplorer.ethernode.io/tx/{{hash}}',
   indexerUrl,
-  metApiUrl,
   wsApiUrl,
 
   // defauls
