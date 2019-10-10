@@ -1,14 +1,14 @@
 'use strict'
 
 const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts['morden']
+const contracts = MetronomeContracts['mordor']
 
-const indexerUrl = process.env.MORDEN_INDEXER_URL || 'http://localhost:3015'
-const wsApiUrl = process.env.MORDEN_NODE_URL || 'ws://localhost:8556'
+const indexerUrl = process.env.MORDOR_INDEXER_URL || 'http://localhost:3015'
+const wsApiUrl = process.env.MORDOR_NODE_URL || 'ws://localhost:8556'
 
 module.exports = {
-  displayName: 'Morden',
-  chainId: 62,
+  displayName: 'Mordor',
+  chainId: 63,
   symbol: 'ETC',
 
   // contracts addresses
@@ -19,7 +19,7 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'https://mordenexplorer.ethernode.io/tx/{{hash}}',
+  explorerUrl: 'https://mordorexplorer.ethernode.io/tx/{{hash}}',
   indexerUrl,
   wsApiUrl,
 

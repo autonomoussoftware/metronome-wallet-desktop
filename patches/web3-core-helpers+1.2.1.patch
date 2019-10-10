@@ -6,7 +6,7 @@ patch-package
      }
  
 -    if(typeof receipt.status !== 'undefined') {
-+    if(typeof receipt.status === 'string') {
++    if(typeof receipt.status !== 'undefined' && receipt.status !== null) {
          receipt.status = Boolean(parseInt(receipt.status));
      }
  
