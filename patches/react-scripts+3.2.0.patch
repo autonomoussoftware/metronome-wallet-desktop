@@ -1,7 +1,7 @@
 patch-package
 --- a/node_modules/react-scripts/config/webpack.config.js
 +++ b/node_modules/react-scripts/config/webpack.config.js
-@@ -323,7 +323,8 @@ module.exports = function(webpackEnv) {
+@@ -386,7 +386,8 @@ module.exports = function(webpackEnv) {
                loader: require.resolve('eslint-loader'),
              },
            ],
@@ -11,7 +11,7 @@ patch-package
          },
          {
            // "oneOf" will traverse all following loaders until one will
-@@ -345,7 +346,7 @@ module.exports = function(webpackEnv) {
+@@ -408,7 +409,7 @@ module.exports = function(webpackEnv) {
              // The preset includes JSX, Flow, TypeScript, and some ESnext features.
              {
                test: /\.(js|mjs|jsx|ts|tsx)$/,
@@ -22,7 +22,7 @@ patch-package
                  customize: require.resolve(
 --- a/node_modules/react-scripts/scripts/utils/createJestConfig.js
 +++ b/node_modules/react-scripts/scripts/utils/createJestConfig.js
-@@ -54,7 +54,7 @@ module.exports = (resolve, rootDir, isEjecting) => {
+@@ -49,7 +49,7 @@ module.exports = (resolve, rootDir, isEjecting) => {
        ),
      },
      transformIgnorePatterns: [
@@ -30,4 +30,4 @@ patch-package
 +      '[/\\\\]node_modules[/\\\\](?!(metronome-wallet-ui-logic)/).+\\.(js|jsx|ts|tsx)$',
        '^.+\\.module\\.(css|sass|scss)$',
      ],
-     moduleNameMapper: {
+     modulePaths: modules.additionalModulePaths || [],

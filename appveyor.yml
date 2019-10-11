@@ -12,7 +12,7 @@ cache:
   - '%USERPROFILE%\.electron'
 
 install:
-  - ps: Install-Product node 8.15
+  - ps: Install-Product node 12.0.0
   - npm i --global --production windows-build-tools@4
   - npm i
 
