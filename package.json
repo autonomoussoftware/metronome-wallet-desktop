@@ -93,6 +93,7 @@
     "proxyquire": "1.8.0",
     "react-testing-library": "1.10.0",
     "run-script-os": "1.0.5",
+    "typescript": "3.6.4",
     "wait-on": "2.1.0"
   },
   "build": {
