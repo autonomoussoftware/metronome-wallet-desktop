@@ -115,6 +115,16 @@ class ConfirmationWizard extends React.Component {
 
   focusable = null
 
+  _isMounted = false
+
+  componentDidMount() {
+    this._isMounted = true
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
+  }
+
   goToReview = ev => {
     ev.preventDefault()
     const isValid = !this.props.validate || this.props.validate()
@@ -126,18 +136,14 @@ class ConfirmationWizard extends React.Component {
   onConfirmClick = ev => {
     ev.preventDefault()
     this.validateConfirmation()
-      .then(isValid => {
-        if (isValid) return this.submitWizard()
-        this.setState({
-          errors: { password: 'Invalid password' }
-        })
-      })
-      .catch(err =>
-        this.setState({
-          errors: { password: err.message }
-        })
+      .then(isValid =>
+        isValid
+          ? this.submitWizard()
+          : this.setState({ errors: { password: 'Invalid password' } })
       )
+      .catch(err => this.setState({ errors: { password: err.message } }))
   }
+
   validateConfirmation = () => {
     const errors = validators.validatePassword(this.state.password)
     const hasErrors = Object.keys(errors).length > 0
@@ -147,16 +153,20 @@ class ConfirmationWizard extends React.Component {
     }
     return this.props.client.validatePassword(this.state.password)
   }
+
   submitWizard = () => {
-    this.setState(
-      { status: 'pending' },
-      () => (this.focusable ? this.focusable.focus() : null)
+    this.setState({ status: 'pending' }, () =>
+      this.focusable ? this.focusable.focus() : null
     )
     this.props
       .onWizardSubmit(this.state.password)
-      .then(result => this.setState({ status: 'success' }))
+      .then(() => this._isMounted && this.setState({ status: 'success' }))
       .then(() => (this.focusable ? this.focusable.focus() : null))
-      .catch(err => this.setState({ status: 'failure', error: err.message }))
+      .catch(
+        err =>
+          this._isMounted &&
+          this.setState({ status: 'failure', error: err.message })
+      )
   }
 
   onPasswordChange = ({ value }) =>
