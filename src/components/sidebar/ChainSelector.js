@@ -99,7 +99,7 @@ const MenuItem = styled(ReachUI.MenuItem)`
 `
 
 const Icon = styled(CoinIcon)`
-  opacity: 0.5;
+  opacity: 0.8;
   transition: opacity 0.3s;
   height: 2.4rem;
   width: 2rem;
@@ -197,10 +197,7 @@ class ChainSelector extends React.Component {
           <MenuButton parent={this.props.parent}>
             <Item {...activeItem} caret="down" parent={this.props.parent} />
           </MenuButton>
-          <MenuList
-            onMouseEnter={this.props.handleMouseEnter}
-            onMouseLeave={this.props.handleMouseLeave}
-          >
+          <MenuList>
             <MenuItem
               onSelect={() => this.props.onChainChange(activeItem.id)}
               key={activeItem.id}
