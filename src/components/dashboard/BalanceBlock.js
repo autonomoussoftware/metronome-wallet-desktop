@@ -23,14 +23,14 @@ const Balance = styled.div`
 const CoinSymbol = styled.div`
   border-radius: 14.1px;
   background-color: ${p => p.theme.colors.primary};
-  width: 4rem;
+  width: 4em;
   line-height: 2.5rem;
   font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
+
   @media (min-width: 1040px) {
     line-height: 3.2rem;
-    width: 6.3rem;
     font-size: 2rem;
   }
 `
