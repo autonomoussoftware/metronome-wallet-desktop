@@ -32,10 +32,11 @@ const IconContainer = styled.div`
   }
 `
 
-const Button = styled(NavLink)`
+const Button = styled(BaseBtn)`
   cursor: pointer;
   display: block;
   text-decoration: none;
+  text-align: left;
   color: ${p => p.theme.colors.light};
   padding: 0.8rem 1.6rem;
   line-height: 2rem;
@@ -130,6 +131,7 @@ class SecondaryNav extends React.Component {
           data-testid="tools-nav-btn"
           parent={this.props.parent}
           to="/tools"
+          as={NavLink}
         >
           Tools
         </Button>
@@ -138,7 +140,6 @@ class SecondaryNav extends React.Component {
           data-testid="help-nav-btn"
           onClick={this.props.client.onHelpLinkClick}
           parent={this.props.parent}
-          as={BaseBtn}
         >
           Help
         </Button>
