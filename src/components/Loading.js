@@ -9,7 +9,6 @@ import ChecklistItem from './common/ChecklistItem'
 
 const ChecklistContainer = styled.div`
   margin: 4rem auto 2rem;
-  max-width: 200px;
 `
 
 const DetailItem = styled.div`
