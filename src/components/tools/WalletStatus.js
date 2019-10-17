@@ -1,6 +1,4 @@
-import { withClient } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
-import * as selectors from 'metronome-wallet-ui-logic/src/selectors'
-import { connect } from 'react-redux'
+import withWalletInfoState from 'metronome-wallet-ui-logic/src/hocs/withWalletInfoState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
@@ -83,13 +81,4 @@ WalletStatus.propTypes = {
   height: PropTypes.number
 }
 
-const mapStateToProps = (state, props) => ({
-  isIndexerConnected: selectors.getIndexerConnectionStatus(state),
-  isWeb3Connected: selectors.getChainConnectionStatus(state),
-  appVersion: props.client.getAppVersion(),
-  chainName: selectors.getActiveChainDisplayName(state),
-  isOnline: selectors.getIsOnline(state),
-  ...selectors.getChainMeta(state)
-})
-
-export default withClient(connect(mapStateToProps)(WalletStatus))
+export default withWalletInfoState(WalletStatus)
