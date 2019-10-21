@@ -4,8 +4,9 @@ const MetronomeContracts = require('metronome-contracts')
 const contracts = MetronomeContracts['qtumTestnet']
 
 module.exports = {
+  chainId: 'test',
+  chainType: 'qtum',
   displayName: 'Qtum Testnet',
-  chainId: 3,
   symbol: 'QTUM',
 
   // contracts addresses
@@ -16,9 +17,8 @@ module.exports = {
   auctionAddress: contracts.Auctions.address,
 
   // urls
-  explorerUrl: 'http://localhost', // TODO: update!
-  indexerUrl: process.env.QTUM_TESTNET_INDEXER_URL || 'http://localhost:3025',
-  wsApiUrl: process.env.QTUM_TESTNET_NODE_URL || 'ws://localhost:8566',
+  explorerUrl: process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001',
+  nodeUrl: process.env.QTUMTEST_NODE_URL || 'http://user:password@localhost:13889',
 
   // defauls
   coinDefaultGasLimit: '21000',

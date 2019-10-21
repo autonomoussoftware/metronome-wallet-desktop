@@ -46,7 +46,7 @@
     "lodash": "4.17.15",
     "metronome-contracts": "2.5.0",
     "metronome-wallet-core": "2.4.8",
-    "metronome-wallet-ui-logic": "3.5.1",
+    "metronome-wallet-ui-logic": "autonomoussoftware/metronome-wallet-ui-logic#qtum",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
     "patch-package": "5.1.1",
