@@ -45,7 +45,7 @@
     "json-stringify-safe": "5.0.1",
     "lodash": "4.17.15",
     "metronome-contracts": "2.5.0",
-    "metronome-wallet-core": "2.4.8",
+    "metronome-wallet-core": "autonomoussoftware/metronome-wallet-core#qtum",
     "metronome-wallet-ui-logic": "autonomoussoftware/metronome-wallet-ui-logic#qtum",
     "nedb": "1.8.0",
     "p-timeout": "2.0.1",
