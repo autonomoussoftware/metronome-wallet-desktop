@@ -1,20 +1,25 @@
 'use strict'
 
-const MetronomeContracts = require('metronome-contracts')
-const contracts = MetronomeContracts['qtumTestnet']
+const { keyBy } = require('lodash')
+const MetronomeContracts = require('metronome-sdk/src/contracts')
 
-module.exports = {
-  chainId: 'test',
-  chainType: 'qtum',
+const chainId = 'test'
+const chainType = 'qtum'
+
+const contracts = keyBy(MetronomeContracts[chainType][chainId], 'name')
+
+const config = {
+  chainId,
+  chainType,
   displayName: 'Qtum Testnet',
   symbol: 'QTUM',
 
   // contracts addresses
-  tokenPorterAddress: contracts.TokenPorter.address,
-  converterAddress: contracts.AutonomousConverter.address,
-  validatorAddress: contracts.Validator.address,
-  metTokenAddress: contracts.METToken.address,
-  auctionAddress: contracts.Auctions.address,
+  tokenPorterAddress: contracts['TokenPorter'].address,
+  converterAddress: contracts['AutonomousConverter'].address,
+  validatorAddress: contracts['Validator'].address,
+  metTokenAddress: contracts['METToken'].address,
+  auctionAddress: contracts['Auctions'].address,
 
   // urls
   explorerUrl: process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001',
@@ -26,3 +31,5 @@ module.exports = {
   defaultGasPrice: '1000000000',
   maxGasPrice: '20000000000000000'
 }
+
+module.exports = config
