@@ -76,7 +76,7 @@ function refreshTransaction ({ hash, address }, { coreApi }) {
 
 const getGasLimit = (data, { coreApi }) => coreApi.wallet.getGasLimit(data)
 
-const getGasPrice = (data, { coreApi }) => coreApi.wallet.getGasPrice(data)
+const getGasPrice = (data, { coreApi }) => coreApi.explorer.getGasPrice(data)
 
 const sendCoin = (data, { coreApi }) =>
   withAuth(coreApi.wallet.sendCoin)(data, { coreApi })
