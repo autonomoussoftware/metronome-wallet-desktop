@@ -98,6 +98,7 @@ export default class Stats extends React.Component {
                 <Badge>1 MET</Badge>
                 <Price>
                   <DisplayValue
+                    useDecimals
                     isCoin
                     value={this.props.converterStatus.currentPrice}
                     pre=" = "
@@ -124,6 +125,7 @@ export default class Stats extends React.Component {
             <Label>Available {this.props.coinSymbol}</Label>
             <AvailableAmount>
               <DisplayValue
+                useDecimals
                 isCoin
                 value={this.props.converterStatus.availableCoin}
               />

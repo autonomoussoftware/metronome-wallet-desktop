@@ -9,6 +9,7 @@ const wsApiUrl = process.env.ROPSTEN_NODE_URL || 'ws://localhost:8546'
 module.exports = {
   displayName: 'Ropsten',
   chainId: 3,
+  decimals: 18,
   symbol: 'ETH',
 
   // contracts addresses

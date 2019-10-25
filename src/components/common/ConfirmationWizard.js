@@ -64,9 +64,9 @@ const Disclaimer = styled.div`
   text-align: justify;
 `
 
-const Focusable = styled.div.attrs({
+const Focusable = styled.div.attrs(() => ({
   tabIndex: '-1'
-})`
+}))`
   &:focus {
     outline: none;
   }

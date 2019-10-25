@@ -101,7 +101,7 @@ class BalanceBlock extends React.Component {
         <Balance>
           <CoinSymbol>{this.props.coinSymbol}</CoinSymbol>
           <Value data-testid="coin-balance">
-            <DisplayValue value={this.props.coinBalanceWei} />
+            <DisplayValue value={this.props.coinBalanceWei} useDecimals />
           </Value>
           <USDValue data-testid="coin-balance-usd">
             ${this.props.coinBalanceUSD} (USD)

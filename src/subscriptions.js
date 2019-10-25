@@ -1,6 +1,6 @@
 export function subscribeToMainProcessMessages(store) {
   const ipcMessages = [
-    'indexer-connection-status-changed',
+    'explorer-connection-status-changed',
     'metronome-token-status-updated',
     'web3-connection-status-changed',
     'attestation-threshold-updated',

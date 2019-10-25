@@ -13,6 +13,7 @@ const config = {
   chainType,
   displayName: 'Qtum Testnet',
   symbol: 'QTUM',
+  decimals: 8,
 
   // contracts addresses
   tokenPorterAddress: contracts['TokenPorter'].address,
