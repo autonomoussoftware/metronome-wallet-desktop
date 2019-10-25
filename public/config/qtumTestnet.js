@@ -1,7 +1,7 @@
 'use strict'
 
 const { keyBy } = require('lodash')
-const MetronomeContracts = require('metronome-wallet-core/src/contracts')
+const MetronomeContracts = require('metronome-wallet-core/contracts')
 
 const chainId = 'test'
 const chainType = 'qtum'
