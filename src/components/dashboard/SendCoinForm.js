@@ -33,6 +33,7 @@ const Footer = styled.div`
 
 class SendCoinForm extends React.Component {
   static propTypes = {
+    addressPlaceholder: PropTypes.string,
     gasEstimateError: PropTypes.bool,
     coinPlaceholder: PropTypes.string,
     usdPlaceholder: PropTypes.string,
@@ -47,6 +48,7 @@ class SendCoinForm extends React.Component {
     validate: PropTypes.func.isRequired,
     gasPrice: PropTypes.string,
     gasLimit: PropTypes.string,
+    useGas: PropTypes.bool.isRequired,
     errors: PropTypes.shape({
       toAddress: PropTypes.string
     }).isRequired,
@@ -73,7 +75,7 @@ class SendCoinForm extends React.Component {
           id="sendForm"
         >
           <TextInput
-            placeholder="e.g. 0x2345678998765434567"
+            placeholder={this.props.addressPlaceholder}
             data-testid="toAddress-field"
             autoFocus
             onChange={this.props.onInputChange}
@@ -94,16 +96,18 @@ class SendCoinForm extends React.Component {
               errors={this.props.errors}
             />
           </Sp>
-          <Sp mt={3}>
-            <GasEditor
-              gasEstimateError={this.props.gasEstimateError}
-              onInputChange={this.props.onInputChange}
-              useCustomGas={this.props.useCustomGas}
-              gasLimit={this.props.gasLimit}
-              gasPrice={this.props.gasPrice}
-              errors={this.props.errors}
-            />
-          </Sp>
+          {this.props.useGas && (
+            <Sp mt={3}>
+              <GasEditor
+                gasEstimateError={this.props.gasEstimateError}
+                onInputChange={this.props.onInputChange}
+                useCustomGas={this.props.useCustomGas}
+                gasLimit={this.props.gasLimit}
+                gasPrice={this.props.gasPrice}
+                errors={this.props.errors}
+              />
+            </Sp>
+          )}
         </form>
       </Sp>
       <Footer>

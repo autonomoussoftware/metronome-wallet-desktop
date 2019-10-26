@@ -8,8 +8,9 @@ const wsApiUrl = process.env.MORDOR_NODE_URL || 'ws://localhost:8556'
 
 module.exports = {
   displayName: 'Mordor',
-  chainId: 63,
+  chainType: 'ethereum',
   decimals: 18,
+  chainId: 63,
   symbol: 'ETC',
 
   // contracts addresses

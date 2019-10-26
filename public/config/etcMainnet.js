@@ -5,8 +5,9 @@ const contracts = MetronomeContracts['classic']
 
 module.exports = {
   displayName: 'Ethereum Classic',
-  chainId: 61,
+  chainType: 'ethereum',
   decimals: 18,
+  chainId: 61,
   symbol: 'ETC',
 
   // contracts addresses
