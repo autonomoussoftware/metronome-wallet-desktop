@@ -1,0 +1,71 @@
+patch-package
+--- a/node_modules/qtumjs-wallet/lib/Insight.js
++++ b/node_modules/qtumjs-wallet/lib/Insight.js
+@@ -14,9 +14,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ const axios_1 = __importDefault(require("axios"));
+ const constants_1 = require("./constants");
+ const INSIGHT_BASEURLS = {
+-    [constants_1.NetworkNames.MAINNET]: "https://explorer.qtum.org/insight-api",
+-    [constants_1.NetworkNames.TESTNET]: "https://testnet.qtum.org/insight-api",
+-    [constants_1.NetworkNames.REGTEST]: "http://localhost:3001/insight-api",
++    [constants_1.NetworkNames.MAINNET]: "https://explorer.qtum.info/api",
++    [constants_1.NetworkNames.TESTNET]: "https://testnet.qtum.info/api",
++    [constants_1.NetworkNames.REGTEST]: "http://localhost:3001/api",
+ };
+ class Insight {
+     constructor(baseURL) {
+@@ -40,13 +40,13 @@ class Insight {
+     }
+     listUTXOs(address) {
+         return __awaiter(this, void 0, void 0, function* () {
+-            const res = yield this.axios.get(`/addr/${address}/utxo`);
++            const res = yield this.axios.get(`/address/${address}/utxo`);
+             return res.data;
+         });
+     }
+     getInfo(address) {
+         return __awaiter(this, void 0, void 0, function* () {
+-            const res = yield this.axios.get(`/addr/${address}`);
++            const res = yield this.axios.get(`/address/${address}`);
+             return res.data;
+         });
+     }
+@@ -62,7 +62,7 @@ class Insight {
+         return __awaiter(this, void 0, void 0, function* () {
+             // FIXME wow, what a weird API design... maybe we should just host the RPC
+             // server, with limited API exposed.
+-            const res = yield this.axios.get(`/contracts/${address}/hash/${encodedData}/call`);
++            const res = yield this.axios.get(`/contract/${address}/call?data=${encodedData}`);
+             return res.data;
+         });
+     }
+@@ -74,8 +74,8 @@ class Insight {
+      */
+     estimateFee(nblocks = 6) {
+         return __awaiter(this, void 0, void 0, function* () {
+-            const res = yield this.axios.get(`/utils/estimatefee?nbBlocks=${nblocks}`);
+-            const feeRate = res.data;
++            const res = yield this.axios.get(`/info`);
++            const feeRate = res.data.feeRate;
+             if (typeof feeRate !== "number" || feeRate < 0) {
+                 return -1;
+             }
+--- a/node_modules/qtumjs-wallet/lib/Wallet.js
++++ b/node_modules/qtumjs-wallet/lib/Wallet.js
+@@ -211,7 +211,15 @@ class Wallet {
+             // could cause overlapping UXTOs to be used.
+             // FIXME: make the two compatible...
+             // massage UXTO to format accepted by bitcoinjs
+-            const bitcoinjsUTXOs = uxtos.map((uxto) => (Object.assign({}, uxto, { pos: uxto.vout, value: uxto.satoshis, hash: uxto.txid })));
++            const bitcoinjsUTXOs = uxtos.map((uxto) => (Object.assign({}, uxto, {
++                pos: uxto.outputIndex,
++                vout: uxto.outputIndex,
++                height: uxto.blockHeight,
++                value: +uxto.value,
++                amount: +uxto.value,
++                hash: uxto.transactionId,
++                txid: uxto.transactionId,
++            })));
+             return bitcoinjsUTXOs;
+         });
+     }
