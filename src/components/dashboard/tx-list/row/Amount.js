@@ -37,6 +37,7 @@ export default class Amount extends React.Component {
   static propTypes = {
     isAttestationValid: PropTypes.bool,
     isProcessing: PropTypes.bool,
+    coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool,
     isFailed: PropTypes.bool.isRequired,
     symbol: PropTypes.string,
@@ -75,6 +76,7 @@ export default class Amount extends React.Component {
           <div>New transaction</div>
         ) : (
           <DisplayValue
+            useDecimals={this.props.symbol === 'coin'}
             value={this.props.value}
             post={
               this.props.txType === 'import-requested' ||

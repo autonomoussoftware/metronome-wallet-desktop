@@ -17,6 +17,7 @@ export default class ConvertedAmount extends React.Component {
       <React.Fragment>
         {this.props.fromValue ? (
           <DisplayValue
+            useDecimals={this.props.convertedFrom === 'coin'}
             value={this.props.fromValue}
             post={` ${
               this.props.convertedFrom === 'coin'
@@ -28,20 +29,20 @@ export default class ConvertedAmount extends React.Component {
           <div>New transaction</div>
         )}
 
-        {this.props.fromValue &&
-          this.props.toValue && (
-            <React.Fragment>
-              <Arrow />
-              <DisplayValue
-                value={this.props.toValue}
-                post={
-                  this.props.convertedFrom === 'coin'
-                    ? ' MET'
-                    : ` ${this.props.coinSymbol}`
-                }
-              />
-            </React.Fragment>
-          )}
+        {this.props.fromValue && this.props.toValue && (
+          <React.Fragment>
+            <Arrow />
+            <DisplayValue
+              useDecimals={this.props.convertedFrom !== 'coin'}
+              value={this.props.toValue}
+              post={
+                this.props.convertedFrom === 'coin'
+                  ? ' MET'
+                  : ` ${this.props.coinSymbol}`
+              }
+            />
+          </React.Fragment>
+        )}
       </React.Fragment>
     )
   }

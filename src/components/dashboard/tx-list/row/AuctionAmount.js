@@ -13,7 +13,11 @@ export default class AuctionAmount extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <DisplayValue value={this.props.coinSpentInAuction} isCoin />
+        <DisplayValue
+          useDecimals
+          isCoin
+          value={this.props.coinSpentInAuction}
+        />
 
         {this.props.metBoughtInAuction && (
           <React.Fragment>
