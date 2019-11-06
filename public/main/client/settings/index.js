@@ -1,83 +1,55 @@
 'use strict'
 
-const settings = require('electron-settings')
-const utils = require('web3-utils')
 const { merge } = require('lodash')
+const settings = require('electron-settings')
 
-const logger = require('../../../logger')
-const restart = require('../electron-restart')
+const { upgradeSettings } = require('./upgradeSettings')
 const { getDb } = require('../database')
+const restart = require('../electron-restart')
+const logger = require('../../../logger')
 
-const getKey = key => settings.get(key)
-
-function setKey (key, value) {
-  settings.set(key, value)
-  logger.verbose('Settings changed', key)
+function getPasswordHash () {
+  return settings.get('user.passwordHash')
 }
-
-const getPasswordHash = () => getKey('user.passwordHash')
 
 function setPasswordHash (hash) {
-  setKey('user.passwordHash', hash)
+  settings.set('user.passwordHash', hash)
+  logger.verbose('Password hash changed')
 }
 
-function upgradeSettings (defaultSettings, currentSettings) {
-  const finalSettings = merge({}, currentSettings)
-  // Remove no longer used settings as now are stored in config
-  delete finalSettings.app
-  delete finalSettings.coincap
-  delete finalSettings.tokens
-  // Convert previous addresses to checksum addresses
-  if (finalSettings.user && finalSettings.user.wallets) {
-    Object.keys(finalSettings.user.wallets).forEach(function (key) {
-      Object.keys(finalSettings.user.wallets[key].addresses).forEach(
-        function (address) {
-          if (!utils.checkAddressChecksum(address)) {
-            finalSettings.user.wallets[key]
-              .addresses[utils.toChecksumAddress(address)] =
-            finalSettings.user.wallets[key].addresses[address]
-            // Remove previous lowercase address
-            delete finalSettings.user.wallets[key].addresses[address]
-          }
-        }
-      )
+/**
+ * Delete cached app state
+ */
+function clearCache () {
+  const db = getDb()
+  db.collection('Balances')
+  db.collection('Rates')
+  db.collection('TokenBalances')
+  db.collection('Transactions')
+  db.collection('State')
+  db.dropDatabase()
+    .catch(function (err) {
+      logger.error('Possible database corruption', err.message)
+      restart()
     })
-  }
-  finalSettings.settingsVersion = defaultSettings.settingsVersion
-  settings.setAll(finalSettings)
 }
 
-function presetDefaults () {
+/**
+ * Initializes app settings merging potentially newer app defaults with
+ * currently installed app settings and upgrading them if required.
+ */
+function init () {
   logger.verbose('Settings file', settings.file())
-
-  const currentSettings = settings.getAll()
   const defaultSettings = require('./defaultSettings')
+  const installedSettings = settings.getAll()
+  const installedSettingsVersion = installedSettings.settingsVersion || 0
 
-  const currentSettingsVersion = currentSettings.settingsVersion || 0
-
-  // User settings format was changed in v2
-  if (currentSettingsVersion <= 1) {
-    logger.warn('Removing old user settings')
-    delete currentSettings.user
-  }
-
-  // Overwrite old settings and clear db if settings file version changed
-  if (defaultSettings.settingsVersion > currentSettingsVersion) {
+  if (defaultSettings.settingsVersion > installedSettingsVersion) {
     logger.verbose('Updating default settings')
-    upgradeSettings(defaultSettings, currentSettings)
-    const db = getDb()
-    db.collection('Balances')
-    db.collection('Rates')
-    db.collection('TokenBalances')
-    db.collection('Transactions')
-    db.collection('State')
-    db.dropDatabase()
-      .catch(function (err) {
-        logger.error('Possible database corruption', err.message)
-        restart()
-      })
+    upgradeSettings(defaultSettings, installedSettings)
+    clearCache()
   } else {
-    settings.setAll(merge(defaultSettings, currentSettings))
+    settings.setAll(merge(defaultSettings, installedSettings))
     logger.verbose('Default settings applied')
     logger.debug('Current settings', settings.getAll())
   }
@@ -86,5 +58,5 @@ function presetDefaults () {
 module.exports = {
   getPasswordHash,
   setPasswordHash,
-  presetDefaults
+  init
 }

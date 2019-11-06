@@ -98,7 +98,7 @@ function createClient (config) {
     logger.error(args.message)
   })
 
-  settings.presetDefaults()
+  settings.init()
 
   const cores = config.enabledChains.map(chainName => ({
     chain: chainName,
