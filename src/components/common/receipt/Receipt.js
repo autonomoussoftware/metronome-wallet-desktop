@@ -1,4 +1,3 @@
-import { toChecksumAddress } from 'web3-utils'
 import PropTypes from 'prop-types'
 import TimeAgo from 'metronome-wallet-ui-logic/src/components/TimeAgo'
 import styled from 'styled-components'
@@ -92,6 +91,7 @@ export default class Receipt extends React.Component {
     refreshError: PropTypes.string,
     coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired,
+    hash: PropTypes.string,
     tx: PropTypes.object.isRequired
   }
 
@@ -142,14 +142,14 @@ export default class Receipt extends React.Component {
               <Label>
                 {this.props.isPending ? 'Pending' : 'Received'} from
               </Label>
-              <Address>{toChecksumAddress(tx.from)}</Address>
+              <Address>{tx.from}</Address>
             </Row>
           )}
 
           {tx.txType === 'sent' && tx.to && (
             <Row>
               <Label>{this.props.isPending ? 'Pending' : 'Sent'} to</Label>
-              <Address>{toChecksumAddress(tx.to)}</Address>
+              <Address>{tx.to}</Address>
             </Row>
           )}
 
@@ -184,7 +184,7 @@ export default class Receipt extends React.Component {
           {tx.portDestinationAddress && (
             <Row>
               <Label>Destination Address</Label>
-              <Address>{toChecksumAddress(tx.portDestinationAddress)}</Address>
+              <Address>{tx.portDestinationAddress}</Address>
             </Row>
           )}
 
