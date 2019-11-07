@@ -45,7 +45,7 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
         send('transactions-scan-started', {})
 
         return pTimeout(
-          coreApi.explorer.syncTransactions(from, address),
+          coreApi.transactionsSyncer.syncTransactions(from, address),
           coreConfig.scanTransactionTimeout
         )
           .then(number => storage.setSyncBlock(number, chain))
