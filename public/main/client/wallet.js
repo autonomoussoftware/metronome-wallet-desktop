@@ -31,16 +31,25 @@ function getSeed (walletId, password) {
 const getSeedByAddress = (address, password) =>
   getSeed(findWalletId(address), password)
 
-const setAddressForWalletId = (walletId, address) =>
+const setAddressForWalletId = (walletId, address, chainType) =>
   Promise.resolve(
-    settings.set(`user.wallets.${walletId}.addresses`, {
-      [address]: {
-        index: 0
-      }
+    settings.set(`user.wallets.${walletId}.addresses.${address}`, {
+      chainType,
+      index: 0
     })
   )
 
 const getAddressesForWalletId = walletId => getWalletAddresses(walletId)
+
+function getAddressesByWalletIdAndChainType (walletId, chainType) {
+  const addresses = settings.get(`user.wallets.${walletId}.addresses`)
+  return Object.keys(addresses).reduce(function (acc, current) {
+    if (addresses[current].chainType === chainType) {
+      acc.push(current)
+    }
+    return acc
+  }, [])
+}
 
 const setSeed = (seed, password) =>
   Promise.resolve(
@@ -53,6 +62,7 @@ const setSeed = (seed, password) =>
 const clearWallets = () => settings.set('user.wallets', {})
 
 module.exports = {
+  getAddressesByWalletIdAndChainType,
   getAddressesForWalletId,
   setAddressForWalletId,
   getSeedByAddress,

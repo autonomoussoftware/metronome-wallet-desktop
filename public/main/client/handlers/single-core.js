@@ -20,26 +20,27 @@ const withAuth = fn =>
       .then(privateKey => fn(privateKey, data))
   }
 
-function createWallet (data, { coreApi, emitter }) {
+function createWallet (data, { coreApi, emitter, config: { chainType } }) {
   const walletId = wallet.getWalletId(data.seed)
   const address = coreApi.wallet.createAddress(data.seed)
   return Promise.all([
     wallet.setSeed(data.seed, data.password),
-    wallet.setAddressForWalletId(walletId, address)
+    wallet.setAddressForWalletId(walletId, address, chainType)
   ])
     .then(() => wallet.setActiveWallet(walletId))
     .then(() => emitter.emit('create-wallet', { walletId }))
 }
 
-function openWallet ({ emitter }) {
+function openWallet ({ emitter, config: { chainType } }) {
   const activeWallet = wallet.getActiveWallet() || wallet.getWallets()[0]
-  wallet.getAddressesForWalletId(activeWallet).forEach(address =>
-    emitter.emit('open-wallets', {
-      walletIds: [activeWallet],
-      activeWallet,
-      address
-    })
-  )
+  wallet.getAddressesByWalletIdAndChainType(activeWallet, chainType)
+    .forEach(address =>
+      emitter.emit('open-wallets', {
+        walletIds: [activeWallet],
+        activeWallet,
+        address
+      })
+    )
 }
 
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
