@@ -99,7 +99,6 @@ export default class Stats extends React.Component {
                 <Badge>1 MET</Badge>
                 <Price>
                   <DisplayValue
-                    useDecimals
                     isCoin
                     value={auctionStatus.currentPrice}
                     pre=" = "
