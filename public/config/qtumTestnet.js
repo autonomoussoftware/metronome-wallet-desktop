@@ -23,9 +23,9 @@ const config = {
   auctionAddress: contracts['Auctions'].address,
 
   // urls
-  explorerUrl: process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001',
-  nodeUrl: process.env.QTUMTEST_NODE_URL ||
-    'http://user:password@localhost:13889',
+  explorerApiUrl: process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001',
+  explorerUrl: `${process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001'}/tx/{{hash}}`,
+  nodeUrl: process.env.QTUMTEST_NODE_URL || 'http://user:password@localhost:13889',
 
   // defauls
   coinDefaultGasLimit: '21000',
