@@ -46,7 +46,7 @@ function openWallet ({ emitter, config: { chainType } }) {
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
   emitter.emit('transactions-scan-started', {})
   return pTimeout(
-    coreApi.explorer.refreshAllTransactions(address),
+    coreApi.transactionsSyncer.refreshAllTransactions(address),
     config.scanTransactionTimeout
   )
     .then(function () {
@@ -68,7 +68,7 @@ function refreshAllTransactions ({ address }, { coreApi, emitter }) {
 
 function refreshTransaction ({ hash, address }, { coreApi }) {
   return pTimeout(
-    coreApi.explorer.refreshTransaction(hash, address),
+    coreApi.transactionsSyncer.refreshTransaction(hash, address),
     config.scanTransactionTimeout
   )
     .then(() => ({ success: true }))
