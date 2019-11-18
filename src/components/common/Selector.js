@@ -81,12 +81,24 @@ const MenuItem = styled(ReachUI.MenuItem)`
   font-weight: 600;
   letter-spacing: 0.5px;
   padding: 1.2rem 1.6rem;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  outline: none;
 
-  &[data-selected] {
+  &[data-selected]:not([disabled]) {
     background-color: rgba(126, 97, 248, 0.1);
     color: ${p => p.theme.colors.primary};
-    outline: none;
   }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+`
+
+const Legend = styled.span`
+  color: ${p => p.theme.colors.danger};
 `
 
 export default class Selector extends React.Component {
@@ -95,6 +107,7 @@ export default class Selector extends React.Component {
     onChange: PropTypes.func.isRequired,
     options: PropTypes.arrayOf(
       PropTypes.shape({
+        disabledReason: PropTypes.string,
         value: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired
       })
@@ -135,10 +148,16 @@ export default class Selector extends React.Component {
           <MenuList>
             {options.map(item => (
               <MenuItem
-                onSelect={() => onChange({ id, value: item.value })}
+                disabled={Boolean(item.disabledReason)}
+                onSelect={
+                  item.disabledReason
+                    ? () => {}
+                    : () => onChange({ id, value: item.value })
+                }
                 key={item.value}
               >
-                {item.label}
+                {item.label}{' '}
+                {item.disabledReason && <Legend>{item.disabledReason}</Legend>}
               </MenuItem>
             ))}
           </MenuList>
