@@ -1,4 +1,3 @@
-import { toChecksumAddress } from 'web3-utils'
 import withPortState from 'metronome-wallet-ui-logic/src/hocs/withPortState'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -93,7 +92,7 @@ const NoPortsMessage = styled.div`
 
 class Port extends React.Component {
   static propTypes = {
-    attestationThreshold: PropTypes.number.isRequired,
+    attestationThreshold: PropTypes.number,
     retryDisabledReason: PropTypes.string,
     portDisabledReason: PropTypes.string,
     shouldRenderForm: PropTypes.bool.isRequired,
@@ -128,7 +127,7 @@ class Port extends React.Component {
       activeModal: 'retry-import',
       retryCandidate: {
         ...retryCandidate,
-        from: toChecksumAddress(retryCandidate.from)
+        from: retryCandidate.from
       }
     })
   }

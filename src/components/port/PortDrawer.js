@@ -98,7 +98,6 @@ class PortDrawer extends React.Component {
         <Sp py={3}>
           <Selector
             data-testid="destination-field"
-            disabled={this.props.availableDestinations.length < 2}
             onChange={this.props.onInputChange}
             options={this.props.availableDestinations}
             error={this.props.errors.destination}
