@@ -20,12 +20,13 @@ const logger = require('../../../logger')
 function upgradeSettings (defaultSettings, installedSettings) {
   const finalSettings = merge({}, installedSettings)
 
-  switch (installedSettings.version || 0) {
+  switch (installedSettings.settingsVersion || 0) {
     case 0:
     case 1:
       // User settings format was changed in v2
       logger.warn('Removing old user settings')
       delete finalSettings.user
+
     case 2:
     case 3:
     case 4:
@@ -44,6 +45,7 @@ function upgradeSettings (defaultSettings, installedSettings) {
       delete finalSettings.app
       delete finalSettings.coincap
       delete finalSettings.tokens
+
       // Convert previous addresses to checksum addresses
       if (finalSettings.user && finalSettings.user.wallets) {
         Object.keys(finalSettings.user.wallets).forEach(function (key) {
@@ -52,14 +54,17 @@ function upgradeSettings (defaultSettings, installedSettings) {
               if (!utils.checkAddressChecksum(address)) {
                 finalSettings.user.wallets[key]
                   .addresses[utils.toChecksumAddress(address)] =
-                finalSettings.user.wallets[key].addresses[address]
+                  finalSettings.user.wallets[key].addresses[address]
                 delete finalSettings.user.wallets[key].addresses[address]
               }
             }
           )
         })
       }
+
     case 16:
+      // Add "ethereum" chainType to existing addresses
+      // Required after adding Qtum support
       if (finalSettings.user && finalSettings.user.wallets) {
         Object.keys(finalSettings.user.wallets).forEach(function (key) {
           Object.keys(finalSettings.user.wallets[key].addresses).forEach(
@@ -71,6 +76,7 @@ function upgradeSettings (defaultSettings, installedSettings) {
         })
       }
   }
+
   finalSettings.settingsVersion = defaultSettings.settingsVersion
   settings.setAll(finalSettings)
 }
