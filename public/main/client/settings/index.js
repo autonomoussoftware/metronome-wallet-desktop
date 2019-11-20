@@ -7,6 +7,7 @@ const { upgradeSettings } = require('./upgradeSettings')
 const { getDb } = require('../database')
 const restart = require('../electron-restart')
 const logger = require('../../../logger')
+const wallet = require('../wallet')
 
 function getPasswordHash () {
   return settings.get('user.passwordHash')
@@ -35,6 +36,27 @@ function clearCache () {
 }
 
 /**
+ * Checks if an enabled chain has a corresponding address in the settings file
+ * and creates it if it doesn't.
+ *
+ * @param {Object} core - A wallet core object
+ * @param {string} password - The user password to decrypt the stored seed
+ */
+function checkMissingAddress ({ coreApi, config: { chainType } }, password) {
+  const walletId = wallet.getActiveWallet() || wallet.getWallets()[0]
+  const addresses =
+    wallet.getAddressesByWalletIdAndChainType(walletId, chainType)
+  if (addresses.length === 0) {
+    const seed = wallet.getSeed(walletId, password)
+    const address = coreApi.wallet.createAddress(seed)
+    settings.set(`user.wallets.${walletId}.addresses.${address}`, {
+      chainType,
+      index: 0
+    })
+  }
+}
+
+/**
  * Initializes app settings merging potentially newer app defaults with
  * currently installed app settings and upgrading them if required.
  */
@@ -56,6 +78,7 @@ function init () {
 }
 
 module.exports = {
+  checkMissingAddress,
   getPasswordHash,
   setPasswordHash,
   init

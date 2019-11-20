@@ -6,6 +6,7 @@ const auth = require('../auth')
 const config = require('../../../config')
 const keys = require('../keys')
 const wallet = require('../wallet')
+const settings = require('../settings')
 const WalletError = require('../WalletError')
 
 const noCore = require('./no-core')
@@ -47,7 +48,10 @@ function onLoginSubmit (data, cores) {
     if (!isValid) {
       return { error: new WalletError('Invalid password') }
     }
-    cores.forEach(singleCore.openWallet)
+    cores.forEach(function (core) {
+      settings.checkMissingAddress(core, data.password)
+      singleCore.openWallet(core)
+    })
     return isValid
   })
 }
