@@ -60,6 +60,7 @@ export default class AmountRow extends React.Component {
           {this.props.txType === 'auction' ? (
             <React.Fragment>
               <DisplayValue
+                useDecimals
                 maxSize="1.6rem"
                 isCoin
                 value={this.props.coinSpentInAuction}
@@ -78,6 +79,7 @@ export default class AmountRow extends React.Component {
           ) : this.props.txType === 'converted' ? (
             <React.Fragment>
               <DisplayValue
+                useDecimals={this.props.convertedFrom === 'coin'}
                 maxSize="1.6rem"
                 value={this.props.fromValue}
                 post={
@@ -90,6 +92,7 @@ export default class AmountRow extends React.Component {
                 <React.Fragment>
                   <Arrow>&darr;</Arrow>
                   <DisplayValue
+                    useDecimals={this.props.convertedFrom !== 'coin'}
                     maxSize="1.6rem"
                     value={this.props.toValue}
                     post={
@@ -103,6 +106,7 @@ export default class AmountRow extends React.Component {
             </React.Fragment>
           ) : (
             <DisplayValue
+              useDecimals={this.props.symbol === 'coin'}
               maxSize="2rem"
               value={this.props.value}
               post={
