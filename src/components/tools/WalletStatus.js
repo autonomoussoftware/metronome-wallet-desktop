@@ -31,6 +31,7 @@ const IndicatorLed = styled.div`
   margin: 5px 8px 2px 1px;
 `
 
+// eslint-disable-next-line require-jsdoc
 function WalletStatus(props) {
   return (
     <div>
@@ -40,10 +41,10 @@ function WalletStatus(props) {
 
       <LastUpdated
         timestamp={props.bestBlockTimestamp}
-        render={({ timeAgo, diff }) => (
+        render={({ timeAgo, level }) => (
           <Text>
             Best Block {props.height}
-            <MinedAgo diff={diff} as="span">
+            <MinedAgo level={level} as="span">
               mined {timeAgo}
             </MinedAgo>
           </Text>

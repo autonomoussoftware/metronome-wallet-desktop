@@ -6,6 +6,7 @@ const contracts = MetronomeContracts['classic']
 module.exports = {
   displayName: 'Ethereum Classic',
   chainType: 'ethereum',
+  blockTime: 15,
   decimals: 18,
   chainId: 61,
   symbol: 'ETC',
@@ -23,7 +24,7 @@ module.exports = {
   indexerUrl: 'https://etc.indexer.metronome.io',
   wsApiUrl: 'wss://etc.wallet.metronome.io:8546',
 
-  // defauls
+  // defaults
   coinDefaultGasLimit: '21000',
   metDefaultGasLimit: '250000',
   defaultGasPrice: '10000000000',

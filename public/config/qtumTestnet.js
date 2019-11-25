@@ -11,6 +11,7 @@ const contracts = keyBy(MetronomeContracts[chainType][chainId], 'name')
 const config = {
   displayName: 'Qtum Testnet',
   chainType,
+  blockTime: 120,
   decimals: 8,
   chainId,
   symbol: 'QTUM',
@@ -27,7 +28,7 @@ const config = {
   explorerUrl: `${process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001'}/tx/{{hash}}`,
   nodeUrl: process.env.QTUMTEST_NODE_URL || 'http://user:password@localhost:13889',
 
-  // defauls
+  // defaults
   coinDefaultGasLimit: '21000',
   metDefaultGasLimit: '250000',
   defaultGasPrice: '1000000000',

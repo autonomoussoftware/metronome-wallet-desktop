@@ -9,6 +9,7 @@ const wsApiUrl = process.env.MORDOR_NODE_URL || 'ws://localhost:8556'
 module.exports = {
   displayName: 'Mordor',
   chainType: 'ethereum',
+  blockTime: 15,
   decimals: 18,
   chainId: 63,
   symbol: 'ETC',
@@ -25,7 +26,7 @@ module.exports = {
   indexerUrl,
   wsApiUrl,
 
-  // defauls
+  // defaults
   coinDefaultGasLimit: '21000',
   metDefaultGasLimit: '250000',
   defaultGasPrice: '1000000000',

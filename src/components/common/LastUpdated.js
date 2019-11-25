@@ -6,23 +6,37 @@ import React from 'react'
 export const Label = styled.div`
   transition: color 0.5s;
   font-size: 1.3rem;
-  color: ${p =>
-    p.diff > 60
-      ? p.theme.colors.danger
-      : p.diff > 15
-      ? p.theme.colors.warning
-      : p.theme.colors.weak};
+  color: ${({ theme, level }) =>
+    ({
+      warning: theme.colors.warning,
+      danger: theme.colors.danger,
+      ok: theme.colors.weak
+    }[level])};
 `
 
-function defaultRender({ diff, timeAgo }) {
-  return <Label diff={diff}>Last updated {timeAgo}</Label>
+/**
+ * A default info string
+ *
+ * @param {Object} params - Render function params
+ * @param {string} params.level - Either "ok", "warning" or "danger"
+ * @param {string} params.timeAgo - "[amount] [unit] ago" string
+ */
+function defaultRender({ level, timeAgo }) {
+  return <Label level={level}>Last updated {timeAgo}</Label>
 }
 
 defaultRender.propTypes = {
   timeAgo: PropTypes.string,
-  diff: PropTypes.number
+  level: PropTypes.oneOf(['ok', 'warning', 'danger']).isRequired
 }
 
+/**
+ * Renders a "last updated" info text which auto-updates and changes color
+ *
+ * @param {Object} props - Component props
+ * @param {number} props.timestamp - Last updated timestamp
+ * @param {Function} props.render - An optional render function
+ */
 export default function LastUpdated({ timestamp, render }) {
   return (
     <TimeAgo
