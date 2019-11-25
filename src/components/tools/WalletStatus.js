@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
-import { Flex, Sp } from '../common'
 import LastUpdated, { Label } from '../common/LastUpdated'
+import { Flex } from '../common'
 
 const Text = styled.div`
   font-size: 1.3rem;
-  margin: 0.8rem 0;
+  margin: 0.8rem 1.6rem 0.8rem 0;
   display: flex;
   align-items: center;
 `
@@ -52,21 +52,15 @@ function WalletStatus(props) {
       />
 
       <Flex.Row align="center">
-        <Text>
-          <IndicatorLed
-            isConnected={props.isIndexerConnected}
-            isOnline={props.isOnline}
-          />
-          Indexer connection
-        </Text>
-        <Sp px={2} />
-        <Text>
-          <IndicatorLed
-            isConnected={props.isWeb3Connected}
-            isOnline={props.isOnline}
-          />
-          Web3 connection
-        </Text>
+        {Object.keys(props.connections).map(connectionName => (
+          <Text key={connectionName}>
+            <IndicatorLed
+              isConnected={props.connections[connectionName]}
+              isOnline={props.isOnline}
+            />
+            {connectionName}
+          </Text>
+        ))}
       </Flex.Row>
     </div>
   )
@@ -74,8 +68,7 @@ function WalletStatus(props) {
 
 WalletStatus.propTypes = {
   bestBlockTimestamp: PropTypes.number,
-  isIndexerConnected: PropTypes.bool,
-  isWeb3Connected: PropTypes.bool,
+  connections: PropTypes.objectOf(PropTypes.bool).isRequired,
   appVersion: PropTypes.string.isRequired,
   chainName: PropTypes.string.isRequired,
   isOnline: PropTypes.bool,

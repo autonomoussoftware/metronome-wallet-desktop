@@ -14,6 +14,12 @@ module.exports = {
   chainId: 63,
   symbol: 'ETC',
 
+  // connections status mappings
+  connections: {
+    indexer: 'Indexer connection',
+    web3: 'Web3 connection'
+  },
+
   // contracts addresses
   tokenPorterAddress: contracts.TokenPorter.address,
   converterAddress: contracts.AutonomousConverter.address,

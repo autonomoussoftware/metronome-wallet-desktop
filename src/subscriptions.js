@@ -1,6 +1,14 @@
+/**
+ * Subscribes to a list of IPC message and dispatch a Redux action
+ * of type { type: MSG_NAME, payload: MSG_ARG }
+ *
+ * @param {Object} store - A standard Redux store object
+ * @returns {undefined}
+ */
 export function subscribeToMainProcessMessages(store) {
   const ipcMessages = [
     'explorer-connection-status-changed',
+    'indexer-connection-status-changed',
     'metronome-token-status-updated',
     'web3-connection-status-changed',
     'attestation-threshold-updated',
@@ -17,8 +25,6 @@ export function subscribeToMainProcessMessages(store) {
     'coin-block'
   ]
 
-  // Subscribe to every IPC message defined above and dispatch a
-  // Redux action of type { type: MSG_NAME, payload: MSG_ARG }
   ipcMessages.forEach(msgName =>
     window.ipcRenderer.on(msgName, (_, payload) =>
       store.dispatch({ type: msgName, payload })

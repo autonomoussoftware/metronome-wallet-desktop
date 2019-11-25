@@ -16,6 +16,11 @@ const config = {
   chainId,
   symbol: 'QTUM',
 
+  // connections status mappings
+  connections: {
+    explorer: 'Explorer connection'
+  },
+
   // contracts addresses
   tokenPorterAddress: contracts['TokenPorter'].address,
   converterAddress: contracts['AutonomousConverter'].address,
