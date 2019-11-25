@@ -8,7 +8,7 @@ import React from 'react'
 import Root from 'metronome-wallet-ui-logic/src/components/Root'
 
 import { subscribeToMainProcessMessages } from './subscriptions'
-import Web3ConnectionNotifier from './components/Web3ConnectionNotifier'
+import ConnectionNotifier from './components/ConnectionNotifier'
 import { ToastsProvider } from './components/toasts'
 import { Tooltips } from './components/common'
 import createClient from './client'
@@ -34,7 +34,7 @@ ReactDOM.render(
             LoginComponent={Login}
           />
           <Tooltips />
-          <Web3ConnectionNotifier />
+          <ConnectionNotifier />
         </ToastsProvider>
       </ThemeProvider>
     </Provider>
