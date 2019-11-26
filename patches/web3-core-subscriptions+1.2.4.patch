@@ -1,7 +1,7 @@
 patch-package
 --- a/node_modules/web3-core-subscriptions/src/subscription.js
 +++ b/node_modules/web3-core-subscriptions/src/subscription.js
-@@ -271,32 +271,18 @@ Subscription.prototype.subscribe = function() {
+@@ -272,32 +272,18 @@ Subscription.prototype.subscribe = function() {
                          _this.callback(null, output, _this);
                      });
                  } else {
@@ -43,7 +43,7 @@ patch-package
          }
      });
  
-@@ -304,4 +290,38 @@ Subscription.prototype.subscribe = function() {
+@@ -305,4 +291,38 @@ Subscription.prototype.subscribe = function() {
      return this;
  };
  
