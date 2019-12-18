@@ -3,10 +3,10 @@
 const { keyBy } = require('lodash')
 const MetronomeContracts = require('metronome-wallet-core/contracts')
 
-const chainId = 'test'
+const chainId = 1364481358
 const chainType = 'qtum'
 
-const contracts = keyBy(MetronomeContracts[chainType][chainId], 'name')
+const contracts = keyBy(MetronomeContracts[chainId], 'name')
 
 const config = {
   displayName: 'Qtum Testnet',
@@ -30,8 +30,10 @@ const config = {
 
   // urls
   explorerApiUrl: process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001',
-  explorerUrl: `${process.env.QTUMTEST_EXPLORER_URL || 'http://localhost:3001'}/tx/{{hash}}`,
-  nodeUrl: process.env.QTUMTEST_NODE_URL || 'http://user:password@localhost:13889',
+  explorerUrl: `${process.env.QTUMTEST_EXPLORER_URL ||
+    'http://localhost:3001'}/tx/{{hash}}`,
+  nodeUrl:
+    process.env.QTUMTEST_NODE_URL || 'http://user:password@localhost:13889',
 
   // defaults
   coinDefaultGasLimit: '21000',
