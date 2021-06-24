@@ -8,7 +8,6 @@ const logger = require('../../logger')
 const subscriptions = require('./subscriptions')
 const settings = require('./settings')
 const storage = require('./storage')
-const pTimeout = require('p-timeout')
 
 function startCore ({ chain, core, config: coreConfig }, webContent) {
   logger.verbose(`Starting core ${chain}`)
@@ -39,16 +38,13 @@ function startCore ({ chain, core, config: coreConfig }, webContent) {
   )
 
   function syncTransactions ({ address }) {
-    storage
+    return storage
       .getSyncBlock(chain)
       .then(function (from) {
         send('transactions-scan-started', {})
 
-        return pTimeout(
-          coreApi.explorer.syncTransactions(from, address),
-          coreConfig.scanTransactionTimeout
-        )
-          .then(number => storage.setSyncBlock(number, chain))
+        return coreApi.explorer
+          .syncTransactions(from, address, number => storage.setSyncBlock(number, chain))
           .then(function () {
             send('transactions-scan-finished', { success: true })
 

@@ -44,10 +44,7 @@ function openWallet ({ emitter }) {
 
 function refreshAllTransactions ({ address }, { coreApi, emitter }) {
   emitter.emit('transactions-scan-started', {})
-  return pTimeout(
-    coreApi.explorer.refreshAllTransactions(address),
-    config.scanTransactionTimeout
-  )
+  return coreApi.explorer.refreshAllTransactions(address)
     .then(function () {
       emitter.emit('transactions-scan-finished', { success: true })
       return {}
