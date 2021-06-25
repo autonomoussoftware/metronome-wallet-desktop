@@ -1,6 +1,7 @@
 'use strict'
 
-const { ipcRenderer, clipboard, shell, remote } = require('electron')
+const { ipcRenderer, clipboard, shell } = require('electron')
+const remote = require('@electron/remote')
 const isDev = require('electron-is-dev')
 
 // @see http://electronjs.org/docs/tutorial/security#2-disable-nodejs-integration-for-remote-content

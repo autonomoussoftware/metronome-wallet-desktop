@@ -25,6 +25,7 @@
     "release": "npm run dist -- --publish always"
   },
   "dependencies": {
+    "@electron/remote": "1.2.0",
     "@reach/menu-button": "0.1.7",
     "bignumber.js": "7.2.1",
     "bip39": "2.5.0",

@@ -1,6 +1,7 @@
 'use strict'
 
-const { app, remote } = require('electron')
+const { app } = require('electron')
+const remote = require('@electron/remote')
 const { promisify } = remote.require('util')
 const { sum, upperFirst } = require('lodash')
 const Datastore = require('nedb')

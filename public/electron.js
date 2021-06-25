@@ -1,6 +1,8 @@
 'use strict'
 
-const { app, remote } = require('electron')
+const { app } = require('electron')
+const remote = require('@electron/remote')
+remote.initialize()
 const path = remote.require('path')
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })

@@ -1,8 +1,9 @@
 'use strict'
 
-const { app, remote, BrowserWindow, Notification } = require('electron')
+const { app, BrowserWindow, Notification } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
+const remote = require('@electron/remote')
 const path = remote.require('path')
 const windowStateKeeper = require('electron-window-state')
 
@@ -85,7 +86,7 @@ function loadWindow () {
     backgroundColor: '#323232',
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: false,
+      contextIsolation: false, // by default this is true from Electron 12.0 https://github.com/electron/electron/issues/23506
       preload: path.join(__dirname, 'preload.js')
     },
     x: mainWindowState.x,
