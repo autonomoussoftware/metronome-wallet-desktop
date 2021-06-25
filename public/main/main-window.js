@@ -1,9 +1,9 @@
 'use strict'
 
-const { app, BrowserWindow, Notification } = require('electron')
+const { app, remote, BrowserWindow, Notification } = require('electron')
 const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
-const path = require('path')
+const path = remote.require('path')
 const windowStateKeeper = require('electron-window-state')
 
 const logger = require('../logger')

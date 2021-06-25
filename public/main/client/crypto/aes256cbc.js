@@ -1,6 +1,6 @@
 'use strict'
 
-const crypto = require('crypto')
+const crypto = require('electron').remote.require('crypto')
 
 function decrypt (password, data) {
   const decipher = crypto.createDecipher('aes-256-cbc', password)

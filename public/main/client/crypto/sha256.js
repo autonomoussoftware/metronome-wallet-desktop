@@ -1,6 +1,6 @@
 'use strict'
 
-const crypto = require('crypto')
+const crypto = require('electron').remote.require('crypto')
 
 const hash = data =>
   crypto

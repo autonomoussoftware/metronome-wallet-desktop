@@ -1,10 +1,10 @@
 'use strict'
 
-const { app } = require('electron')
-const { promisify } = require('util')
+const { app, remote } = require('electron')
+const { promisify } = remote.require('util')
 const { sum, upperFirst } = require('lodash')
 const Datastore = require('nedb')
-const path = require('path')
+const path = remote.require('path')
 
 const logger = require('../../logger')
 const config = require('../../config')
