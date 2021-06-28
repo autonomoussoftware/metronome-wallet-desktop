@@ -29,9 +29,11 @@ npm run dev
 
 The log output is in the next directories:
 
-* **Linux:** `~/.config/<app name>/log.log`
-* **macOS:** `~/Library/Logs/<app name>/log.log`
-* **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
+* **Linux:** `~/.config/<app name>/logs/{process-type}.log`
+* **macOS:** `~/Library/Logs/<app name>/logs/{process-type}.log`
+* **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\logs\{process-type}.log`
+
+`process-type` being equal to `main`, `renderer` or `worker`
 
 More info [github.com/megahertz/electron-log](https://github.com/megahertz/electron-log)
 

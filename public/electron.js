@@ -21,7 +21,7 @@ const logger = require('./logger')
 if (isDev) {
   // Development
   app.on('ready', function () {
-    require('electron-debug')({ enabled: true })
+    require('electron-debug')({ isEnabled: true })
 
     const {
       default: installExtension,

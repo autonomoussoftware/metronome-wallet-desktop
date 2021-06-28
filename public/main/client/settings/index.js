@@ -8,10 +8,10 @@ const logger = require('../../../logger')
 const restart = require('../electron-restart')
 const { getDb } = require('../database')
 
-const getKey = key => settings.get(key)
+const getKey = key => settings.getSync(key)
 
 function setKey (key, value) {
-  settings.set(key, value)
+  settings.setSync(key, value)
   logger.verbose('Settings changed', key)
 }
 
@@ -44,13 +44,13 @@ function upgradeSettings (defaultSettings, currentSettings) {
     })
   }
   finalSettings.settingsVersion = defaultSettings.settingsVersion
-  settings.setAll(finalSettings)
+  settings.setSync(finalSettings)
 }
 
 function presetDefaults () {
   logger.verbose('Settings file', settings.file())
 
-  const currentSettings = settings.getAll()
+  const currentSettings = settings.getSync()
   const defaultSettings = require('./defaultSettings')
 
   const currentSettingsVersion = currentSettings.settingsVersion || 0
@@ -77,9 +77,9 @@ function presetDefaults () {
         restart()
       })
   } else {
-    settings.setAll(merge(defaultSettings, currentSettings))
+    settings.setSync(merge(defaultSettings, currentSettings))
     logger.verbose('Default settings applied')
-    logger.debug('Current settings', settings.getAll())
+    logger.debug('Current settings', settings.getSync())
   }
 }
 
