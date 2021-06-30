@@ -4,14 +4,14 @@ import React from 'react'
 
 const Container = styled.div`
   min-height: 100%;
-  background-image: ${p => p.theme.colors.darkGradient};
+  background-image: ${(p) => p.theme.colors.darkGradient};
   border-left: 2px solid rgb(46, 46, 46);
 `
 
 const Header = styled.header`
   padding: 2.4rem;
-  background-color: ${p => p.theme.colors.dark};
-  box-shadow: 0 2px 2px 0 ${p => p.theme.colors.lightShade};
+  background-color: ${(p) => p.theme.colors.dark};
+  box-shadow: 0 2px 2px 0 ${(p) => p.theme.colors.lightShade};
 
   @media (min-width: 800px) {
     padding: 2.4rem 4.8rem;
@@ -24,7 +24,7 @@ const Title = styled.h1`
   font-size: 2.4rem;
 `
 
-const DarkLayout = props => {
+const DarkLayout = (props) => {
   const { children, title, ...other } = props
 
   return (
@@ -39,7 +39,7 @@ const DarkLayout = props => {
 
 DarkLayout.propTypes = {
   children: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 }
 
 export default DarkLayout

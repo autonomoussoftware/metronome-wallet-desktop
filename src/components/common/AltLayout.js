@@ -9,7 +9,7 @@ import Sp from './Spacing'
 const Container = styled(Flex.Column)`
   min-height: 100vh;
   padding: 3.2rem;
-  background: ${p => p.theme.colors.dark} url('./images/pattern.png') repeat-x
+  background: ${(p) => p.theme.colors.dark} url('./images/pattern.png') repeat-x
     top center;
 `
 
@@ -27,7 +27,7 @@ const Title = styled.div`
   font-size: 1.8rem;
   font-weight: bold;
   text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
   @media (min-height: 600px) {
     font-size: 2.4rem;
   }
@@ -36,7 +36,7 @@ const Title = styled.div`
 export default class AltLayout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    title: PropTypes.string
+    title: PropTypes.string,
   }
 
   render() {

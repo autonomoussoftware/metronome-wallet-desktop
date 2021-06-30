@@ -13,7 +13,7 @@ const Message = styled.div`
     text-decoration: underline;
     font-size: 13px;
     cursor: pointer;
-    color: ${p => p.theme.colors.success};
+    color: ${(p) => p.theme.colors.success};
   }
 `
 

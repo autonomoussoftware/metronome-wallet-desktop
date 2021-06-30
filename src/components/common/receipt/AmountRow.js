@@ -9,19 +9,19 @@ const Label = styled.div`
   font-size: 1.1rem;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: ${p => p.theme.colors.copy};
+  color: ${(p) => p.theme.colors.copy};
   margin-right: 1.6rem;
   white-space: nowrap;
 `
 
 const Amount = styled.div`
-  color: ${p => p.theme.colors.primary};
+  color: ${(p) => p.theme.colors.primary};
   line-height: 2.5rem;
   text-align: right;
 `
 
 const Arrow = styled.span`
-  color: ${p => p.theme.colors.primary};
+  color: ${(p) => p.theme.colors.primary};
   position: relative;
   margin: 0 12px;
   transform: scale3d(1.5, 1.5, 1);
@@ -45,10 +45,10 @@ export default class AmountRow extends React.Component {
       'received',
       'auction',
       'unknown',
-      'sent'
+      'sent',
     ]).isRequired,
     symbol: PropTypes.string,
-    value: PropTypes.string
+    value: PropTypes.string,
   }
 
   // eslint-disable-next-line complexity

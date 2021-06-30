@@ -87,11 +87,11 @@
     "expect": "22.4.3",
     "husky": "1.3.1",
     "lint-staged": "8.1.0",
-    "prettier": "1.15.3",
+    "prettier": "2.3.2",
     "proxyquire": "1.8.0",
     "react-testing-library": "1.10.0",
-    "run-script-os": "1.0.5",
-    "wait-on": "2.1.0"
+    "run-script-os": "1.1.6",
+    "wait-on": "6.0.0"
   },
   "build": {
     "appId": "sh.autonomous.metronome.wallet.desktop",

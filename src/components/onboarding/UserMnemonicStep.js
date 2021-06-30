@@ -14,7 +14,7 @@ export default class UserMnemonic extends React.Component {
     userMnemonic: PropTypes.string,
     shouldSubmit: PropTypes.func.isRequired,
     getTooltip: PropTypes.func.isRequired,
-    errors: utils.errorPropTypes('userMnemonic')
+    errors: utils.errorPropTypes('userMnemonic'),
   }
 
   render() {

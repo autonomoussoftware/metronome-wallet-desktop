@@ -10,7 +10,7 @@ const CheckIcon = ({ size, ...other }) => (
 )
 
 CheckIcon.propTypes = {
-  size: PropTypes.string
+  size: PropTypes.string,
 }
 
 export default CheckIcon

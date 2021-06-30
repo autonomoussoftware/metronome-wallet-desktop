@@ -86,7 +86,7 @@ export default class Toast extends React.Component {
     onShowMore: PropTypes.func.isRequired,
     onDismiss: PropTypes.func.isRequired,
     messages: PropTypes.arrayOf(PropTypes.string).isRequired,
-    type: PropTypes.oneOf(['info', 'success', 'error']).isRequired
+    type: PropTypes.oneOf(['info', 'success', 'error']).isRequired,
   }
 
   state = { showMore: false }
@@ -125,16 +125,16 @@ export default class Toast extends React.Component {
             styles={(hiddenMessages.length > 0
               ? [...shownMessages, 'more']
               : shownMessages
-            ).map(msg => ({
+            ).map((msg) => ({
               key: msg,
               data: msg,
               style: {
                 maxHeight: spring(50, { stiffness: 150, damping: 20 }),
-                opacity: spring(1, { stiffness: 60, damping: 5 })
-              }
+                opacity: spring(1, { stiffness: 60, damping: 5 }),
+              },
             }))}
           >
-            {interpolatedStyles => (
+            {(interpolatedStyles) => (
               <Scroller>
                 {interpolatedStyles.map(({ key, style, data }) =>
                   key === 'more' ? (

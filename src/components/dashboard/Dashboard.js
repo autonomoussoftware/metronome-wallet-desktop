@@ -11,7 +11,7 @@ import { Btn } from '../common'
 import TxList from './tx-list/TxList'
 
 const Container = styled.div`
-  background-color: ${p => p.theme.colors.primary};
+  background-color: ${(p) => p.theme.colors.primary};
   padding: 0 2.4rem 2.4rem;
   min-height: 100%;
   position: relative;
@@ -22,7 +22,7 @@ const Container = styled.div`
 `
 
 const FixedContainer = styled.div`
-  background-color: ${p => p.theme.colors.primary};
+  background-color: ${(p) => p.theme.colors.primary};
   position: sticky;
   padding: 0 1.6rem;
   margin: 0 -1.6rem;
@@ -45,7 +45,7 @@ const Left = styled.div`
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
-  background-color: ${p => p.theme.colors.lightShade};
+  background-color: ${(p) => p.theme.colors.lightShade};
   border-radius: 4px;
   padding: 0 1.2rem;
   @media (min-width: 1040px) {
@@ -83,14 +83,14 @@ class Dashboard extends React.Component {
     onWalletRefresh: PropTypes.func.isRequired,
     sendDisabled: PropTypes.bool.isRequired,
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
-    address: PropTypes.string.isRequired
+    address: PropTypes.string.isRequired,
   }
 
   state = {
-    activeModal: null
+    activeModal: null,
   }
 
-  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
+  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
 
   onCloseModal = () => this.setState({ activeModal: null })
 

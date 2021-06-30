@@ -12,7 +12,7 @@ export default class ConvertedDetails extends React.Component {
   static propTypes = {
     convertedFrom: PropTypes.string,
     coinSymbol: PropTypes.string.isRequired,
-    isPending: PropTypes.bool.isRequired
+    isPending: PropTypes.bool.isRequired,
   }
 
   render() {

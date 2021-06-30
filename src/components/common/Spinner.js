@@ -7,7 +7,7 @@ const Container = styled.div`
   background-color: #ffffff;
   border-radius: ${({ size }) => size};
   padding: 2px;
-  box-shadow: 0 1px 1px 0 ${p => p.theme.colors.darkShade};
+  box-shadow: 0 1px 1px 0 ${(p) => p.theme.colors.darkShade};
 `
 
 const rotate = keyframes`
@@ -44,16 +44,16 @@ const Circle = styled.circle`
   stroke-dashoffset: 0;
   animation: ${dash} 1.5s ease-in-out infinite;
   stroke-linecap: round;
-  stroke: ${p => p.theme.colors.primary};
+  stroke: ${(p) => p.theme.colors.primary};
 `
 
 export default class Spinner extends React.Component {
   static propTypes = {
-    size: PropTypes.string
+    size: PropTypes.string,
   }
 
   static defaultProps = {
-    size: '12px'
+    size: '12px',
   }
 
   render() {

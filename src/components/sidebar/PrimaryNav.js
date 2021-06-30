@@ -16,9 +16,9 @@ const Button = styled(NavLink)`
   text-decoration: none;
   letter-spacing: 1.6px;
   text-transform: uppercase;
-  color: ${p => p.theme.colors.light};
+  color: ${(p) => p.theme.colors.light};
   padding: 1.6rem;
-  border-bottom: 1px solid ${p => p.theme.colors.darkShade};
+  border-bottom: 1px solid ${(p) => p.theme.colors.darkShade};
   border-top: 1px solid transparent;
 
   &:focus {
@@ -26,16 +26,16 @@ const Button = styled(NavLink)`
   }
 
   &:hover:not(.active) {
-    background-color: ${p => p.theme.colors.lightShade};
+    background-color: ${(p) => p.theme.colors.lightShade};
   }
 
   &:first-child {
-    border-top: 1px solid ${p => p.theme.colors.darkShade};
+    border-top: 1px solid ${(p) => p.theme.colors.darkShade};
   }
 
   &.active {
     pointer-events: none;
-    border-bottom: 2px solid ${p => p.theme.colors.primary};
+    border-bottom: 2px solid ${(p) => p.theme.colors.primary};
     background-image: linear-gradient(
       250deg,
       rgba(66, 53, 119, 0.4),
@@ -78,7 +78,7 @@ const Label = styled.span`
 export default class PrimaryNav extends React.Component {
   static propTypes = {
     isMultiChain: PropTypes.bool.isRequired,
-    parent: PropTypes.object.isRequired
+    parent: PropTypes.object.isRequired,
   }
 
   render() {

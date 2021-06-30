@@ -1,6 +1,6 @@
-const Deferred = function() {
+const Deferred = function () {
   const obj = this
-  obj.promise = new Promise(function(resolve, reject) {
+  obj.promise = new Promise(function (resolve, reject) {
     Object.assign(obj, { resolve, reject })
   })
 }

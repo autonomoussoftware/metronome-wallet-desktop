@@ -8,14 +8,17 @@ import { DisplayValue, Flex } from '../common'
 import CaretIcon from '../icons/CaretIcon'
 import CoinIcon from '../icons/CoinIcon'
 
-const wideOrHover = styles => ({ parent }) => css`
-  ${parent}:hover & {
-    ${styles};
-  }
-  @media (min-width: 800px) {
-    ${styles};
-  }
-`
+const wideOrHover =
+  (styles) =>
+  ({ parent }) =>
+    css`
+      ${parent}:hover & {
+        ${styles};
+      }
+      @media (min-width: 800px) {
+        ${styles};
+      }
+    `
 
 const GlobalStyles = createGlobalStyle`
   [data-reach-menu] {
@@ -180,11 +183,11 @@ class ChainSelector extends React.Component {
       PropTypes.shape({
         displayName: PropTypes.string.isRequired,
         balance: PropTypes.string.isRequired,
-        id: PropTypes.string.isRequired
+        id: PropTypes.string.isRequired,
       })
     ).isRequired,
     handleMouseEnter: PropTypes.func,
-    handleMouseLeave: PropTypes.func
+    handleMouseLeave: PropTypes.func,
   }
 
   render() {
@@ -211,7 +214,7 @@ class ChainSelector extends React.Component {
             </MenuItem>
             {this.props.chains
               .filter(({ id }) => id !== this.props.activeChain)
-              .map(chain => (
+              .map((chain) => (
                 <MenuItem
                   onSelect={() => this.props.onChainChange(chain.id)}
                   key={chain.id}
@@ -249,7 +252,7 @@ Item.propTypes = {
   balance: PropTypes.string.isRequired,
   parent: PropTypes.object,
   caret: PropTypes.oneOf(['up', 'down', 'none']).isRequired,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
 }
 
 export default withChainSelectorState(ChainSelector)

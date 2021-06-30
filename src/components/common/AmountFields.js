@@ -19,8 +19,8 @@ export default class AmountFields extends React.Component {
     onChange: PropTypes.func.isRequired,
     errors: PropTypes.shape({
       coinAmount: PropTypes.string,
-      usdAmount: PropTypes.string
-    }).isRequired
+      usdAmount: PropTypes.string,
+    }).isRequired,
   }
 
   render() {

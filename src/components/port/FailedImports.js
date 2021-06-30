@@ -59,17 +59,17 @@ export default class FailedImports extends React.Component {
         currentBurnHash: PropTypes.string.isRequired,
         originChain: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
-        from: PropTypes.string.isRequired
+        from: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   }
 
-  handleRetryClick = e => this.props.onRetryClick(e.target.dataset.hash)
+  handleRetryClick = (e) => this.props.onRetryClick(e.target.dataset.hash)
 
   render() {
     return (
       <List>
-        {this.props.items.map(item => (
+        {this.props.items.map((item) => (
           <Item key={item.currentBurnHash}>
             <Flex.Row justify="space-between" align="center">
               <LeftLabel>FAILED</LeftLabel>

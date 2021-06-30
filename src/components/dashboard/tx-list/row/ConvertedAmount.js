@@ -9,7 +9,7 @@ export default class ConvertedAmount extends React.Component {
     convertedFrom: PropTypes.string,
     coinSymbol: PropTypes.string.isRequired,
     fromValue: PropTypes.string,
-    toValue: PropTypes.string
+    toValue: PropTypes.string,
   }
 
   render() {
@@ -28,20 +28,19 @@ export default class ConvertedAmount extends React.Component {
           <div>New transaction</div>
         )}
 
-        {this.props.fromValue &&
-          this.props.toValue && (
-            <React.Fragment>
-              <Arrow />
-              <DisplayValue
-                value={this.props.toValue}
-                post={
-                  this.props.convertedFrom === 'coin'
-                    ? ' MET'
-                    : ` ${this.props.coinSymbol}`
-                }
-              />
-            </React.Fragment>
-          )}
+        {this.props.fromValue && this.props.toValue && (
+          <React.Fragment>
+            <Arrow />
+            <DisplayValue
+              value={this.props.toValue}
+              post={
+                this.props.convertedFrom === 'coin'
+                  ? ' MET'
+                  : ` ${this.props.coinSymbol}`
+              }
+            />
+          </React.Fragment>
+        )}
       </React.Fragment>
     )
   }

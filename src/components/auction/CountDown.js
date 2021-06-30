@@ -7,7 +7,7 @@ const Row = styled.div`
   margin-top: 1.6rem;
   display: flex;
   border-radius: 4px;
-  background-color: ${p => p.theme.colors.lightShade};
+  background-color: ${(p) => p.theme.colors.lightShade};
 `
 
 const Cell = styled.div`
@@ -15,12 +15,12 @@ const Cell = styled.div`
   padding: 1.6rem;
   flex-grow: 1;
   flex-basis: 0;
-  color: ${p => p.theme.colors.primary};
+  color: ${(p) => p.theme.colors.primary};
   line-height: 6rem;
   letter-spacing: -1px;
   text-align: center;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  border-left: 1px solid ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  border-left: 1px solid ${(p) => p.theme.colors.darkShade};
   font-size: 2.4rem;
   &:first-child {
     border-left: none;
@@ -36,7 +36,7 @@ const Cell = styled.div`
 
 export default class CountDown extends React.Component {
   static propTypes = {
-    targetTimestamp: PropTypes.number.isRequired
+    targetTimestamp: PropTypes.number.isRequired,
   }
 
   render() {

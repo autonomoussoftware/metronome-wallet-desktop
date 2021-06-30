@@ -103,24 +103,24 @@ class Port extends React.Component {
         refutedCount: PropTypes.number.isRequired,
         importedFrom: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
-        hash: PropTypes.string.isRequired
+        hash: PropTypes.string.isRequired,
       })
     ).isRequired,
     failedImports: PropTypes.array.isRequired,
     retryDisabled: PropTypes.bool.isRequired,
-    portDisabled: PropTypes.bool.isRequired
+    portDisabled: PropTypes.bool.isRequired,
   }
 
   state = {
     retryCandidate: null,
-    activeModal: null
+    activeModal: null,
   }
 
-  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
+  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
 
   onCloseModal = () => this.setState({ activeModal: null })
 
-  onRetryClick = hash => {
+  onRetryClick = (hash) => {
     const retryCandidate = this.props.failedImports
       .concat(this.props.ongoingImports)
       .find(({ currentBurnHash }) => currentBurnHash === hash)
@@ -128,8 +128,8 @@ class Port extends React.Component {
       activeModal: 'retry-import',
       retryCandidate: {
         ...retryCandidate,
-        from: toChecksumAddress(retryCandidate.from)
-      }
+        from: toChecksumAddress(retryCandidate.from),
+      },
     })
   }
 

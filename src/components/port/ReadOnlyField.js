@@ -30,7 +30,7 @@ export default class ReadOnlyField extends React.Component {
     suffix: PropTypes.node,
     label: PropTypes.string.isRequired,
     value: PropTypes.node.isRequired,
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }
 
   render() {

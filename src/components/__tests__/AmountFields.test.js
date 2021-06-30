@@ -96,7 +96,7 @@ export function runValidateTests(
     const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '' },
-      errors: { [fieldTestId]: 'Amount is required' }
+      errors: { [fieldTestId]: 'Amount is required' },
     })
   })
 
@@ -104,7 +104,7 @@ export function runValidateTests(
     const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '-1' },
-      errors: { [fieldTestId]: 'Amount must be greater than 0' }
+      errors: { [fieldTestId]: 'Amount must be greater than 0' },
     })
   })
 
@@ -112,7 +112,7 @@ export function runValidateTests(
     const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: 'foo' },
-      errors: { [fieldTestId]: 'Invalid amount' }
+      errors: { [fieldTestId]: 'Invalid amount' },
     })
   })
 
@@ -120,7 +120,7 @@ export function runValidateTests(
     const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '10000' },
-      errors: { [fieldTestId]: 'Insufficient funds' }
+      errors: { [fieldTestId]: 'Insufficient funds' },
     })
   })
 
@@ -128,7 +128,7 @@ export function runValidateTests(
     const { getByTestId } = testUtils.reduxRender(el, initialState)
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { [fieldTestId]: '0.0000000000000000000000000000001' },
-      errors: { [fieldTestId]: 'Invalid amount' }
+      errors: { [fieldTestId]: 'Invalid amount' },
     })
   })
 }

@@ -23,7 +23,7 @@ const Container = styled.div`
 const ListContainer = styled.div`
   border-radius: 2px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px 0 ${p => p.theme.colors.darkShade};
+  box-shadow: 0 4px 8px 0 ${(p) => p.theme.colors.darkShade};
 `
 
 const TxRowContainer = styled.div`
@@ -47,16 +47,16 @@ class TxList extends React.Component {
     items: PropTypes.arrayOf(
       PropTypes.shape({
         txType: PropTypes.string.isRequired,
-        hash: PropTypes.string.isRequired
+        hash: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   }
 
   state = {
     displayAttestations: false,
     activeModal: null,
     selectedTx: null,
-    isReady: false
+    isReady: false,
   }
 
   componentDidMount() {
@@ -75,33 +75,36 @@ class TxList extends React.Component {
   onTxClicked = ({ currentTarget }) => {
     this.setState({
       activeModal: 'receipt',
-      selectedTx: currentTarget.dataset.hash
+      selectedTx: currentTarget.dataset.hash,
     })
   }
 
   onCloseModal = () => this.setState({ activeModal: null })
 
-  rowRenderer = items => ({ key, style, index }) => (
-    <TxRowContainer style={style} key={`${key}-${items[index].hash}`}>
-      <TxRow
-        data-testid="tx-row"
-        data-hash={items[index].hash}
-        onClick={this.onTxClicked}
-        tx={items[index]}
-      />
-    </TxRowContainer>
-  )
+  rowRenderer =
+    (items) =>
+    ({ key, style, index }) =>
+      (
+        <TxRowContainer style={style} key={`${key}-${items[index].hash}`}>
+          <TxRow
+            data-testid="tx-row"
+            data-hash={items[index].hash}
+            onClick={this.onTxClicked}
+            tx={items[index]}
+          />
+        </TxRowContainer>
+      )
 
   filterExtractValue = ({ txType }) =>
     ['import-requested', 'imported', 'exported', 'attestation'].includes(txType)
       ? 'ported'
       : txType
 
-  handleClick = e => {
+  handleClick = (e) => {
     if (!window.isDev || !e.shiftKey || !e.altKey) return
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      displayAttestations: !state.displayAttestations
+      displayAttestations: !state.displayAttestations,
     }))
   }
 

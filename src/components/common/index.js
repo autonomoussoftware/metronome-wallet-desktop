@@ -42,5 +42,5 @@ export {
   Text,
   Flex,
   Btn,
-  Sp
+  Sp,
 }

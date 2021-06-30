@@ -6,7 +6,7 @@ import { DisplayValue, Flex, Sp } from '../common'
 
 const Container = styled.div`
   border-radius: 4px;
-  background-color: ${p => p.theme.colors.lightShade};
+  background-color: ${(p) => p.theme.colors.lightShade};
   flex-grow: 1;
   margin-right: 0;
   width: 100%;
@@ -20,7 +20,7 @@ const Container = styled.div`
 const Label = styled.div`
   line-height: 4rem;
   font-size: 1.6rem;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
   margin-right: 2em;
   white-space: nowrap;
 
@@ -33,7 +33,7 @@ const Badge = styled.div`
   display: inline-block;
   line-height: 2.5rem;
   border-radius: 1.4rem;
-  background-color: ${p => p.theme.colors.primary};
+  background-color: ${(p) => p.theme.colors.primary};
   font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
@@ -48,7 +48,7 @@ const Price = styled.div`
   font-size: 1.6rem;
   line-height: 3rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
 
   @media (min-width: 920px) {
     font-size: 2.4rem;
@@ -69,7 +69,7 @@ const USDPrice = styled.div`
 const AvailableAmount = styled.div`
   line-height: 1.6rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
 
   @media (min-width: 920px) {
     font-size: 2.4rem;
@@ -82,9 +82,9 @@ export default class Stats extends React.Component {
     converterStatus: PropTypes.shape({
       currentPrice: PropTypes.string.isRequired,
       availableCoin: PropTypes.string.isRequired,
-      availableMet: PropTypes.string.isRequired
+      availableMet: PropTypes.string.isRequired,
     }),
-    coinSymbol: PropTypes.string.isRequired
+    coinSymbol: PropTypes.string.isRequired,
   }
 
   render() {

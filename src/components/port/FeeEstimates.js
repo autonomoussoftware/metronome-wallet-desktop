@@ -9,18 +9,18 @@ const Container = styled.div`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
-  opacity: ${p => (p.weak ? 0.5 : 1)};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  opacity: ${(p) => (p.weak ? 0.5 : 1)};
 `
 
 const ErrorMsg = styled.div`
-  color: ${p => p.theme.colors.danger};
+  color: ${(p) => p.theme.colors.danger};
 `
 
 export default class FeeEstimates extends React.Component {
   static propTypes = {
     feeError: PropTypes.string,
-    fee: PropTypes.string
+    fee: PropTypes.string,
   }
 
   render() {

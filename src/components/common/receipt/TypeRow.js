@@ -7,13 +7,13 @@ const Label = styled.div`
   font-size: 1.1rem;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: ${p => p.theme.colors.copy};
+  color: ${(p) => p.theme.colors.copy};
   margin-right: 1.6rem;
   white-space: nowrap;
 `
 
 const Value = styled.div`
-  color: ${p => p.theme.colors.copy};
+  color: ${(p) => p.theme.colors.copy};
   text-align: right;
   line-height: 1.6rem;
   font-size: 1.3rem;
@@ -27,7 +27,7 @@ export default class TypeRow extends React.Component {
   static propTypes = {
     isCancelApproval: PropTypes.bool,
     isApproval: PropTypes.bool,
-    txType: PropTypes.string.isRequired
+    txType: PropTypes.string.isRequired,
   }
 
   render() {

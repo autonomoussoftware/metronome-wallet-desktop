@@ -6,10 +6,10 @@ import * as utils from './utils'
 import keys from './keys'
 import './sentry'
 
-const createClient = function(createStore) {
+const createClient = function (createStore) {
   const reduxDevtoolsOptions = {
     // actionsBlacklist: ['price-updated$'],
-    features: { dispatch: true }
+    features: { dispatch: true },
     // maxAge: 100 // default: 50
   }
 
@@ -19,10 +19,10 @@ const createClient = function(createStore) {
     const debounceTime = get(payload, 'data.config.statePersistanceDebounce', 0)
     store.subscribe(
       debounce(
-        function() {
+        function () {
           utils
             .forwardToMainProcess('persist-state')(store.getState())
-            .catch(err =>
+            .catch((err) =>
               // eslint-disable-next-line no-console
               console.warn(`Error persisting state: ${err.message}`)
             )
@@ -43,26 +43,27 @@ const createClient = function(createStore) {
       'https://github.com/autonomoussoftware/documentation/blob/master/FAQ.md#metronome-faq'
     )
 
-  const onLinkClick = url => window.openLink(url)
+  const onLinkClick = (url) => window.openLink(url)
 
   const getStringEntropy = fastPasswordEntropy
 
-  const copyToClipboard = text => Promise.resolve(window.copyToClipboard(text))
+  const copyToClipboard = (text) =>
+    Promise.resolve(window.copyToClipboard(text))
 
   const onInit = () => {
-    window.addEventListener('beforeunload', function() {
+    window.addEventListener('beforeunload', function () {
       utils.sendToMainProcess('ui-unload')
     })
     window.addEventListener('online', () => {
       store.dispatch({
         type: 'connectivity-state-changed',
-        payload: { ok: true }
+        payload: { ok: true },
       })
     })
     window.addEventListener('offline', () => {
       store.dispatch({
         type: 'connectivity-state-changed',
-        payload: { ok: false }
+        payload: { ok: false },
       })
     })
     return utils.sendToMainProcess('ui-ready')
@@ -108,7 +109,7 @@ const createClient = function(createStore) {
     getGasPrice: utils.forwardToMainProcess('get-gas-price'),
     sendCoin: utils.forwardToMainProcess('send-coin', 750000),
     sendMet: utils.forwardToMainProcess('send-met', 750000),
-    clearCache: utils.forwardToMainProcess('clear-cache')
+    clearCache: utils.forwardToMainProcess('clear-cache'),
   }
 
   const api = {
@@ -123,7 +124,7 @@ const createClient = function(createStore) {
     getAppVersion: window.getAppVersion,
     onLinkClick,
     onInit,
-    store
+    store,
   }
 
   return api

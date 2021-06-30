@@ -14,7 +14,7 @@ import {
   Selector,
   Drawer,
   Btn,
-  Sp
+  Sp,
 } from '../common'
 
 const ConfirmationContainer = styled.div`
@@ -25,7 +25,7 @@ const ConfirmationContainer = styled.div`
 
   & > span,
   & > div {
-    color: ${p => p.theme.colors.primary};
+    color: ${(p) => p.theme.colors.primary};
   }
 `
 
@@ -39,7 +39,7 @@ class PortDrawer extends React.Component {
     availableDestinations: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired
+        value: PropTypes.string.isRequired,
       })
     ).isRequired,
     sourceDisplayName: PropTypes.string.isRequired,
@@ -59,7 +59,7 @@ class PortDrawer extends React.Component {
     feeError: PropTypes.string,
     errors: PropTypes.object.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    fee: PropTypes.string
+    fee: PropTypes.string,
   }
 
   componentDidUpdate(prevProps) {
@@ -86,7 +86,7 @@ class PortDrawer extends React.Component {
     )
   }
 
-  renderForm = goToReview => (
+  renderForm = (goToReview) => (
     <form onSubmit={goToReview} noValidate data-testid="port-form">
       <Sp py={4} px={3}>
         <ReadOnlyField

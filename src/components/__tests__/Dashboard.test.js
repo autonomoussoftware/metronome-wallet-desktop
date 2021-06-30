@@ -1,3 +1,5 @@
+/* eslint-disable require-path-exists/exists */
+/* eslint-disable import/no-unresolved */
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import Dashboard from '../dashboard/Dashboard'
@@ -126,7 +128,7 @@ describe('<Dashboard/>', () => {
       const { queryByTestId } = testUtils.reduxRender(
         <Dashboard />,
         getInitialState({
-          transactions: [testUtils.getDummyTransaction()]
+          transactions: [testUtils.getDummyTransaction()],
         })
       )
       expect(queryByTestId('notx-msg')).not.toBeInTheDOM()
@@ -148,14 +150,14 @@ describe('<Dashboard/>', () => {
 function goOffline() {
   return {
     type: 'connectivity-state-changed',
-    payload: { ok: false }
+    payload: { ok: false },
   }
 }
 
 function getInitialState({
   metBalance = '25000000000000000',
   ethBalance = '50000000000000000',
-  transactions = []
+  transactions = [],
 } = {}) {
   return testUtils.getInitialState({
     rates: { ETH: { token: 'ETH', price: 100 } },
@@ -166,11 +168,11 @@ function getInitialState({
             [ACTIVE_ADDRESS]: {
               token: { [config.MET_TOKEN_ADDR]: { balance: metBalance } },
               balance: ethBalance,
-              transactions
-            }
-          }
-        }
-      }
-    }
+              transactions,
+            },
+          },
+        },
+      },
+    },
   })
 }

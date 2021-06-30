@@ -13,7 +13,7 @@ import {
   TextInput,
   Flex,
   Btn,
-  Sp
+  Sp,
 } from '../common'
 
 const ConfirmationContainer = styled.div`
@@ -22,7 +22,7 @@ const ConfirmationContainer = styled.div`
   letter-spacing: 0.5px;
 
   & > div {
-    color: ${p => p.theme.colors.primary};
+    color: ${(p) => p.theme.colors.primary};
   }
 `
 
@@ -52,10 +52,10 @@ class ConvertMETtoCoinForm extends React.Component {
     estimate: PropTypes.string,
     errors: PropTypes.shape({
       useMinimum: PropTypes.string,
-      metAmount: PropTypes.string
+      metAmount: PropTypes.string,
     }).isRequired,
     tabs: PropTypes.node.isRequired,
-    rate: PropTypes.string
+    rate: PropTypes.string,
   }
 
   renderConfirmation = () => {
@@ -76,7 +76,7 @@ class ConvertMETtoCoinForm extends React.Component {
     )
   }
 
-  renderForm = goToReview => (
+  renderForm = (goToReview) => (
     <Flex.Column grow="1">
       {this.props.tabs}
       <Sp py={4} px={3}>

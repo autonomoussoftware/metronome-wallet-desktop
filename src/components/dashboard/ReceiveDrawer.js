@@ -19,19 +19,19 @@ const Title = styled.div`
   line-height: 2rem;
   font-size: 1.6rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
 `
 
 const Address = styled.div`
   margin-top: 1.6rem;
   padding: 0.8rem 1.6rem;
   border-radius: 4px;
-  background-color: ${p => p.theme.colors.lightShade};
+  background-color: ${(p) => p.theme.colors.lightShade};
   line-height: 1.6rem;
   font-size: 1.3rem;
   letter-spacing: 0.5px;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
   letter-spacing: normal;
 `
 
@@ -53,12 +53,12 @@ const CopyBtn = styled(BaseBtn)`
 `
 
 const BtnLabel = styled.div`
-  opacity: ${p => (p.isCopied ? '1' : '0.5')};
+  opacity: ${(p) => (p.isCopied ? '1' : '0.5')};
   margin-top: 0.8rem;
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
-  text-shadow: 0 2px 0 ${p => p.theme.colors.darkShade};
+  text-shadow: 0 2px 0 ${(p) => p.theme.colors.darkShade};
 `
 
 const Footer = styled.div`
@@ -92,7 +92,7 @@ const QRmsg = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
 `
 
 class ReceiveDrawer extends React.Component {
@@ -101,7 +101,7 @@ class ReceiveDrawer extends React.Component {
     onRequestClose: PropTypes.func.isRequired,
     copyBtnLabel: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired
+    isOpen: PropTypes.bool.isRequired,
   }
 
   render() {

@@ -50,14 +50,14 @@ class Converter extends React.Component {
     convertDisabled: PropTypes.bool.isRequired,
     converterStatus: PropTypes.object,
     lastUpdated: PropTypes.number,
-    coinSymbol: PropTypes.string.isRequired
+    coinSymbol: PropTypes.string.isRequired,
   }
 
   state = {
-    activeModal: null
+    activeModal: null,
   }
 
-  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
+  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
 
   onCloseModal = () => this.setState({ activeModal: null })
 

@@ -5,7 +5,7 @@ import React from 'react'
 
 import { DisplayValue } from '../common'
 
-const relSize = ratio => `calc(100vw / ${ratio})`
+const relSize = (ratio) => `calc(100vw / ${ratio})`
 
 const Balance = styled.div`
   display: flex;
@@ -13,7 +13,7 @@ const Balance = styled.div`
   justify-content: space-between;
   padding: 0.75em 0;
   & + & {
-    border-top: 1px solid ${p => p.theme.colors.darkShade};
+    border-top: 1px solid ${(p) => p.theme.colors.darkShade};
   }
   @media (min-width: 1040px) {
     padding: 0.95em 0;
@@ -22,7 +22,7 @@ const Balance = styled.div`
 
 const CoinSymbol = styled.div`
   border-radius: 14.1px;
-  background-color: ${p => p.theme.colors.primary};
+  background-color: ${(p) => p.theme.colors.primary};
   width: 4rem;
   line-height: 2.5rem;
   font-size: 1.2rem;
@@ -38,8 +38,8 @@ const CoinSymbol = styled.div`
 const Value = styled.div`
   line-height: 1.5;
   font-weight: 600;
-  letter-spacing: ${p => (p.large ? '-1px' : 'inherit')};
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  letter-spacing: ${(p) => (p.large ? '-1px' : 'inherit')};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
   margin: 0 1.6rem;
   flex-grow: 1;
   position: relative;
@@ -62,9 +62,9 @@ const Value = styled.div`
 const USDValue = styled.div`
   line-height: 1.5;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
   white-space: nowrap;
-  opacity: ${p => (p.hide ? '0' : '1')};
+  opacity: ${(p) => (p.hide ? '0' : '1')};
   position: relative;
   top: ${relSize(-400)};
   font-size: ${relSize(36)};
@@ -83,7 +83,7 @@ class BalanceBlock extends React.Component {
     coinBalanceUSD: PropTypes.string.isRequired,
     coinBalanceWei: PropTypes.string.isRequired,
     metBalanceWei: PropTypes.string.isRequired,
-    coinSymbol: PropTypes.string.isRequired
+    coinSymbol: PropTypes.string.isRequired,
   }
 
   render() {

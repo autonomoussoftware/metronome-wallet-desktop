@@ -7,12 +7,12 @@ import { ErrorMsg, Label } from './TextInput'
 import SelectorCaret from '../icons/SelectorCaret'
 
 const MenuButton = styled(ReachUI.MenuButton)`
-  background-color: ${p => p.theme.colors.translucentPrimary};
-  color: ${p => p.theme.colors.light};
+  background-color: ${(p) => p.theme.colors.translucentPrimary};
+  color: ${(p) => p.theme.colors.light};
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: ${p => p.theme.textShadow};
+  text-shadow: ${(p) => p.theme.textShadow};
   padding: 0;
   border: none;
   display: block;
@@ -26,7 +26,7 @@ const MenuButton = styled(ReachUI.MenuButton)`
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 0 0px
-    ${p => (p.hasErrors ? p.theme.colors.danger : 'transparent')};
+    ${(p) => (p.hasErrors ? p.theme.colors.danger : 'transparent')};
 
   &[disabled] {
     cursor: not-allowed;
@@ -34,8 +34,8 @@ const MenuButton = styled(ReachUI.MenuButton)`
 
   &:focus {
     outline: none;
-    box-shadow: 0 2px 0 0px ${p => p.theme.colors.primary};
-    box-shadow: ${p =>
+    box-shadow: 0 2px 0 0px ${(p) => p.theme.colors.primary};
+    box-shadow: ${(p) =>
       p.noFocus && p.value.length > 0
         ? 'none'
         : `0 2px 0 0px ${p.theme.colors.primary}`};
@@ -54,14 +54,14 @@ const ValueContainer = styled.div`
 const CaretContainer = styled.div`
   background-color: transparent;
   padding: 1.6rem 1.2rem 1.6rem 1.3rem;
-  box-shadow: 1px 0 0 0 ${p => p.theme.colors.dark} inset;
+  box-shadow: 1px 0 0 0 ${(p) => p.theme.colors.dark} inset;
 
   [aria-expanded='true'] & {
-    background-color: ${p => p.theme.colors.light};
-    box-shadow: 0 -1px 0 0 ${p => p.theme.colors.dark} inset;
+    background-color: ${(p) => p.theme.colors.light};
+    box-shadow: 0 -1px 0 0 ${(p) => p.theme.colors.dark} inset;
 
     svg {
-      fill: ${p => p.theme.colors.primary};
+      fill: ${(p) => p.theme.colors.primary};
     }
   }
 
@@ -71,12 +71,12 @@ const CaretContainer = styled.div`
 `
 
 const MenuList = styled(ReachUI.MenuList)`
-  background-color: ${p => p.theme.colors.light};
+  background-color: ${(p) => p.theme.colors.light};
   padding: 1.6rem 0;
 `
 
 const MenuItem = styled(ReachUI.MenuItem)`
-  color: ${p => p.theme.colors.copy};
+  color: ${(p) => p.theme.colors.copy};
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -84,7 +84,7 @@ const MenuItem = styled(ReachUI.MenuItem)`
 
   &[data-selected] {
     background-color: rgba(126, 97, 248, 0.1);
-    color: ${p => p.theme.colors.primary};
+    color: ${(p) => p.theme.colors.primary};
     outline: none;
   }
 `
@@ -96,19 +96,19 @@ export default class Selector extends React.Component {
     options: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired
+        label: PropTypes.string.isRequired,
       })
     ).isRequired,
     error: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string),
-      PropTypes.string
+      PropTypes.string,
     ]),
     label: PropTypes.string.isRequired,
     value: PropTypes.string,
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }
 
-  onChange = e => {
+  onChange = (e) => {
     this.props.onChange({ id: this.props.id, value: e.target.value })
   }
 
@@ -116,7 +116,7 @@ export default class Selector extends React.Component {
     const { onChange, options, error, label, value, id, ...other } = this.props
 
     const hasErrors = error && error.length > 0
-    const activeItem = options.find(item => item.value === value)
+    const activeItem = options.find((item) => item.value === value)
 
     return (
       <div>
@@ -133,7 +133,7 @@ export default class Selector extends React.Component {
             </CaretContainer>
           </MenuButton>
           <MenuList>
-            {options.map(item => (
+            {options.map((item) => (
               <MenuItem
                 onSelect={() => onChange({ id, value: item.value })}
                 key={item.value}

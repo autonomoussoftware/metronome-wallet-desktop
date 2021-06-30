@@ -12,7 +12,7 @@ class SendDrawer extends React.Component {
     sendMetDisabled: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
     coinSymbol: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired
+    isOpen: PropTypes.bool.isRequired,
   }
 
   state = { activeTab: 'coin' }
@@ -23,7 +23,7 @@ class SendDrawer extends React.Component {
     }
   }
 
-  onTabChange = activeTab => this.setState({ activeTab })
+  onTabChange = (activeTab) => this.setState({ activeTab })
 
   render() {
     const tabs = (
@@ -35,9 +35,9 @@ class SendDrawer extends React.Component {
             id: 'met',
             label: 'MET',
             'data-rh': this.props.sendMetDisabledReason,
-            disabled: this.props.sendMetDisabled
+            disabled: this.props.sendMetDisabled,
           },
-          { id: 'coin', label: this.props.coinSymbol }
+          { id: 'coin', label: this.props.coinSymbol },
         ]}
       />
     )

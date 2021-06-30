@@ -15,7 +15,7 @@ const Container = styled.div`
   line-height: 1.6rem;
   font-size: 1rem;
   letter-spacing: 0px;
-  color: ${p => p.theme.colors.copy};
+  color: ${(p) => p.theme.colors.copy};
   text-transform: uppercase;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
   text-align: right;
@@ -28,7 +28,7 @@ const Container = styled.div`
 
 const Failed = styled.span`
   line-height: 1.6rem;
-  color: ${p => p.theme.colors.danger};
+  color: ${(p) => p.theme.colors.danger};
 `
 
 export default class Details extends React.Component {
@@ -44,8 +44,8 @@ export default class Details extends React.Component {
       'exported',
       'auction',
       'unknown',
-      'sent'
-    ]).isRequired
+      'sent',
+    ]).isRequired,
   }
 
   render() {

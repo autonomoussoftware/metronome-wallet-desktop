@@ -26,7 +26,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-limit-field': '' },
-      errors: { 'gas-limit-field': 'Gas limit is required' }
+      errors: { 'gas-limit-field': 'Gas limit is required' },
     })
   })
 
@@ -35,7 +35,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-limit-field': 'foo' },
-      errors: { 'gas-limit-field': 'Invalid value' }
+      errors: { 'gas-limit-field': 'Invalid value' },
     })
   })
 
@@ -44,7 +44,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-limit-field': '1.1' },
-      errors: { 'gas-limit-field': 'Gas limit must be an integer' }
+      errors: { 'gas-limit-field': 'Gas limit must be an integer' },
     })
   })
 
@@ -53,7 +53,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-limit-field': '-1' },
-      errors: { 'gas-limit-field': 'Gas limit must be greater than 0' }
+      errors: { 'gas-limit-field': 'Gas limit must be greater than 0' },
     })
   })
 
@@ -62,7 +62,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-price-field': '' },
-      errors: { 'gas-price-field': 'Gas price is required' }
+      errors: { 'gas-price-field': 'Gas price is required' },
     })
   })
 
@@ -71,7 +71,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-price-field': 'foo' },
-      errors: { 'gas-price-field': 'Invalid value' }
+      errors: { 'gas-price-field': 'Invalid value' },
     })
   })
 
@@ -80,7 +80,7 @@ export function runValidateTests(el, initialState, formTestId) {
     Simulate.click(getByTestId('edit-gas-btn'))
     testUtils.testValidation(getByTestId, formTestId, {
       formData: { 'gas-price-field': '0' },
-      errors: { 'gas-price-field': 'Gas price can not be lower than 1' }
+      errors: { 'gas-price-field': 'Gas price can not be lower than 1' },
     })
   })
 }

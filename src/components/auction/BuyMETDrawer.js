@@ -10,7 +10,7 @@ import {
   GasEditor,
   Drawer,
   Btn,
-  Sp
+  Sp,
 } from '../common'
 
 const ConfirmationContainer = styled.div`
@@ -19,13 +19,13 @@ const ConfirmationContainer = styled.div`
   letter-spacing: 0.5px;
 
   & > div {
-    color: ${p => p.theme.colors.primary};
+    color: ${(p) => p.theme.colors.primary};
   }
 `
 
 const ExpectedMsg = styled.div`
   font-size: 1.3rem;
-  color: ${p => (p.error ? p.theme.colors.danger : 'inherit')};
+  color: ${(p) => (p.error ? p.theme.colors.danger : 'inherit')};
 `
 
 const BtnContainer = styled.div`
@@ -56,7 +56,7 @@ class BuyMETDrawer extends React.Component {
     gasLimit: PropTypes.string,
     excedes: PropTypes.bool,
     errors: PropTypes.object.isRequired,
-    isOpen: PropTypes.bool.isRequired
+    isOpen: PropTypes.bool.isRequired,
   }
 
   componentDidUpdate(prevProps) {
@@ -98,7 +98,7 @@ class BuyMETDrawer extends React.Component {
     </ConfirmationContainer>
   )
 
-  renderForm = goToReview => (
+  renderForm = (goToReview) => (
     <form onSubmit={goToReview} noValidate data-testid="buy-form">
       <Sp py={4} px={3}>
         <AmountFields

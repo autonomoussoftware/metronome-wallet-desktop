@@ -21,7 +21,7 @@ const LogoIcon = ({ size, negative, ...other }) => (
 
 LogoIcon.propTypes = {
   negative: PropTypes.bool,
-  size: PropTypes.string
+  size: PropTypes.string,
 }
 
 export default LogoIcon

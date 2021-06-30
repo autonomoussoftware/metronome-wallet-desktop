@@ -18,7 +18,7 @@ class DisplayValue extends React.Component {
     value: PropTypes.string,
     toWei: PropTypes.bool,
     post: PropTypes.string,
-    pre: PropTypes.string
+    pre: PropTypes.string,
   }
 
   static defaultProps = {
@@ -26,7 +26,7 @@ class DisplayValue extends React.Component {
     maxPrecision: 6,
     minDecimals: 0,
     maxDecimals: 6,
-    maxSize: 'inherit'
+    maxSize: 'inherit',
   }
 
   round = smartRounder(
@@ -46,7 +46,7 @@ class DisplayValue extends React.Component {
       toWei,
       value,
       post,
-      pre
+      pre,
     } = this.props
 
     let formattedValue
@@ -65,7 +65,7 @@ class DisplayValue extends React.Component {
         style={{
           whiteSpace: 'nowrap',
           fontSize: maxSize,
-          display: inline ? 'inline' : 'block'
+          display: inline ? 'inline' : 'block',
         }}
       >
         {pre}

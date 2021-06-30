@@ -11,7 +11,7 @@ const Mnemonic = styled.div`
   font-weight: 600;
   line-height: 2;
   text-align: center;
-  color: ${p => p.theme.colors.primary};
+  color: ${(p) => p.theme.colors.primary};
   word-spacing: 1.6rem;
 `
 
@@ -19,7 +19,7 @@ export default class CopyMnemonicStep extends React.Component {
   static propTypes = {
     onUseUserMnemonicToggled: PropTypes.func.isRequired,
     onMnemonicCopiedToggled: PropTypes.func.isRequired,
-    mnemonic: PropTypes.string
+    mnemonic: PropTypes.string,
   }
 
   render() {

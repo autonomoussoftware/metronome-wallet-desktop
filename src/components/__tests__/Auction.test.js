@@ -111,14 +111,14 @@ describe('<Auction/>', () => {
 function auctionStatusUpdated(payload = {}) {
   return {
     type: 'auction-status-updated',
-    payload
+    payload,
   }
 }
 
 function goOffline() {
   return {
     type: 'connectivity-state-changed',
-    payload: { ok: false }
+    payload: { ok: false },
   }
 }
 
@@ -128,16 +128,7 @@ const initialAuctionNotStarted = (overrides = {}) => ({
   currentAuction: 0,
   currentPrice: '33000000000',
   genesisTime: testUtils.inOneHour(),
-  ...overrides
-})
-
-const inBetweenAuctions = (overrides = {}) => ({
-  nextAuctionStartTime: testUtils.inOneHour(),
-  tokenRemaining: '1',
-  currentAuction: 0,
-  currentPrice: '33000000000',
-  genesisTime: testUtils.twoWeeksAgo(),
-  ...overrides
+  ...overrides,
 })
 
 const inDailyAuction = (overrides = {}) => ({
@@ -146,7 +137,7 @@ const inDailyAuction = (overrides = {}) => ({
   currentAuction: 10,
   currentPrice: '33000000000',
   genesisTime: testUtils.twoWeeksAgo(),
-  ...overrides
+  ...overrides,
 })
 
 function getInitialState(auctionStatus = null) {

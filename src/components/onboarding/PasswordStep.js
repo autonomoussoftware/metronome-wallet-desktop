@@ -12,7 +12,7 @@ const PasswordMessage = styled(Message)`
 
 const Green = styled.div`
   display: inline-block;
-  color: ${p => p.theme.colors.success};
+  color: ${(p) => p.theme.colors.success};
 `
 
 export default class PasswordStep extends React.Component {
@@ -22,10 +22,10 @@ export default class PasswordStep extends React.Component {
     onInputChange: PropTypes.func.isRequired,
     passwordAgain: PropTypes.string,
     password: PropTypes.string,
-    errors: utils.errorPropTypes('passwordAgain', 'password')
+    errors: utils.errorPropTypes('passwordAgain', 'password'),
   }
 
-  onPasswordSubmit = e => {
+  onPasswordSubmit = (e) => {
     e.preventDefault()
     this.props.onPasswordSubmit({ clearOnError: false })
   }

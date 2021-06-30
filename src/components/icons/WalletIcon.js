@@ -2,7 +2,7 @@ import React from 'react'
 
 import BaseIcon from './BaseIcon'
 
-const WalletIcon = props => (
+const WalletIcon = (props) => (
   <BaseIcon {...props}>
     <path
       fillRule="nonzero"

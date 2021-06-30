@@ -2,7 +2,7 @@ import React from 'react'
 
 import BaseIcon from './BaseIcon'
 
-const ImportIcon = props => (
+const ImportIcon = (props) => (
   <BaseIcon {...props}>
     <path
       transform="rotate(-180 12 12)"

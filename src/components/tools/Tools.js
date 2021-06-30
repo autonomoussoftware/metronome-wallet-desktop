@@ -12,12 +12,12 @@ import {
   TextInput,
   Flex,
   Btn,
-  Sp
+  Sp,
 } from '../common'
 
 const Confirmation = styled.div`
-  color: ${p => p.theme.colors.danger};
-  background-color: ${p => p.theme.colors.darkShade};
+  color: ${(p) => p.theme.colors.danger};
+  background-color: ${(p) => p.theme.colors.darkShade};
   border-radius: 4px;
   padding: 0.8rem 1.6rem;
 `
@@ -36,15 +36,15 @@ class Tools extends React.Component {
     onSubmit: PropTypes.func.isRequired,
     mnemonic: PropTypes.string,
     history: PropTypes.shape({
-      push: PropTypes.func.isRequired
+      push: PropTypes.func.isRequired,
     }).isRequired,
     errors: PropTypes.shape({
-      mnemonic: PropTypes.string
-    }).isRequired
+      mnemonic: PropTypes.string,
+    }).isRequired,
   }
 
   state = {
-    activeModal: null
+    activeModal: null,
   }
 
   onCloseModal = () => {
@@ -55,7 +55,7 @@ class Tools extends React.Component {
     this.setState({ activeModal: 'confirm-rescan' })
   }
 
-  onWizardSubmit = password =>
+  onWizardSubmit = (password) =>
     this.props
       .onSubmit(password)
       .then(() => this.props.history.push('/wallets'))
@@ -67,7 +67,7 @@ class Tools extends React.Component {
     </Confirmation>
   )
 
-  renderForm = goToReview => {
+  renderForm = (goToReview) => {
     const { onInputChange, mnemonic, errors } = this.props
 
     return (
@@ -152,14 +152,14 @@ class Tools extends React.Component {
             noCancel
             styles={{
               confirmation: {
-                padding: 0
+                padding: 0,
               },
               btns: {
                 background: 'none',
                 marginTop: '3.2rem',
                 maxWidth: '200px',
-                padding: 0
-              }
+                padding: 0,
+              },
             }}
           />
         </Sp>

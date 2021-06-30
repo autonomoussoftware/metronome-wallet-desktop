@@ -3,7 +3,7 @@ import React from 'react'
 
 import BaseIcon from './BaseIcon'
 
-const ETH = isTest => (
+const ETH = (isTest) => (
   <g fill="none" fillRule="evenodd">
     <circle cx="12" cy="12" r="12" fill="#FFF" fillRule="nonzero" />
     <g fillRule="nonzero">
@@ -29,7 +29,7 @@ const ETH = isTest => (
   </g>
 )
 
-const ETC = isTest => (
+const ETC = (isTest) => (
   <g fill="none" fillRule="evenodd">
     <circle cx="12" cy="12" r="12" fill="#FFF" fillRule="nonzero" />
     <path
@@ -86,8 +86,8 @@ CoinIcon.propTypes = {
     'ethMainnet',
     'ethRopsten',
     'etcMainnet',
-    'etcMordor'
-  ]).isRequired
+    'etcMordor',
+  ]).isRequired,
 }
 
 export default CoinIcon

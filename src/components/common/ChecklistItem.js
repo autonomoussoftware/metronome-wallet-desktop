@@ -11,20 +11,20 @@ const Container = styled.div`
 
 const Icon = styled.svg`
   position: absolute;
-  fill: ${p => (p.isActive ? '#45d48d' : '#7d7f89')};
+  fill: ${(p) => (p.isActive ? '#45d48d' : '#7d7f89')};
   left: 0;
   top: 1px;
 `
 
 const Label = styled.span`
   transition: opacity 0.3s;
-  opacity: ${p => (p.isActive ? 1 : 0.5)};
+  opacity: ${(p) => (p.isActive ? 1 : 0.5)};
 `
 
 export default class ChecklistItem extends React.Component {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
-    text: PropTypes.string.isRequired
+    text: PropTypes.string.isRequired,
   }
 
   render() {

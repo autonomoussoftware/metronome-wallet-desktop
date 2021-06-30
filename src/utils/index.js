@@ -6,7 +6,7 @@ export const errorPropTypes = (...fields) => {
   const shape = fields.reduce((acc, fieldName) => {
     acc[fieldName] = PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string),
-      PropTypes.string
+      PropTypes.string,
     ])
     return acc
   }, {})
@@ -17,7 +17,7 @@ export const statusPropTypes = PropTypes.oneOf([
   'init',
   'pending',
   'success',
-  'failure'
+  'failure',
 ]).isRequired
 
 export function isWeiable(amount, unit = 'ether') {
@@ -57,10 +57,10 @@ export function getUSDequivalent(amount, rate) {
   return weiUSDvalue.isZero()
     ? '$0.00 (USD)'
     : weiUSDvalue.lt(toBN(toWei('0.01')))
-      ? '< $0.01 (USD)'
-      : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
-          .dp(2)
-          .toString(10)} (USD)`
+    ? '< $0.01 (USD)'
+    : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
+        .dp(2)
+        .toString(10)} (USD)`
 }
 
 export function toUSD(amount, rate, errorValue, smallValue) {
@@ -77,8 +77,8 @@ export function toUSD(amount, rate, errorValue, smallValue) {
     ? weiUSDvalue.isZero()
       ? '0'
       : weiUSDvalue.lt(toBN(toWei('0.01')))
-        ? smallValue
-        : new BigNumber(fromWei(weiUSDvalue.toString())).dp(2).toString(10)
+      ? smallValue
+      : new BigNumber(fromWei(weiUSDvalue.toString())).dp(2).toString(10)
     : errorValue
 
   return expectedUSDamount
@@ -116,10 +116,7 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 
   const expectedMETamount = isValidAmount
     ? toWei(
-        weiAmount
-          .dividedBy(new BigNumber(rate))
-          .decimalPlaces(18)
-          .toString(10)
+        weiAmount.dividedBy(new BigNumber(rate)).decimalPlaces(18).toString(10)
       )
     : errorValue
 
@@ -138,10 +135,7 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 
   const excessCoinAmount =
     isValidAmount && excedes
-      ? weiAmount
-          .minus(usedCoinAmount)
-          .integerValue()
-          .toString(10)
+      ? weiAmount.minus(usedCoinAmount).integerValue().toString(10)
       : null
 
   return { expectedMETamount, excedes, usedCoinAmount, excessCoinAmount }
@@ -174,10 +168,7 @@ export function smartRound(weiAmount) {
  * @param {string} str The string to sanitize
  */
 export function sanitizeMnemonic(str) {
-  return str
-    .replace(/\s+/gi, ' ')
-    .trim()
-    .toLowerCase()
+  return str.replace(/\s+/gi, ' ').trim().toLowerCase()
 }
 
 export function getConversionRate(metAmount, coinAmount) {
