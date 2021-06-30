@@ -131,6 +131,7 @@ class ConfirmationWizard extends React.Component {
         this.setState({
           errors: { password: 'Invalid password' }
         })
+        return undefined
       })
       .catch(err =>
         this.setState({
@@ -148,9 +149,8 @@ class ConfirmationWizard extends React.Component {
     return this.props.client.validatePassword(this.state.password)
   }
   submitWizard = () => {
-    this.setState(
-      { status: 'pending' },
-      () => (this.focusable ? this.focusable.focus() : null)
+    this.setState({ status: 'pending' }, () =>
+      this.focusable ? this.focusable.focus() : null
     )
     this.props
       .onWizardSubmit(this.state.password)

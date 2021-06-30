@@ -70,7 +70,8 @@ export default class Modal extends React.Component {
     children: PropTypes.node.isRequired,
     variant: PropTypes.oneOf(['primary']),
     isOpen: PropTypes.bool.isRequired,
-    title: PropTypes.string
+    title: PropTypes.string,
+    styleOverrides: PropTypes.object
   }
 
   render() {

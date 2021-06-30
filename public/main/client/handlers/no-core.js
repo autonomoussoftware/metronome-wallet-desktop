@@ -22,14 +22,18 @@ const persistState = data => storage.persistState(data).then(() => true)
 function changePassword ({ oldPassword, newPassword }) {
   return validatePassword(oldPassword)
     .then(function (isValid) {
-      if (isValid) {
-        wallet.getWallets().forEach(function (walletId) {
-          const seed = wallet.getSeed(walletId, oldPassword)
-          auth.setPassword(newPassword)
-          wallet.setSeed(seed, newPassword)
-        })
+      if (!isValid) {
+        return isValid
       }
-      return isValid
+      return auth
+        .setPassword(newPassword)
+        .then(function () {
+          wallet.getWallets().map(function (walletId) {
+            const seed = wallet.getSeed(walletId, oldPassword)
+            wallet.setSeed(seed, newPassword)
+          })
+        })
+        .then(() => isValid)
     })
 }
 

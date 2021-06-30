@@ -3,7 +3,7 @@
 const { aes256cbcIv, sha256 } = require('./crypto')
 const settings = require('electron-settings')
 
-const getActiveWallet = () => settings.get('user.activeWallet')
+const getActiveWallet = () => settings.getSync('user.activeWallet')
 
 const setActiveWallet = activeWallet =>
   settings.setSync('user.activeWallet', activeWallet)
@@ -32,7 +32,7 @@ const getSeedByAddress = (address, password) =>
   getSeed(findWalletId(address), password)
 
 const setAddressForWalletId = (walletId, address) =>
-  settings.set(`user.wallets.${walletId}.addresses`, {
+  settings.setSync(`user.wallets.${walletId}.addresses`, {
     [address]: {
       index: 0
     }
@@ -41,7 +41,7 @@ const setAddressForWalletId = (walletId, address) =>
 const getAddressesForWalletId = walletId => getWalletAddresses(walletId)
 
 const setSeed = (seed, password) =>
-  settings.set(
+  settings.setSync(
     `user.wallets.${getWalletId(seed)}.encryptedSeed`,
     aes256cbcIv.encrypt(password, seed)
   )

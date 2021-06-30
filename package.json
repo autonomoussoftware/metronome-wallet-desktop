@@ -20,7 +20,7 @@
     "env:win32": ".\\scripts\\env.bat",
     "env:darwin:linux": "./scripts/env.sh",
     "ppa": "./scripts/ppa.sh",
-    "postinstall": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps",
     "prepare": "patch-package",
     "release": "npm run dist -- --publish always"
   },
@@ -61,20 +61,18 @@
     "react-motion": "0.5.2",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
-    "react-scripts": "3.2.0",
+    "react-scripts": "4.0.3",
     "react-virtualized": "9.20.1",
     "smart-round": "1.0.0",
     "styled-components": "4.1.2",
     "universal-analytics": "0.4.20",
-    "web3-utils": "1.2.1"
+    "web3-utils": "1.3.6"
   },
   "devDependencies": {
     "concurrently": "3.6.0",
-    "electron": "13.1.14",
-    "electron-builder": "22.11.17",
+    "electron": "13.1.4",
+    "electron-builder": "22.11.7",
     "electron-devtools-installer": "3.2.0",
-    "electron-rebuild": "2.3.5",
-    "eslint": "6.5.1",
     "eslint-config-bloq": "2.1.0",
     "eslint-config-prettier": "4.1.0",
     "eslint-config-standard": "12.0.0",

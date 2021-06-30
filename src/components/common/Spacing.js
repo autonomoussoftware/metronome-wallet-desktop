@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 // eslint-disable-next-line complexity
-function getMargin({ m, mt, mb, my, ml, mr, mx, theme: { spacing } }) {
+const getMargin = function({ m, mt, mb, my, ml, mr, mx, theme: { spacing } }) {
   const marginBottom = `${0.1 * spacing(m || mb || my || 0)}rem`
   const marginRight = `${0.1 * spacing(m || mr || mx || 0)}rem`
   const marginLeft = `${0.1 * spacing(m || ml || mx || 0)}rem`
@@ -12,7 +12,7 @@ function getMargin({ m, mt, mb, my, ml, mr, mx, theme: { spacing } }) {
 }
 
 // eslint-disable-next-line complexity
-function getPadding({ p, pt, pb, py, pl, pr, px, theme: { spacing } }) {
+const getPadding = function({ p, pt, pb, py, pl, pr, px, theme: { spacing } }) {
   const paddingBottom = `${0.1 * spacing(p || pb || py || 0)}rem`
   const paddingRight = `${0.1 * spacing(p || pr || px || 0)}rem`
   const paddingLeft = `${0.1 * spacing(p || pl || px || 0)}rem`

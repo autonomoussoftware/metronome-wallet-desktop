@@ -1,14 +1,14 @@
 'use strict'
 
 const { app } = require('electron')
-const remote = require('@electron/remote')
+const remote = require('@electron/remote/main')
 remote.initialize()
-const path = remote.require('path')
+const path = require('path')
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 const isDev = require('electron-is-dev')
-const os = remote.require('os')
+const os = require('os')
 const Raven = require('raven')
 
 const { createWindow } = require('./main/main-window.js')

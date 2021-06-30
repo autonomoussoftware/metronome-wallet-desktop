@@ -182,7 +182,9 @@ class ChainSelector extends React.Component {
         balance: PropTypes.string.isRequired,
         id: PropTypes.string.isRequired
       })
-    ).isRequired
+    ).isRequired,
+    handleMouseEnter: PropTypes.func,
+    handleMouseLeave: PropTypes.func
   }
 
   render() {

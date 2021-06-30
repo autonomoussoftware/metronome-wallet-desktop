@@ -1,4 +1,5 @@
 import withTxRowState from 'metronome-wallet-ui-logic/src/hocs/withTxRowState'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import React from 'react'
 
@@ -18,6 +19,9 @@ const Container = styled.div`
 `
 
 class Row extends React.Component {
+  static propTypes = {
+    tx: PropTypes.any
+  }
   render() {
     const { tx, ...other } = this.props
 

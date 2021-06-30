@@ -45,4 +45,5 @@ const containerProptypes = {
 Column.propTypes = containerProptypes
 Row.propTypes = containerProptypes
 
-export default { Column, Row, Item }
+const Flex = { Column, Row, Item }
+export default Flex
