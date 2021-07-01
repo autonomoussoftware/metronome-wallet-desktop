@@ -139,6 +139,7 @@ class ConfirmationWizard extends React.Component {
         })
       )
   }
+
   validateConfirmation = () => {
     const errors = validators.validatePassword(this.state.password)
     const hasErrors = Object.keys(errors).length > 0
@@ -148,6 +149,7 @@ class ConfirmationWizard extends React.Component {
     }
     return this.props.client.validatePassword(this.state.password)
   }
+
   submitWizard = () => {
     this.setState({ status: 'pending' }, () =>
       this.focusable ? this.focusable.focus() : null

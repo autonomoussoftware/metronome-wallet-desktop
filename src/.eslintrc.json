@@ -7,8 +7,8 @@
     "bloq",
     "plugin:import/recommended",
     "plugin:react/recommended",
-    "prettier",
-    "react-app"
+    "react-app",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {

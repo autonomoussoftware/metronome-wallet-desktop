@@ -3,7 +3,8 @@
     "node": true
   },
   "extends": [
-    "bloq"
+    "bloq",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {

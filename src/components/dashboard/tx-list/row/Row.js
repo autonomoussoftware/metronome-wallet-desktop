@@ -22,6 +22,7 @@ class Row extends React.Component {
   static propTypes = {
     tx: PropTypes.any,
   }
+
   render() {
     const { tx, ...other } = this.props
 
