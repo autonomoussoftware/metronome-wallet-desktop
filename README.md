@@ -13,7 +13,7 @@
 
 ### Requirements
 
-* [Node.js](https://nodejs.org) LTS (v8)
+* [Node.js](https://nodejs.org) LTS (v12 minimum, v14 recommended)
 
 ### Launch
 
@@ -23,6 +23,15 @@ npm i
 
 # Run dev mode
 npm run dev
+```
+
+#### Troubleshooting
+
+- If you get an error when installing the dependencies related to `node-gyp`, try using `sudo` to postinstall the deps
+- For  windows, you might need to install the windows-build-tools. To do so, run 
+
+```bash
+npm i --global --production windows-build-tools
 ```
 
 ### Logs
