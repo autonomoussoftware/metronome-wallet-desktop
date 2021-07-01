@@ -19,19 +19,19 @@ const trans = keyframes`
 const Container = styled.div`
   animation: 0.5s ${trans};
   animation-fill-mode: forwards;
-  background-color: ${(p) =>
+  background-color: ${p =>
     p.negative
       ? p.theme.colors.primary
       : p.darker
       ? p.theme.colors.darker
       : p.theme.colors.dark};
-  max-width: ${(p) => p.maxWidth || 'auto'};
+  max-width: ${p => p.maxWidth || 'auto'};
   font-size: 1.3rem;
   padding: 8px 12px;
   border-radius: 4px;
   box-shadow: 0 0px 3px 0px #323232;
   position: relative;
-  color: ${(p) => p.theme.colors.light};
+  color: ${p => p.theme.colors.light};
 
   &:after {
     content: '';
@@ -47,7 +47,7 @@ const Container = styled.div`
     border: 5px solid transparent;
     z-index: 1;
     border-bottom: none;
-    border-top-color: ${(p) =>
+    border-top-color: ${p =>
       p.negative
         ? p.theme.colors.primary
         : p.darker

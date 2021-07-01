@@ -30,7 +30,7 @@ const Container = styled.div`
 class FailedImportsBadge extends React.Component {
   static propTypes = {
     parent: PropTypes.object.isRequired,
-    amount: PropTypes.number.isRequired,
+    amount: PropTypes.number.isRequired
   }
 
   render() {

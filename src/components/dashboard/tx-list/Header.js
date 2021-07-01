@@ -6,7 +6,7 @@ import ScanIndicator from './ScanIndicator'
 import { Flex } from '../../common'
 import Filter from './Filter'
 
-const responsiveHeader = (width) => css`
+const responsiveHeader = width => css`
   @media (min-width: ${width}) {
     align-items: baseline;
     display: flex;
@@ -16,7 +16,7 @@ const responsiveHeader = (width) => css`
 
 const Container = styled.div`
   position: sticky;
-  background: ${(p) => p.theme.colors.primary};
+  background: ${p => p.theme.colors.primary};
   top: 4.1rem;
   left: 0;
   right: 0;
@@ -24,14 +24,14 @@ const Container = styled.div`
   margin: 0 -4.8rem;
   padding: 0 4.8rem;
 
-  ${(p) => responsiveHeader(p.isMultiChain ? '1140px' : '1040px')}
+  ${p => responsiveHeader(p.isMultiChain ? '1140px' : '1040px')}
 `
 
 const Title = styled.div`
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin-bottom: 2px;
   margin-right: 2.4rem;
 
@@ -52,7 +52,7 @@ export default class Header extends React.Component {
     activeFilter: PropTypes.string.isRequired,
     isMultiChain: PropTypes.bool.isRequired,
     onTitleClick: PropTypes.func.isRequired,
-    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
+    syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired
   }
 
   render() {

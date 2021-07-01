@@ -10,7 +10,7 @@ window.ipcRenderer.on('ui-ready', (ev, payload) => {
       // eslint-disable-next-line no-console
       console.warn(`Error while configuring Raven with Sentry. ${err.message}`)
     }
-    window.addEventListener('unhandledrejection', (err) =>
+    window.addEventListener('unhandledrejection', err =>
       Raven.captureException(err.reason)
     )
   }

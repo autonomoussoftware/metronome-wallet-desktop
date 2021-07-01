@@ -46,6 +46,6 @@ describe('<ConvertETHtoMETForm/>', () => {
 
 function getInitialState() {
   return testUtils.getInitialState({
-    rates: { ETH: { token: 'ETH', price: ETHprice } },
+    rates: { ETH: { token: 'ETH', price: ETHprice } }
   })
 }

@@ -21,7 +21,7 @@ const Title = styled.div`
   font-size: 2.4rem;
   font-weight: bold;
   text-align: center;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
 const Message = styled.div`
@@ -30,7 +30,7 @@ const Message = styled.div`
   font-weight: 600;
   letter-spacing: 0.5px;
   text-align: center;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
 const EditBtn = styled(BaseBtn)`
@@ -45,7 +45,7 @@ const EditBtn = styled(BaseBtn)`
 `
 
 const TryAgainBtn = styled(BaseBtn)`
-  color: ${(p) => p.theme.colors.primary};
+  color: ${p => p.theme.colors.primary};
   margin-top: 1.6rem;
   font-size: 1.4rem;
 `
@@ -65,7 +65,7 @@ const Disclaimer = styled.div`
 `
 
 const Focusable = styled.div.attrs({
-  tabIndex: '-1',
+  tabIndex: '-1'
 })`
   &:focus {
     outline: none;
@@ -89,8 +89,8 @@ class ConfirmationWizard extends React.Component {
     validate: PropTypes.func,
     styles: PropTypes.object,
     client: PropTypes.shape({
-      validatePassword: PropTypes.func.isRequired,
-    }).isRequired,
+      validatePassword: PropTypes.func.isRequired
+    }).isRequired
   }
 
   static defaultProps = {
@@ -101,21 +101,21 @@ class ConfirmationWizard extends React.Component {
     failureTitle: 'Error',
     pendingTitle: 'Sending...',
     editLabel: 'Edit this transaction',
-    styles: {},
+    styles: {}
   }
 
   static initialState = {
     password: null,
     errors: {},
     status: 'init', // init | confirm | pending | success | failure
-    error: null,
+    error: null
   }
 
   state = ConfirmationWizard.initialState
 
   focusable = null
 
-  goToReview = (ev) => {
+  goToReview = ev => {
     ev.preventDefault()
     const isValid = !this.props.validate || this.props.validate()
     if (isValid) this.setState({ status: 'confirm', password: null })
@@ -123,19 +123,19 @@ class ConfirmationWizard extends React.Component {
 
   onCancelClick = () => this.setState(ConfirmationWizard.initialState)
 
-  onConfirmClick = (ev) => {
+  onConfirmClick = ev => {
     ev.preventDefault()
     this.validateConfirmation()
-      .then((isValid) => {
+      .then(isValid => {
         if (isValid) return this.submitWizard()
         this.setState({
-          errors: { password: 'Invalid password' },
+          errors: { password: 'Invalid password' }
         })
         return undefined
       })
-      .catch((err) =>
+      .catch(err =>
         this.setState({
-          errors: { password: err.message },
+          errors: { password: err.message }
         })
       )
   }
@@ -156,9 +156,9 @@ class ConfirmationWizard extends React.Component {
     )
     this.props
       .onWizardSubmit(this.state.password)
-      .then((result) => this.setState({ status: 'success' }))
+      .then(result => this.setState({ status: 'success' }))
       .then(() => (this.focusable ? this.focusable.focus() : null))
-      .catch((err) => this.setState({ status: 'failure', error: err.message }))
+      .catch(err => this.setState({ status: 'failure', error: err.message }))
   }
 
   onPasswordChange = ({ value }) =>
@@ -211,7 +211,7 @@ class ConfirmationWizard extends React.Component {
     if (status === 'success') {
       return (
         <Sp my={19} mx={12} data-testid="success">
-          <Focusable ref={(element) => (this.focusable = element)}>
+          <Focusable ref={element => (this.focusable = element)}>
             <Flex.Column align="center">
               <CheckIcon color={theme.colors.success} />
               <Sp my={2}>
@@ -247,7 +247,7 @@ class ConfirmationWizard extends React.Component {
     }
     return (
       <Sp my={19} mx={12} data-testid="waiting">
-        <Focusable ref={(element) => (this.focusable = element)}>
+        <Focusable ref={element => (this.focusable = element)}>
           <Flex.Column align="center">
             <Sp mb={2}>
               <Title>{this.props.pendingTitle}</Title>

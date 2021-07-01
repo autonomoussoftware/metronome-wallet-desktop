@@ -57,14 +57,14 @@ describe('<Converter/>', () => {
 function converterStatusUpdated(payload = {}) {
   return {
     type: 'converter-status-updated',
-    payload,
+    payload
   }
 }
 
 function goOffline() {
   return {
     type: 'connectivity-state-changed',
-    payload: { ok: false },
+    payload: { ok: false }
   }
 }
 
@@ -72,7 +72,7 @@ const dummyStatus = (overrides = {}) => ({
   availableEth: '100',
   availableMet: '100',
   currentPrice: '10',
-  ...overrides,
+  ...overrides
 })
 
 const inDailyAuction = (overrides = {}) => ({
@@ -81,12 +81,12 @@ const inDailyAuction = (overrides = {}) => ({
   currentAuction: 10,
   currentPrice: '33000000000',
   genesisTime: testUtils.twoWeeksAgo(),
-  ...overrides,
+  ...overrides
 })
 
 function getInitialState(converterStatus = null, auctionStatus = null) {
   return testUtils.getInitialState({
     converter: { status: converterStatus },
-    auction: { status: auctionStatus },
+    auction: { status: auctionStatus }
   })
 }

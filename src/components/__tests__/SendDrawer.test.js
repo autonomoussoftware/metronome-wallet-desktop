@@ -9,7 +9,7 @@ import 'react-testing-library/extend-expect'
 
 const closeHandler = jest.fn()
 
-const getElement = (defaultTab) => (
+const getElement = defaultTab => (
   <SendDrawer onRequestClose={closeHandler} defaultTab={defaultTab} isOpen />
 )
 
@@ -68,13 +68,13 @@ describe('<SendDrawer/>', () => {
 function goOffline() {
   return {
     type: 'connectivity-state-changed',
-    payload: { ok: false },
+    payload: { ok: false }
   }
 }
 
 function getInitialState({
   isInitialAuction = false,
-  metBalance = '5000000000000000000000',
+  metBalance = '5000000000000000000000'
 } = {}) {
   return testUtils.getInitialState({
     auction: { status: { currentAuction: isInitialAuction ? 0 : 1 } },
@@ -87,13 +87,13 @@ function getInitialState({
           addresses: {
             '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: {
-                [config.MET_TOKEN_ADDR]: { balance: metBalance },
+                [config.MET_TOKEN_ADDR]: { balance: metBalance }
               },
-              balance: '5000000000000000000000',
-            },
-          },
-        },
-      },
-    },
+              balance: '5000000000000000000000'
+            }
+          }
+        }
+      }
+    }
   })
 }

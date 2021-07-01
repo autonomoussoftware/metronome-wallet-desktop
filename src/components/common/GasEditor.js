@@ -17,7 +17,7 @@ const GasLabel = styled.span`
 
 const ErrorMsg = styled.div`
   margin-top: 1em;
-  color: ${(p) => p.theme.colors.danger};
+  color: ${p => p.theme.colors.danger};
 `
 
 class GasEditor extends React.Component {
@@ -31,8 +31,8 @@ class GasEditor extends React.Component {
     gasLimit: PropTypes.string.isRequired,
     errors: PropTypes.shape({
       gasPrice: PropTypes.string,
-      gasLimit: PropTypes.string,
-    }).isRequired,
+      gasLimit: PropTypes.string
+    }).isRequired
   }
 
   render() {

@@ -7,7 +7,7 @@ import styled from 'styled-components'
 // shadows: 0 1px 1px ${p => p.theme.colors.darkShade}
 
 const Text = styled.span`
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   line-height: 2.5rem;
   font-size: 2rem;
   font-weight: 600;

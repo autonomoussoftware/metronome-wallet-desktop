@@ -6,7 +6,7 @@ export const errorPropTypes = (...fields) => {
   const shape = fields.reduce((acc, fieldName) => {
     acc[fieldName] = PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string),
-      PropTypes.string,
+      PropTypes.string
     ])
     return acc
   }, {})
@@ -17,7 +17,7 @@ export const statusPropTypes = PropTypes.oneOf([
   'init',
   'pending',
   'success',
-  'failure',
+  'failure'
 ]).isRequired
 
 export function isWeiable(amount, unit = 'ether') {
@@ -116,7 +116,10 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 
   const expectedMETamount = isValidAmount
     ? toWei(
-        weiAmount.dividedBy(new BigNumber(rate)).decimalPlaces(18).toString(10)
+        weiAmount
+          .dividedBy(new BigNumber(rate))
+          .decimalPlaces(18)
+          .toString(10)
       )
     : errorValue
 
@@ -135,7 +138,10 @@ export function toMET(amount, rate, errorValue = 'Invalid amount', remaining) {
 
   const excessCoinAmount =
     isValidAmount && excedes
-      ? weiAmount.minus(usedCoinAmount).integerValue().toString(10)
+      ? weiAmount
+          .minus(usedCoinAmount)
+          .integerValue()
+          .toString(10)
       : null
 
   return { expectedMETamount, excedes, usedCoinAmount, excessCoinAmount }
@@ -168,7 +174,10 @@ export function smartRound(weiAmount) {
  * @param {string} str The string to sanitize
  */
 export function sanitizeMnemonic(str) {
-  return str.replace(/\s+/gi, ' ').trim().toLowerCase()
+  return str
+    .replace(/\s+/gi, ' ')
+    .trim()
+    .toLowerCase()
 }
 
 export function getConversionRate(metAmount, coinAmount) {

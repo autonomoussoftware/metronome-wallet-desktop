@@ -10,7 +10,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   border-radius: 12px;
-  background-color: ${(p) => p.theme.colors.lightShade};
+  background-color: ${p => p.theme.colors.lightShade};
   padding: 0.4rem 1rem 0.4rem 0.4rem;
   margin-top: 3px;
   cursor: ${({ isDisabled }) => (isDisabled ? 'auto' : 'pointer')};
@@ -49,7 +49,7 @@ class ScanIndicator extends React.Component {
     syncStatus: PropTypes.oneOf(['up-to-date', 'syncing', 'failed']).isRequired,
     isOnline: PropTypes.bool.isRequired,
     tooltip: PropTypes.string,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
   }
 
   static contextType = ToastsContext

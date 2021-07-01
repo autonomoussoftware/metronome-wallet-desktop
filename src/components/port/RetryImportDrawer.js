@@ -12,7 +12,7 @@ import {
   Drawer,
   Flex,
   Btn,
-  Sp,
+  Sp
 } from '../common'
 
 const Message = styled.div`
@@ -21,7 +21,7 @@ const Message = styled.div`
   padding-bottom: 2.4rem;
 
   & span {
-    color: ${(p) => p.theme.colors.light};
+    color: ${p => p.theme.colors.light};
   }
 `
 
@@ -33,7 +33,7 @@ const ConfirmationContainer = styled.div`
 
   & > span,
   & > div {
-    color: ${(p) => p.theme.colors.primary};
+    color: ${p => p.theme.colors.primary};
   }
 `
 
@@ -60,7 +60,7 @@ class RetryImportDrawer extends React.Component {
     errors: PropTypes.object.isRequired,
     isOpen: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired,
-    fee: PropTypes.string.isRequired,
+    fee: PropTypes.string.isRequired
   }
 
   componentDidUpdate(prevProps) {
@@ -80,7 +80,7 @@ class RetryImportDrawer extends React.Component {
     </ConfirmationContainer>
   )
 
-  renderForm = (goToReview) => (
+  renderForm = goToReview => (
     <form onSubmit={goToReview} noValidate data-testid="port-form">
       <Sp py={4} px={3}>
         <Message>

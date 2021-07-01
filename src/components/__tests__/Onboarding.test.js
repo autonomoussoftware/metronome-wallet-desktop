@@ -28,7 +28,7 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       testValidation(getByTestId, 'pass-form', {
         formData: { 'pass-field': '' },
-        errors: { 'pass-field': 'Password is required' },
+        errors: { 'pass-field': 'Password is required' }
       })
     })
 
@@ -37,7 +37,7 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       testValidation(getByTestId, 'pass-form', {
         formData: { 'pass-field': '1' },
-        errors: { 'pass-field': 'Password is not strong enough' },
+        errors: { 'pass-field': 'Password is not strong enough' }
       })
     })
 
@@ -46,7 +46,7 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       testValidation(getByTestId, 'pass-form', {
         formData: { 'pass-field': VALID_PASSWORD },
-        errors: { 'pass-again-field': 'Repeat the password' },
+        errors: { 'pass-again-field': 'Repeat the password' }
       })
     })
 
@@ -55,7 +55,7 @@ describe('<Onboarding/>', () => {
       acceptTerms(getByTestId)
       testValidation(getByTestId, 'pass-form', {
         formData: { 'pass-field': VALID_PASSWORD, 'pass-again-field': '1' },
-        errors: { 'pass-again-field': "Passwords don't match" },
+        errors: { 'pass-again-field': "Passwords don't match" }
       })
     })
 
@@ -98,8 +98,8 @@ describe('<Onboarding/>', () => {
           formData: { 'mnemonic-field': 'foo' },
           errors: {
             'mnemonic-field':
-              'The text provided does not match your recovery passphrase.',
-          },
+              'The text provided does not match your recovery passphrase.'
+          }
         })
       })
 
@@ -118,7 +118,7 @@ describe('<Onboarding/>', () => {
 
         expect(mockCallback).toHaveBeenCalledWith({
           password: VALID_PASSWORD,
-          mnemonic,
+          mnemonic
         })
       })
     })
@@ -152,7 +152,7 @@ describe('<Onboarding/>', () => {
         recoverFromMnemonic(getByTestId)
         testValidation(getByTestId, 'mnemonic-form', {
           formData: { 'mnemonic-field': '' },
-          errors: { 'mnemonic-field': 'The phrase is required' },
+          errors: { 'mnemonic-field': 'The phrase is required' }
         })
       })
 
@@ -165,8 +165,8 @@ describe('<Onboarding/>', () => {
           formData: { 'mnemonic-field': 'foo' },
           errors: {
             'mnemonic-field':
-              "These words don't look like a valid recovery phrase",
-          },
+              "These words don't look like a valid recovery phrase"
+          }
         })
       })
 
@@ -184,7 +184,7 @@ describe('<Onboarding/>', () => {
 
         expect(mockCallback).toHaveBeenCalledWith({
           password: VALID_PASSWORD,
-          mnemonic: VALID_MNEMONIC,
+          mnemonic: VALID_MNEMONIC
         })
       })
     })

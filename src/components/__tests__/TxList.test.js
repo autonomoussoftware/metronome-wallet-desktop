@@ -29,11 +29,11 @@ function getInitialState() {
         foo: {
           addresses: {
             [ACTIVE_ADDRESS]: {
-              transactions: [testUtils.getDummyTransaction()],
-            },
-          },
-        },
-      },
-    },
+              transactions: [testUtils.getDummyTransaction()]
+            }
+          }
+        }
+      }
+    }
   })
 }

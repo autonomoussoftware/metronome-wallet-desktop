@@ -11,7 +11,7 @@ import {
   FieldBtn,
   Flex,
   Btn,
-  Sp,
+  Sp
 } from '../common'
 
 const ConfirmationContainer = styled.div`
@@ -20,7 +20,7 @@ const ConfirmationContainer = styled.div`
   letter-spacing: 0.5px;
 
   & > div {
-    color: ${(p) => p.theme.colors.primary};
+    color: ${p => p.theme.colors.primary};
   }
 `
 
@@ -46,9 +46,9 @@ class SendMETForm extends React.Component {
     gasLimit: PropTypes.string,
     errors: PropTypes.shape({
       metAmount: PropTypes.string,
-      toAddress: PropTypes.string,
+      toAddress: PropTypes.string
     }).isRequired,
-    tabs: PropTypes.node.isRequired,
+    tabs: PropTypes.node.isRequired
   }
 
   renderConfirmation = () => (
@@ -59,7 +59,7 @@ class SendMETForm extends React.Component {
     </ConfirmationContainer>
   )
 
-  renderForm = (goToReview) => (
+  renderForm = goToReview => (
     <Flex.Column grow="1">
       {this.props.tabs}
       <Sp py={4} px={3}>

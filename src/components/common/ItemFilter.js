@@ -6,27 +6,27 @@ export default class ItemFilter extends React.Component {
     defaultFilter: PropTypes.string,
     extractValue: PropTypes.func,
     children: PropTypes.func.isRequired,
-    items: PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired
   }
 
   static defaultProps = {
     defaultFilter: '',
-    extractValue: (_) => _,
+    extractValue: _ => _
   }
 
   constructor(props) {
     super(props)
     this.state = {
-      activeFilter: props.defaultFilter,
+      activeFilter: props.defaultFilter
     }
   }
 
   filterItems = (filterValue, items) =>
     filterValue
-      ? items.filter((item) => this.props.extractValue(item) === filterValue)
+      ? items.filter(item => this.props.extractValue(item) === filterValue)
       : items
 
-  onFilterChange = (filterValue) => {
+  onFilterChange = filterValue => {
     if (typeof filterValue !== 'undefined') {
       this.setState({ activeFilter: filterValue })
     }
@@ -41,7 +41,7 @@ export default class ItemFilter extends React.Component {
         this.state.activeFilter,
         this.props.items
       ),
-      activeFilter,
+      activeFilter
     })
   }
 }

@@ -5,7 +5,7 @@ import React from 'react'
 
 const closeHandler = jest.fn()
 
-const getElement = (defaultTab) => (
+const getElement = defaultTab => (
   <ConvertDrawer onRequestClose={closeHandler} defaultTab={defaultTab} isOpen />
 )
 

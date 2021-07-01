@@ -12,7 +12,7 @@ import {
   GasEditor,
   Flex,
   Btn,
-  Sp,
+  Sp
 } from '../common'
 
 const ConfirmationContainer = styled.div`
@@ -21,7 +21,7 @@ const ConfirmationContainer = styled.div`
   letter-spacing: 0.5px;
 
   & > div {
-    color: ${(p) => p.theme.colors.primary};
+    color: ${p => p.theme.colors.primary};
   }
 `
 
@@ -52,10 +52,10 @@ class ConvertCointoMETForm extends React.Component {
     gasLimit: PropTypes.string,
     estimate: PropTypes.string,
     errors: PropTypes.shape({
-      useMinimum: PropTypes.string,
+      useMinimum: PropTypes.string
     }).isRequired,
     tabs: PropTypes.node.isRequired,
-    rate: PropTypes.string,
+    rate: PropTypes.string
   }
 
   renderConfirmation = () => {
@@ -76,7 +76,7 @@ class ConvertCointoMETForm extends React.Component {
     )
   }
 
-  renderForm = (goToReview) => (
+  renderForm = goToReview => (
     <Flex.Column grow="1">
       {this.props.tabs}
       <Sp py={4} px={3}>

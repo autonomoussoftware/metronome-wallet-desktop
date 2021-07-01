@@ -13,7 +13,7 @@ class ReceiptModal extends React.Component {
     refreshStatus: PropTypes.oneOf(['init', 'pending', 'success', 'failure'])
       .isRequired,
     isOpen: PropTypes.bool.isRequired,
-    hash: PropTypes.string,
+    hash: PropTypes.string
   }
 
   static contextType = ToastsContext

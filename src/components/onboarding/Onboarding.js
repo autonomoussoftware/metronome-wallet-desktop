@@ -15,8 +15,8 @@ class Onboarding extends React.Component {
       'define-password',
       'verify-mnemonic',
       'ask-for-terms',
-      'copy-mnemonic',
-    ]).isRequired,
+      'copy-mnemonic'
+    ]).isRequired
   }
 
   render() {

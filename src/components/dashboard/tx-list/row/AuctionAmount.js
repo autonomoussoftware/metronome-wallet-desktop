@@ -7,7 +7,7 @@ import Arrow from './Arrow'
 export default class AuctionAmount extends React.Component {
   static propTypes = {
     metBoughtInAuction: PropTypes.string,
-    coinSpentInAuction: PropTypes.string,
+    coinSpentInAuction: PropTypes.string
   }
 
   render() {

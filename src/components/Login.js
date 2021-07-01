@@ -12,7 +12,7 @@ class Login extends React.Component {
     password: PropTypes.string,
     errors: utils.errorPropTypes('password'),
     status: utils.statusPropTypes,
-    error: PropTypes.string,
+    error: PropTypes.string
   }
 
   render() {

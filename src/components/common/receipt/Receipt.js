@@ -10,11 +10,11 @@ import AmountRow from './AmountRow'
 import TypeRow from './TypeRow'
 
 const Container = styled.div`
-  background-color: ${(p) => p.theme.colors.medium};
+  background-color: ${p => p.theme.colors.medium};
 `
 
 const Scroller = styled.div`
-  box-shadow: 0 -1.6rem 1.6rem -1.6rem ${(p) => p.theme.colors.darkShade} inset;
+  box-shadow: 0 -1.6rem 1.6rem -1.6rem ${p => p.theme.colors.darkShade} inset;
   overflow-y: auto;
   max-height: 60vh;
 `
@@ -25,7 +25,7 @@ const Row = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: ${(p) =>
+  border-top: ${p =>
     p.first ? 'none' : `1px solid ${p.theme.colors.lightShade}`};
 `
 
@@ -34,19 +34,19 @@ const Label = styled.div`
   font-size: 1.1rem;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: ${(p) => p.theme.colors.copy};
+  color: ${p => p.theme.colors.copy};
   margin-right: 1.6rem;
   white-space: nowrap;
 `
 
 const Value = styled.div`
-  color: ${(p) => p.theme.colors.copy};
+  color: ${p => p.theme.colors.copy};
   text-align: right;
   line-height: 1.6rem;
   font-size: 1.3rem;
 
   &[data-rh] {
-    border-bottom: 1px dotted ${(p) => p.theme.colors.darkShade};
+    border-bottom: 1px dotted ${p => p.theme.colors.darkShade};
   }
 `
 
@@ -72,7 +72,7 @@ const ExplorerBtn = styled(Btn)`
 
 const InspectBtn = styled(BaseBtn)`
   letter-spacing: 1.4px;
-  color: ${(p) => p.theme.colors.weak};
+  color: ${p => p.theme.colors.weak};
   width: 100%;
   font-size: 1.1rem;
   line-height: 2;
@@ -93,7 +93,7 @@ export default class Receipt extends React.Component {
     coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired,
     tx: PropTypes.object.isRequired,
-    hash: PropTypes.string.isRequired,
+    hash: PropTypes.string.isRequired
   }
 
   // eslint-disable-next-line complexity

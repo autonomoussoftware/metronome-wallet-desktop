@@ -125,8 +125,8 @@ export function getInitialState(overrides = {}) {
       status: {
         availableEth: '100',
         availableMet: '100',
-        currentPrice: '10',
-      },
+        currentPrice: '10'
+      }
     },
     auction: {
       status: {
@@ -134,8 +134,8 @@ export function getInitialState(overrides = {}) {
         tokenRemaining: '1',
         currentAuction: 10,
         currentPrice: '33000000000',
-        genesisTime: twoWeeksAgo(),
-      },
+        genesisTime: twoWeeksAgo()
+      }
     },
     session: { isLoggedIn: true },
     rates: { ETH: { token: 'ETH', price: 1 } },
@@ -148,15 +148,15 @@ export function getInitialState(overrides = {}) {
           addresses: {
             '0x15dd2028C976beaA6668E286b496A518F457b5Cf': {
               token: {
-                [config.MET_TOKEN_ADDR]: { balance: '5000000000000000000000' },
+                [config.MET_TOKEN_ADDR]: { balance: '5000000000000000000000' }
               },
               balance: '5000000000000000000000',
-              transactions: [],
-            },
-          },
-        },
-      },
-    },
+              transactions: []
+            }
+          }
+        }
+      }
+    }
   }
   return merge({}, baseState, overrides)
 }
@@ -173,9 +173,9 @@ export function getDummyTransaction() {
           event: 'Transfer',
           processing: false,
           value:
-            '0x000000000000000000000000000000000000000000000001e5b8fa8fe2ac0000',
-        },
-      },
+            '0x000000000000000000000000000000000000000000000001e5b8fa8fe2ac0000'
+        }
+      }
     },
     receipt: {
       blockHash: '0x1234567890abcdef',
@@ -183,7 +183,7 @@ export function getDummyTransaction() {
       cumulativeGasUsed: 38484,
       gasUsed: 38484,
       transactionHash: '0x1234567890abcdef',
-      transactionIndex: 0,
+      transactionIndex: 0
     },
     transaction: {
       transactionIndex: 0,
@@ -194,7 +194,7 @@ export function getDummyTransaction() {
       gasPrice: '5000000000',
       gas: 76968,
       from: '0x15dd2028C976beaA6668E286b496A518F457b5Cf',
-      to: '0xde806D6efD432CDeE42573760682D99eDEdC1d89',
-    },
+      to: '0xde806D6efD432CDeE42573760682D99eDEdC1d89'
+    }
   }
 }

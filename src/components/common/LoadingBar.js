@@ -12,7 +12,7 @@ const loading = keyframes`
 
 const Container = styled.div`
   width: 100%;
-  background-color: ${(p) => p.theme.colors.translucentPrimary};
+  background-color: ${p => p.theme.colors.translucentPrimary};
   padding: 0.2rem;
   border-radius: 0.8rem;
 `
@@ -31,7 +31,7 @@ const Bar = styled.div`
     content: '';
     left: -200px;
     width: 200px;
-    background-color: ${(p) => p.theme.colors.primary};
+    background-color: ${p => p.theme.colors.primary};
     animation: ${loading} 2s linear infinite;
   }
 `

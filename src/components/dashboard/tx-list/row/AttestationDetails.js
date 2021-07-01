@@ -3,7 +3,7 @@ import React from 'react'
 
 export default class AttestationDetails extends React.Component {
   static propTypes = {
-    isAttestationValid: PropTypes.bool,
+    isAttestationValid: PropTypes.bool
   }
 
   render() {

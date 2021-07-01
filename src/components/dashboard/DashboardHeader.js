@@ -6,7 +6,7 @@ import { ToastsContext } from '../toasts'
 import { Btn } from '../common'
 
 const Container = styled.header`
-  border-bottom: 1px solid ${(p) => p.theme.colors.darkShade};
+  border-bottom: 1px solid ${p => p.theme.colors.darkShade};
   padding: 1.8rem 0;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@ const Title = styled.h1`
   line-height: 3rem;
   white-space: nowrap;
   margin: 0;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
 `
 
 const AddressContainer = styled.div`
@@ -29,7 +29,7 @@ const AddressContainer = styled.div`
 const Label = styled.div`
   padding: 0.8rem;
   font-size: 1.3rem;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   letter-spacing: 0.5px;
   font-weight: 600;
   opacity: 0;
@@ -44,7 +44,7 @@ const Bg = styled.div`
   align-items: center;
   border-radius: 4px;
   padding: 2px;
-  background-color: ${(p) => p.theme.colors.lightShade};
+  background-color: ${p => p.theme.colors.lightShade};
 `
 
 const Address = styled.div`
@@ -52,7 +52,7 @@ const Address = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: normal;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 240px;
@@ -73,7 +73,7 @@ const CopyBtn = styled(Btn)`
 export default class DashboardHeader extends React.Component {
   static propTypes = {
     copyToClipboard: PropTypes.func.isRequired,
-    address: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired
   }
 
   static contextType = ToastsContext
@@ -81,7 +81,7 @@ export default class DashboardHeader extends React.Component {
   onCopyToClipboardClick = () => {
     this.props.copyToClipboard(this.props.address)
     this.context.toast('info', 'Address copied to clipboard', {
-      autoClose: 1500,
+      autoClose: 1500
     })
   }
 

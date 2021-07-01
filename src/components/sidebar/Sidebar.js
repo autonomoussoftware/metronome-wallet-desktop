@@ -9,7 +9,7 @@ import LogoIcon from '../icons/LogoIcon'
 import Logo from './Logo'
 
 const Container = styled.div`
-  background: ${(p) => p.theme.colors.darkGradient};
+  background: ${p => p.theme.colors.darkGradient};
   width: 64px;
   display: flex;
   flex-direction: column;
@@ -35,9 +35,9 @@ const Container = styled.div`
 `
 
 const LogoLargeContainer = styled.div`
-  padding: ${(p) =>
+  padding: ${p =>
     p.isMultiChain ? '2.4rem 2.4rem 2.8rem 2.4rem' : '3.2rem 3.2rem 5.6rem'};
-  height: ${(p) => (p.isMultiChain ? 'auto' : '125px')};
+  height: ${p => (p.isMultiChain ? 'auto' : '125px')};
   display: none;
   flex-shrink: 0;
 
@@ -47,9 +47,8 @@ const LogoLargeContainer = styled.div`
 `
 
 const LogoSmallContainer = styled.div`
-  padding: ${(p) =>
-    p.isMultiChain ? '2.3rem 1.6rem 3.2rem' : '2.3rem 1.6rem'};
-  height: ${(p) => (p.isMultiChain ? 'auto' : '125px')};
+  padding: ${p => (p.isMultiChain ? '2.3rem 1.6rem 3.2rem' : '2.3rem 1.6rem')};
+  height: ${p => (p.isMultiChain ? 'auto' : '125px')};
   display: block;
   flex-shrink: 0;
 
@@ -68,7 +67,7 @@ const ChainSelectorContainer = styled.div`
 
 const PrimaryNavContainer = styled.nav`
   flex-grow: 1;
-  margin-top: ${(p) => (p.isMultiChain ? 0 : '5rem')};
+  margin-top: ${p => (p.isMultiChain ? 0 : '5rem')};
 `
 
 const SecondaryNavContainer = styled.div`
@@ -94,7 +93,7 @@ const Footer = styled.div`
 
 export default class Sidebar extends React.Component {
   static propTypes = {
-    isMultiChain: PropTypes.bool.isRequired,
+    isMultiChain: PropTypes.bool.isRequired
   }
 
   render() {

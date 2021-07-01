@@ -1,16 +1,16 @@
-global.window.require = function () {
+global.window.require = function() {
   return {
     ipcRenderer: {
       sendSync: jest.fn(),
       send: jest.fn(),
-      on: jest.fn(),
+      on: jest.fn()
     },
     clipboard: {
-      writeText: jest.fn(),
+      writeText: jest.fn()
     },
     shell: {
-      openExternal: jest.fn(),
-    },
+      openExternal: jest.fn()
+    }
   }
 }
 
@@ -19,14 +19,14 @@ global.window.require = function () {
  * instead of the place where the <Modal /> component is placed, so we need to
  * mock the package behavior and make it render the modal children in-place.
  */
-jest.mock('react-modal', () => (props) => props.isOpen ? props.children : null)
+jest.mock('react-modal', () => props => (props.isOpen ? props.children : null))
 
 /**
  * mock qrcode as Canvas is not implemented in jsdom
  */
-jest.mock('qrcode.react', () => (props) => null)
+jest.mock('qrcode.react', () => props => null)
 
-Object.defineProperty(window['HTMLElement'].prototype, 'dataset', {
+Object.defineProperty(window.HTMLElement.prototype, 'dataset', {
   writable: true,
-  value: {},
+  value: {}
 })

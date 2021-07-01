@@ -7,7 +7,7 @@ import { ToastsContext } from '../components/toasts'
 class Web3ConnectionNotifier extends React.Component {
   static propTypes = {
     isConnected: PropTypes.bool,
-    chainName: PropTypes.string,
+    chainName: PropTypes.string
   }
 
   static contextType = ToastsContext

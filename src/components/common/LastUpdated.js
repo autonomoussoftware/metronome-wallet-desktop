@@ -6,7 +6,7 @@ import React from 'react'
 export const Label = styled.div`
   transition: color 0.5s;
   font-size: 1.3rem;
-  color: ${(p) =>
+  color: ${p =>
     p.diff > 60
       ? p.theme.colors.danger
       : p.diff > 15
@@ -14,16 +14,16 @@ export const Label = styled.div`
       : p.theme.colors.weak};
 `
 
-const defaultRender = function ({ diff, timeAgo }) {
+const defaultRender = function({ diff, timeAgo }) {
   return <Label diff={diff}>Last updated {timeAgo}</Label>
 }
 
 defaultRender.propTypes = {
   timeAgo: PropTypes.string,
-  diff: PropTypes.number,
+  diff: PropTypes.number
 }
 
-const LastUpdated = function ({ timestamp, render }) {
+const LastUpdated = function({ timestamp, render }) {
   return (
     <TimeAgo
       updateInterval={1000}
@@ -35,7 +35,7 @@ const LastUpdated = function ({ timestamp, render }) {
 
 LastUpdated.propTypes = {
   timestamp: PropTypes.number,
-  render: PropTypes.func,
+  render: PropTypes.func
 }
 
 export default LastUpdated

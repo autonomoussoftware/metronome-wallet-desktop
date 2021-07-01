@@ -52,9 +52,9 @@ const Container = styled(Modal)`
 `
 
 const Header = styled.header`
-  background-color: ${(p) => p.theme.colors.primary};
+  background-color: ${p => p.theme.colors.primary};
   padding: 1.7rem 2.4rem;
-  box-shadow: 0 0 16px 0 ${(p) => p.theme.colors.darkShade};
+  box-shadow: 0 0 16px 0 ${p => p.theme.colors.darkShade};
   display: flex;
   justify-content: space-between;
   flex-shrink: 0;
@@ -64,7 +64,7 @@ const Title = styled.h1`
   font-size: 2rem;
   line-height: 2rem;
   font-weight: bold;
-  text-shadow: 0 1px 1px ${(p) => p.theme.colors.darkShade};
+  text-shadow: 0 1px 1px ${p => p.theme.colors.darkShade};
   margin: 0;
 
   @media (min-height: 700px) {
@@ -90,7 +90,7 @@ export default class Drawer extends React.Component {
     'data-testid': PropTypes.string,
     children: PropTypes.node.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    title: PropTypes.string,
+    title: PropTypes.string
   }
 
   render() {
@@ -106,7 +106,7 @@ export default class Drawer extends React.Component {
         style={{
           overlay: {
             backgroundColor: 'transparent',
-            zIndex: '3',
+            zIndex: '3'
           },
           content: {
             boxShadow: '0 0 16px 0 rgba(0, 0, 0, 0.2)',
@@ -125,8 +125,8 @@ export default class Drawer extends React.Component {
             width: '460px',
             right: '0',
             left: 'auto',
-            top: '0',
-          },
+            top: '0'
+          }
         }}
       >
         {title && (

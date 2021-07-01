@@ -11,7 +11,7 @@ const Chain = styled.span`
 export default class ImportedDetails extends React.Component {
   static propTypes = {
     importedFrom: PropTypes.string,
-    isPending: PropTypes.bool.isRequired,
+    isPending: PropTypes.bool.isRequired
   }
 
   render() {

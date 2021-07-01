@@ -36,7 +36,7 @@ const Button = styled(NavLink)`
   cursor: pointer;
   display: block;
   text-decoration: none;
-  color: ${(p) => p.theme.colors.light};
+  color: ${p => p.theme.colors.light};
   padding: 0.8rem 1.6rem;
   line-height: 2rem;
   opacity: 0;
@@ -62,7 +62,7 @@ const Button = styled(NavLink)`
     opacity: 0;
     content: '';
     display: block;
-    background-color: ${(p) => p.theme.colors.primary};
+    background-color: ${p => p.theme.colors.primary};
     border-radius: 100%;
     position: absolute;
     top: 50%;
@@ -118,8 +118,8 @@ class SecondaryNav extends React.Component {
   static propTypes = {
     parent: PropTypes.object.isRequired,
     client: PropTypes.shape({
-      onHelpLinkClick: PropTypes.func.isRequired,
-    }).isRequired,
+      onHelpLinkClick: PropTypes.func.isRequired
+    }).isRequired
   }
 
   render() {

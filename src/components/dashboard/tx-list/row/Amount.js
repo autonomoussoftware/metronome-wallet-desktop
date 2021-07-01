@@ -10,7 +10,7 @@ const Container = styled.div`
   line-height: 2.5rem;
   text-align: right;
   opacity: ${({ isPending }) => (isPending ? '0.5' : '1')};
-  color: ${(p) =>
+  color: ${p =>
     p.isPending
       ? p.theme.colors.copy
       : p.isFailed
@@ -49,10 +49,10 @@ export default class Amount extends React.Component {
       'received',
       'auction',
       'unknown',
-      'sent',
+      'sent'
     ]).isRequired,
     value: PropTypes.string.isRequired,
-    coinSymbol: PropTypes.string,
+    coinSymbol: PropTypes.string
   }
 
   // eslint-disable-next-line complexity

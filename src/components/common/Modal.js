@@ -27,9 +27,9 @@ const Container = styled(ReactModal)`
 const Header = styled.header`
   padding: 1.6rem;
   display: flex;
-  background-color: ${(p) =>
+  background-color: ${p =>
     p.variant === 'primary' ? p.theme.colors.primary : 'transparent'};
-  justify-content: ${(p) => (p.hasTitle ? 'space-between' : 'flex-end')};
+  justify-content: ${p => (p.hasTitle ? 'space-between' : 'flex-end')};
   flex-shrink: 0;
 `
 
@@ -37,7 +37,7 @@ const Title = styled.h1`
   font-size: 1.8rem;
   line-height: 2.4rem;
   font-weight: normal;
-  color: ${(p) =>
+  color: ${p =>
     p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.copy};
   margin: 0;
   flex-grow: 1;
@@ -50,11 +50,11 @@ export const HeaderButton = styled.button`
   padding: 0;
   outline: none;
   cursor: pointer;
-  color: ${(p) =>
+  color: ${p =>
     p.variant === 'primary' ? p.theme.colors.light : p.theme.colors.primary};
 
   &[disabled] {
-    color: ${(p) => p.theme.colors.weak};
+    color: ${p => p.theme.colors.weak};
   }
 
   &:not([disabled]):hover,
@@ -71,7 +71,7 @@ export default class Modal extends React.Component {
     variant: PropTypes.oneOf(['primary']),
     isOpen: PropTypes.bool.isRequired,
     title: PropTypes.string,
-    styleOverrides: PropTypes.object,
+    styleOverrides: PropTypes.object
   }
 
   render() {
@@ -95,7 +95,7 @@ export default class Modal extends React.Component {
         style={{
           overlay: {
             backgroundColor: 'transparent',
-            zIndex: '3',
+            zIndex: '3'
           },
           content: {
             background: theme.colors.light,
@@ -113,8 +113,8 @@ export default class Modal extends React.Component {
             right: 'auto',
             left: '50%',
             top: '10rem',
-            ...styleOverrides,
-          },
+            ...styleOverrides
+          }
         }}
         {...other}
       >

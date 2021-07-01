@@ -9,7 +9,7 @@ export default class ConvertedAmount extends React.Component {
     convertedFrom: PropTypes.string,
     coinSymbol: PropTypes.string.isRequired,
     fromValue: PropTypes.string,
-    toValue: PropTypes.string,
+    toValue: PropTypes.string
   }
 
   render() {

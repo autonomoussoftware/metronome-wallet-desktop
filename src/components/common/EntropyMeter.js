@@ -50,13 +50,13 @@ const Message = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: ${(p) =>
+  color: ${p =>
     p.ratio >= 1
       ? p.theme.colors.success
       : p.ratio >= 0.75
       ? 'hsla(40, 100%, 50%, 0.75)'
       : p.theme.colors.danger};
-  text-shadow: ${(p) => p.theme.textShadow};
+  text-shadow: ${p => p.theme.textShadow};
   text-align: right;
   margin-bottom: -18px;
 `
@@ -64,7 +64,7 @@ const Message = styled.div`
 export default class EntropyMeter extends React.Component {
   static propTypes = {
     targetEntropy: PropTypes.number.isRequired,
-    password: PropTypes.string,
+    password: PropTypes.string
   }
 
   getEntropy(string) {

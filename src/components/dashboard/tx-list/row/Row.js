@@ -13,14 +13,14 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 -1px 0 0 ${(p) => p.theme.colors.lightShade} inset;
+  box-shadow: 0 -1px 0 0 ${p => p.theme.colors.lightShade} inset;
   cursor: pointer;
   height: 66px;
 `
 
 class Row extends React.Component {
   static propTypes = {
-    tx: PropTypes.any,
+    tx: PropTypes.any
   }
 
   render() {

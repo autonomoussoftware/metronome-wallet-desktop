@@ -7,7 +7,7 @@ import ConvertMETtoCoinForm from './ConvertMETtoCoinForm'
 import { Drawer, Tabs } from '../common'
 
 const Arrow = styled.span`
-  color: ${(p) => p.theme.colors.primary};
+  color: ${p => p.theme.colors.primary};
   position: relative;
   margin: 0 8px;
   transform: scale3d(1.5, 1.5, 1);
@@ -18,7 +18,7 @@ export default class ConvertDrawer extends React.Component {
   static propTypes = {
     onRequestClose: PropTypes.func.isRequired,
     coinSymbol: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired,
+    isOpen: PropTypes.bool.isRequired
   }
 
   state = { activeTab: 'coin' }
@@ -29,7 +29,7 @@ export default class ConvertDrawer extends React.Component {
     }
   }
 
-  onTabChange = (activeTab) => this.setState({ activeTab })
+  onTabChange = activeTab => this.setState({ activeTab })
 
   render() {
     const tabs = (
@@ -45,7 +45,7 @@ export default class ConvertDrawer extends React.Component {
                 <Arrow>&rarr;</Arrow>
                 MET
               </React.Fragment>
-            ),
+            )
           },
           {
             id: 'met',
@@ -55,8 +55,8 @@ export default class ConvertDrawer extends React.Component {
                 <Arrow>&rarr;</Arrow>
                 {this.props.coinSymbol}
               </React.Fragment>
-            ),
-          },
+            )
+          }
         ]}
       />
     )

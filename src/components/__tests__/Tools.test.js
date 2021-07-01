@@ -15,7 +15,7 @@ describe('<Tools/>', () => {
       const { getByTestId } = testUtils.routerRender(element)
       testUtils.testValidation(getByTestId, 'recover-form', {
         formData: { 'mnemonic-field': '' },
-        errors: { 'mnemonic-field': 'The phrase is required' },
+        errors: { 'mnemonic-field': 'The phrase is required' }
       })
     })
 
@@ -25,8 +25,8 @@ describe('<Tools/>', () => {
         formData: { 'mnemonic-field': 'foo' },
         errors: {
           'mnemonic-field':
-            "These words don't look like a valid recovery phrase",
-        },
+            "These words don't look like a valid recovery phrase"
+        }
       })
     })
 

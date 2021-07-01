@@ -62,12 +62,12 @@ export const Layout = ({ isMultiChain }) => (
 )
 
 Layout.propTypes = {
-  isMultiChain: PropTypes.bool.isRequired,
+  isMultiChain: PropTypes.bool.isRequired
 }
 
 export default class Router extends React.Component {
   static propTypes = {
-    isMultiChain: PropTypes.bool.isRequired,
+    isMultiChain: PropTypes.bool.isRequired
   }
 
   render() {

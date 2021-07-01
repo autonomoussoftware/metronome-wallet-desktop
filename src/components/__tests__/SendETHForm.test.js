@@ -28,7 +28,7 @@ describe('<SendETHForm/>', () => {
       const { getByTestId } = testUtils.reduxRender(element, getInitialState())
       testUtils.testValidation(getByTestId, 'sendEth-form', {
         formData: { 'toAddress-field': '' },
-        errors: { 'toAddress-field': 'Address is required' },
+        errors: { 'toAddress-field': 'Address is required' }
       })
     })
 
@@ -36,7 +36,7 @@ describe('<SendETHForm/>', () => {
       const { getByTestId } = testUtils.reduxRender(element, getInitialState())
       testUtils.testValidation(getByTestId, 'sendEth-form', {
         formData: { 'toAddress-field': 'foo' },
-        errors: { 'toAddress-field': 'Invalid address' },
+        errors: { 'toAddress-field': 'Invalid address' }
       })
     })
 
@@ -64,6 +64,6 @@ describe('<SendETHForm/>', () => {
 
 function getInitialState() {
   return testUtils.getInitialState({
-    rates: { ETH: { token: 'ETH', price: ETHprice } },
+    rates: { ETH: { token: 'ETH', price: ETHprice } }
   })
 }

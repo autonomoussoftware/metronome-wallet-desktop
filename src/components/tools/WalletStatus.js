@@ -33,7 +33,7 @@ const IndicatorLed = styled.div`
   margin: 5px 8px 2px 1px;
 `
 
-const WalletStatus = function (props) {
+const WalletStatus = function(props) {
   return (
     <div>
       <Text>Version {props.appVersion}</Text>
@@ -80,7 +80,7 @@ WalletStatus.propTypes = {
   appVersion: PropTypes.string.isRequired,
   chainName: PropTypes.string.isRequired,
   isOnline: PropTypes.bool,
-  height: PropTypes.number,
+  height: PropTypes.number
 }
 
 const mapStateToProps = (state, props) => ({
@@ -89,7 +89,7 @@ const mapStateToProps = (state, props) => ({
   appVersion: props.client.getAppVersion(),
   chainName: selectors.getActiveChainDisplayName(state),
   isOnline: selectors.getIsOnline(state),
-  ...selectors.getChainMeta(state),
+  ...selectors.getChainMeta(state)
 })
 
 export default withClient(connect(mapStateToProps)(WalletStatus))

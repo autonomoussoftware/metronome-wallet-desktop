@@ -7,13 +7,13 @@ import Deferred from '../lib/Deferred'
 export const fromWei = (str, unit = 'ether') => utils.fromWei(str, unit)
 export const toWei = (bn, unit = 'ether') => utils.toWei(bn, unit)
 
-export const isAddress = (str) => utils.isAddress(str)
+export const isAddress = str => utils.isAddress(str)
 
-export const toBN = (str) => utils.toBN(str)
-export const toHex = (bn) => utils.toHex(bn)
+export const toBN = str => utils.toBN(str)
+export const toHex = bn => utils.toHex(bn)
 
 export function forwardToMainProcess(eventName, timeout = 10000) {
-  return function (data) {
+  return function(data) {
     return sendToMainProcess(eventName, data, timeout)
   }
 }

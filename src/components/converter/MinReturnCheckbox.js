@@ -6,8 +6,8 @@ const Container = styled.label`
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${(p) => p.theme.colors.light};
-  text-shadow: ${(p) => p.theme.textShadow};
+  color: ${p => p.theme.colors.light};
+  text-shadow: ${p => p.theme.textShadow};
   margin-top: 1.6rem;
   display: flex;
 `
@@ -30,11 +30,11 @@ const Icon = styled.span`
 `
 
 const ErrorMsg = styled.div`
-  color: ${(p) => p.theme.colors.danger};
+  color: ${p => p.theme.colors.danger};
   line-height: 1.6rem;
   font-size: 1.3rem;
   font-weight: 600;
-  text-shadow: ${(p) => p.theme.textShadow};
+  text-shadow: ${p => p.theme.textShadow};
   margin-top: 0.2rem;
   width: 100%;
   margin-left: 23px;
@@ -46,7 +46,7 @@ export default class MinReturnCheckbox extends React.Component {
     useMinimum: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired,
     label: PropTypes.string.isRequired,
-    error: PropTypes.string,
+    error: PropTypes.string
   }
 
   render() {

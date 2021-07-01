@@ -7,11 +7,11 @@ const Container = styled.svg`
 `
 
 const Metronome = styled.path`
-  fill: ${(p) => p.theme.colors.primary};
+  fill: ${p => p.theme.colors.primary};
 `
 
 const Wallet = styled.path`
-  fill: ${(p) => p.theme.colors.light};
+  fill: ${p => p.theme.colors.light};
 `
 
 export default class Logo extends React.Component {

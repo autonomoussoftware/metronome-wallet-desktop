@@ -34,8 +34,8 @@ export default class Icon extends React.Component {
       'exported',
       'auction',
       'unknown',
-      'sent',
-    ]).isRequired,
+      'sent'
+    ]).isRequired
   }
 
   render() {

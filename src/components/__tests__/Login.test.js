@@ -18,11 +18,11 @@ describe('<Login />', () => {
       const { getByTestId } = testUtils.reduxRender(element)
       testUtils.testValidation(getByTestId, 'login-form', {
         formData: {
-          'pass-field': '',
+          'pass-field': ''
         },
         errors: {
-          'pass-field': 'Password is required',
-        },
+          'pass-field': 'Password is required'
+        }
       })
     })
 
@@ -35,7 +35,7 @@ describe('<Login />', () => {
       Simulate.submit(getByTestId('login-form'))
 
       expect(onLoginSubmit).toHaveBeenCalledWith({
-        password: VALID_PASSWORD,
+        password: VALID_PASSWORD
       })
     })
 

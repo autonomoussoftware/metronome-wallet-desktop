@@ -62,14 +62,14 @@ class Auction extends React.Component {
     auctionStatus: PropTypes.object,
     buyDisabled: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
-    title: PropTypes.string,
+    title: PropTypes.string
   }
 
   state = {
-    activeModal: null,
+    activeModal: null
   }
 
-  onOpenModal = (e) => this.setState({ activeModal: e.target.dataset.modal })
+  onOpenModal = e => this.setState({ activeModal: e.target.dataset.modal })
 
   onCloseModal = () => this.setState({ activeModal: null })
 

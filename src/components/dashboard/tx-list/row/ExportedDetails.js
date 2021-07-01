@@ -11,7 +11,7 @@ const Chain = styled.span`
 export default class ExportedDetails extends React.Component {
   static propTypes = {
     exportedTo: PropTypes.string,
-    isPending: PropTypes.bool.isRequired,
+    isPending: PropTypes.bool.isRequired
   }
 
   render() {

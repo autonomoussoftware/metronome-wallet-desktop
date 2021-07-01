@@ -29,10 +29,10 @@ export default class TermsStep extends React.Component {
     onTermsAccepted: PropTypes.func.isRequired,
     licenseCheckbox: PropTypes.bool.isRequired,
     termsCheckbox: PropTypes.bool.isRequired,
-    onInputChange: PropTypes.func.isRequired,
+    onInputChange: PropTypes.func.isRequired
   }
 
-  onCheckboxToggle = (e) => {
+  onCheckboxToggle = e => {
     this.props.onInputChange({ id: e.target.id, value: e.target.checked })
   }
 
@@ -44,9 +44,7 @@ export default class TermsStep extends React.Component {
         </DisclaimerWarning>
 
         <DisclaimerMessge>
-          <TermsAndConditions
-            ParagraphComponent={(props) => <p {...props} />}
-          />
+          <TermsAndConditions ParagraphComponent={props => <p {...props} />} />
         </DisclaimerMessge>
 
         <Message>

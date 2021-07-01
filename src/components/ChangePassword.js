@@ -26,11 +26,11 @@ const PasswordMessage = styled.div`
 
 const Green = styled.div`
   display: inline-block;
-  color: ${(p) => p.theme.colors.success};
+  color: ${p => p.theme.colors.success};
 `
 
 const ErrorMessage = styled.div`
-  color: ${(p) => p.theme.colors.danger}
+  color: ${p => p.theme.colors.danger}
   font-size: 1.2rem;
   margin-top: 2.4rem;
   margin-bottom: -3.9rem;
@@ -45,7 +45,7 @@ class ChangePassword extends React.Component {
     oldPassword: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
     history: PropTypes.shape({
-      push: PropTypes.func.isRequired,
+      push: PropTypes.func.isRequired
     }).isRequired,
     status: PropTypes.oneOf(['init', 'pending', 'success', 'failure']),
     errors: utils.errorPropTypes(
@@ -53,12 +53,12 @@ class ChangePassword extends React.Component {
       'newPassword',
       'oldPassword'
     ),
-    error: PropTypes.string,
+    error: PropTypes.string
   }
 
   static contextType = ToastsContext
 
-  handleSubmitAndNavigate = (e) => {
+  handleSubmitAndNavigate = e => {
     e.preventDefault()
     this.props.onSubmit()
   }

@@ -14,7 +14,7 @@ export default class VerifyMnemonicStep extends React.Component {
     mnemonicAgain: PropTypes.string,
     shouldSubmit: PropTypes.func.isRequired,
     getTooltip: PropTypes.func.isRequired,
-    errors: utils.errorPropTypes('mnemonicAgain'),
+    errors: utils.errorPropTypes('mnemonicAgain')
   }
 
   render() {

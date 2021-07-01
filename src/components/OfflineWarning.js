@@ -28,7 +28,7 @@ const DismissBtn = styled(BaseBtn)`
 class OfflineWarning extends React.Component {
   static propTypes = {
     handleDismissClick: PropTypes.func.isRequired,
-    isVisible: PropTypes.bool.isRequired,
+    isVisible: PropTypes.bool.isRequired
   }
 
   render() {

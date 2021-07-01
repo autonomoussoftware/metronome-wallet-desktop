@@ -84,17 +84,17 @@ export default class OngoingImports extends React.Component {
         refutedCount: PropTypes.number.isRequired,
         importedFrom: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
-        hash: PropTypes.string.isRequired,
+        hash: PropTypes.string.isRequired
       })
-    ).isRequired,
+    ).isRequired
   }
 
-  handleRetryClick = (e) => this.props.onRetryClick(e.target.dataset.hash)
+  handleRetryClick = e => this.props.onRetryClick(e.target.dataset.hash)
 
   render() {
     return (
       <List>
-        {this.props.items.map((item) => (
+        {this.props.items.map(item => (
           <Item key={item.hash}>
             <Flex.Row justify="space-between" align="center">
               <LeftLabel>
