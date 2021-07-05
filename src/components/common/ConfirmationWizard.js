@@ -127,11 +127,13 @@ class ConfirmationWizard extends React.Component {
     ev.preventDefault()
     this.validateConfirmation()
       .then(isValid => {
-        if (isValid) return this.submitWizard()
+        if (isValid) {
+          this.submitWizard()
+          return
+        }
         this.setState({
           errors: { password: 'Invalid password' }
         })
-        return undefined
       })
       .catch(err =>
         this.setState({
