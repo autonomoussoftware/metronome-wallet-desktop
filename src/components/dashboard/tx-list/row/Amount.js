@@ -51,7 +51,8 @@ export default class Amount extends React.Component {
       'unknown',
       'sent'
     ]).isRequired,
-    value: PropTypes.string.isRequired
+    value: PropTypes.string.isRequired,
+    coinSymbol: PropTypes.string
   }
 
   // eslint-disable-next-line complexity

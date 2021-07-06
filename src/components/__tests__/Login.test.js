@@ -6,11 +6,8 @@ import React from 'react'
 const INVALID_PASSWORD = 'wrong!'
 const VALID_PASSWORD = 'foo'
 
-const onLoginSubmit = jest.fn(
-  ({ password }) =>
-    password === VALID_PASSWORD
-      ? Promise.resolve()
-      : Promise.reject(new Error())
+const onLoginSubmit = jest.fn(({ password }) =>
+  password === VALID_PASSWORD ? Promise.resolve() : Promise.reject(new Error())
 )
 
 const element = <Login onLoginSubmit={onLoginSubmit} />

@@ -84,8 +84,9 @@ function loadWindow () {
     minHeight: 632,
     backgroundColor: '#323232',
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: false,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
     x: mainWindowState.x,

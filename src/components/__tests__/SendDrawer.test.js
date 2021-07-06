@@ -1,3 +1,5 @@
+/* eslint-disable require-path-exists/exists */
+/* eslint-disable import/no-unresolved */
 import * as testUtils from '../../testUtils'
 import { Simulate } from 'react-testing-library'
 import SendDrawer from '../dashboard/SendDrawer'

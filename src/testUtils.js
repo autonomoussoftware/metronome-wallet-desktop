@@ -1,3 +1,5 @@
+/* eslint-disable require-path-exists/exists */
+/* eslint-disable import/no-unresolved */
 import { Provider as ClientProvider } from 'metronome-wallet-ui-logic/src/hocs/clientContext'
 import { Provider, createStore } from 'metronome-wallet-ui-logic/src/store'
 import { render, Simulate } from 'react-testing-library'

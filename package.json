@@ -20,11 +20,12 @@
     "env:win32": ".\\scripts\\env.bat",
     "env:darwin:linux": "./scripts/env.sh",
     "ppa": "./scripts/ppa.sh",
-    "postinstall": "electron-rebuild",
-    "prepare": "patch-package",
+    "postinstall": "electron-builder install-app-deps",
+    "prepare": "patch-package && husky install",
     "release": "npm run dist -- --publish always"
   },
   "dependencies": {
+    "@electron/remote": "1.2.0",
     "@reach/menu-button": "0.1.7",
     "bignumber.js": "7.2.1",
     "bip39": "2.5.0",
@@ -33,68 +34,64 @@
     "credential-plus-pbkdf2": "2.0.4",
     "cuid": "2.1.6",
     "dotenv": "5.0.1",
-    "electron-context-menu": "0.11.0",
-    "electron-debug": "2.1.0",
-    "electron-is-dev": "1.0.1",
-    "electron-log": "3.0.5",
-    "electron-settings": "3.2.0",
-    "electron-unhandled": "2.1.0",
-    "electron-updater": "4.0.6",
+    "electron-context-menu": "3.1.1",
+    "electron-debug": "3.2.0",
+    "electron-is-dev": "2.0.0",
+    "electron-log": "4.3.0",
+    "electron-settings": "4.0.2",
+    "electron-unhandled": "3.0.2",
+    "electron-updater": "4.3.0",
     "electron-window-state": "5.0.3",
     "fast-password-entropy": "1.1.1",
     "json-stringify-safe": "5.0.1",
-    "lodash": "4.17.15",
+    "lodash": "4.17.21",
     "metronome-contracts": "2.5.0",
-    "metronome-wallet-core": "2.4.9",
+    "metronome-wallet-core": "3.0.0",
     "metronome-wallet-ui-logic": "3.5.2",
     "nedb": "1.8.0",
-    "p-timeout": "2.0.1",
+    "p-timeout": "4.1.0",
     "patch-package": "5.1.1",
     "qrcode.react": "0.7.2",
     "raven": "2.6.4",
     "raven-js": "3.27.0",
-    "react": "16.8.3",
-    "react-dom": "16.8.3",
-    "react-hint": "3.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-hint": "3.2.1",
     "react-modal": "3.5.1",
     "react-motion": "0.5.2",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
-    "react-scripts": "3.2.0",
+    "react-scripts": "4.0.3",
     "react-virtualized": "9.20.1",
     "smart-round": "1.0.0",
     "styled-components": "4.1.2",
     "universal-analytics": "0.4.20",
-    "web3-utils": "1.2.1"
+    "web3-utils": "1.3.6"
   },
   "devDependencies": {
-    "concurrently": "3.6.0",
-    "devtron": "1.4.0",
-    "electron": "5.0.11",
-    "electron-builder": "20.38.5",
-    "electron-devtools-installer": "2.2.4",
-    "electron-rebuild": "1.8.6",
-    "eslint": "6.5.1",
-    "eslint-config-bloq": "2.1.0",
-    "eslint-config-prettier": "4.1.0",
-    "eslint-config-standard": "12.0.0",
-    "eslint-plugin-import": "2.18.2",
-    "eslint-plugin-jsdoc": "4.8.3",
-    "eslint-plugin-mocha": "5.3.0",
-    "eslint-plugin-node": "8.0.1",
-    "eslint-plugin-prefer-arrow": "1.1.5",
-    "eslint-plugin-promise": "4.1.1",
+    "concurrently": "6.2.0",
+    "electron": "13.1.4",
+    "electron-builder": "22.11.7",
+    "electron-devtools-installer": "3.2.0",
+    "eslint-config-bloq": "2.4.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.23.4",
+    "eslint-plugin-jsdoc": "35.4.1",
+    "eslint-plugin-mocha": "9.0.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prefer-arrow": "1.2.3",
+    "eslint-plugin-promise": "5.1.0",
     "eslint-plugin-require-path-exists": "1.1.9",
     "eslint-plugin-standard": "4.0.0",
     "expect": "22.4.3",
-    "husky": "1.3.1",
-    "lint-staged": "8.1.0",
-    "prettier": "1.15.3",
-    "proxyquire": "1.8.0",
+    "husky": "7.0.0",
+    "lint-staged": "11.0.0",
+    "prettier": "1.19.1",
+    "proxyquire": "2.1.3",
     "react-testing-library": "1.10.0",
-    "run-script-os": "1.0.5",
-    "typescript": "3.6.4",
-    "wait-on": "2.1.0"
+    "run-script-os": "1.1.6",
+    "wait-on": "6.0.0"
   },
   "build": {
     "appId": "sh.autonomous.metronome.wallet.desktop",
@@ -158,18 +155,15 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "{src,public}/**/*.js": [
-      "eslint --cache"
+    "src/**/*.js": [
+      "eslint  --config src/.eslintrc.json --cache"
+    ],
+    "public/**/*.js": [
+      "eslint  --config public/.eslintrc.json --cache"
     ],
     "src/**/*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
+      "prettier --write --config src/.prettierrc.json"
     ]
   }
 }

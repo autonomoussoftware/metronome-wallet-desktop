@@ -9,7 +9,7 @@ const wallet = require('../wallet')
 
 const validatePassword = data => auth.isValidPassword(data)
 
-function clearCache () {
+function clearCache() {
   logger.verbose('Clearing database cache')
   return dbManager
     .getDb()
@@ -19,18 +19,19 @@ function clearCache () {
 
 const persistState = data => storage.persistState(data).then(() => true)
 
-function changePassword ({ oldPassword, newPassword }) {
-  return validatePassword(oldPassword)
-    .then(function (isValid) {
-      if (isValid) {
-        wallet.getWallets().forEach(function (walletId) {
-          const seed = wallet.getSeed(walletId, oldPassword)
-          auth.setPassword(newPassword)
-          wallet.setSeed(seed, newPassword)
-        })
-      }
+function changePassword({ oldPassword, newPassword }) {
+  return validatePassword(oldPassword).then(function(isValid) {
+    if (!isValid) {
       return isValid
+    }
+    return auth.setPassword(newPassword).then(function() {
+      wallet.getWallets().forEach(function(walletId) {
+        const seed = wallet.getSeed(walletId, oldPassword)
+        wallet.setSeed(seed, newPassword)
+      })
+      return true
     })
+  })
 }
 
 module.exports = {

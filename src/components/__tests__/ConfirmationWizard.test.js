@@ -6,9 +6,8 @@ import React from 'react'
 const INVALID_PASSWORD = 'wrong!'
 const VALID_PASSWORD = 'foo'
 
-const onWizardSubmit = jest.fn(
-  pass =>
-    pass === VALID_PASSWORD ? Promise.resolve() : Promise.reject(new Error())
+const onWizardSubmit = jest.fn(pass =>
+  pass === VALID_PASSWORD ? Promise.resolve() : Promise.reject(new Error())
 )
 
 const failValidation = jest.fn(() => false)

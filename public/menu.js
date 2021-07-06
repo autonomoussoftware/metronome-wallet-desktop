@@ -56,7 +56,7 @@ const template = [
       {
         label: 'Learn More',
         click () {
-          shell.openExternal('https://metronome.io')
+          return shell.openExternal('https://metronome.io')
         }
       }
     ]

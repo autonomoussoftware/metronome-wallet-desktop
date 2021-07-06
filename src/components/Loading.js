@@ -56,9 +56,7 @@ class Loading extends React.Component {
                 />
                 <ChecklistItem
                   isActive={this.props.chainsStatus[chainName].hasCoinRate}
-                  text={`${
-                    this.props.chainsStatus[chainName].symbol
-                  } exchange data`}
+                  text={`${this.props.chainsStatus[chainName].symbol} exchange data`}
                 />
                 <ChecklistItem
                   isActive={this.props.chainsStatus[chainName].hasCoinBalance}

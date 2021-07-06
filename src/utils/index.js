@@ -57,10 +57,10 @@ export function getUSDequivalent(amount, rate) {
   return weiUSDvalue.isZero()
     ? '$0.00 (USD)'
     : weiUSDvalue.lt(toBN(toWei('0.01')))
-      ? '< $0.01 (USD)'
-      : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
-          .dp(2)
-          .toString(10)} (USD)`
+    ? '< $0.01 (USD)'
+    : `$${new BigNumber(fromWei(weiUSDvalue.toString()))
+        .dp(2)
+        .toString(10)} (USD)`
 }
 
 export function toUSD(amount, rate, errorValue, smallValue) {
@@ -77,8 +77,8 @@ export function toUSD(amount, rate, errorValue, smallValue) {
     ? weiUSDvalue.isZero()
       ? '0'
       : weiUSDvalue.lt(toBN(toWei('0.01')))
-        ? smallValue
-        : new BigNumber(fromWei(weiUSDvalue.toString())).dp(2).toString(10)
+      ? smallValue
+      : new BigNumber(fromWei(weiUSDvalue.toString())).dp(2).toString(10)
     : errorValue
 
   return expectedUSDamount

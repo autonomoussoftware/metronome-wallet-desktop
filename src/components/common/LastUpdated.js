@@ -14,7 +14,7 @@ export const Label = styled.div`
       : p.theme.colors.weak};
 `
 
-function defaultRender({ diff, timeAgo }) {
+const defaultRender = function({ diff, timeAgo }) {
   return <Label diff={diff}>Last updated {timeAgo}</Label>
 }
 
@@ -23,7 +23,7 @@ defaultRender.propTypes = {
   diff: PropTypes.number
 }
 
-export default function LastUpdated({ timestamp, render }) {
+const LastUpdated = function({ timestamp, render }) {
   return (
     <TimeAgo
       updateInterval={1000}
@@ -37,3 +37,5 @@ LastUpdated.propTypes = {
   timestamp: PropTypes.number,
   render: PropTypes.func
 }
+
+export default LastUpdated

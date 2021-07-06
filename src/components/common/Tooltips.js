@@ -23,8 +23,8 @@ const Container = styled.div`
     p.negative
       ? p.theme.colors.primary
       : p.darker
-        ? p.theme.colors.darker
-        : p.theme.colors.dark};
+      ? p.theme.colors.darker
+      : p.theme.colors.dark};
   max-width: ${p => p.maxWidth || 'auto'};
   font-size: 1.3rem;
   padding: 8px 12px;
@@ -51,8 +51,8 @@ const Container = styled.div`
       p.negative
         ? p.theme.colors.primary
         : p.darker
-          ? p.theme.colors.darker
-          : p.theme.colors.dark};
+        ? p.theme.colors.darker
+        : p.theme.colors.dark};
   }
 `
 

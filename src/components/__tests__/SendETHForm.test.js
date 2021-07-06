@@ -1,3 +1,5 @@
+/* eslint-disable require-path-exists/exists */
+/* eslint-disable import/no-unresolved */
 import * as amountFields from './AmountFields.test.js'
 import * as gasEditor from './GasEditor.test.js'
 import * as testUtils from '../../testUtils'

@@ -1,4 +1,4 @@
-export function subscribeToMainProcessMessages(store) {
+export const subscribeToMainProcessMessages = function(store) {
   const ipcMessages = [
     'indexer-connection-status-changed',
     'metronome-token-status-updated',

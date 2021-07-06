@@ -13,7 +13,7 @@
 
 ### Requirements
 
-* [Node.js](https://nodejs.org) LTS (v8)
+* [Node.js](https://nodejs.org) LTS (v12 minimum, v14 recommended)
 
 ### Launch
 
@@ -25,13 +25,24 @@ npm i
 npm run dev
 ```
 
+#### Troubleshooting
+
+- If you get an error when installing the dependencies related to `node-gyp`, try using `sudo` to postinstall the deps
+- For  windows, you might need to install the windows-build-tools. To do so, run 
+
+```bash
+npm i --global --production windows-build-tools
+```
+
 ### Logs
 
 The log output is in the next directories:
 
-* **Linux:** `~/.config/<app name>/log.log`
-* **macOS:** `~/Library/Logs/<app name>/log.log`
-* **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\log.log`
+* **Linux:** `~/.config/<app name>/logs/{process-type}.log`
+* **macOS:** `~/Library/Logs/<app name>/logs/{process-type}.log`
+* **Windows:** `%USERPROFILE%\AppData\Roaming\<app name>\logs\{process-type}.log`
+
+`process-type` being equal to `main`, `renderer` or `worker`
 
 More info [github.com/megahertz/electron-log](https://github.com/megahertz/electron-log)
 
