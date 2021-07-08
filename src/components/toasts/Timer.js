@@ -1,4 +1,4 @@
-export default function Timer(callback, delay) {
+const Timer = function(callback, delay) {
   let start
   let remaining = delay
 
@@ -22,3 +22,5 @@ export default function Timer(callback, delay) {
 
   this.resume()
 }
+
+export default Timer

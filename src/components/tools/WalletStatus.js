@@ -33,7 +33,7 @@ const IndicatorLed = styled.div`
   margin: 5px 8px 2px 1px;
 `
 
-function WalletStatus(props) {
+const WalletStatus = function(props) {
   return (
     <div>
       <Text>Version {props.appVersion}</Text>

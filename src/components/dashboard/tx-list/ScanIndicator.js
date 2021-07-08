@@ -33,11 +33,11 @@ const IndicatorLed = styled.div`
   width: 10px;
   height: 10px;
   background-color: ${({ isOnline, syncStatus, theme }) =>
-    !isOnline
-      ? 'rgba(119, 132, 125, 0.68)'
-      : syncStatus === 'failed'
-      ? theme.colors.danger
-      : '#45d48d'};
+    isOnline
+      ? syncStatus === 'failed'
+        ? theme.colors.danger
+        : '#45d48d'
+      : 'rgba(119, 132, 125, 0.68)'};
   border: 1px solid white;
   border-radius: 10px;
   margin: 3px;

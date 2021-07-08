@@ -127,7 +127,10 @@ class ConfirmationWizard extends React.Component {
     ev.preventDefault()
     this.validateConfirmation()
       .then(isValid => {
-        if (isValid) return this.submitWizard()
+        if (isValid) {
+          this.submitWizard()
+          return
+        }
         this.setState({
           errors: { password: 'Invalid password' }
         })
@@ -138,6 +141,7 @@ class ConfirmationWizard extends React.Component {
         })
       )
   }
+
   validateConfirmation = () => {
     const errors = validators.validatePassword(this.state.password)
     const hasErrors = Object.keys(errors).length > 0
@@ -147,6 +151,7 @@ class ConfirmationWizard extends React.Component {
     }
     return this.props.client.validatePassword(this.state.password)
   }
+
   submitWizard = () => {
     this.setState({ status: 'pending' }, () =>
       this.focusable ? this.focusable.focus() : null

@@ -6,7 +6,7 @@ import * as utils from './utils'
 import keys from './keys'
 import './sentry'
 
-function createClient(createStore) {
+const createClient = function(createStore) {
   const reduxDevtoolsOptions = {
     // actionsBlacklist: ['price-updated$'],
     features: { dispatch: true }

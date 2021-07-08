@@ -92,7 +92,8 @@ export default class Receipt extends React.Component {
     refreshError: PropTypes.string,
     coinSymbol: PropTypes.string.isRequired,
     isPending: PropTypes.bool.isRequired,
-    tx: PropTypes.object.isRequired
+    tx: PropTypes.object.isRequired,
+    hash: PropTypes.string.isRequired
   }
 
   // eslint-disable-next-line complexity

@@ -1,10 +1,12 @@
 'use strict'
 
+const { app } = require('electron')
+const remote = require('@electron/remote/main')
+remote.initialize()
 const path = require('path')
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
-const { app } = require('electron')
 const isDev = require('electron-is-dev')
 const os = require('os')
 const Raven = require('raven')
@@ -19,7 +21,7 @@ const logger = require('./logger')
 if (isDev) {
   // Development
   app.on('ready', function () {
-    require('electron-debug')({ enabled: true })
+    require('electron-debug')({ isEnabled: true })
 
     const {
       default: installExtension,

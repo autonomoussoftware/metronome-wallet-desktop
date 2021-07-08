@@ -20,7 +20,7 @@ analytics.event = function (...args) {
 }
 
 analytics.init = function (userAgent) {
-  visitor = ua(settings.get('app.trackingId'))
+  visitor = ua(settings.getSync('app.trackingId'))
   visitor.set('ds', 'app')
   visitor.set('an', app.getName())
   visitor.set('av', app.getVersion())

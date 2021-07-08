@@ -4,7 +4,6 @@ const MetronomeContracts = require('metronome-contracts')
 const contracts = MetronomeContracts['ropsten']
 
 const indexerUrl = process.env.ROPSTEN_INDEXER_URL || 'http://localhost:3005'
-const metApiUrl = process.env.ROPSTEN_API_URL || 'http://localhost:3002/'
 const wsApiUrl = process.env.ROPSTEN_NODE_URL || 'ws://localhost:8546'
 
 module.exports = {
@@ -22,7 +21,6 @@ module.exports = {
   // urls
   explorerUrl: 'https://ropsten.etherscan.io/tx/{{hash}}',
   indexerUrl,
-  metApiUrl,
   wsApiUrl,
 
   // defauls

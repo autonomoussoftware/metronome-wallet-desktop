@@ -12,7 +12,7 @@ cache:
   - '%USERPROFILE%\.electron'
 
 install:
-  - ps: Install-Product node 8.15
+  - ps: Install-Product node 14
   - npm i --global --production windows-build-tools@4
   - npm i
 
@@ -22,7 +22,7 @@ platform:
 build_script:
   - npm run dist
 
-test: "off"
+test: false
 
 for:
 -

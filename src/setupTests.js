@@ -26,7 +26,7 @@ jest.mock('react-modal', () => props => (props.isOpen ? props.children : null))
  */
 jest.mock('qrcode.react', () => props => null)
 
-Object.defineProperty(window['HTMLElement'].prototype, 'dataset', {
+Object.defineProperty(window.HTMLElement.prototype, 'dataset', {
   writable: true,
   value: {}
 })

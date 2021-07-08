@@ -3,7 +3,8 @@
     "node": true
   },
   "extends": [
-    "bloq"
+    "bloq",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -14,6 +15,7 @@
   },
   "root": true,
   "rules": {
+    "dot-notation": "warn",
     "promise/catch-or-return": "error"
   }
 }

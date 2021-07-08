@@ -7,8 +7,8 @@
     "bloq",
     "plugin:import/recommended",
     "plugin:react/recommended",
-    "prettier",
-    "react-app"
+    "react-app",
+    "prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -33,6 +33,7 @@
     "arrow-body-style": ["warn", "as-needed"],
     "complexity": ["warn", { "max": 10 }],
     "no-console": "warn",
-    "no-shadow": ["error", { "allow": ["status", "Text"] }]
+    "no-shadow": ["error", { "allow": ["status", "Text"] }],
+    "import/no-unresolved": ["error", { "ignore": [".*test.js$"] }]
   }
 }

@@ -8,14 +8,15 @@ import { DisplayValue, Flex } from '../common'
 import CaretIcon from '../icons/CaretIcon'
 import CoinIcon from '../icons/CoinIcon'
 
-const wideOrHover = styles => ({ parent }) => css`
-  ${parent}:hover & {
-    ${styles};
-  }
-  @media (min-width: 800px) {
-    ${styles};
-  }
-`
+const wideOrHover = styles => ({ parent }) =>
+  css`
+    ${parent}:hover & {
+      ${styles};
+    }
+    @media (min-width: 800px) {
+      ${styles};
+    }
+  `
 
 const GlobalStyles = createGlobalStyle`
   [data-reach-menu] {
@@ -182,7 +183,9 @@ class ChainSelector extends React.Component {
         balance: PropTypes.string.isRequired,
         id: PropTypes.string.isRequired
       })
-    ).isRequired
+    ).isRequired,
+    handleMouseEnter: PropTypes.func,
+    handleMouseLeave: PropTypes.func
   }
 
   render() {

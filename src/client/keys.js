@@ -7,8 +7,10 @@ const isValidMnemonic = mnemonic => bip39.validateMnemonic(mnemonic)
 const mnemonicToSeedHex = mnemonic =>
   bip39.mnemonicToSeedHex(mnemonic).toString('hex')
 
-export default {
+const keys = {
   createMnemonic,
   isValidMnemonic,
   mnemonicToSeedHex
 }
+
+export default keys

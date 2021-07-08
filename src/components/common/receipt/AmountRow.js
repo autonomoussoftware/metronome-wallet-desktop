@@ -23,9 +23,8 @@ const Amount = styled.div`
 const Arrow = styled.span`
   color: ${p => p.theme.colors.primary};
   position: relative;
-  top: -6px;
   margin: 0 12px;
-  transform: scale3d(1.5, 2, 1);
+  transform: scale3d(1.5, 1.5, 1);
   display: inline-block;
 `
 

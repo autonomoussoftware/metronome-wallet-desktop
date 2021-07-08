@@ -131,15 +131,6 @@ const initialAuctionNotStarted = (overrides = {}) => ({
   ...overrides
 })
 
-const inBetweenAuctions = (overrides = {}) => ({
-  nextAuctionStartTime: testUtils.inOneHour(),
-  tokenRemaining: '1',
-  currentAuction: 0,
-  currentPrice: '33000000000',
-  genesisTime: testUtils.twoWeeksAgo(),
-  ...overrides
-})
-
 const inDailyAuction = (overrides = {}) => ({
   nextAuctionStartTime: testUtils.inOneHour(),
   tokenRemaining: '1',
