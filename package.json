@@ -129,7 +129,8 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "sign": true
     },
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
