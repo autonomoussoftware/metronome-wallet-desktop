@@ -73,6 +73,7 @@
     "electron": "13.1.4",
     "electron-builder": "22.11.7",
     "electron-devtools-installer": "3.2.0",
+    "electron-notarize": "1.0.0",
     "eslint-config-bloq": "2.4.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-config-standard": "16.0.3",
@@ -107,6 +108,7 @@
     "directories": {
       "buildResources": "assets"
     },
+    "afterSign": "scripts/notarize.js",
     "mac": {
       "artifactName": "${name}_v${version}.${ext}",
       "category": "public.app-category.finance",
@@ -114,7 +116,11 @@
       "extendInfo": {
         "NSUserNotificationAlertStyle": "alert"
       },
-      "electronUpdaterCompatibility": ">= 2.16"
+      "electronUpdaterCompatibility": ">= 2.16",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "./entitlements.mac.plist",
+      "entitlementsInherit": "./entitlements.mac.plist"
     },
     "dmg": {
       "backgroundColor": "#7e61f8",
@@ -129,8 +135,7 @@
           "type": "link",
           "path": "/Applications"
         }
-      ],
-      "sign": true
+      ]
     },
     "linux": {
       "artifactName": "${name}_v${version}.${ext}",
